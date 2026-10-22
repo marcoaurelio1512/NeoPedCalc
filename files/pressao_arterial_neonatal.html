@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — Pressão arterial neonatal (educativo)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #e5e7eb;
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.95em;
+        }
+
+        input[type="number"], input[type="date"], input[type="datetime-local"], input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #111827;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input:readonly {
+            background: #f8f9fa;
+        }
+
+        /* Remover spinners dos campos readonly */
+        input[readonly]::-webkit-outer-spin-button,
+        input[readonly]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[readonly][type=number] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        /* Campos calculados sem borda */
+        .calculated-field {
+            border: none !important;
+            box-shadow: none !important;
+            background: #f0f8ff !important;
+            font-weight: 600 !important;
+            color: #111827 !important;
+        }
+
+        .reference-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .reference-table th, .reference-table td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .reference-table th {
+            background: #e5e7eb;
+            color: white;
+            font-weight: 600;
+        }
+
+        .reference-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .reference-table tr.highlight {
+            background: #d5e8ff;
+            font-weight: 600;
+        }
+
+        .result-box {
+            background: white;
+            border: 2px solid #e1e8ed;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 25px;
+            display: none;
+        }
+
+        .result-box h3 {
+            color: #111827;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            border-bottom: 1px solid #f8f9fa;
+            align-items: center;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            color: #374151;
+            font-size: 0.95em;
+        }
+
+        .result-value {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+
+        .status-normal {
+            background: #d4edda;
+            color: #155724;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .status-alert {
+            background: #fff3cd;
+            color: #856404;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .status-critical {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .report-btn {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .report-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .report-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .reference-info {
+            background: #fff;
+            border: 1px solid #e1e8ed;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .reference-info h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .reference-info p {
+            color: #374151;
+            font-size: 0.9em;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 5px; }
+            .header h1 { font-size: 1.4em; }
+            .header p { font-size: 0.9em; }
+            .content { padding: 15px; }
+            .section { padding: 12px; }
+            .section h3 { font-size: 1.1em; }
+            input, select { padding: 10px; font-size: 14px; }
+            button { padding: 10px; font-size: 14px; }
+            .results { padding: 12px; }
+            .table-responsive table { font-size: 12px; }
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-info:hover {
+            background: white;
+            color: #2c3e50;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #2c3e50;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+
+            .modal-body {
+                padding: 20px;
+                max-height: 75vh;
+            }
+
+            .modal-header {
+                padding: 15px 20px;
+            }
+
+            .modal-header h2 {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 98%;
+                margin: 5% auto;
+            }
+
+            .modal-body {
+                padding: 15px;
+                max-height: 80vh;
+            }
+
+            .modal-header h2 {
+                font-size: 16px;
+            }
+
+            .modal-body h3 {
+                font-size: 16px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🩺 Pressão Arterial Neonatal</h1>
+            <p>Valores de Referência por Idade Gestacional</p>
+            <div class="header-actions">
+                <button type="button" class="btn-info" onclick="abrirModal()">
+                    Como usar
+                </button>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Dados do Paciente -->
+            <div class="section">
+                <h2>👶 Dados do Recém-Nascido</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome">Nome:</label>
+                        <input type="text" id="nome" placeholder="Digite o nome">
+                    </div>
+                    <div class="form-group">
+                        <label for="dataNascimento">Data/Hora de Nascimento:</label>
+                        <input type="datetime-local" id="dataNascimento" onchange="calcularIdades()">
+                    </div>
+                    <div class="form-group">
+                        <label for="dataAvaliacao">Data/Hora da Avaliação:</label>
+                        <input type="datetime-local" id="dataAvaliacao" onchange="calcularIdades()">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pesoNascimento">Peso ao Nascer (gramas):</label>
+                        <input type="number" id="pesoNascimento" min="400" max="5000" placeholder="Ex: 2500" onchange="avaliarPressao()">
+                    </div>
+                    <div class="form-group">
+                        <label for="igSemanas">Idade Gestacional ao Nascer (semanas):</label>
+                        <input type="number" id="igSemanas" min="24" max="42" placeholder="24-42" onchange="calcularIdades()">
+                    </div>
+                    <div class="form-group">
+                        <label for="igDias">IG - Dias adicionais (0-6):</label>
+                        <input type="number" id="igDias" min="0" max="6" placeholder="0-6" value="0" onchange="calcularIdades()">
+                    </div>
+                </div>
+                
+                <!-- Idades Calculadas Automaticamente -->
+                <div class="form-row" style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-top: 15px;">
+                    <div class="form-group">
+                        <label for="idadeCorrigida">Idade Gestacional Corrigida:</label>
+                        <input type="text" id="idadeCorrigida" readonly class="calculated-field">
+                    </div>
+                    <div class="form-group">
+                        <label for="diasVida">Dias de Vida:</label>
+                        <input type="number" id="diasVida" readonly class="calculated-field">
+                    </div>
+                    <div class="form-group">
+                        <label for="horasVida">Horas de Vida (se < 1 dia):</label>
+                        <input type="number" id="horasVida" readonly class="calculated-field">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medidas de Pressão Arterial -->
+            <div class="section">
+                <h2>🩺 Medidas de Pressão Arterial</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pasSistolica">Pressão Arterial Sistólica (mmHg):</label>
+                        <input type="number" id="pasSistolica" min="0" max="200" placeholder="mmHg" onchange="avaliarPressao()">
+                    </div>
+                    <div class="form-group">
+                        <label for="paMean">Pressão Arterial Média (mmHg):</label>
+                        <input type="number" id="paMean" min="0" max="200" placeholder="mmHg" onchange="avaliarPressao()">
+                    </div>
+                    <div class="form-group">
+                        <label for="paDiastolica">Pressão Arterial Diastólica (mmHg):</label>
+                        <input type="number" id="paDiastolica" min="0" max="200" placeholder="mmHg" onchange="avaliarPressao()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resultado da Avaliação -->
+            <div class="result-box" id="resultBox">
+                <h3>📋 Avaliação da Pressão Arterial</h3>
+                <div id="resultContent"></div>
+            </div>
+
+            <!-- Botão Gerar Relatório -->
+            <button type="button" class="report-btn" onclick="gerarRelatorio()" id="reportBtn" disabled>
+                📋 Copiar texto informativo
+            </button>
+
+            <!-- Tabelas de Referência -->
+            <div class="section">
+                <h2>📊 Valores de Referência</h2>
+                <p style="color: #374151; margin-bottom: 20px; font-size: 0.9em;">
+                    <strong>Nota:</strong> A calculadora seleciona automaticamente a tabela mais apropriada baseada nos dados informados
+                </p>
+
+                <!-- Tabela 1: Baixo Peso ao Nascer -->
+                <h3 style="color: #111827; margin-top: 25px; margin-bottom: 15px;">Baixo Peso ao Nascer</h3>
+                <table class="reference-table" id="tableWeight">
+                    <thead>
+                        <tr>
+                            <th>Peso ao Nascer (g)</th>
+                            <th>Sistólica (mmHg)</th>
+                            <th>Diastólica (mmHg)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>501-750</td><td>50-62</td><td>26-36</td></tr>
+                        <tr><td>751-1000</td><td>48-59</td><td>23-36</td></tr>
+                        <tr><td>1001-1250</td><td>49-61</td><td>26-35</td></tr>
+                        <tr><td>1251-1500</td><td>46-56</td><td>26-33</td></tr>
+                        <tr><td>1501-1750</td><td>46-58</td><td>23-33</td></tr>
+                        <tr><td>1751-2000</td><td>48-61</td><td>24-35</td></tr>
+                    </tbody>
+                </table>
+
+                <!-- Tabela 2: Prematuros por IG -->
+                <h3 style="color: #111827; margin-top: 25px; margin-bottom: 15px;">Prematuros (por Idade Gestacional)</h3>
+                <table class="reference-table" id="tableGA">
+                    <thead>
+                        <tr>
+                            <th>Gestação (semanas)</th>
+                            <th>Sistólica (mmHg)</th>
+                            <th>Diastólica (mmHg)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>&lt;24</td><td>48-63</td><td>24-39</td></tr>
+                        <tr><td>24-28</td><td>48-58</td><td>22-36</td></tr>
+                        <tr><td>29-32</td><td>47-59</td><td>24-34</td></tr>
+                        <tr><td>&gt;32</td><td>48-60</td><td>24-34</td></tr>
+                    </tbody>
+                </table>
+
+                <!-- Tabela 3: Prematuros por Dias de Vida -->
+                <h3 style="color: #111827; margin-top: 25px; margin-bottom: 15px;">Prematuros (por Dias de Vida)</h3>
+                <table class="reference-table" id="tableDays">
+                    <thead>
+                        <tr>
+                            <th>Dia</th>
+                            <th>Sistólica (mmHg)</th>
+                            <th>Diastólica (mmHg)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>48-63</td><td>25-35</td></tr>
+                        <tr><td>2</td><td>54-63</td><td>30-39</td></tr>
+                        <tr><td>3</td><td>53-67</td><td>31-43</td></tr>
+                        <tr><td>4</td><td>57-71</td><td>32-45</td></tr>
+                        <tr><td>5</td><td>56-72</td><td>33-47</td></tr>
+                        <tr><td>6</td><td>57-71</td><td>32-47</td></tr>
+                        <tr><td>7</td><td>61-74</td><td>34-46</td></tr>
+                    </tbody>
+                </table>
+
+                <!-- Tabela 4: Bebês a Termo -->
+                <h3 style="color: #111827; margin-top: 25px; margin-bottom: 15px;">Bebês Nascidos a Termo</h3>
+                <table class="reference-table" id="tableTerm">
+                    <thead>
+                        <tr>
+                            <th>Idade</th>
+                            <th>Sistólica (mmHg)</th>
+                            <th>Diastólica (mmHg)</th>
+                            <th>Média (mmHg)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1 hora</td><td>70</td><td>44</td><td>53</td></tr>
+                        <tr><td>12 horas</td><td>66</td><td>41</td><td>50</td></tr>
+                        <tr><td>Dia 1 (dormindo)</td><td>70 ± 9</td><td>42 ± 12</td><td>55 ± 11</td></tr>
+                        <tr><td>Dia 1 (acordado)</td><td>71 ± 9</td><td>43 ± 10</td><td>55 ± 9</td></tr>
+                        <tr><td>Dia 3 (dormindo)</td><td>75 ± 11</td><td>48 ± 10</td><td>59 ± 9</td></tr>
+                        <tr><td>Dia 3 (acordado)</td><td>77 ± 12</td><td>49 ± 10</td><td>63 ± 13</td></tr>
+                        <tr><td>Dia 6 (dormindo)</td><td>76 ± 10</td><td>46 ± 12</td><td>58 ± 12</td></tr>
+                        <tr><td>Dia 6 (acordado)</td><td>76 ± 10</td><td>49 ± 11</td><td>62 ± 12</td></tr>
+                        <tr><td>Semana 2</td><td>78 ± 10</td><td>50 ± 9</td><td>-</td></tr>
+                        <tr><td>Semana 3</td><td>79 ± 8</td><td>49 ± 8</td><td>-</td></tr>
+                        <tr><td>Semana 4</td><td>85 ± 10</td><td>46 ± 9</td><td>-</td></tr>
+                    </tbody>
+                </table>
+
+                <!-- Tabela 5: 3º Percentil por Idade Gestacional (Referência Histórica) -->
+                <h3 style="color: #111827; margin-top: 25px; margin-bottom: 15px;">3º Percentil por Idade Gestacional (Referência Complementar)</h3>
+                <p style="color: #374151; margin-bottom: 10px; font-size: 0.9em;">
+                    <strong>Nota:</strong> Valores do 3º percentil - hipotensão se abaixo destes valores
+                </p>
+                <table class="reference-table" id="tablePercentile">
+                    <thead>
+                        <tr>
+                            <th>IG (semanas)</th>
+                            <th>Sistólica (mmHg)</th>
+                            <th>Média (mmHg)</th>
+                            <th>Diastólica (mmHg)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>24</td><td>32</td><td>26</td><td>15</td></tr>
+                        <tr><td>25</td><td>34</td><td>26</td><td>16</td></tr>
+                        <tr><td>26</td><td>36</td><td>27</td><td>17</td></tr>
+                        <tr><td>27</td><td>38</td><td>27</td><td>17</td></tr>
+                        <tr><td>28</td><td>40</td><td>28</td><td>18</td></tr>
+                        <tr><td>29</td><td>42</td><td>28</td><td>19</td></tr>
+                        <tr><td>30</td><td>43</td><td>29</td><td>20</td></tr>
+                        <tr><td>31</td><td>45</td><td>30</td><td>20</td></tr>
+                        <tr><td>32</td><td>46</td><td>30</td><td>21</td></tr>
+                        <tr><td>33</td><td>47</td><td>30</td><td>22</td></tr>
+                        <tr><td>34</td><td>48</td><td>31</td><td>23</td></tr>
+                        <tr><td>35</td><td>49</td><td>32</td><td>24</td></tr>
+                        <tr><td>36</td><td>50</td><td>32</td><td>25</td></tr>
+                        <tr><td>37</td><td>51</td><td>33</td><td>26</td></tr>
+                        <tr><td>38</td><td>52</td><td>34</td><td>27</td></tr>
+                        <tr><td>39</td><td>53</td><td>35</td><td>28</td></tr>
+                        <tr><td>40</td><td>54</td><td>36</td><td>29</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Referências -->
+            <div class="reference-info">
+                <h3>📚 Referências Bibliográficas</h3>
+                <p><strong>Tabela 2:</strong> Blood pressure thresholds at third percentile according to gestational age (GA).</p>
+                <p><strong>Interpretação:</strong> Valores abaixo do 3º percentil para a idade gestacional indicam hipotensão arterial e podem requerer intervenção.</p>
+                <hr style="margin: 20px 0; border: none; border-top: 1px solid #e1e8ed;">
+                <p style="margin-bottom: 10px;"><strong>1.</strong> Rennie JM, Roberton NRC (Eds). Livro didático de Neonatologia, 3ª ed. Churchill Livingstone, Edimburgo, 1999.</p>
+                <p style="margin-bottom: 10px;"><strong>2.</strong> Taeusch HW, Ballard RA. Doenças de Avery do recém-nascido 7ª Ed. WB Saunders Company, Filadélfia. 1998.</p>
+                <p style="margin-bottom: 10px;"><strong>3.</strong> Watkins AMC, West CR, Cooke RWI: Blood pressure and cerebral haemorrhage and ischaemia in very low birthweight infants. Early Hum Dev 19:103-110, 1989.</p>
+                <p style="margin-bottom: 10px;"><strong>4.</strong> Nuntnarumit P, Yang W, Bada-Ellzey HS. Medições de pressão arterial no recém-nascido. Clin Perinatol 1999; 26:981-996.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — Pressão arterial neonatal (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta calculadora organiza valores de referência para estimativa educativa da pressão arterial neonatal em diferentes idades gestacionais e pós-natais. O conteúdo é informativo e não substitui avaliação clínica, protocolo institucional ou prescrição.</p>
+                
+                <h3>Fórmulas Principais</h3>
+                <div class="formula-box">
+                    <strong>Pressão Arterial Média (PAM):</strong><br>
+                    PAM = PAD + (PAS - PAD)/3<br><br>
+                    <strong>PAM Estimada:</strong><br>
+                    PAM ≈ PAD + (PAS - PAD)/3<br><br>
+                    <strong>Valores de Referência por Idade Gestacional:</strong><br>
+                    • <strong>24-28 semanas:</strong> PAS 35-45, PAD 20-30 mmHg<br>
+                    • <strong>29-32 semanas:</strong> PAS 40-50, PAD 25-35 mmHg<br>
+                    • <strong>33-36 semanas:</strong> PAS 45-55, PAD 30-40 mmHg<br>
+                    • <strong>37-42 semanas:</strong> PAS 50-70, PAD 35-45 mmHg<br><br>
+                    <strong>Valores por Peso:</strong><br>
+                    • <strong>< 1000g:</strong> PAS 40-50 mmHg<br>
+                    • <strong>1000-1500g:</strong> PAS 45-55 mmHg<br>
+                    • <strong>1500-2500g:</strong> PAS 50-65 mmHg<br>
+                    • <strong>> 2500g:</strong> PAS 55-75 mmHg
+                </div>
+
+                <h3>Parâmetros Avaliados</h3>
+                <ul>
+                    <li><strong>Idade Gestacional:</strong> Semanas completas</li>
+                    <li><strong>Idade Pós-natal:</strong> Dias de vida</li>
+                    <li><strong>Peso:</strong> Em gramas</li>
+                    <li><strong>Sexo:</strong> Masculino ou feminino</li>
+                    <li><strong>Pressão Sistólica:</strong> PAS em mmHg</li>
+                    <li><strong>Pressão Diastólica:</strong> PAD em mmHg</li>
+                    <li><strong>Pressão Média:</strong> PAM em mmHg</li>
+                    <li><strong>Classificação:</strong> Normal, elevada, baixa</li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Insira a Idade Gestacional:</strong> Semanas</li>
+                    <li><strong>Informe a Idade Pós-natal:</strong> Dias</li>
+                    <li><strong>Insira o Peso:</strong> Em gramas</li>
+                    <li><strong>Selecione o Sexo:</strong> Masculino ou feminino</li>
+                    <li><strong>Insira a PA:</strong> Sistólica e diastólica</li>
+                    <li><strong>Calcule:</strong> Sistema calcula automaticamente</li>
+                    <li><strong>Interprete:</strong> Valores de referência</li>
+                </ol>
+
+                <h3>Classificação da Pressão Arterial</h3>
+                <ul>
+                    <li><strong>Normal:</strong> Dentro dos percentis 10-90</li>
+                    <li><strong>Elevada:</strong> 90-95º percentil</li>
+                    <li><strong>Hipertensão:</strong> > 95º percentil</li>
+                    <li><strong>Baixa:</strong> < 10º percentil</li>
+                    <li><strong>Hipotensão:</strong> < 5º percentil</li>
+                    <li><strong>Crítica:</strong> Requer intervenção</li>
+                    <li><strong>Limítrofe:</strong> 85-95º percentil</li>
+                    <li><strong>Severa:</strong> > 99º percentil</li>
+                </ul>
+
+                <h3>Fatores que Influenciam a PA Neonatal</h3>
+                <ul>
+                    <li><strong>Idade Gestacional:</strong> PA aumenta com IG</li>
+                    <li><strong>Peso:</strong> Recém-nascidos maiores</li>
+                    <li><strong>Idade Pós-natal:</strong> PA aumenta nos primeiros dias</li>
+                    <li><strong>Sexo:</strong> Diferenças sutis</li>
+                    <li><strong>Raça:</strong> Variações étnicas</li>
+                    <li><strong>Posição:</strong> Decúbito, elevação</li>
+                    <li><strong>Atividade:</strong> Choro, agitação</li>
+                    <li><strong>Medicações:</strong> Vasopressores, sedativos</li>
+                </ul>
+
+                <h3>Métodos de Medição</h3>
+                <ul>
+                    <li><strong>Invasiva:</strong> Cateter arterial</li>
+                    <li><strong>Não Invasiva:</strong> Oscilométrica</li>
+                    <li><strong>Auscultatória:</strong> Doppler, estetoscópio</li>
+                    <li><strong>Oscilométrica:</strong> Aparelho automático</li>
+                    <li><strong>Doppler:</strong> Ultrassom</li>
+                    <li><strong>Palpação:</strong> Pulso</li>
+                    <li><strong>Contínua:</strong> Monitor invasivo</li>
+                    <li><strong>Intermittente:</strong> Medições periódicas</li>
+                </ul>
+
+                <h3>Indicações para Monitoramento</h3>
+                <ul>
+                    <li><strong>Prematuridade:</strong> < 37 semanas</li>
+                    <li><strong>Baixo Peso:</strong> < 2500g</li>
+                    <li><strong>Sepse:</strong> Infecção sistêmica</li>
+                    <li><strong>Hemorragia:</strong> HIC, pulmonar</li>
+                    <li><strong>Cardiopatias:</strong> Congênitas</li>
+                    <li><strong>Medicações:</strong> Vasopressores</li>
+                    <li><strong>Cirurgia:</strong> Pós-operatório</li>
+                    <li><strong>Instabilidade:</strong> Hemodinâmica</li>
+                </ul>
+
+                <h3>Complicações da Hipertensão Neonatal</h3>
+                <ul>
+                    <li><strong>Cardiovasculares:</strong> Insuficiência cardíaca</li>
+                    <li><strong>Renais:</strong> Insuficiência renal</li>
+                    <li><strong>Neurológicas:</strong> Convulsões, HIC</li>
+                    <li><strong>Respiratórias:</strong> Edema pulmonar</li>
+                    <li><strong>Oftalmológicas:</strong> Retinopatia</li>
+                    <li><strong>Hematológicas:</strong> Coagulopatia</li>
+                    <li><strong>Metabólicas:</strong> Acidose</li>
+                    <li><strong>Gastrointestinais:</strong> Isquemia intestinal</li>
+                </ul>
+
+                <h3>Tratamento da Hipertensão</h3>
+                <ul>
+                    <li><strong>Medidas Gerais:</strong> Controle de dor, ambiente</li>
+                    <li><strong>Volume:</strong> Reposição hídrica</li>
+                    <li><strong>Vasodilatadores:</strong> Hidralazina, nifedipina</li>
+                    <li><strong>Diuréticos:</strong> Furosemida</li>
+                    <li><strong>Bloqueadores:</strong> Beta-bloqueadores</li>
+                    <li><strong>Inibidores:</strong> ECA</li>
+                    <li><strong>Monitoramento:</strong> Contínuo</li>
+                    <li><strong>Ajuste:</strong> Individualizado</li>
+                </ul>
+
+                <h3>Limitações e Considerações</h3>
+                <ul>
+                    <li>Não substitui avaliação clínica</li>
+                    <li>Requer contexto clínico</li>
+                    <li>Variações individuais</li>
+                    <li>Fatores não incluídos</li>
+                    <li>Medições precisas necessárias</li>
+                    <li>Interpretação experiente</li>
+                    <li>Monitoramento contínuo</li>
+                    <li>Ajuste individual</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Kent AL, et al. Blood pressure in the first year of life in healthy infants born at term. Pediatr Nephrol. 2007;22(10):1743-1749.<br>
+                    - Dionne JM, et al. Hypertension in infancy: diagnosis, management and outcome. Pediatr Nephrol. 2012;27(1):17-32.<br>
+                    - Flynn JT, et al. Clinical practice guideline for screening and management of high blood pressure in children and adolescents. Pediatrics. 2017;140(3):e20171904.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Tabelas de referência baseadas na imagem fornecida
+        
+        // Tabela 1: Baixo peso ao nascer
+        const weightRanges = [
+            {min: 501, max: 750, systolicMin: 50, systolicMax: 62, diastolicMin: 26, diastolicMax: 36},
+            {min: 751, max: 1000, systolicMin: 48, systolicMax: 59, diastolicMin: 23, diastolicMax: 36},
+            {min: 1001, max: 1250, systolicMin: 49, systolicMax: 61, diastolicMin: 26, diastolicMax: 35},
+            {min: 1251, max: 1500, systolicMin: 46, systolicMax: 56, diastolicMin: 26, diastolicMax: 33},
+            {min: 1501, max: 1750, systolicMin: 46, systolicMax: 58, diastolicMin: 23, diastolicMax: 33},
+            {min: 1751, max: 2000, systolicMin: 48, systolicMax: 61, diastolicMin: 24, diastolicMax: 35}
+        ];
+
+        // Tabela 2: Prematuros por idade gestacional
+        const gaRanges = [
+            {minGA: 0, maxGA: 23, systolicMin: 48, systolicMax: 63, diastolicMin: 24, diastolicMax: 39},
+            {minGA: 24, maxGA: 28, systolicMin: 48, systolicMax: 58, diastolicMin: 22, diastolicMax: 36},
+            {minGA: 29, maxGA: 32, systolicMin: 47, systolicMax: 59, diastolicMin: 24, diastolicMax: 34},
+            {minGA: 33, maxGA: 50, systolicMin: 48, systolicMax: 60, diastolicMin: 24, diastolicMax: 34}
+        ];
+
+        // Tabela 3: Prematuros por dias de vida
+        const dayRanges = [
+            {day: 1, systolicMin: 48, systolicMax: 63, diastolicMin: 25, diastolicMax: 35},
+            {day: 2, systolicMin: 54, systolicMax: 63, diastolicMin: 30, diastolicMax: 39},
+            {day: 3, systolicMin: 53, systolicMax: 67, diastolicMin: 31, diastolicMax: 43},
+            {day: 4, systolicMin: 57, systolicMax: 71, diastolicMin: 32, diastolicMax: 45},
+            {day: 5, systolicMin: 56, systolicMax: 72, diastolicMin: 33, diastolicMax: 47},
+            {day: 6, systolicMin: 57, systolicMax: 71, diastolicMin: 32, diastolicMax: 47},
+            {day: 7, systolicMin: 61, systolicMax: 74, diastolicMin: 34, diastolicMax: 46}
+        ];
+
+        // Tabela 4: Bebês a termo
+        const termRanges = [
+            {id: '1h', name: '1 hora', hours: 1, systolic: 70, diastolic: 44, mean: 53},
+            {id: '12h', name: '12 horas', hours: 12, systolic: 66, diastolic: 41, mean: 50},
+            {id: 'd1sleep', name: 'Dia 1 (dormindo)', day: 1, systolic: 70, systolicSD: 9, diastolic: 42, diastolicSD: 12, mean: 55, meanSD: 11},
+            {id: 'd1awake', name: 'Dia 1 (acordado)', day: 1, systolic: 71, systolicSD: 9, diastolic: 43, diastolicSD: 10, mean: 55, meanSD: 9},
+            {id: 'd3sleep', name: 'Dia 3 (dormindo)', day: 3, systolic: 75, systolicSD: 11, diastolic: 48, diastolicSD: 10, mean: 59, meanSD: 9},
+            {id: 'd3awake', name: 'Dia 3 (acordado)', day: 3, systolic: 77, systolicSD: 12, diastolic: 49, diastolicSD: 10, mean: 63, meanSD: 13},
+            {id: 'd6sleep', name: 'Dia 6 (dormindo)', day: 6, systolic: 76, systolicSD: 10, diastolic: 46, diastolicSD: 12, mean: 58, meanSD: 12},
+            {id: 'd6awake', name: 'Dia 6 (acordado)', day: 6, systolic: 76, systolicSD: 10, diastolic: 49, diastolicSD: 11, mean: 62, meanSD: 12},
+            {id: 'w2', name: 'Semana 2', week: 2, systolic: 78, systolicSD: 10, diastolic: 50, diastolicSD: 9},
+            {id: 'w3', name: 'Semana 3', week: 3, systolic: 79, systolicSD: 8, diastolic: 49, diastolicSD: 8},
+            {id: 'w4', name: 'Semana 4', week: 4, systolic: 85, systolicSD: 10, diastolic: 46, diastolicSD: 9}
+        ];
+
+        // Tabela 5: 3º Percentil por Idade Gestacional (Referência Histórica)
+        const percentileRanges = {
+            24: {systolic: 32, mean: 26, diastolic: 15},
+            25: {systolic: 34, mean: 26, diastolic: 16},
+            26: {systolic: 36, mean: 27, diastolic: 17},
+            27: {systolic: 38, mean: 27, diastolic: 17},
+            28: {systolic: 40, mean: 28, diastolic: 18},
+            29: {systolic: 42, mean: 28, diastolic: 19},
+            30: {systolic: 43, mean: 29, diastolic: 20},
+            31: {systolic: 45, mean: 30, diastolic: 20},
+            32: {systolic: 46, mean: 30, diastolic: 21},
+            33: {systolic: 47, mean: 30, diastolic: 22},
+            34: {systolic: 48, mean: 31, diastolic: 23},
+            35: {systolic: 49, mean: 32, diastolic: 24},
+            36: {systolic: 50, mean: 32, diastolic: 25},
+            37: {systolic: 51, mean: 33, diastolic: 26},
+            38: {systolic: 52, mean: 34, diastolic: 27},
+            39: {systolic: 53, mean: 35, diastolic: 28},
+            40: {systolic: 54, mean: 36, diastolic: 29}
+        };
+
+        // Inicializar data atual
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+                .toISOString()
+                .slice(0, 16);
+            document.getElementById('dataAvaliacao').value = localDateTime;
+        });
+
+        // Função para calcular idades automaticamente
+        function calcularIdades() {
+            const dataNascimento = document.getElementById('dataNascimento').value;
+            const dataAvaliacao = document.getElementById('dataAvaliacao').value;
+            const igSemanas = parseInt(document.getElementById('igSemanas').value) || 0;
+            const igDias = parseInt(document.getElementById('igDias').value) || 0;
+
+            if (!dataNascimento || !dataAvaliacao) {
+                document.getElementById('idadeCorrigida').value = '';
+                document.getElementById('diasVida').value = '';
+                document.getElementById('horasVida').value = '';
+                return;
+            }
+
+            const nascimento = new Date(dataNascimento);
+            const avaliacao = new Date(dataAvaliacao);
+
+            // Calcular diferença em milissegundos
+            const diffMs = avaliacao - nascimento;
+            
+            if (diffMs < 0) {
+                alert('Data de avaliação não pode ser anterior ao nascimento!');
+                return;
+            }
+
+            // Calcular dias de vida
+            const diasVida = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            
+            // Calcular horas de vida (se < 1 dia)
+            let horasVida = 0;
+            if (diasVida === 0) {
+                horasVida = Math.floor(diffMs / (1000 * 60 * 60));
+            }
+
+            // Calcular idade gestacional corrigida
+            // IG corrigida = IG ao nascer + dias de vida pós-natal (em semanas)
+            const igTotalDias = (igSemanas * 7) + igDias;
+            const idadeCorrigidaTotalDias = igTotalDias + diasVida;
+            const idadeCorrigidaSemanas = Math.floor(idadeCorrigidaTotalDias / 7);
+            const idadeCorrigidaDias = idadeCorrigidaTotalDias % 7;
+
+            // Atualizar campos
+            document.getElementById('diasVida').value = diasVida;
+            document.getElementById('horasVida').value = horasVida;
+            
+            if (igSemanas > 0) {
+                document.getElementById('idadeCorrigida').value = `${idadeCorrigidaSemanas} semanas e ${idadeCorrigidaDias} dias`;
+                
+                // Atualizar também o campo IG para usar na avaliação
+                // Usar apenas as semanas completas para a avaliação
+                document.getElementById('igSemanas').value = idadeCorrigidaSemanas;
+            }
+
+            // Chamar avaliação automaticamente
+            avaliarPressao();
+        }
+
+        function avaliarPressao() {
+            const peso = parseInt(document.getElementById('pesoNascimento').value);
+            const ig = parseInt(document.getElementById('igSemanas').value);
+            const dias = parseInt(document.getElementById('diasVida').value) || 0;
+            const horas = parseInt(document.getElementById('horasVida').value) || 0;
+            const sistolica = parseFloat(document.getElementById('pasSistolica').value);
+            const mean = parseFloat(document.getElementById('paMean').value);
+            const diastolica = parseFloat(document.getElementById('paDiastolica').value);
+
+            // Remover todos os highlights
+            document.querySelectorAll('.reference-table tbody tr').forEach(row => row.classList.remove('highlight'));
+
+            // Verificar se pelo menos PA sistólica e diastólica estão preenchidas
+            if (isNaN(sistolica) || isNaN(diastolica)) {
+                document.getElementById('resultBox').style.display = 'none';
+                document.getElementById('reportBtn').disabled = true;
+                return;
+            }
+
+            // Determinar qual tabela usar (prioridade)
+            let refValues = null;
+            let tableUsed = '';
+            let referenceText = '';
+
+            // 1. Se bebê a termo (IG >= 37) e tem dias/horas de vida
+            if (ig >= 37 && (dias > 0 || horas > 0)) {
+                refValues = getTermReference(dias, horas);
+                if (refValues) {
+                    tableUsed = 'term';
+                    referenceText = refValues.name;
+                    highlightTermRow(refValues.id);
+                }
+            }
+
+            // 2. Se não encontrou e tem IG e dias (prematuros)
+            if (!refValues && ig && ig < 37 && dias > 0 && dias <= 7) {
+                refValues = getDayReference(dias);
+                if (refValues) {
+                    tableUsed = 'days';
+                    referenceText = `Prematuro - Dia ${dias}`;
+                    highlightDayRow(dias);
+                }
+            }
+
+            // 3. Se não encontrou e tem IG (prematuros)
+            if (!refValues && ig) {
+                refValues = getGAReference(ig);
+                if (refValues) {
+                    tableUsed = 'ga';
+                    referenceText = `Prematuro - ${ig} semanas IG`;
+                    highlightGARow(ig);
+                }
+            }
+
+            // 4. Se não encontrou e tem peso < 2000g
+            if (!refValues && peso && peso <= 2000) {
+                refValues = getWeightReference(peso);
+                if (refValues) {
+                    tableUsed = 'weight';
+                    referenceText = `Baixo peso - ${peso}g`;
+                    highlightWeightRow(peso);
+                }
+            }
+
+            // Se ainda não encontrou referência, não pode avaliar
+            if (!refValues) {
+                document.getElementById('resultBox').style.display = 'none';
+                document.getElementById('reportBtn').disabled = true;
+                alert('Preencha peso ao nascer, IG e/ou dias de vida para avaliação adequada');
+                return;
+            }
+
+            // Avaliar pressões
+            let resultHTML = '';
+            resultHTML += `<div style="background: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+                <strong>Tabela principal utilizada:</strong> ${referenceText}
+            </div>`;
+
+            // Verificar também com 3º percentil se tiver IG
+            let percentileRef = null;
+            if (ig && percentileRanges[ig]) {
+                percentileRef = percentileRanges[ig];
+                highlightPercentileRow(ig);
+            }
+
+            // Sistólica
+            let sistolicaStatus = evaluateBP(sistolica, refValues.systolicMin, refValues.systolicMax, refValues.systolic, refValues.systolicSD);
+            resultHTML += `
+                <div class="result-item">
+                    <span class="result-label">Pressão Sistólica:</span>
+                    <div style="text-align: right;">
+                        <div class="result-value">${sistolica} mmHg (Ref: ${formatReference(refValues, 'systolic')})</div>
+                        <div class="status-${sistolicaStatus.status}" style="margin-top: 5px;">
+                            ${sistolicaStatus.text}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Diastólica
+            let diastolicaStatus = evaluateBP(diastolica, refValues.diastolicMin, refValues.diastolicMax, refValues.diastolic, refValues.diastolicSD);
+            resultHTML += `
+                <div class="result-item">
+                    <span class="result-label">Pressão Diastólica:</span>
+                    <div style="text-align: right;">
+                        <div class="result-value">${diastolica} mmHg (Ref: ${formatReference(refValues, 'diastolic')})</div>
+                        <div class="status-${diastolicaStatus.status}" style="margin-top: 5px;">
+                            ${diastolicaStatus.text}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Média (se disponível)
+            if (!isNaN(mean)) {
+                let meanStatus = evaluateBP(mean, refValues.meanMin, refValues.meanMax, refValues.mean, refValues.meanSD);
+                resultHTML += `
+                    <div class="result-item">
+                        <span class="result-label">Pressão Média:</span>
+                        <div style="text-align: right;">
+                            <div class="result-value">${mean} mmHg ${refValues.mean ? '(Ref: ' + formatReference(refValues, 'mean') + ')' : ''}</div>
+                            <div class="status-${meanStatus.status}" style="margin-top: 5px;">
+                                ${meanStatus.text}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Comparação com 3º Percentil (se disponível)
+            if (percentileRef) {
+                resultHTML += `
+                    <div style="background: #fff3cd; padding: 12px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #d1d5db;">
+                        <h4 style="color: #856404; margin-bottom: 10px;">📊 Comparação com 3º Percentil (IG ${ig} semanas):</h4>
+                        <div style="font-size: 0.9em; color: #856404;">
+                            <strong>Sistólica:</strong> ${sistolica} mmHg ${sistolica >= percentileRef.systolic ? '✓ ≥' : '🚨 <'} ${percentileRef.systolic} mmHg<br>
+                            <strong>Diastólica:</strong> ${diastolica} mmHg ${diastolica >= percentileRef.diastolic ? '✓ ≥' : '🚨 <'} ${percentileRef.diastolic} mmHg<br>
+                            ${!isNaN(mean) ? `<strong>Média:</strong> ${mean} mmHg ${mean >= percentileRef.mean ? '✓ ≥' : '🚨 <'} ${percentileRef.mean} mmHg` : ''}
+                        </div>
+                        <div style="margin-top: 8px; font-size: 0.85em; color: #856404;">
+                            <em>Nota: Valores abaixo do 3º percentil indicam hipotensão arterial</em>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Avaliação geral
+            const hasHypotension = sistolicaStatus.status === 'critical' || diastolicaStatus.status === 'critical';
+            const isAlert = sistolicaStatus.status === 'alert' || diastolicaStatus.status === 'alert';
+            
+            // Verificar hipotensão pelo 3º percentil também
+            let hypotensionByPercentile = false;
+            if (percentileRef) {
+                hypotensionByPercentile = sistolica < percentileRef.systolic || diastolica < percentileRef.diastolic || (!isNaN(mean) && mean < percentileRef.mean);
+            }
+
+            resultHTML += `
+                <div class="result-item" style="margin-top: 15px; padding-top: 15px; border-top: 2px solid #e5e7eb;">
+                    <span class="result-label" style="font-size: 1.1em;">Avaliação Geral:</span>
+                    <div class="status-${(hasHypotension || hypotensionByPercentile) ? 'critical' : isAlert ? 'alert' : 'normal'}" style="font-size: 1.1em;">
+                        ${(hasHypotension || hypotensionByPercentile) ? '🚨 HIPOTENSÃO ARTERIAL - Considerar intervenção' : 
+                          isAlert ? '⚠️ Valores limítrofes - Monitorar de perto' : 
+                          '✓ Pressão arterial adequada'}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('resultContent').innerHTML = resultHTML;
+            document.getElementById('resultBox').style.display = 'block';
+            document.getElementById('reportBtn').disabled = false;
+        }
+
+        // Funções auxiliares
+        function getWeightReference(peso) {
+            for (let range of weightRanges) {
+                if (peso >= range.min && peso <= range.max) {
+                    return range;
+                }
+            }
+            return null;
+        }
+
+        function getGAReference(ig) {
+            for (let range of gaRanges) {
+                if (ig >= range.minGA && ig <= range.maxGA) {
+                    return range;
+                }
+            }
+            return null;
+        }
+
+        function getDayReference(day) {
+            return dayRanges.find(r => r.day === day);
+        }
+
+        function getTermReference(dias, horas) {
+            // Conversão para horas totais
+            const totalHours = (dias * 24) + horas;
+            
+            if (totalHours <= 1) return termRanges.find(r => r.id === '1h');
+            if (totalHours <= 12) return termRanges.find(r => r.id === '12h');
+            if (dias === 1) return termRanges.find(r => r.id === 'd1awake');
+            if (dias === 3) return termRanges.find(r => r.id === 'd3awake');
+            if (dias === 6) return termRanges.find(r => r.id === 'd6awake');
+            if (dias >= 7 && dias <= 13) return termRanges.find(r => r.id === 'w2');
+            if (dias >= 14 && dias <= 20) return termRanges.find(r => r.id === 'w3');
+            if (dias >= 21 && dias <= 28) return termRanges.find(r => r.id === 'w4');
+            
+            return null;
+        }
+
+        function evaluateBP(value, min, max, fixed, sd) {
+            // Se tem range (min-max)
+            if (min !== undefined && max !== undefined) {
+                if (value < min) return {status: 'critical', text: '🚨 Abaixo do normal'};
+                if (value > max) return {status: 'alert', text: '⚠️ Acima do normal'};
+                return {status: 'normal', text: '✓ Normal'};
+            }
+            
+            // Se tem valor fixo com desvio padrão
+            if (fixed !== undefined) {
+                if (sd) {
+                    const lowerLimit = fixed - sd;
+                    const upperLimit = fixed + sd;
+                    if (value < lowerLimit - 5) return {status: 'critical', text: '🚨 Muito abaixo'};
+                    if (value < lowerLimit) return {status: 'alert', text: '⚠️ Abaixo'};
+                    if (value > upperLimit + 5) return {status: 'alert', text: '⚠️ Muito acima'};
+                    if (value > upperLimit) return {status: 'alert', text: '⚠️ Acima'};
+                    return {status: 'normal', text: '✓ Normal'};
+                } else {
+                    if (value < fixed - 5) return {status: 'critical', text: '🚨 Abaixo'};
+                    if (value < fixed) return {status: 'alert', text: '⚠️ Limítrofe'};
+                    return {status: 'normal', text: '✓ Normal'};
+                }
+            }
+            
+            return {status: 'normal', text: '-'};
+        }
+
+        function formatReference(ref, type) {
+            const min = ref[type + 'Min'];
+            const max = ref[type + 'Max'];
+            const value = ref[type];
+            const sd = ref[type + 'SD'];
+            
+            if (min !== undefined && max !== undefined) {
+                return `${min}-${max} mmHg`;
+            }
+            if (value !== undefined) {
+                if (sd) return `${value} ± ${sd} mmHg`;
+                return `${value} mmHg`;
+            }
+            return '-';
+        }
+
+        function highlightWeightRow(peso) {
+            const rows = document.querySelectorAll('#tableWeight tbody tr');
+            rows.forEach((row, index) => {
+                const range = weightRanges[index];
+                if (range && peso >= range.min && peso <= range.max) {
+                    row.classList.add('highlight');
+                }
+            });
+        }
+
+        function highlightGARow(ig) {
+            const rows = document.querySelectorAll('#tableGA tbody tr');
+            rows.forEach((row, index) => {
+                const range = gaRanges[index];
+                if (range && ig >= range.minGA && ig <= range.maxGA) {
+                    row.classList.add('highlight');
+                }
+            });
+        }
+
+        function highlightDayRow(day) {
+            const rows = document.querySelectorAll('#tableDays tbody tr');
+            rows.forEach((row, index) => {
+                if (dayRanges[index] && dayRanges[index].day === day) {
+                    row.classList.add('highlight');
+                }
+            });
+        }
+
+        function highlightTermRow(id) {
+            const rows = document.querySelectorAll('#tableTerm tbody tr');
+            rows.forEach((row, index) => {
+                if (termRanges[index] && termRanges[index].id === id) {
+                    row.classList.add('highlight');
+                }
+            });
+        }
+
+        function highlightPercentileRow(ig) {
+            const rows = document.querySelectorAll('#tablePercentile tbody tr');
+            const igValues = Object.keys(percentileRanges).map(Number);
+            rows.forEach((row, index) => {
+                if (igValues[index] === ig) {
+                    row.classList.add('highlight');
+                }
+            });
+        }
+
+        function gerarRelatorio() {
+            const nome = document.getElementById('nome').value || 'Nao informado';
+            const dataNascimento = document.getElementById('dataNascimento').value;
+            const dataAvaliacao = document.getElementById('dataAvaliacao').value;
+            const peso = parseInt(document.getElementById('pesoNascimento').value);
+            const igSemanasOriginal = parseInt(document.getElementById('igSemanas').value);
+            const igDias = parseInt(document.getElementById('igDias').value) || 0;
+            const idadeCorrigida = document.getElementById('idadeCorrigida').value;
+            const dias = parseInt(document.getElementById('diasVida').value) || 0;
+            const horas = parseInt(document.getElementById('horasVida').value) || 0;
+            const sistolica = parseFloat(document.getElementById('pasSistolica').value);
+            const mean = parseFloat(document.getElementById('paMean').value);
+            const diastolica = parseFloat(document.getElementById('paDiastolica').value);
+
+            // Formatar datas
+            let dataNascFormatada = 'Nao informada';
+            if (dataNascimento) {
+                const dt = new Date(dataNascimento);
+                dataNascFormatada = dt.toLocaleString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+
+            let dataAvalFormatada = 'Nao informada';
+            if (dataAvaliacao) {
+                const dt = new Date(dataAvaliacao);
+                dataAvalFormatada = dt.toLocaleString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+
+            // Para avaliação, usar IG atual
+            const ig = igSemanasOriginal;
+
+            // Determinar qual tabela usar (mesma lógica da avaliação)
+            let refValues = null;
+            let tableUsed = '';
+            let referenceText = '';
+
+            if (ig >= 37 && (dias > 0 || horas > 0)) {
+                refValues = getTermReference(dias, horas);
+                if (refValues) {
+                    tableUsed = 'term';
+                    referenceText = refValues.name;
+                }
+            }
+            if (!refValues && ig && ig < 37 && dias > 0 && dias <= 7) {
+                refValues = getDayReference(dias);
+                if (refValues) {
+                    tableUsed = 'days';
+                    referenceText = `Prematuro - Dia ${dias}`;
+                }
+            }
+            if (!refValues && ig) {
+                refValues = getGAReference(ig);
+                if (refValues) {
+                    tableUsed = 'ga';
+                    referenceText = `Prematuro - ${ig} semanas IG`;
+                }
+            }
+            if (!refValues && peso && peso <= 2000) {
+                refValues = getWeightReference(peso);
+                if (refValues) {
+                    tableUsed = 'weight';
+                    referenceText = `Baixo peso - ${peso}g`;
+                }
+            }
+
+            if (!refValues) {
+                alert('Erro ao gerar relatório: referências não encontradas');
+                return;
+            }
+
+            // Avaliar status
+            const sistolicaStatus = evaluateBP(sistolica, refValues.systolicMin, refValues.systolicMax, refValues.systolic, refValues.systolicSD);
+            const diastolicaStatus = evaluateBP(diastolica, refValues.diastolicMin, refValues.diastolicMax, refValues.diastolic, refValues.diastolicSD);
+            const meanStatus = !isNaN(mean) ? evaluateBP(mean, refValues.meanMin, refValues.meanMax, refValues.mean, refValues.meanSD) : null;
+
+            const hasHypotension = sistolicaStatus.status === 'critical' || diastolicaStatus.status === 'critical';
+
+            // Verificar também com 3º percentil
+            let percentileRef = null;
+            let hypotensionByPercentile = false;
+            if (ig && percentileRanges[ig]) {
+                percentileRef = percentileRanges[ig];
+                hypotensionByPercentile = sistolica < percentileRef.systolic || diastolica < percentileRef.diastolic || (!isNaN(mean) && mean < percentileRef.mean);
+            }
+
+            // Converter status para texto simples sem ícones
+            function statusToText(status) {
+                if (status.text.includes('Muito abaixo') || status.text.includes('Abaixo do normal')) return 'ABAIXO DO NORMAL';
+                if (status.text.includes('Abaixo') || status.text.includes('Limítrofe')) return 'LIMITROFE';
+                if (status.text.includes('Muito acima') || status.text.includes('Acima')) return 'ACIMA DO NORMAL';
+                if (status.text.includes('Normal')) return 'NORMAL';
+                return 'NAO AVALIADO';
+            }
+
+            let relatorio = `RESUMO INFORMATIVO — PRESSAO ARTERIAL NEONATAL (EDUCATIVO)
+========================================
+
+DADOS DO PACIENTE
+-----------------
+Nome: ${nome}
+Data/Hora de Nascimento: ${dataNascFormatada}
+Data/Hora da Avaliacao: ${dataAvalFormatada}
+${peso ? `Peso ao Nascer: ${peso}g\n` : ''}${ig ? `Idade Gestacional ao Nascer: ${ig} semanas${igDias > 0 ? ' e ' + igDias + ' dias' : ''}\n` : ''}${idadeCorrigida ? `Idade Gestacional Corrigida: ${idadeCorrigida}\n` : ''}${dias > 0 ? `Dias de Vida: ${dias}\n` : ''}${horas > 0 && dias === 0 ? `Horas de Vida: ${horas}\n` : ''}
+MEDIDAS DE PRESSAO ARTERIAL
+---------------------------
+Pressao Arterial Sistolica: ${sistolica} mmHg
+Pressao Arterial Diastolica: ${diastolica} mmHg
+${!isNaN(mean) ? `Pressao Arterial Media: ${mean} mmHg\n` : ''}
+TABELA DE REFERENCIA UTILIZADA
+-------------------------------
+${referenceText}
+
+VALORES DE REFERENCIA
+---------------------
+Sistolica: ${formatReference(refValues, 'systolic')}
+Diastolica: ${formatReference(refValues, 'diastolic')}
+${refValues.mean ? `Media: ${formatReference(refValues, 'mean')}\n` : ''}
+AVALIACAO
+---------
+Pressao Sistolica: ${statusToText(sistolicaStatus)}
+  Medida: ${sistolica} mmHg | Referencia: ${formatReference(refValues, 'systolic')}
+
+Pressao Diastolica: ${statusToText(diastolicaStatus)}
+  Medida: ${diastolica} mmHg | Referencia: ${formatReference(refValues, 'diastolic')}
+${meanStatus ? `
+Pressao Media: ${statusToText(meanStatus)}
+  Medida: ${mean} mmHg | Referencia: ${formatReference(refValues, 'mean')}
+` : ''}
+${percentileRef ? `
+COMPARACAO COM 3º PERCENTIL (IG ${ig} SEMANAS)
+----------------------------------------------
+Sistolica: ${sistolica} mmHg ${sistolica >= percentileRef.systolic ? 'ACIMA OU IGUAL' : 'ABAIXO'} de ${percentileRef.systolic} mmHg
+Diastolica: ${diastolica} mmHg ${diastolica >= percentileRef.diastolic ? 'ACIMA OU IGUAL' : 'ABAIXO'} de ${percentileRef.diastolic} mmHg
+${!isNaN(mean) ? `Media: ${mean} mmHg ${mean >= percentileRef.mean ? 'ACIMA OU IGUAL' : 'ABAIXO'} de ${percentileRef.mean} mmHg` : ''}
+
+Nota: Valores abaixo do 3º percentil indicam hipotensao arterial
+` : ''}
+CONCLUSAO
+---------
+${(hasHypotension || hypotensionByPercentile) ? 
+`HIPOTENSAO ARTERIAL DETECTADA
+${hypotensionByPercentile ? '- Valores abaixo do 3º percentil para idade gestacional\n' : ''}
+CONSIDERAR INTERVENCAO:
+  - Avaliar volemia
+  - Considerar expansao volemica
+  - Avaliar necessidade de suporte inotroópico
+  - Investigar causas (sepse, hipovolemia, disfuncao cardiaca)
+  - Monitorar debito urinario e perfusao periferica` : 
+`Pressao arterial adequada
+- Valores dentro dos parametros de normalidade
+- Manter monitorizacao de rotina`}
+
+OBSERVACOES
+-----------
+- Valores baseados em referencias da literatura neonatal
+- Avaliar sempre em conjunto com quadro clinico
+- Considerar contexto: uso de drogas vasoativas, volemia, perfusao
+- Reavaliar periodicamente
+
+REFERENCIAS BIBLIOGRAFICAS
+--------------------------
+1. Rennie JM, Roberton NRC (Eds). Livro didatico de Neonatologia, 3ª ed.
+   Churchill Livingstone, Edimburgo, 1999.
+
+2. Taeusch HW, Ballard RA. Doencas de Avery do recem-nascido 7ª Ed.
+   WB Saunders Company, Filadelfia. 1998.
+
+3. Watkins AMC, West CR, Cooke RWI: Blood pressure and cerebral haemorrhage
+   and ischaemia in very low birthweight infants. Early Hum Dev 19:103-110, 1989.
+
+4. Nuntnarumit P, Yang W, Bada-Ellzey HS. Medicoes de pressao arterial
+   no recem-nascido. Clin Perinatol 1999; 26:981-996.
+
+Data de Geracao: ${new Date().toLocaleString('pt-BR')}
+`;
+
+            relatorio = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorio;
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorio += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                relatorio += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            // Copiar para a área de transferência
+            navigator.clipboard.writeText(relatorio).then(() => {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(() => {
+                const textArea = document.createElement('textarea');
+                textArea.value = relatorio;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

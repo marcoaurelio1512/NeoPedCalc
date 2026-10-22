@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — Score clínico de sinusite (educativo)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #6b7280;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --background-color: #ecf0f1;
+            --card-background: #ffffff;
+            --text-color: #2c3e50;
+            --text-muted: #374151;
+            --border-color: #bdc3c7;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--background-color) 0%, #d5dbdb 100%);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: var(--card-background);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .form-section {
+            background: var(--card-background);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-section:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+
+        .subsection-title {
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+            margin: 20px 0 15px 0;
+            font-weight: 600;
+            padding-left: 10px;
+            border-left: none;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #d1d5db;
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.06);
+            background: white;
+        }
+
+        .unit {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: #4b5563;
+            color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--text-muted) 0%, #6c757d 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .copy-btn:hover {
+            background: linear-gradient(135deg, #229954 0%, #27ae60 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        .copy-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(39, 174, 96, 0.3);
+        }
+
+        .results-section {
+            background: var(--card-background);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: none;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .result-value {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        .risk-indicator {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .risk-no {
+            background: rgba(39, 174, 96, 0.1);
+            color: var(--success-color);
+            border: 2px solid rgba(39, 174, 96, 0.3);
+        }
+
+        .risk-probable {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+            border: 2px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .report-section {
+            background: var(--card-background);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .breakdown-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .breakdown-table th,
+        .breakdown-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .breakdown-table th {
+            background: #f3f4f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        .breakdown-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .result-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #374151;
+        }
+
+        .info-box h4 {
+            margin-bottom: 10px;
+            color: #374151;
+        }
+
+        .symptoms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .symptom-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .symptom-item:hover {
+            border-color: #d1d5db;
+            background: #e3f2fd;
+        }
+
+        .symptom-item input[type="checkbox"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+
+        .symptom-item label {
+            cursor: pointer;
+            margin: 0;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .symptom-item.checked {
+            border-color: #d1d5db;
+            background: #e3f2fd;
+        }
+
+        .major-symptoms {
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .minor-symptoms {
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .score-info {
+            background: #fff3cd;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #856404;
+        }
+
+        .score-info h4 {
+            margin-bottom: 10px;
+            color: #856404;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .container { border-radius: 10px; }
+            .header h1 { font-size: 1.8em; }
+            .content { padding: 20px; }
+            .section { padding: 15px; }
+            button { padding: 12px; font-size: 15px; }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 5px; }
+            .header h1 { font-size: 1.4em; }
+            .header p { font-size: 0.9em; }
+            .content { padding: 15px; }
+            .section { padding: 12px; }
+            .section h3 { font-size: 1.1em; }
+            select { padding: 10px; font-size: 14px; }
+            button { padding: 10px; font-size: 14px; }
+            .results { padding: 12px; }
+            .score-display { font-size: 2.5em; }
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-info:hover {
+            background: white;
+            color: #2c3e50;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #2c3e50;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+
+            .modal-body {
+                padding: 20px;
+                max-height: 75vh;
+            }
+
+            .modal-header {
+                padding: 15px 20px;
+            }
+
+            .modal-header h2 {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 98%;
+                margin: 5% auto;
+            }
+
+            .modal-body {
+                padding: 15px;
+                max-height: 80vh;
+            }
+
+            .modal-header h2 {
+                font-size: 16px;
+            }
+
+            .modal-body h3 {
+                font-size: 16px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Score Clínico de Sinusite</h1>
+            <p>Calculadora para avaliação clínica de sinusite baseada em critérios maiores e menores</p>
+            <div class="header-actions">
+                <button type="button" class="btn-info" onclick="abrirModal()">
+                    Como usar
+                </button>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2 class="section-title">Dados do Paciente</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="nome">Nome do Paciente</label>
+                    <input type="text" id="nome" placeholder="Nome completo">
+                </div>
+                <div class="form-group">
+                    <label for="data_nascimento">Data de Nascimento</label>
+                    <input type="date" id="data_nascimento">
+                </div>
+                <div class="form-group">
+                    <label for="data_avaliacao">Data da Avaliação</label>
+                    <input type="date" id="data_avaliacao">
+                </div>
+                <div class="form-group">
+                    <label for="hora_avaliacao">Hora da Avaliação</label>
+                    <input type="time" id="hora_avaliacao">
+                </div>
+                <div class="form-group">
+                    <label for="idade_completa">Idade (Calculada)</label>
+                    <input type="text" id="idade_completa" readonly>
+                    <span class="unit">anos, meses e dias</span>
+                </div>
+                <div class="form-group">
+                    <label for="peso">Peso</label>
+                    <input type="number" id="peso" step="0.001" placeholder="Ex.: 45.500">
+                    <span class="unit">kg</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2 class="section-title">Score Clínico de Sinusite</h2>
+            
+            <div class="score-info">
+                <h4>Critérios de Pontuação</h4>
+                <p><strong>Sinais Maiores:</strong> 100 pontos cada<br>
+                <strong>Sinais Menores:</strong> 25 pontos cada<br>
+                <strong>Critério de Diagnóstico:</strong> Soma ≥ 150 pontos (equivalente a 2 maiores ou 1 maior + 2 menores)</p>
+            </div>
+
+            <h3 class="subsection-title">Sinais Maiores (100 pontos cada)</h3>
+            <div class="symptoms-grid major-symptoms">
+                <div class="symptom-item" onclick="toggleSymptom('m_dor_facial')">
+                    <input type="checkbox" id="m_dor_facial">
+                    <label for="m_dor_facial">Dor facial / dor à pressão</label>
+                </div>
+                <div class="symptom-item" onclick="toggleSymptom('m_congestao')">
+                    <input type="checkbox" id="m_congestao">
+                    <label for="m_congestao">Congestão nasal</label>
+                </div>
+                <div class="symptom-item" onclick="toggleSymptom('m_cabeca_pesada')">
+                    <input type="checkbox" id="m_cabeca_pesada">
+                    <label for="m_cabeca_pesada">Sensação de cabeça "pesada"</label>
+                </div>
+                <div class="symptom-item" onclick="toggleSymptom('m_corrimento_purulento')">
+                    <input type="checkbox" id="m_corrimento_purulento">
+                    <label for="m_corrimento_purulento">Corrimento nasal purulento</label>
+                </div>
+                <div class="symptom-item" onclick="toggleSymptom('m_hiposmia')">
+                    <input type="checkbox" id="m_hiposmia">
+                    <label for="m_hiposmia">Hiposmia/anosmia</label>
+                </div>
+                <div class="symptom-item" onclick="toggleSymptom('m_febre_aguda')">
+                    <input type="checkbox" id="m_febre_aguda">
+                    <label for="m_febre_aguda">Febre (sinusite aguda)</label>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Sinais Menores (25 pontos cada)</h3>
+            <div class="symptoms-grid minor-symptoms">
+                <div class="symptom-item" onclick="toggleSymptom('n_cefaleia')">
+                    <input type="checkbox" id="n_cefaleia">
+                    <label for="n_cefaleia">Dor de cabeça</label>
+                </div>
+                <div class="symptom-item" onclick="toggleSymptom('n_halitose')">
+                    <input type="checkbox" id="n_halitose">
+                    <label for="n_halitose">Halitose</label>
+                </div>
+                <div class="symptom-item" onclick="toggleSymptom('n_fadiga')">
+                    <input type="checkbox" id="n_fadiga">
+                    <label for="n_fadiga">Fadiga</label>
+                </div>
+                <div class="symptom-item" onclick="toggleSymptom('n_tosse')">
+                    <input type="checkbox" id="n_tosse">
+                    <label for="n_tosse">Tosse</label>
+                </div>
+                <div class="symptom-item" onclick="toggleSymptom('n_dor_dente')">
+                    <input type="checkbox" id="n_dor_dente">
+                    <label for="n_dor_dente">Dor de dente</label>
+                </div>
+                <div class="symptom-item" onclick="toggleSymptom('n_pressao_ouvido')">
+                    <input type="checkbox" id="n_pressao_ouvido">
+                    <label for="n_pressao_ouvido">Pressão nos ouvidos</label>
+                </div>
+                <div class="symptom-item" onclick="toggleSymptom('n_febre_subcronica')">
+                    <input type="checkbox" id="n_febre_subcronica">
+                    <label for="n_febre_subcronica">Febre (subaguda/crônica)</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="obs">Observações</label>
+                <input type="text" id="obs" placeholder="Duração dos sintomas, tratamentos anteriores, etc.">
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="btn btn-primary" onclick="calcularScoreSinusite()">Calcular Score de Sinusite</button>
+                <button type="button" class="btn btn-secondary" onclick="limparDados()">Limpar Dados</button>
+            </div>
+        </div>
+
+        <div class="results-section">
+            <h2 class="section-title">Resultados</h2>
+            <div id="resultados" class="result-item">
+                <span class="result-label">Score Total:</span>
+                <span class="result-value" id="score_total">-</span>
+            </div>
+            <div id="resultados_maiores" class="result-item">
+                <span class="result-label">Sinais Maiores:</span>
+                <span class="result-value" id="maiores_count">-</span>
+            </div>
+            <div id="resultados_menores" class="result-item">
+                <span class="result-label">Sinais Menores:</span>
+                <span class="result-value" id="menores_count">-</span>
+            </div>
+            <div id="indicador_risco" style="text-align: center; margin-top: 15px;"></div>
+            <div id="breakdown_table"></div>
+        </div>
+
+        <div class="report-section">
+            <h2 class="section-title">Texto informativo para prontuário eletrônico (revisar)</h2>
+            <button type="button" class="copy-btn" onclick="gerarECopiarRelatorio()">Gerar e copiar texto informativo</button>
+        </div>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — Score clínico de sinusite (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta calculadora organiza critérios para estimativa educativa de probabilidade de sinusite. O conteúdo é informativo e não substitui avaliação clínica, protocolo institucional ou prescrição.</p>
+                
+                <h3>Critérios de Avaliação</h3>
+                <div class="formula-box">
+                    <strong>Score Clínico de Sinusite:</strong><br><br>
+                    <strong>Sintomas Principais:</strong><br>
+                    • Obstrução nasal: 0-3 pontos<br>
+                    • Secreção nasal: 0-3 pontos<br>
+                    • Dor facial: 0-3 pontos<br>
+                    • Alteração do olfato: 0-3 pontos<br><br>
+                    <strong>Sintomas Secundários:</strong><br>
+                    • Cefaleia: 0-2 pontos<br>
+                    • Odontalgia: 0-2 pontos<br>
+                    • Tosse: 0-2 pontos<br>
+                    • Halitose: 0-2 pontos<br>
+                    • Fadiga: 0-2 pontos<br>
+                    • Febre: 0-2 pontos<br><br>
+                    <strong>PONTUAÇÃO TOTAL: 0-28</strong>
+                </div>
+
+                <h3>Parâmetros Avaliados</h3>
+                <ul>
+                    <li><strong>Obstrução Nasal:</strong> Grau 0-3</li>
+                    <li><strong>Secreção Nasal:</strong> Grau 0-3</li>
+                    <li><strong>Dor Facial:</strong> Grau 0-3</li>
+                    <li><strong>Alteração Olfato:</strong> Grau 0-3</li>
+                    <li><strong>Cefaleia:</strong> Presente/ausente</li>
+                    <li><strong>Odontalgia:</strong> Presente/ausente</li>
+                    <li><strong>Tosse:</strong> Presente/ausente</li>
+                    <li><strong>Halitose:</strong> Presente/ausente</li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Avalie Sintomas:</strong> Principais e secundários</li>
+                    <li><strong>Classifique Gravidade:</strong> 0-3 para principais</li>
+                    <li><strong>Verifique Sintomas:</strong> Secundários</li>
+                    <li><strong>Calcule:</strong> Sistema calcula automaticamente</li>
+                    <li><strong>Interprete:</strong> Diagnóstico e conduta</li>
+                    <li><strong>Monitore:</strong> Evolução</li>
+                </ol>
+
+                <h3>Interpretação do Score</h3>
+                <ul>
+                    <li><strong>0-5:</strong> Sinusite improvável</li>
+                    <li><strong>6-10:</strong> Sinusite possível</li>
+                    <li><strong>11-15:</strong> Sinusite provável</li>
+                    <li><strong>16-20:</strong> Sinusite muito provável</li>
+                    <li><strong>21-28:</strong> Sinusite altamente provável</li>
+                    <li><strong>< 8:</strong> Tratamento conservador</li>
+                    <li><strong>8-15:</strong> Antibioticoterapia</li>
+                    <li><strong>> 15:</strong> Investigação adicional</li>
+                </ul>
+
+                <h3>Classificação por Duração</h3>
+                <ul>
+                    <li><strong>Viral:</strong> < 10 dias</li>
+                    <li><strong>Aguda:</strong> 10-30 dias</li>
+                    <li><strong>Subaguda:</strong> 30-90 dias</li>
+                    <li><strong>Crônica:</strong> > 90 dias</li>
+                    <li><strong>Recorrente:</strong> 4+ episódios/ano</li>
+                    <li><strong>Agudização:</strong> Exacerbação crônica</li>
+                    <li><strong>Fúngica:</strong> Imunocomprometidos</li>
+                    <li><strong>Alérgica:</strong> Rinite associada</li>
+                </ul>
+
+                <h3>Sintomas por Gravidade</h3>
+                <ul>
+                    <li><strong>Leve (1):</strong> Sintoma presente, discreto</li>
+                    <li><strong>Moderado (2):</strong> Sintoma incômodo</li>
+                    <li><strong>Grave (3):</strong> Sintoma muito incômodo</li>
+                    <li><strong>Ausente (0):</strong> Sem sintoma</li>
+                    <li><strong>Obstrução:</strong> Respiração nasal</li>
+                    <li><strong>Secreção:</strong> Rinorreia anterior/posterior</li>
+                    <li><strong>Dor:</strong> Pressão facial</li>
+                    <li><strong>Olfato:</strong> Hiposmia/anosmia</li>
+                </ul>
+
+                <h3>Fatores de Risco</h3>
+                <ul>
+                    <li><strong>Rinite Alérgica:</strong> Predisposição</li>
+                    <li><strong>Rinite Vasomotora:</strong> Crônica</li>
+                    <li><strong>Pólipos Nasais:</strong> Obstrução</li>
+                    <li><strong>Desvio Septal:</strong> Anatômico</li>
+                    <li><strong>Hipertrofia Adenoide:</strong> Crianças</li>
+                    <li><strong>Fumaça:</strong> Tabaco, poluição</li>
+                    <li><strong>Natação:</strong> Cloro</li>
+                    <li><strong>Voo:</strong> Pressão barométrica</li>
+                </ul>
+
+                <h3>Complicações</h3>
+                <ul>
+                    <li><strong>Orbitárias:</strong> Celulite, abscesso</li>
+                    <li><strong>Intracranianas:</strong> Meningite, abscesso</li>
+                    <li><strong>Osteomielite:</strong> Osso frontal</li>
+                    <li><strong>Mucocele:</strong> Expansão cística</li>
+                    <li><strong>Piocele:</strong> Mucocele infectada</li>
+                    <li><strong>Fístula:</strong> Oronasal</li>
+                    <li><strong>Seio Cavernoso:</strong> Trombose</li>
+                    <li><strong>Sistêmicas:</strong> Sepse</li>
+                </ul>
+
+                <h3>Diagnóstico Diferencial</h3>
+                <ul>
+                    <li><strong>Rinite Alérgica:</strong> Prurido, espirros</li>
+                    <li><strong>Rinite Vasomotora:</strong> Sem alergia</li>
+                    <li><strong>Resfriado:</strong> Viral, autolimitado</li>
+                    <li><strong>Cefaleia:</strong> Tensional, enxaqueca</li>
+                    <li><strong>Neuralgia:</strong> Trigeminal</li>
+                    <li><strong>Tumor:</strong> Nasal, sinusal</li>
+                    <li><strong>Granulomatose:</strong> Wegener</li>
+                    <li><strong>Fibrose Cística:</strong> Crônica</li>
+                </ul>
+
+                <h3>Exames Complementares</h3>
+                <ul>
+                    <li><strong>Rinoscopia:</strong> Anterior, posterior</li>
+                    <li><strong>Endoscopia:</strong> Nasal</li>
+                    <li><strong>Radiografia:</strong> Seios da face</li>
+                    <li><strong>Tomografia:</strong> Computadorizada</li>
+                    <li><strong>Ressonância:</strong> Magnética</li>
+                    <li><strong>Cultura:</strong> Secreção nasal</li>
+                    <li><strong>Citologia:</strong> Nasal</li>
+                    <li><strong>Teste Alérgico:</strong> Prick test</li>
+                </ul>
+
+                <h3>Tratamento</h3>
+                <ul>
+                    <li><strong>Conservador:</strong> Lavagem nasal</li>
+                    <li><strong>Antibioticoterapia:</strong> Amoxicilina</li>
+                    <li><strong>Corticosteroides:</strong> Nasais, sistêmicos</li>
+                    <li><strong>Descongestionantes:</strong> Tópicos, sistêmicos</li>
+                    <li><strong>Antihistamínicos:</strong> Se alérgica</li>
+                    <li><strong>Analgésicos:</strong> Paracetamol, AAS</li>
+                    <li><strong>Irrigação:</strong> Soro fisiológico</li>
+                    <li><strong>Cirúrgico:</strong> Endoscópico</li>
+                </ul>
+
+                <h3>Prevenção</h3>
+                <ul>
+                    <li><strong>Lavagem Nasal:</strong> Diária</li>
+                    <li><strong>Umidificação:</strong> Ambiente</li>
+                    <li><strong>Evitar Irritantes:</strong> Fumaça</li>
+                    <li><strong>Tratar Alergia:</strong> Rinite</li>
+                    <li><strong>Vacinação:</strong> Influenza</li>
+                    <li><strong>Hidratação:</strong> Adequada</li>
+                    <li><strong>Exercício:</strong> Regular</li>
+                    <li><strong>Alimentação:</strong> Saudável</li>
+                </ul>
+
+                <h3>Limitações e Considerações</h3>
+                <ul>
+                    <li>Score clínico apenas</li>
+                    <li>Variações individuais</li>
+                    <li>Fatores não incluídos</li>
+                    <li>Monitoramento clínico</li>
+                    <li>Interpretação experiente</li>
+                    <li>Ajuste individual</li>
+                    <li>Protocolos institucionais</li>
+                    <li>Correlação clínica</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Rosenfeld RM, et al. Clinical practice guideline (update): adult sinusitis. Otolaryngol Head Neck Surg. 2015;152(2 Suppl):S1-S39.<br>
+                    - Chow AW, et al. IDSA clinical practice guideline for acute bacterial rhinosinusitis in children and adults. Clin Infect Dis. 2012;54(8):e72-e112.<br>
+                    - Fokkens WJ, et al. EPOS 2012: European position paper on rhinosinusitis and nasal polyps 2012. Rhinology. 2012;50(1):1-12.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Configuração dos sintomas conforme arquivo original
+        const MAJORS = [
+            'm_dor_facial', 'm_congestao', 'm_cabeca_pesada', 'm_corrimento_purulento', 'm_hiposmia', 'm_febre_aguda'
+        ];
+        const MINORS = [
+            'n_cefaleia', 'n_halitose', 'n_fadiga', 'n_tosse', 'n_dor_dente', 'n_pressao_ouvido', 'n_febre_subcronica'
+        ];
+
+        const MAJOR_POINTS = 100;
+        const MINOR_POINTS = 25;
+        const DIAGNOSIS_THRESHOLD = 150;
+
+        // Função para calcular idade em anos, meses e dias
+        function calcularIdade() {
+            const dataNascimento = document.getElementById('data_nascimento').value;
+            const dataAvaliacao = document.getElementById('data_avaliacao').value;
+
+            if (dataNascimento && dataAvaliacao) {
+                const nascimento = new Date(dataNascimento);
+                const avaliacao = new Date(dataAvaliacao);
+                
+                let anos = avaliacao.getFullYear() - nascimento.getFullYear();
+                let meses = avaliacao.getMonth() - nascimento.getMonth();
+                let dias = avaliacao.getDate() - nascimento.getDate();
+                
+                if (dias < 0) {
+                    meses--;
+                    const ultimoMes = new Date(avaliacao.getFullYear(), avaliacao.getMonth(), 0);
+                    dias += ultimoMes.getDate();
+                }
+                
+                if (meses < 0) {
+                    anos--;
+                    meses += 12;
+                }
+                
+                let idadeTexto = '';
+                if (anos > 0) {
+                    idadeTexto += `${anos} ano${anos > 1 ? 's' : ''}`;
+                }
+                if (meses > 0) {
+                    if (idadeTexto) idadeTexto += ', ';
+                    idadeTexto += `${meses} mês${meses > 1 ? 'es' : ''}`;
+                }
+                if (dias > 0 || (!anos && !meses)) {
+                    if (idadeTexto) idadeTexto += ', ';
+                    idadeTexto += `${dias} dia${dias > 1 ? 's' : ''}`;
+                }
+                
+                document.getElementById('idade_completa').value = idadeTexto || '0 dias';
+            }
+        }
+
+        // Preencher data e hora atuais
+        function preencherDataAtual() {
+            const hoje = new Date();
+            const dataAtual = hoje.toISOString().split('T')[0];
+            const horaAtual = hoje.toTimeString().slice(0, 5);
+            
+            if (!document.getElementById('data_avaliacao').value) {
+                document.getElementById('data_avaliacao').value = dataAtual;
+            }
+            if (!document.getElementById('hora_avaliacao').value) {
+                document.getElementById('hora_avaliacao').value = horaAtual;
+            }
+        }
+
+        // Função para toggle de sintomas
+        function toggleSymptom(symptomId) {
+            const checkbox = document.getElementById(symptomId);
+            const symptomItem = checkbox.closest('.symptom-item');
+            
+            checkbox.checked = !checkbox.checked;
+            
+            if (checkbox.checked) {
+                symptomItem.classList.add('checked');
+            } else {
+                symptomItem.classList.remove('checked');
+            }
+        }
+
+        // Função para calcular score
+        function calcularScoreSinusite() {
+            const majorCount = MAJORS.reduce((count, id) => count + (document.getElementById(id).checked ? 1 : 0), 0);
+            const minorCount = MINORS.reduce((count, id) => count + (document.getElementById(id).checked ? 1 : 0), 0);
+            
+            const score = majorCount * MAJOR_POINTS + minorCount * MINOR_POINTS;
+            const probable = score >= DIAGNOSIS_THRESHOLD;
+
+            // Exibir resultados
+            document.getElementById('score_total').textContent = `${score} pontos`;
+            document.getElementById('maiores_count').textContent = `${majorCount} sinais`;
+            document.getElementById('menores_count').textContent = `${minorCount} sinais`;
+
+            // Determinar interpretação
+            const interpretacao = probable ? 
+                { texto: 'PROVÁVEL SINUSITE', classe: 'risk-probable' } :
+                { texto: 'Sem critérios para sinusite', classe: 'risk-no' };
+
+            document.getElementById('indicador_risco').innerHTML = 
+                `<span class="risk-indicator ${interpretacao.classe}">${interpretacao.texto}</span>`;
+
+            // Criar tabela de breakdown
+            let tableHTML = '<table class="breakdown-table">';
+            tableHTML += '<thead><tr><th>Categoria</th><th>Quantidade</th><th>Pontos por Item</th><th>Total</th></tr></thead>';
+            tableHTML += '<tbody>';
+            tableHTML += `<tr><td>Sinais Maiores</td><td>${majorCount}</td><td>${MAJOR_POINTS}</td><td><strong>${majorCount * MAJOR_POINTS}</strong></td></tr>`;
+            tableHTML += `<tr><td>Sinais Menores</td><td>${minorCount}</td><td>${MINOR_POINTS}</td><td><strong>${minorCount * MINOR_POINTS}</strong></td></tr>`;
+            tableHTML += '</tbody></table>';
+            
+            document.getElementById('breakdown_table').innerHTML = tableHTML;
+        }
+
+        // Função para gerar e copiar relatório
+        function gerarECopiarRelatorio() {
+            const nome = document.getElementById('nome').value;
+            const dataNascimento = document.getElementById('data_nascimento').value;
+            const dataAvaliacao = document.getElementById('data_avaliacao').value;
+            const horaAvaliacao = document.getElementById('hora_avaliacao').value;
+            const idadeCompleta = document.getElementById('idade_completa').value;
+            const peso = document.getElementById('peso').value;
+            const obs = document.getElementById('obs').value;
+
+            // Obter resultados calculados
+            const majorCount = MAJORS.reduce((count, id) => count + (document.getElementById(id).checked ? 1 : 0), 0);
+            const minorCount = MINORS.reduce((count, id) => count + (document.getElementById(id).checked ? 1 : 0), 0);
+            const score = majorCount * MAJOR_POINTS + minorCount * MINOR_POINTS;
+            const probable = score >= DIAGNOSIS_THRESHOLD;
+
+            // Obter sintomas selecionados
+            const maioresSelecionados = MAJORS.filter(id => document.getElementById(id).checked)
+                .map(id => document.querySelector(`label[for="${id}"]`).textContent);
+            const menoresSelecionados = MINORS.filter(id => document.getElementById(id).checked)
+                .map(id => document.querySelector(`label[for="${id}"]`).textContent);
+
+            const interpretacao = probable ? 'PROVÁVEL SINUSITE' : 'Sem critérios para sinusite';
+
+            let relatorioTexto = `RESUMO INFORMATIVO — SCORE CLINICO DE SINUSITE (EDUCATIVO)
+${nome ? `Paciente: ${nome}` : ''}
+${dataAvaliacao ? `Data da Avaliacao: ${dataAvaliacao}` : ''}${horaAvaliacao ? ` - Hora: ${horaAvaliacao}` : ''}
+
+DADOS DO PACIENTE:
+${dataNascimento ? `- Data de Nascimento: ${dataNascimento}` : ''}
+${idadeCompleta ? `- Idade: ${idadeCompleta}` : ''}
+${peso ? `- Peso: ${peso} kg` : ''}
+
+AVALIACAO SCORE CLINICO DE SINUSITE:
+${maioresSelecionados.length > 0 ? `- Sinais Maiores (${maioresSelecionados.length}): ${maioresSelecionados.join(', ')}` : '- Sinais Maiores: Nenhum'}
+${menoresSelecionados.length > 0 ? `- Sinais Menores (${menoresSelecionados.length}): ${menoresSelecionados.join(', ')}` : '- Sinais Menores: Nenhum'}
+${obs ? `- Observacoes: ${obs}` : ''}
+
+RESULTADOS:
+- Sinais Maiores: ${majorCount} (${majorCount * MAJOR_POINTS} pontos)
+- Sinais Menores: ${minorCount} (${minorCount * MINOR_POINTS} pontos)
+- Score Total: ${score} pontos
+- Interpretacao: ${interpretacao}
+
+INTERPRETACAO:
+O Score Clinico de Sinusite avalia a probabilidade de sinusite baseada em sinais maiores e menores. Sinais maiores valem 100 pontos cada, sinais menores valem 25 pontos cada. O diagnostico de provavel sinusite e estabelecido quando o score total e maior ou igual a 150 pontos.
+
+CRITERIOS DE PONTUACAO:
+SINAIS MAIORES (100 pontos cada):
+- Dor facial / dor a pressao
+- Congestao nasal
+- Sensacao de cabeca "pesada"
+- Corrimento nasal purulento
+- Hiposmia/anosmia
+- Febre (sinusite aguda)
+
+SINAIS MENORES (25 pontos cada):
+- Dor de cabeca
+- Halitose
+- Fadiga
+- Tosse
+- Dor de dente
+- Pressao nos ouvidos
+- Febre (subaguda/cronica)
+
+INTERPRETACAO DOS VALORES:
+- Score < 150 pontos: Sem criterios para sinusite
+- Score >= 150 pontos: PROVAVEL SINUSITE
+
+EQUIVALENCIA CLINICA:
+- 2 sinais maiores = 200 pontos (diagnostico)
+- 1 sinal maior + 2 sinais menores = 150 pontos (diagnostico)
+- 6 sinais menores = 150 pontos (diagnostico)
+
+CONDUTA CLINICA:
+- Score < 150: Avaliacao clinica adicional, consideracao de outros diagnosticos
+- Score >= 150: Consideracao de tratamento para sinusite, avaliacao da necessidade de antibiotico
+
+Referencias:
+- Mintz ML. Disorders of the Respiratory Tract: Common Challenges in Primary Care. Springer, 2006; pp. 65-76.
+- Score clinico baseado em criterios validados para diagnostico de sinusite aguda.
+- Recomenda-se validacao local conforme diretrizes institucionais e guidelines atualizadas.`;
+
+            relatorioTexto = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorioTexto;
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorioTexto += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                relatorioTexto += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            copiarTexto(relatorioTexto);
+        }
+
+        // Função para copiar texto
+        function copiarTexto(texto) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(texto).then(() => {
+                    if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                }).catch(err => {
+                    copiarTextoFallback(texto);
+                });
+            } else {
+                copiarTextoFallback(texto);
+            }
+        }
+
+        function copiarTextoFallback(texto) {
+            const textArea = document.createElement('textarea');
+            textArea.value = texto;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            } catch (err) {
+                if (typeof window.neopedCopyFail === 'function') window.neopedCopyFail(); else alert('Nao foi possivel copiar automaticamente. Revise o texto e copie manualmente para uso informativo.');
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // Função para limpar dados
+        function limparDados() {
+            const campos = [
+                'nome', 'data_nascimento', 'data_avaliacao', 'hora_avaliacao', 'idade_completa', 'peso', 'obs'
+            ];
+
+            campos.forEach(campo => {
+                document.getElementById(campo).value = '';
+            });
+
+            // Limpar checkboxes
+            [...MAJORS, ...MINORS].forEach(id => {
+                document.getElementById(id).checked = false;
+                document.getElementById(id).closest('.symptom-item').classList.remove('checked');
+            });
+
+            document.getElementById('score_total').textContent = '-';
+            document.getElementById('maiores_count').textContent = '-';
+            document.getElementById('menores_count').textContent = '-';
+            document.getElementById('indicador_risco').innerHTML = '';
+            document.getElementById('breakdown_table').innerHTML = '';
+        }
+
+        // Event listeners
+        document.getElementById('data_nascimento').addEventListener('change', calcularIdade);
+        document.getElementById('data_avaliacao').addEventListener('change', calcularIdade);
+
+        // Preencher data atual ao carregar
+        window.addEventListener('load', preencherDataAtual);
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

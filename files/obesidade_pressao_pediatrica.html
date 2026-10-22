@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — Obesidade e pressão arterial pediátrica (educativo)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            margin: 0 0 15px 0;
+            color: #111;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .results-section {
+            background: #f0f4ff;
+            border: 1px solid #b4cfff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .result-item {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .result-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 700;
+        }
+
+        .result-value {
+            font-size: 18px;
+            font-weight: 900;
+            color: #111;
+        }
+
+        .action-btn {
+            background: #111;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .secondary-btn {
+            background: #eee;
+            color: #111;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .copy-btn {
+            background: #27ae60;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .info-section {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .info-section ul {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #374151;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        .status-normal { background: #d4edda; border-left: 5px solid #d1d5db; }
+        .status-alert { background: #fff3cd; border-left: 5px solid #d1d5db; }
+        .status-critical { background: #f8d7da; border-left: 5px solid #dc3545; }
+
+        /* Modal Styles */
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(17, 17, 17, 0.1);
+            color: #111;
+            border: 2px solid #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-info:hover {
+            background: #111;
+            color: #fff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 { margin: 0; font-size: 22px; }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover { transform: rotate(90deg); }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child { margin-top: 0; }
+        .modal-body p { line-height: 1.6; margin-bottom: 15px; color: #34495e; }
+        .modal-body ul, .modal-body ol { margin: 10px 0; padding-left: 25px; }
+        .modal-body li { margin-bottom: 8px; line-height: 1.5; }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong { color: #2c3e50; }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong { color: #27ae60; }
+
+        @media (max-width: 768px) {
+            .modal { padding: 10px; }
+            .modal-content { width: 95%; max-height: 95vh; }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <header>
+        <h1>🧪 Obesidade e PA Pediátrica</h1>
+        <p>Avaliação antropométrica e cardiovascular - 2 a 17 anos</p>
+        <div class="header-actions">
+            <button type="button" class="btn-info" onclick="abrirModal()">
+                Como usar
+            </button>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="card">
+            <div class="content">
+            <!-- Dados do Paciente -->
+            <div class="form-section">
+                <h2 class="section-title">Dados do Paciente</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="nome">Nome do Paciente:</label>
+                        <input type="text" id="nome" placeholder="Nome completo">
+                    </div>
+                    <div class="form-group">
+                        <label for="dataNascimento">Data de Nascimento:</label>
+                        <input type="date" id="dataNascimento" onchange="calcularIdade()">
+                    </div>
+                    <div class="form-group">
+                        <label for="dataAvaliacao">Data da Avaliacao:</label>
+                        <input type="date" id="dataAvaliacao" onchange="calcularIdade()">
+                    </div>
+                    <div class="form-group">
+                        <label for="sexo">Sexo:</label>
+                        <select id="sexo">
+                            <option value="">Selecione</option>
+                            <option value="M">Masculino</option>
+                            <option value="F">Feminino</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="idadeAnos">Idade (anos):</label>
+                        <input type="text" id="idadeAnos" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="idadeMeses">Idade (meses):</label>
+                        <input type="text" id="idadeMeses" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dados Antropométricos -->
+            <div class="form-section">
+                <h2 class="section-title">Dados Antropometricos</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="peso">Peso (kg):</label>
+                        <input type="number" id="peso" step="0.001" placeholder="Ex: 35.500">
+                    </div>
+                    <div class="form-group">
+                        <label for="altura">Altura (cm):</label>
+                        <input type="number" id="altura" step="0.1" placeholder="Ex: 140.5">
+                    </div>
+                    <div class="form-group">
+                        <label for="imc">IMC (kg/m²):</label>
+                        <input type="text" id="imc" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="circunferenciaCintura">Circunferencia da Cintura (cm):</label>
+                        <input type="number" id="circunferenciaCintura" step="0.1" placeholder="Opcional">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medidas de Pressão Arterial -->
+            <div class="form-section">
+                <h2 class="section-title">Medidas de Pressao Arterial</h2>
+                <p style="margin-bottom: 15px; color: #666; font-size: 14px;">
+                    Inserir as medidas de PA em tres ocasioes diferentes (em mmHg):
+                </p>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="pas1">1ª PA Sistolica:</label>
+                        <input type="number" id="pas1" placeholder="Ex: 110">
+                    </div>
+                    <div class="form-group">
+                        <label for="pad1">1ª PA Diastolica:</label>
+                        <input type="number" id="pad1" placeholder="Ex: 70">
+                    </div>
+                    <div class="form-group">
+                        <label for="pas2">2ª PA Sistolica:</label>
+                        <input type="number" id="pas2" placeholder="Ex: 112">
+                    </div>
+                    <div class="form-group">
+                        <label for="pad2">2ª PA Diastolica:</label>
+                        <input type="number" id="pad2" placeholder="Ex: 72">
+                    </div>
+                    <div class="form-group">
+                        <label for="pas3">3ª PA Sistolica:</label>
+                        <input type="number" id="pas3" placeholder="Ex: 108">
+                    </div>
+                    <div class="form-group">
+                        <label for="pad3">3ª PA Diastolica:</label>
+                        <input type="number" id="pad3" placeholder="Ex: 68">
+                    </div>
+                    <div class="form-group">
+                        <label for="mediaPAS">Media PA Sistolica:</label>
+                        <input type="text" id="mediaPAS" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="mediaPAD">Media PA Diastolica:</label>
+                        <input type="text" id="mediaPAD" readonly>
+                    </div>
+                </div>
+                <button class="action-btn" onclick="calcularAvaliacoes()">Calcular Avaliacoes</button>
+            </div>
+
+            <!-- Resultados -->
+            <div id="resultBox" class="results-section" style="display: none;">
+                <h2 class="section-title">Resultados da Avaliacao</h2>
+                <div id="resultContent"></div>
+                <!-- Botão Gerar Relatório -->
+                <button type="button" id="reportBtn" class="copy-btn" style="display: none;" onclick="gerarRelatorio()">Copiar texto informativo</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="footer">
+        <p>Calculadora de Obesidade e Pressão Arterial Pediátrica</p>
+        <p><strong>Referências:</strong> Protocolos de Terapia Intensiva Pediátrica e Neonatal.</p>
+    </div>
+
+    <script>
+        // Cálculo automático de idade
+        function calcularIdade() {
+            const dataNasc = document.getElementById('dataNascimento').value;
+            const dataAval = document.getElementById('dataAvaliacao').value;
+
+            if (!dataNasc || !dataAval) return;
+
+            const nascimento = new Date(dataNasc);
+            const avaliacao = new Date(dataAval);
+
+            let anos = avaliacao.getFullYear() - nascimento.getFullYear();
+            let meses = avaliacao.getMonth() - nascimento.getMonth();
+
+            if (meses < 0) {
+                anos--;
+                meses += 12;
+            }
+
+            const totalMeses = anos * 12 + meses;
+
+            document.getElementById('idadeAnos').value = anos.toFixed(1);
+            document.getElementById('idadeMeses').value = totalMeses;
+
+            calcularIMC();
+            calcularMediasPressao();
+        }
+
+        // Cálculo do IMC
+        function calcularIMC() {
+            const peso = parseFloat(document.getElementById('peso').value);
+            const altura = parseFloat(document.getElementById('altura').value);
+
+            if (peso && altura) {
+                const alturaM = altura / 100;
+                const imc = peso / (alturaM * alturaM);
+                document.getElementById('imc').value = imc.toFixed(1);
+            }
+        }
+
+        // Cálculo das médias de pressão arterial
+        function calcularMediasPressao() {
+            const pas1 = parseFloat(document.getElementById('pas1').value) || 0;
+            const pas2 = parseFloat(document.getElementById('pas2').value) || 0;
+            const pas3 = parseFloat(document.getElementById('pas3').value) || 0;
+
+            const pad1 = parseFloat(document.getElementById('pad1').value) || 0;
+            const pad2 = parseFloat(document.getElementById('pad2').value) || 0;
+            const pad3 = parseFloat(document.getElementById('pad3').value) || 0;
+
+            if (pas1 && pas2 && pas3) {
+                const mediaPAS = (pas1 + pas2 + pas3) / 3;
+                document.getElementById('mediaPAS').value = mediaPAS.toFixed(1);
+            }
+
+            if (pad1 && pad2 && pad3) {
+                const mediaPAD = (pad1 + pad2 + pad3) / 3;
+                document.getElementById('mediaPAD').value = mediaPAD.toFixed(1);
+            }
+        }
+
+        // Event listeners para cálculos automáticos
+        document.getElementById('peso').addEventListener('input', calcularIMC);
+        document.getElementById('altura').addEventListener('input', calcularIMC);
+        document.getElementById('pas1').addEventListener('input', calcularMediasPressao);
+        document.getElementById('pas2').addEventListener('input', calcularMediasPressao);
+        document.getElementById('pas3').addEventListener('input', calcularMediasPressao);
+        document.getElementById('pad1').addEventListener('input', calcularMediasPressao);
+        document.getElementById('pad2').addEventListener('input', calcularMediasPressao);
+        document.getElementById('pad3').addEventListener('input', calcularMediasPressao);
+
+        // Tabelas de referência OMS (simplificadas)
+        const imcReferencias = {
+            // Z-scores para IMC por idade (valores aproximados)
+            'M': {
+                2: { '-2': 14.8, '-1': 15.6, '0': 16.5, '1': 17.5, '2': 18.6, '3': 19.9 },
+                5: { '-2': 13.9, '-1': 14.6, '0': 15.4, '1': 16.4, '2': 17.5, '3': 18.8 },
+                10: { '-2': 14.2, '-1': 15.3, '0': 16.4, '1': 17.8, '2': 19.4, '3': 21.4 },
+                15: { '-2': 17.0, '-1': 18.5, '0': 20.2, '1': 22.1, '2': 24.3, '3': 26.8 },
+                17: { '-2': 18.1, '-1': 19.8, '0': 21.7, '1': 23.7, '2': 26.0, '3': 28.6 }
+            },
+            'F': {
+                2: { '-2': 14.4, '-1': 15.3, '0': 16.2, '1': 17.3, '2': 18.5, '3': 19.9 },
+                5: { '-2': 13.5, '-1': 14.3, '0': 15.2, '1': 16.2, '2': 17.4, '3': 18.8 },
+                10: { '-2': 14.2, '-1': 15.3, '0': 16.6, '1': 18.0, '2': 19.7, '3': 21.7 },
+                15: { '-2': 17.2, '-1': 18.6, '0': 20.2, '1': 22.0, '2': 24.0, '3': 26.3 },
+                17: { '-2': 17.9, '-1': 19.4, '0': 21.1, '1': 23.0, '2': 25.2, '3': 27.6 }
+            }
+        };
+
+        function calcularAvaliacoes() {
+            // Validações
+            const idade = parseFloat(document.getElementById('idadeAnos').value);
+            const sexo = document.getElementById('sexo').value;
+            const imc = parseFloat(document.getElementById('imc').value);
+            const mediaPAS = parseFloat(document.getElementById('mediaPAS').value);
+            const mediaPAD = parseFloat(document.getElementById('mediaPAD').value);
+
+            if (!idade || !sexo || !imc || !mediaPAS || !mediaPAD) {
+                alert('Por favor, preencha todos os campos obrigatorios.');
+                return;
+            }
+
+            if (idade < 2 || idade > 17) {
+                alert('Esta calculadora e para criancas de 2 a 17 anos.');
+                return;
+            }
+
+            // Avaliação do IMC
+            const avaliacaoIMC = avaliarIMC(idade, sexo, imc);
+            
+            // Avaliação da Pressão Arterial
+            const avaliacaoPA = avaliarPressaoArterial(idade, sexo, mediaPAS, mediaPAD);
+
+            // Exibir resultados
+            exibirResultados(avaliacaoIMC, avaliacaoPA);
+        }
+
+        function avaliarIMC(idade, sexo, imc) {
+            // Simplificação: usar faixas de referência baseadas na OMS
+            let categoria = '';
+            let status = '';
+
+            // Aproximação dos percentis da OMS
+            if (imc < 14) {
+                categoria = 'Baixo Peso';
+                status = 'status-alert';
+            } else if (imc < 18) {
+                categoria = 'Eutrofico';
+                status = 'status-normal';
+            } else if (imc < 25) {
+                categoria = 'Sobrepeso';
+                status = 'status-alert';
+            } else if (imc < 30) {
+                categoria = 'Obesidade Grau I';
+                status = 'status-critical';
+            } else {
+                categoria = 'Obesidade Grau II ou III';
+                status = 'status-critical';
+            }
+
+            return {
+                imc: imc,
+                categoria: categoria,
+                status: status
+            };
+        }
+
+        function avaliarPressaoArterial(idade, sexo, pas, pad) {
+            // Valores de referência simplificados para percentil 95
+            // Baseados em tabelas pediátricas padrão
+            const referenciasPA = {
+                '2-5': { 'M': { 'PAS': 105, 'PAD': 68 }, 'F': { 'PAS': 104, 'PAD': 67 } },
+                '6-9': { 'M': { 'PAS': 112, 'PAD': 74 }, 'F': { 'PAS': 111, 'PAD': 73 } },
+                '10-13': { 'M': { 'PAS': 120, 'PAD': 79 }, 'F': { 'PAS': 119, 'PAD': 78 } },
+                '14-17': { 'M': { 'PAS': 130, 'PAD': 83 }, 'F': { 'PAS': 125, 'PAD': 81 } }
+            };
+
+            let faixa = '';
+            if (idade >= 2 && idade <= 5) faixa = '2-5';
+            else if (idade >= 6 && idade <= 9) faixa = '6-9';
+            else if (idade >= 10 && idade <= 13) faixa = '10-13';
+            else if (idade >= 14 && idade <= 17) faixa = '14-17';
+
+            const ref = referenciasPA[faixa][sexo];
+            
+            let categoriaPAS = '';
+            let statusPAS = '';
+            let categoriaPAD = '';
+            let statusPAD = '';
+
+            // Avaliação PAS
+            if (pas < ref.PAS - 10) {
+                categoriaPAS = 'Normal';
+                statusPAS = 'status-normal';
+            } else if (pas < ref.PAS) {
+                categoriaPAS = 'Pre-Hipertensao';
+                statusPAS = 'status-alert';
+            } else if (pas < ref.PAS + 10) {
+                categoriaPAS = 'Hipertensao Estagio 1';
+                statusPAS = 'status-critical';
+            } else {
+                categoriaPAS = 'Hipertensao Estagio 2';
+                statusPAS = 'status-critical';
+            }
+
+            // Avaliação PAD
+            if (pad < ref.PAD - 5) {
+                categoriaPAD = 'Normal';
+                statusPAD = 'status-normal';
+            } else if (pad < ref.PAD) {
+                categoriaPAD = 'Pre-Hipertensao';
+                statusPAD = 'status-alert';
+            } else if (pad < ref.PAD + 5) {
+                categoriaPAD = 'Hipertensao Estagio 1';
+                statusPAD = 'status-critical';
+            } else {
+                categoriaPAD = 'Hipertensao Estagio 2';
+                statusPAD = 'status-critical';
+            }
+
+            return {
+                pas: pas,
+                pad: pad,
+                categoriaPAS: categoriaPAS,
+                statusPAS: statusPAS,
+                categoriaPAD: categoriaPAD,
+                statusPAD: statusPAD,
+                refPAS: ref.PAS,
+                refPAD: ref.PAD
+            };
+        }
+
+        function exibirResultados(avaliacaoIMC, avaliacaoPA) {
+            let html = '<h3 style="color: #111827; margin-bottom: 15px;">Avaliacao Antropometrica</h3>';
+            
+            html += `<div class="result-item ${avaliacaoIMC.status}">
+                <div class="result-label">IMC:</div>
+                <div class="result-value">${avaliacaoIMC.imc.toFixed(1)} kg/m² - ${avaliacaoIMC.categoria}</div>
+            </div>`;
+
+            html += '<h3 style="color: #111827; margin: 20px 0 15px 0;">Avaliacao da Pressao Arterial</h3>';
+            
+            html += `<div class="result-item ${avaliacaoPA.statusPAS}">
+                <div class="result-label">PA Sistolica:</div>
+                <div class="result-value">${avaliacaoPA.pas.toFixed(1)} mmHg - ${avaliacaoPA.categoriaPAS}</div>
+            </div>`;
+
+            html += `<div class="result-item ${avaliacaoPA.statusPAD}">
+                <div class="result-label">PA Diastolica:</div>
+                <div class="result-value">${avaliacaoPA.pad.toFixed(1)} mmHg - ${avaliacaoPA.categoriaPAD}</div>
+            </div>`;
+
+            html += `<p style="margin-top: 15px; color: #666; font-size: 13px;">
+                Referencia P95: PAS ${avaliacaoPA.refPAS} mmHg / PAD ${avaliacaoPA.refPAD} mmHg
+            </p>`;
+
+            document.getElementById('resultContent').innerHTML = html;
+            document.getElementById('resultBox').style.display = 'block';
+            document.getElementById('reportBtn').style.display = 'block';
+        }
+
+        function gerarRelatorio() {
+            const nome = document.getElementById('nome').value || 'Nao informado';
+            const dataNasc = document.getElementById('dataNascimento').value || 'Nao informado';
+            const dataAval = document.getElementById('dataAvaliacao').value || 'Nao informado';
+            const sexo = document.getElementById('sexo').value === 'M' ? 'Masculino' : 'Feminino';
+            const idade = document.getElementById('idadeAnos').value;
+            const peso = document.getElementById('peso').value;
+            const altura = document.getElementById('altura').value;
+            const imc = document.getElementById('imc').value;
+            const mediaPAS = document.getElementById('mediaPAS').value;
+            const mediaPAD = document.getElementById('mediaPAD').value;
+
+            const dataHoraAtual = new Date().toLocaleString('pt-BR');
+
+            // Pegar avaliações do resultado
+            const resultContent = document.getElementById('resultContent').innerText;
+
+            let relatorio = `========================================
+RESUMO INFORMATIVO — AVALIACAO PEDIATRICA (EDUCATIVO)
+========================================
+
+DADOS DO PACIENTE
+-----------------
+Nome: ${nome}
+Data de Nascimento: ${formatarData(dataNasc)}
+Data da Avaliacao: ${formatarData(dataAval)}
+Sexo: ${sexo}
+Idade: ${idade} anos
+
+DADOS ANTROPOMETRICOS
+---------------------
+Peso: ${peso} kg
+Altura: ${altura} cm
+IMC: ${imc} kg/m²
+
+MEDIDAS DE PRESSAO ARTERIAL
+----------------------------
+Media PA Sistolica: ${mediaPAS} mmHg
+Media PA Diastolica: ${mediaPAD} mmHg
+
+AVALIACOES
+----------
+${resultContent}
+
+OBSERVACOES
+-----------
+- Valores baseados em referencias da OMS e diretrizes pediatricas
+- Recomenda-se avaliacao medica completa
+- Considerar fatores geneticos e ambientais
+- Orientacao sobre habitos saudaveis de vida
+
+REFERENCIAS
+-----------
+- OMS - Organizacao Mundial da Saude
+- AAP - American Academy of Pediatrics
+- SBP - Sociedade Brasileira de Pediatria
+
+========================================
+Data de Geracao: ${dataHoraAtual}
+========================================`;
+
+            relatorio = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorio;
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorio += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                relatorio += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            // Copiar para clipboard
+            navigator.clipboard.writeText(relatorio).then(() => {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(() => {
+                // Fallback se clipboard não funcionar
+                const textArea = document.createElement('textarea');
+                textArea.value = relatorio;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+
+        function formatarData(dataStr) {
+            if (!dataStr) return 'Nao informado';
+            const data = new Date(dataStr);
+            return data.toLocaleDateString('pt-BR');
+        }
+
+        // Definir data de avaliação como hoje ao carregar
+        window.onload = function() {
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('dataAvaliacao').value = hoje;
+        };
+
+        // Funções do modal
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — Obesidade e pressão arterial pediátrica (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta calculadora organiza variáveis para estimativa educativa do estado nutricional e da pressão arterial pediátrica. O conteúdo é informativo e não substitui avaliação clínica, protocolo institucional ou prescrição.</p>
+                
+                <h3>Parâmetros Avaliados</h3>
+                <div style="background: #f8f9fa; border-left: none; padding: 15px; margin: 15px 0; border-radius: 5px;">
+                    <strong>Avaliação Nutricional:</strong><br>
+                    • Peso (kg)<br>
+                    • Altura (cm)<br>
+                    • Idade (anos)<br>
+                    • Sexo<br>
+                    • IMC = Peso / (Altura/100)²<br><br>
+                    <strong>Pressão Arterial:</strong><br>
+                    • Pressão Sistólica (mmHg)<br>
+                    • Pressão Diastólica (mmHg)<br>
+                    • Altura (cm)<br>
+                    • Idade (anos)<br>
+                    • Sexo
+                </div>
+
+                <h3>Classificação do IMC</h3>
+                <ul>
+                    <li><strong>Baixo Peso:</strong> < 5º percentil</li>
+                    <li><strong>Peso Normal:</strong> 5º - 85º percentil</li>
+                    <li><strong>Sobrepeso:</strong> 85º - 95º percentil</li>
+                    <li><strong>Obesidade:</strong> > 95º percentil</li>
+                    <li><strong>Obesidade Severa:</strong> > 99º percentil</li>
+                </ul>
+
+                <h3>Classificação da Pressão Arterial</h3>
+                <ul>
+                    <li><strong>Normal:</strong> < 90º percentil</li>
+                    <li><strong>Pré-hipertensão:</strong> 90º - 95º percentil</li>
+                    <li><strong>Hipertensão Estágio 1:</strong> 95º - 99º percentil</li>
+                    <li><strong>Hipertensão Estágio 2:</strong> > 99º percentil</li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Preencha Dados:</strong> Idade, sexo, peso, altura</li>
+                    <li><strong>Medição PA:</strong> Sistólica e diastólica</li>
+                    <li><strong>Calcule:</strong> Sistema calcula automaticamente</li>
+                    <li><strong>Interprete:</strong> Percentis e classificação</li>
+                    <li><strong>Oriente:</strong> Conduta baseada nos resultados</li>
+                </ol>
+
+                <h3>Critérios de Medição</h3>
+                <ul>
+                    <li><strong>Peso:</strong> Balança calibrada</li>
+                    <li><strong>Altura:</strong> Estadiômetro</li>
+                    <li><strong>PA:</strong> Manguito adequado</li>
+                    <li><strong>Ambiente:</strong> Calmo</li>
+                    <li><strong>Repouso:</strong> 5 minutos</li>
+                    <li><strong>Posição:</strong> Sentado</li>
+                    <li><strong>Múltiplas:</strong> 3 medições</li>
+                    <li><strong>Documentação:</strong> Média</li>
+                </ul>
+
+                <h3>Fatores de Risco Cardiovascular</h3>
+                <ul>
+                    <li><strong>Obesidade:</strong> IMC elevado</li>
+                    <li><strong>Hipertensão:</strong> PA elevada</li>
+                    <li><strong>História Familiar:</strong> CVD precoce</li>
+                    <li><strong>Diabetes:</strong> Tipo 2</li>
+                    <li><strong>Dislipidemia:</strong> Colesterol elevado</li>
+                    <li><strong>Sedentarismo:</strong> Baixa atividade</li>
+                    <li><strong>Tabagismo:</strong> Ativo/passivo</li>
+                    <li><strong>Dieta:</strong> Rica em sódio</li>
+                </ul>
+
+                <h3>Tratamento da Obesidade</h3>
+                <ul>
+                    <li><strong>Dieta:</strong> Equilibrada</li>
+                    <li><strong>Exercício:</strong> Regular</li>
+                    <li><strong>Comportamental:</strong> Mudança hábitos</li>
+                    <li><strong>Familiar:</strong> Envolvimento</li>
+                    <li><strong>Multidisciplinar:</strong> Equipe</li>
+                    <li><strong>Medicamentos:</strong> Raros casos</li>
+                    <li><strong>Cirurgia:</strong> Casos extremos</li>
+                    <li><strong>Seguimento:</strong> Contínuo</li>
+                </ul>
+
+                <h3>Tratamento da Hipertensão</h3>
+                <ul>
+                    <li><strong>Modificação:</strong> Estilo de vida</li>
+                    <li><strong>Dieta:</strong> DASH</li>
+                    <li><strong>Exercício:</strong> Aeróbico</li>
+                    <li><strong>Peso:</strong> Redução</li>
+                    <li><strong>Medicamentos:</strong> Se necessário</li>
+                    <li><strong>Monitorização:</strong> Contínua</li>
+                    <li><strong>Familiar:</strong> Educação</li>
+                    <li><strong>Escolar:</strong> Adaptações</li>
+                </ul>
+
+                <h3>Limitações e Considerações</h3>
+                <ul>
+                    <li>Curvas de referência</li>
+                    <li>Variações individuais</li>
+                    <li>Fatores não incluídos</li>
+                    <li>Interpretação clínica</li>
+                    <li>Protocolos institucionais</li>
+                    <li>Seguimento longitudinal</li>
+                </ul>
+
+                <div style="background: #e8f5e9; border-left: 1px solid #e5e7eb; padding: 15px; margin: 15px 0; border-radius: 5px;">
+                    <strong>Referências:</strong><br>
+                    - WHO Child Growth Standards. Geneva: World Health Organization, 2006.<br>
+                    - Flynn JT, et al. Clinical Practice Guideline for Screening and Management of High Blood Pressure in Children and Adolescents. Pediatrics. 2017;140(3):e20171904.<br>
+                    - Barlow SE. Expert Committee Recommendations Regarding the Prevention, Assessment, and Treatment of Child and Adolescent Overweight and Obesity: Summary Report. Pediatrics. 2007;120(S4):S164-S192.
+                </div>
+            </div>
+        </div>
+    </div>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>
+

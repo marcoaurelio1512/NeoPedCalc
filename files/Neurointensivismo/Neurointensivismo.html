@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — Neurointensivismo pediátrico (educativo)</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #6b7280);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .btn-info {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 15px;
+        }
+
+        .btn-info:hover {
+            background: white;
+            color: #2c3e50;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #6b7280 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #2c3e50;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #d1d5db;
+        }
+
+        .form-group input[readonly] {
+            background-color: #f8f9fa;
+            color: #374151;
+        }
+
+        .results-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .result-item {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: none;
+        }
+
+        .result-item h4 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .result-item .value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #e74c3c;
+        }
+
+        .info-section {
+            background: #fff3cd;
+            border: 1px solid #e5e7eb;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .info-section h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .info-section p {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: #6b7280;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #4b5563;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #229954;
+            transform: translateY(-2px);
+        }
+
+        .copy-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #27ae60;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            display: none;
+            z-index: 1000;
+        }
+
+
+        .diagram-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .diagram-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .diagram-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .diagram-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .conversion-info {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.9rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+
+        }
+    </style>
+    <link rel="stylesheet" href="../../css/neoped-responsive.css">
+<link rel="stylesheet" href="../../css/neoped-modern.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>NeoPedCalc - Neuro Intensivismo</h1>
+            <p>Avaliação de Pressão de Perfusão Cerebral</p>
+            <button class="btn-info" onclick="abrirModal()">
+                Como usar
+            </button>
+        </div>
+
+        <div class="form-container">
+            <form id="formc" name="formc">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="XLEW_1_4_4">Nome do Paciente</label>
+                        <input type="text" id="XLEW_1_4_4" name="XLEW_1_4_4" oninput="recalc_onclick('XLEW_1_4_4')" tabindex="1">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="XLEW_1_2_3">Peso (Kg)</label>
+                        <input type="number" id="XLEW_1_2_3" name="XLEW_1_2_3" step="0.1" oninput="recalc_onclick('XLEW_1_2_3')" tabindex="2">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="XLEW_1_2_7">Altura (cm)</label>
+                        <input type="number" id="XLEW_1_2_7" name="XLEW_1_2_7" oninput="recalc_onclick('XLEW_1_2_7')" tabindex="3">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="XLEW_1_7_4">Data de Nascimento</label>
+                        <input type="date" id="XLEW_1_7_4" name="XLEW_1_7_4" onchange="recalc_onclick('XLEW_1_7_4')" tabindex="4">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="p1E11">Unidade de Medida</label>
+                        <select id="p1E11" name="p1E11" onchange="recalc_onclick('p1E11')" tabindex="5">
+                            <option value="mmHg">mmHg</option>
+                            <option value="cm H2O" selected>cm H2O</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="p1E16">Faixa Etária</label>
+                        <select id="p1E16" name="p1E16" onchange="recalc_onclick('p1E16')" tabindex="7">
+                            <option value="Recém-nascido a termo" selected>Recém-nascido a termo</option>
+                            <option value="Lactentes (1 a 12 meses)">Lactentes (1 a 12 meses)</option>
+                            <option value="Crianças (1 a 10 anos)">Crianças (1 a 10 anos)</option>
+                            <option value="Crianças > 10 anos">Crianças > 10 anos</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="XLEW_1_19_3">Pressão Intracraniana (<span id="pic_unit">mmHg</span>)</label>
+                        <input type="number" id="XLEW_1_19_3" name="XLEW_1_19_3" step="0.1" oninput="recalc_onclick('XLEW_1_19_3')" tabindex="6">
+                        <small class="conversion-info">Conversão: <span id="pic_conversion">- mmHg</span></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="XLEW_1_20_3">Pressão Arterial Sistólica (mmHg)</label>
+                        <input type="number" id="XLEW_1_20_3" name="XLEW_1_20_3" oninput="recalc_onclick('XLEW_1_20_3')" tabindex="7">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="XLEW_1_21_3">Pressão Arterial Diastólica (mmHg)</label>
+                        <input type="number" id="XLEW_1_21_3" name="XLEW_1_21_3" oninput="recalc_onclick('XLEW_1_21_3')" tabindex="8">
+                    </div>
+                </div>
+
+                <div class="results-section">
+                    <h3>Resultados Calculados</h3>
+                    <div class="results-grid">
+                        <div class="result-item">
+                            <h4>Data de Hoje</h4>
+                            <div class="value" id="XLEW_1_4_11_display">-</div>
+                        </div>
+
+                        <div class="result-item">
+                            <h4>Idade Calculada</h4>
+                            <div class="value" id="XLEW_1_8_4_display">-</div>
+                        </div>
+
+
+                        <div class="result-item">
+                            <h4>Pressão Arterial Média</h4>
+                            <div class="value" id="XLEW_1_22_3_display">0 mmHg</div>
+                        </div>
+
+                        <div class="result-item">
+                            <h4>Pressão de Perfusão Cerebral</h4>
+                            <div class="value" id="XLEW_1_23_3_display">0 mmHg</div>
+                        </div>
+
+                        <div class="result-item">
+                            <h4>Status da PPC</h4>
+                            <div class="value" id="XLEW_1_24_1_display">-</div>
+                        </div>
+
+                        <div class="result-item">
+                            <h4>Faixa de Frequência Cardíaca (Acordado)</h4>
+                            <div class="value" id="XLEW_1_20_5_display">-</div>
+                        </div>
+
+                        <div class="result-item">
+                            <h4>Faixa de Frequência Cardíaca (Dormindo)</h4>
+                            <div class="value" id="XLEW_1_22_5_display">-</div>
+                        </div>
+
+                        <div class="result-item">
+                            <h4>Faixa de Frequência Respiratória</h4>
+                            <div class="value" id="XLEW_1_24_5_display">-</div>
+                        </div>
+
+                        <div class="result-item">
+                            <h4>Faixa de PIC por Idade</h4>
+                            <div class="value" id="XLEW_1_18_5_display">-</div>
+                        </div>
+
+                        <div class="result-item">
+                            <h4>Definição de Hipotensão</h4>
+                            <div class="value" id="XLEW_1_26_5_display">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3>Informações Importantes</h3>
+                    <p><strong>PPC = PAM(1/3 PAS + 2/3 PAD) - PIC</strong></p>
+                    <p><strong>PIC acima da qual tratamento deve ser iniciado:</strong> Varia de 15 a 25 mmHg</p>
+                    <p><strong>PIC > 20 mmHg</strong> que persiste por 5 min ou mais - TRATAR</p>
+                    <p><strong>Saturação venosa do bulbo da jugular (SjvO2):</strong> 60% a 80%</p>
+                    <p><strong>Autorregulação vascular:</strong> Mantém FSC em níveis constantes entre PPC de 50 e 150 mmHg</p>
+                    <p><strong>PPC < 50 mmHg:</strong> DIMINUI O FSC</p>
+                </div>
+
+                <div class="diagram-section">
+                    <h3>Diagrama de Referência</h3>
+                    <div class="diagram-container">
+                        <img src="image002.png" alt="Diagrama de Neurointensivismo" class="diagram-image" onerror="this.style.display='none'; var s=this.nextElementSibling; if(s) s.style.display='block';">
+                        <span class="neoped-img-fallback" style="display:none; padding:1rem; background:var(--card-bg, #f8f9fa); border-radius:8px; color:#666; font-size:0.9rem;">Diagrama não disponível neste dispositivo.</span>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="btn btn-success" onclick="copyReportToClipboard()">
+                        Copiar texto informativo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="copy-notification" id="copyNotification">
+        Relatório copiado com sucesso!
+    </div>
+
+
+    <script>
+        // Variáveis globais
+        var co = new Object;
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0');
+        var yyyy = today.getFullYear();
+        today = dd + '/' + mm + '/' + yyyy;
+
+        // Função para inicializar a data de hoje
+        function initializeToday() {
+            document.getElementById('XLEW_1_4_11_display').textContent = today;
+        }
+
+        // Função de cálculo principal
+        function calc(data) {
+            var c1C2 = data.XLEW_1_2_3; // Peso
+            var c1G2 = data.XLEW_1_2_7; // Altura
+            var c1D4 = data.XLEW_1_4_4; // Nome
+            var c1D7 = data.XLEW_1_7_4; // Data nascimento
+            var c1E16 = data.p1E16; // Faixa etária
+            var c1C19 = data.XLEW_1_19_3; // PIC
+            var c1C20 = data.XLEW_1_20_3; // PAS
+            var c1C21 = data.XLEW_1_21_3; // PAD
+
+            var c1K4 = today; // Data hoje
+            var c1D8 = calculateAge(c1D7, c1K4); // Idade calculada
+            var c1E18 = getPICRange(c1E16); // Faixa PIC por idade
+            var c1E20 = getHRRangeAwake(c1E16); // FC acordado
+            var c1C22 = (c1C20 / 3) + ((c1C21 * 2) / 3); // PAM
+            var c1E22 = getHRRangeSleep(c1E16); // FC dormindo
+            
+            // Converter PIC para mmHg se necessário (para cálculos)
+            var picEmMmHg = data.p1E11 === "cm H2O" ? c1C19 / 1.36 : c1C19;
+            var c1C23 = c1C22 - picEmMmHg; // PPC
+            var c1E24 = getRRRange(c1E16); // FR
+            var c1E26 = getHypotensionDef(c1E16); // Definição hipotensão
+            var c1A24 = c1C23 >= 50 ? "PPC ADEQUADA" : (c1C23 < 50 ? "CUIDADO PPC BAIXA" : "");
+
+            // Atualizar resultados
+            data.XLEW_1_4_11 = c1K4;
+            data.XLEW_1_8_4 = c1D8;
+            data.XLEW_1_18_5 = c1E18;
+            data.XLEW_1_20_5 = c1E20;
+            data.XLEW_1_22_3 = c1C22;
+            data.XLEW_1_22_5 = c1E22;
+            data.XLEW_1_23_3 = c1C23;
+            data.XLEW_1_24_1 = c1A24;
+            data.XLEW_1_24_5 = c1E24;
+            data.XLEW_1_26_5 = c1E26;
+
+            // Atualizar interface
+            updateDisplay();
+        }
+
+        // Funções auxiliares
+        function calculateAge(birthDate, currentDate) {
+            if (!birthDate) return "-";
+            var birth = new Date(birthDate);
+            var current = new Date();
+            var age = current.getFullYear() - birth.getFullYear();
+            var monthDiff = current.getMonth() - birth.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && current.getDate() < birth.getDate())) {
+                age--;
+            }
+            var months = current.getMonth() - birth.getMonth();
+            if (months < 0) months += 12;
+            var days = current.getDate() - birth.getDate();
+            if (days < 0) {
+                months--;
+                days += new Date(current.getFullYear(), current.getMonth(), 0).getDate();
+            }
+            return age + " a, " + months + " m, " + days + " d";
+        }
+
+        // Função para determinar faixa etária baseada na idade
+        function determineAgeGroup(birthDate) {
+            if (!birthDate) return "Recém-nascido a termo";
+            
+            var birth = new Date(birthDate);
+            var current = new Date();
+            var ageInMonths = (current.getFullYear() - birth.getFullYear()) * 12 + (current.getMonth() - birth.getMonth());
+            
+            // Ajustar se o dia ainda não chegou
+            if (current.getDate() < birth.getDate()) {
+                ageInMonths--;
+            }
+            
+            var ageInYears = Math.floor(ageInMonths / 12);
+            
+            if (ageInMonths <= 1) {
+                return "Recém-nascido a termo";
+            } else if (ageInMonths <= 12) {
+                return "Lactentes (1 a 12 meses)";
+            } else if (ageInYears <= 10) {
+                return "Crianças (1 a 10 anos)";
+            } else {
+                return "Crianças > 10 anos";
+            }
+        }
+
+        // Função para atualizar faixa etária automaticamente
+        function updateAgeGroup() {
+            var birthDate = document.formc.XLEW_1_7_4.value;
+            if (birthDate) {
+                var ageGroup = determineAgeGroup(birthDate);
+                document.formc.p1E16.value = ageGroup;
+            }
+        }
+
+        function getPICRange(ageGroup) {
+            switch(ageGroup) {
+                case "Recém-nascido a termo": return "1,5 a 6 mmHg";
+                case "Lactentes (1 a 12 meses)": return "3 a 7 mmHg";
+                case "Crianças (1 a 10 anos)": return "10 a 15 mmHg";
+                case "Crianças > 10 anos": return "7 a 15 mmHg";
+                default: return "-";
+            }
+        }
+
+        function getHRRangeAwake(ageGroup) {
+            switch(ageGroup) {
+                case "Recém-nascido a termo": return "85 a 205 bpm";
+                case "Lactentes (1 a 12 meses)": return "100 a 190 bpm";
+                case "Crianças (1 a 10 anos)": return "60 a 140 bpm";
+                case "Crianças > 10 anos": return "60 a 100 bpm";
+                default: return "-";
+            }
+        }
+
+        function getHRRangeSleep(ageGroup) {
+            switch(ageGroup) {
+                case "Recém-nascido a termo": return "80 a 160 bpm";
+                case "Lactentes (1 a 12 meses)": return "75 a 160 bpm";
+                case "Crianças (1 a 10 anos)": return "60 a 90 bpm";
+                case "Crianças > 10 anos": return "50 a 90 bpm";
+                default: return "-";
+            }
+        }
+
+        function getRRRange(ageGroup) {
+            switch(ageGroup) {
+                case "Recém-nascido a termo": return "30 a 60 mpm";
+                case "Lactentes (1 a 12 meses)": return "24 a 40 mpm";
+                case "Crianças (1 a 10 anos)": return "22 a 34 mpm";
+                case "Crianças > 10 anos": return "18 a 30 mpm";
+                default: return "-";
+            }
+        }
+
+        function getHypotensionDef(ageGroup) {
+            switch(ageGroup) {
+                case "Recém-nascido a termo": return "< 60 mmHg";
+                case "Lactentes (1 a 12 meses)": return "< 70 mmHg";
+                case "Crianças (1 a 10 anos)": return "< 70 mmHg + (idade x 2) mmHg";
+                case "Crianças > 10 anos": return "< 90 mmHg";
+                default: return "-";
+            }
+        }
+
+        // Função para atualizar a interface
+        function updateDisplay() {
+            document.getElementById('XLEW_1_8_4_display').textContent = co.XLEW_1_8_4 || "-";
+            document.getElementById('XLEW_1_22_3_display').textContent = (co.XLEW_1_22_3 || 0).toFixed(1) + " mmHg";
+            document.getElementById('XLEW_1_23_3_display').textContent = (co.XLEW_1_23_3 || 0).toFixed(1) + " mmHg";
+            document.getElementById('XLEW_1_24_1_display').textContent = co.XLEW_1_24_1 || "-";
+            document.getElementById('XLEW_1_20_5_display').textContent = co.XLEW_1_20_5 || "-";
+            document.getElementById('XLEW_1_22_5_display').textContent = co.XLEW_1_22_5 || "-";
+            document.getElementById('XLEW_1_24_5_display').textContent = co.XLEW_1_24_5 || "-";
+            document.getElementById('XLEW_1_18_5_display').textContent = co.XLEW_1_18_5 || "-";
+            document.getElementById('XLEW_1_26_5_display').textContent = co.XLEW_1_26_5 || "-";
+            
+            // Atualizar conversões automáticas
+            updateConversions();
+        }
+
+        // Função para atualizar conversões automáticas
+        function updateConversions() {
+            var pic = parseFloat(document.formc.XLEW_1_19_3.value) || 0;
+            var unidade = document.formc.p1E11.value;
+            
+            // Atualizar unidade no label
+            document.getElementById('pic_unit').textContent = unidade;
+            
+            // Mostrar conversão da PIC
+            if (pic > 0) {
+                if (unidade === "mmHg") {
+                    // Se está em mmHg, converter para cm H2O
+                    document.getElementById('pic_conversion').textContent = (pic * 1.36).toFixed(1) + " cm H2O";
+                } else {
+                    // Se está em cm H2O, converter para mmHg
+                    document.getElementById('pic_conversion').textContent = (pic / 1.36).toFixed(1) + " mmHg";
+                }
+            } else {
+                document.getElementById('pic_conversion').textContent = unidade === "mmHg" ? "- cm H2O" : "- mmHg";
+            }
+        }
+
+        // Variável para debounce
+        var recalculationTimeout;
+
+        // Função de recálculo otimizada
+        function recalc_onclick(ctl) {
+            // Limpar timeout anterior para evitar cálculos desnecessários
+            if (recalculationTimeout) {
+                clearTimeout(recalculationTimeout);
+            }
+            
+            // Debounce para campos de input (não para selects e date)
+            if (ctl && (ctl.includes('input') || ctl.includes('XLEW_1_2_3') || ctl.includes('XLEW_1_2_7') || ctl.includes('XLEW_1_19_3') || ctl.includes('XLEW_1_20_3') || ctl.includes('XLEW_1_21_3'))) {
+                recalculationTimeout = setTimeout(performCalculation, 100);
+            } else {
+                performCalculation();
+            }
+        }
+
+        // Função que executa o cálculo
+        function performCalculation() {
+            co.XLEW_1_2_3 = parseFloat(document.formc.XLEW_1_2_3.value) || 0;
+            co.XLEW_1_2_7 = parseFloat(document.formc.XLEW_1_2_7.value) || 0;
+            co.XLEW_1_4_4 = document.formc.XLEW_1_4_4.value;
+            co.XLEW_1_7_4 = document.formc.XLEW_1_7_4.value;
+            co.p1E11 = document.formc.p1E11.value;
+            
+            // Atualizar faixa etária automaticamente quando a data de nascimento muda
+            if (document.formc.XLEW_1_7_4.value) {
+                updateAgeGroup();
+            }
+            
+            co.p1E16 = document.formc.p1E16.value;
+            co.XLEW_1_19_3 = parseFloat(document.formc.XLEW_1_19_3.value) || 0;
+            co.XLEW_1_20_3 = parseFloat(document.formc.XLEW_1_20_3.value) || 0;
+            co.XLEW_1_21_3 = parseFloat(document.formc.XLEW_1_21_3.value) || 0;
+            
+            calc(co);
+        }
+
+        // Função para copiar relatório
+        function copyReportToClipboard() {
+            var report = generateReport();
+            
+            navigator.clipboard.writeText(report).then(function() {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(function(err) {
+                console.error('Erro ao copiar: ', err);
+                // Fallback para navegadores mais antigos
+                var textArea = document.createElement("textarea");
+                textArea.value = report;
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                } catch (err) {
+                    console.error('Fallback: Erro ao copiar', err);
+                    if (typeof window.neopedCopyFail === 'function') window.neopedCopyFail(); else alert('Nao foi possivel copiar automaticamente. Revise o texto e copie manualmente para uso informativo.');
+                }
+                document.body.removeChild(textArea);
+            });
+        }
+
+        // Função para gerar relatório em texto puro
+        function generateReport() {
+            var nome = document.formc.XLEW_1_4_4.value || "Nao informado";
+            var peso = document.formc.XLEW_1_2_3.value || "Nao informado";
+            var altura = document.formc.XLEW_1_2_7.value || "Nao informado";
+            var dataNasc = document.formc.XLEW_1_7_4.value || "Nao informado";
+            var faixaEtaria = document.formc.p1E16.value || "Nao informado";
+            var pic = document.formc.XLEW_1_19_3.value || "Nao informado";
+            var picUnidade = document.formc.p1E11.value || "mmHg";
+            var pas = document.formc.XLEW_1_20_3.value || "Nao informado";
+            var pad = document.formc.XLEW_1_21_3.value || "Nao informado";
+            
+            var report = "RESUMO INFORMATIVO — NEUROINTENSIVISMO PEDIATRICO (EDUCATIVO)\n";
+            report += "==========================================\n\n";
+            report += "Data: " + today + "\n";
+            report += "Paciente: " + nome + "\n";
+            report += "Peso: " + peso + " kg\n";
+            report += "Altura: " + altura + " cm\n";
+            report += "Data de Nascimento: " + dataNasc + "\n";
+            report += "Idade: " + (co.XLEW_1_8_4 || "Nao calculada") + "\n";
+            report += "Faixa Etaria: " + faixaEtaria + "\n\n";
+            
+            report += "PARAMETROS VITAIS:\n";
+            report += "------------------\n";
+            report += "Pressao Intracraniana (PIC): " + pic + " " + picUnidade + "\n";
+            report += "Pressao Arterial Sistolica: " + pas + " mmHg\n";
+            report += "Pressao Arterial Diastolica: " + pad + " mmHg\n";
+            report += "Pressao Arterial Media: " + (co.XLEW_1_22_3 || 0).toFixed(1) + " mmHg\n";
+            report += "Pressao de Perfusao Cerebral: " + (co.XLEW_1_23_3 || 0).toFixed(1) + " mmHg\n";
+            report += "Status da PPC: " + (co.XLEW_1_24_1 || "Nao calculado") + "\n\n";
+            
+            report += "REFERENCIAIS POR FAIXA ETARIA:\n";
+            report += "------------------------------\n";
+            report += "Frequencia Cardiaca (acordado): " + (co.XLEW_1_20_5 || "Nao informado") + "\n";
+            report += "Frequencia Cardiaca (dormindo): " + (co.XLEW_1_22_5 || "Nao informado") + "\n";
+            report += "Frequencia Respiratoria: " + (co.XLEW_1_24_5 || "Nao informado") + "\n";
+            report += "Faixa PIC normal: " + (co.XLEW_1_18_5 || "Nao informado") + "\n";
+            report += "Definicao de hipotensao: " + (co.XLEW_1_26_5 || "Nao informado") + "\n\n";
+            
+            report += "INFORMACOES IMPORTANTES:\n";
+            report += "------------------------\n";
+            report += "PPC = PAM(1/3 PAS + 2/3 PAD) - PIC\n";
+            report += "PIC acima da qual tratamento deve ser iniciado: 15 a 25 mmHg\n";
+            report += "PIC > 20 mmHg que persiste por 5 min ou mais - TRATAR\n";
+            report += "Saturacao venosa do bulbo da jugular (SjvO2): 60% a 80%\n";
+            report += "Autorregulacao vascular mantem FSC entre PPC de 50 e 150 mmHg\n";
+            report += "PPC < 50 mmHg DIMINUI O FSC\n\n";
+            
+            report += "Bibliografia: Oddo M & Roux PL. Evidence-based practice of critical care 2010\n";
+            report = "NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n" + report;
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                report += "\n" + window.neopedLegalReportFooter().trim();
+            } else {
+                report += "\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.";
+            }
+            
+            return report;
+        }
+
+        // Função para mostrar notificação de cópia
+        function showCopyNotification() {
+            var notification = document.getElementById('copyNotification');
+            notification.style.display = 'block';
+            setTimeout(function() {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+
+
+        // Inicialização
+        window.onload = function() {
+            initializeToday();
+            try {
+                document.formc.XLEW_1_4_4.focus();
+            } catch(err) {}
+        };
+
+        // Funções do modal
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — Neurointensivismo (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta calculadora organiza parâmetros para estimativa educativa de pressão de perfusão cerebral em contexto pediátrico. O conteúdo é informativo e não substitui avaliação clínica, protocolo institucional ou prescrição.</p>
+                
+                <h3>Fórmula Principal</h3>
+                <div style="background: #f8f9fa; border-left: 4px solid #2c3e50; padding: 15px; margin: 15px 0; border-radius: 5px;">
+                    <strong>PPC = PAM - PIC</strong><br><br>
+                    Onde:<br>
+                    PAM = Pressão Arterial Média<br>
+                    PIC = Pressão Intracraniana
+                </div>
+
+                <h3>Parâmetros Avaliados</h3>
+                <ul>
+                    <li><strong>Pressão Arterial Sistólica:</strong> mmHg</li>
+                    <li><strong>Pressão Arterial Diastólica:</strong> mmHg</li>
+                    <li><strong>Pressão Intracraniana:</strong> mmHg</li>
+                    <li><strong>Idade:</strong> Anos</li>
+                    <li><strong>Peso:</strong> kg</li>
+                    <li><strong>Altura:</strong> cm</li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Preencha Dados:</strong> Nome, peso, altura, idade</li>
+                    <li><strong>Parâmetros Vitais:</strong> PAS, PAD, PIC</li>
+                    <li><strong>Calcule:</strong> Sistema calcula automaticamente</li>
+                    <li><strong>Interprete:</strong> Status da PPC</li>
+                    <li><strong>Monitore:</strong> Continuamente</li>
+                </ol>
+
+                <h3>Interpretação da PPC</h3>
+                <ul>
+                    <li><strong>PPC > 60 mmHg:</strong> Adequada</li>
+                    <li><strong>PPC 50-60 mmHg:</strong> Limítrofe</li>
+                    <li><strong>PPC < 50 mmHg:</strong> Inadequada</li>
+                </ul>
+
+                <h3>Critérios de Tratamento</h3>
+                <ul>
+                    <li><strong>PIC > 20 mmHg:</strong> Tratar se persistir 5 min</li>
+                    <li><strong>PPC < 50 mmHg:</strong> Tratamento imediato</li>
+                    <li><strong>SjvO₂ < 60%:</strong> Isquemia cerebral</li>
+                    <li><strong>SjvO₂ > 80%:</strong> Hiperemia</li>
+                </ul>
+
+                <h3>Limitações e Considerações</h3>
+                <ul>
+                    <li>Variações individuais</li>
+                    <li>Fatores não incluídos</li>
+                    <li>Interpretação clínica</li>
+                    <li>Protocolos específicos</li>
+                </ul>
+
+                <div style="background: #e8f5e9; border-left: 1px solid #e5e7eb; padding: 15px; margin: 15px 0; border-radius: 5px;">
+                    <strong>Referências:</strong><br>
+                    - Oddo M & Roux PL. Evidence-based practice of critical care 2010<br>
+                    - Guidelines for the acute medical management of severe traumatic brain injury in infants, children, and adolescents.
+                </div>
+            </div>
+        </div>
+    </div>
+<script src="../../js/neoped-datetime-fix.js"></script>
+<script src="../../js/neoped-nav.js"></script>
+</body>
+</html>

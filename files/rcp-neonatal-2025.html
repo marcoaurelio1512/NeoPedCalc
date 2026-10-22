@@ -1,0 +1,3232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — RCP Neonatal 2025 (educativo)</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #6b7280;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --info: #17a2b8;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --muted: #374151;
+            --ok: #28a745;
+            --bad: #dc3545;
+            --warn: #ffc107;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: var(--muted);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: var(--success);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        @media (min-width: 1920px) {
+            .container {
+                padding: 30px;
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .drugs-grid {
+                grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+                gap: 25px;
+            }
+            
+            .equipment-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 15px;
+            }
+            
+            .card {
+                padding: 25px;
+            }
+            
+            .header {
+                padding: 25px;
+            }
+        }
+
+        @media (min-width: 1600px) and (max-width: 1919px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+            
+            .drugs-grid {
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 20px;
+            }
+            
+            .equipment-grid {
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 12px;
+            }
+        }
+
+        @media (min-width: 2560px) {
+            .container {
+                max-width: 2400px;
+                padding: 40px;
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 35px;
+            }
+            
+            .drugs-grid {
+                grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+                gap: 30px;
+            }
+            
+            .equipment-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 18px;
+            }
+            
+            .card {
+                padding: 30px;
+            }
+            
+            .header {
+                padding: 30px;
+            }
+            
+            .header h1 {
+                font-size: 3rem;
+            }
+            
+            .drug-box {
+                min-height: 120px;
+            }
+            
+            .equipment-item {
+                min-height: 80px;
+            }
+        }
+
+        @media (min-width: 1400px) and (max-width: 1599px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+            
+            .drugs-grid {
+                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+                gap: 18px;
+            }
+            
+            .equipment-grid {
+                grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 100%;
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .drugs-grid {
+                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            }
+        }
+
+        @media (max-width: 992px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .card {
+                padding: 18px;
+            }
+            
+            .drugs-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 10px;
+        }
+
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+            max-width: 100%;
+        }
+
+        /* Ajuste específico para campo de data em mobile */
+        .form-group input[type="date"] {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.06);
+        }
+
+        .btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            background: #4b5563;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn.success {
+            background: var(--success);
+        }
+
+        .btn.success:hover {
+            background: #219a52;
+        }
+
+        .btn.danger {
+            background: var(--danger);
+        }
+
+        .btn.danger:hover {
+            background: #c0392b;
+        }
+
+        .btn.info {
+            background: var(--info);
+        }
+
+        .btn.info:hover {
+            background: #138496;
+        }
+
+        .btn:disabled {
+            background: var(--muted);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+
+        .info-box {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .info-box h4 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            border-left: 4px solid var(--secondary);
+            padding-left: 15px;
+        }
+
+        .drugs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            padding: 10px 0;
+            width: 100%;
+        }
+
+        @media (max-width: 1024px) {
+            .drugs-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .drugs-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 10px;
+            }
+        }
+
+        .drug-box {
+            background: #1a0f0f;
+            border: 2px solid var(--bad);
+            border-radius: 12px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+
+
+        .drug-box h4 {
+            color: var(--bad);
+            font-weight: bold;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .drug-box .dose {
+            color: white;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .drug-box .info {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .drug-box .timing {
+            color: var(--warn);
+            font-size: 0.8rem;
+            margin-top: 4px;
+        }
+
+        .drug-box .indication {
+            color: var(--muted);
+            font-size: 0.75rem;
+        }
+
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        @media (max-width: 1024px) {
+            .equipment-grid {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 8px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .equipment-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 6px;
+            }
+        }
+
+        .equipment-item {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.85rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .equipment-item h5 {
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .equipment-item .size {
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .procedure-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .procedure-item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            
+            .procedure-actions {
+                justify-content: center;
+            }
+        }
+
+        .procedure-item:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .procedure-item.completed {
+            background: #d4edda;
+            border-color: var(--success);
+        }
+
+        .procedure-item.repeatable {
+            background: #fff3cd;
+            border-color: var(--warning);
+        }
+
+        .procedure-info {
+            flex: 1;
+        }
+
+        .procedure-info h5 {
+            color: var(--dark);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .procedure-info p {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .procedure-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .countdown-timer {
+            background: var(--danger);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-indicator.completed {
+            background: var(--success);
+        }
+
+        .status-indicator.repeatable {
+            background: var(--warning);
+        }
+
+        .status-indicator.pending {
+            background: var(--muted);
+        }
+
+        .cronometro {
+            background: var(--danger);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .cronometro h4 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .cronometro input {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            width: 100%;
+        }
+
+        .cronometro input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .botao-desativado {
+            opacity: 0.5;
+            cursor: not-allowed !important;
+            pointer-events: none;
+        }
+
+        .cronometro-travado {
+            background: #6c757d !important;
+            color: #fff !important;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+            width: 100%;
+            max-width: none;
+        }
+
+        /* Força expansão em telas grandes */
+        @media (min-width: 1400px) {
+            .drug-box, .equipment-item, .procedure-item {
+                width: 100%;
+                max-width: none;
+            }
+            
+            .drugs-grid, .equipment-grid {
+                width: 100%;
+            }
+            
+            .card.full-width {
+                width: 100%;
+                max-width: none;
+            }
+            
+            #drogas_emergencia {
+                width: 100%;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 20px;
+            }
+        }
+
+        @media (min-width: 1920px) {
+            #drogas_emergencia {
+                grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+                gap: 25px;
+            }
+        }
+
+        @media (min-width: 2560px) {
+            #drogas_emergencia {
+                grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+                gap: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 15px;
+            }
+            
+            .card h2 {
+                font-size: 1.3rem;
+            }
+            
+            .section h3 {
+                font-size: 1.1rem;
+            }
+
+            /* Ajuste específico para campo de data em tablets e mobile */
+            .form-group input[type="date"] {
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+            
+            /* Centralizar e ajustar largura do campo de data de nascimento em mobile */
+            label[for="data_nascimento"] {
+                text-align: center;
+                display: block;
+            }
+            
+            #data_nascimento {
+                max-width: 200px;
+                margin: 0 auto;
+                display: block;
+            }
+            
+            /* Layout responsivo para dados do paciente */
+            .card div[style*="grid-template-columns: 1fr 1fr 1fr"] {
+                grid-template-columns: 1fr !important;
+                gap: 10px !important;
+            }
+            
+            /* Layout responsivo para cronômetro e horário */
+            .card div[style*="grid-template-columns: 1fr 1fr"] {
+                grid-template-columns: 1fr !important;
+                gap: 10px !important;
+            }
+        }
+
+        @media (max-width: 1024px) and (min-width: 769px) {
+            /* Layout de 2 colunas para tablets */
+            .card div[style*="grid-template-columns: 1fr 1fr 1fr"] {
+                grid-template-columns: 1fr 1fr !important;
+                gap: 12px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 8px;
+            }
+            
+            .header {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .card {
+                padding: 12px;
+                border-radius: 10px;
+            }
+            
+            .card h2 {
+                font-size: 1.2rem;
+            }
+            
+            .section h3 {
+                font-size: 1rem;
+            }
+
+            /* Ajuste específico para campo de data em smartphones */
+            .form-group input[type="date"] {
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+                font-size: 16px; /* Previne zoom no iOS */
+            }
+            
+            /* Centralizar e ajustar largura do campo de data de nascimento em smartphones */
+            label[for="data_nascimento"] {
+                text-align: center;
+                display: block;
+            }
+            
+            #data_nascimento {
+                max-width: 180px;
+                margin: 0 auto;
+                display: block;
+            }
+
+            /* Garantir que grids não causem overflow */
+            .card div[style*="grid-template-columns: 1fr 1fr"] {
+                grid-template-columns: 1fr !important;
+                gap: 10px !important;
+            }
+            
+            .drugs-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+                padding: 5px 0;
+            }
+            
+            .drug-box {
+                padding: 10px;
+                border-radius: 8px;
+            }
+            
+            .drug-box h4 {
+                font-size: 0.9rem;
+            }
+            
+            .drug-box .dose {
+                font-size: 0.8rem;
+            }
+            
+            .equipment-grid {
+                grid-template-columns: 1fr;
+                gap: 6px;
+            }
+            
+            .equipment-item {
+                padding: 8px;
+            }
+            
+            .equipment-item h5 {
+                font-size: 0.9rem;
+            }
+            
+            .btn {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+                margin: 2px;
+            }
+            
+            .form-group input, .form-group select {
+                padding: 8px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .container {
+                padding: 5px;
+            }
+            
+            .header {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.6rem;
+            }
+            
+            .card {
+                padding: 10px;
+            }
+
+            /* Ajuste específico para campo de data em telas muito pequenas */
+            .form-group input[type="date"] {
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+                font-size: 16px; /* Previne zoom no iOS */
+                padding: 8px;
+            }
+            
+            /* Centralizar e ajustar largura do campo de data de nascimento em telas muito pequenas */
+            label[for="data_nascimento"] {
+                text-align: center;
+                display: block;
+            }
+            
+            #data_nascimento {
+                max-width: 170px;
+                margin: 0 auto;
+                display: block;
+            }
+
+            /* Garantir que grids não causem overflow */
+            .card div[style*="grid-template-columns: 1fr 1fr"] {
+                grid-template-columns: 1fr !important;
+                gap: 8px !important;
+            }
+            
+            .drugs-grid {
+                grid-template-columns: 1fr;
+                gap: 6px;
+            }
+            
+            .drug-box {
+                padding: 8px;
+            }
+            
+            .equipment-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn {
+                padding: 6px 10px;
+                font-size: 0.75rem;
+            }
+        }
+
+        .close-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: #c0392b;
+            transform: scale(1.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .action-buttons {
+                gap: 8px;
+            }
+            
+            .action-buttons .btn {
+                flex: 1;
+                min-width: 140px;
+                max-width: 200px;
+            }
+        }
+
+        @media (min-width: 1600px) {
+            .action-buttons {
+                gap: 15px;
+            }
+            
+            .action-buttons .btn {
+                padding: 15px 30px;
+                font-size: 1.1rem;
+            }
+            
+            .drug-box {
+                min-height: 100px;
+            }
+            
+            .equipment-item {
+                min-height: 70px;
+            }
+        }
+
+        @media (min-width: 2560px) {
+            .action-buttons {
+                gap: 20px;
+            }
+            
+            .action-buttons .btn {
+                padding: 18px 35px;
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .action-buttons {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .action-buttons .btn {
+                width: 100%;
+                max-width: none;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🩺 RCP Neonatal 2025</h1>
+            <p>Calculadora de Emergência para Recém-Nascidos</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Dados do Paciente -->
+            <div class="card full-width">
+                <h2>👶 Dados do Recém-Nascido</h2>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div class="form-group">
+                        <label for="nome_paciente">Nome do RN</label>
+                        <input type="text" id="nome_paciente" placeholder="Ex: RN João Silva">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="peso">Peso (kg)</label>
+                        <input type="text" id="peso" placeholder="Ex: 3,200 ou 3.200" inputmode="decimal" autocomplete="off">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="idade_gestacional">IG (semanas)</label>
+                        <input type="number" id="idade_gestacional" placeholder="Ex: 38" min="22" max="42" step="1">
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div class="form-group">
+                        <label for="data_nascimento">Data Nascimento</label>
+                        <input type="date" id="data_nascimento">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="hora_inicio">Hora Início RCP</label>
+                        <input type="time" id="hora_inicio" style="border: none; background: transparent; font-weight: bold; color: var(--primary);">
+                        <div style="text-align: center; margin-top: 5px; font-size: 0.75rem; color: var(--muted);">
+                            ⚡ Preenchido automaticamente ao marcar "Avaliação Inicial"
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label for="cronometro">⏱️ Tempo de Parada</label>
+                        <input type="text" id="cronometro" readonly style="font-size: 0.9rem; font-weight: bold; color: var(--bad);">
+                        <div style="text-align: center; margin-top: 8px; font-size: 0.75rem; color: var(--muted);">
+                            ⚡ Inicia automaticamente ao marcar "Avaliação Inicial"
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="hora_avaliacao">🕐 Hora da Avaliação</label>
+                        <input type="text" id="hora_avaliacao" readonly style="font-size: 0.9rem; font-weight: bold; color: var(--primary);" placeholder="Não iniciada">
+                        <div style="text-align: center; margin-top: 8px; font-size: 0.75rem; color: var(--muted);">
+                            📅 Registra automaticamente o horário
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <!-- Drogas de Emergência -->
+            <div class="card full-width" id="card_drogas_neonatal" style="display:none;">
+                <h2>💊 DROGAS DE EMERGÊNCIA - NEONATAL</h2>
+                <div id="drogas_emergencia" class="drugs-grid">
+                    <!-- Será preenchido dinamicamente -->
+                </div>
+            </div>
+
+
+            <!-- Procedimentos e Medicamentos -->
+            <div class="card full-width">
+                <h2>🩺 Procedimentos e Medicamentos</h2>
+                <div class="section">
+                    <h3>📋 Avaliação Inicial</h3>
+                    <div id="avaliacao_inicial">
+                        <!-- Será preenchido dinamicamente -->
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>🌡️ Suporte Básico</h3>
+                    <div id="suporte">
+                        <!-- Será preenchido dinamicamente -->
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>🫁 Vias Aéreas</h3>
+                    <div id="vias_aereas">
+                        <!-- Será preenchido dinamicamente -->
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>🫁 Ventilação e Suporte Respiratório</h3>
+                    <div id="ventilacao">
+                        <!-- Será preenchido dinamicamente -->
+                    </div>
+                    <div id="equipamentos_vias_aereas">
+                        <!-- Equipamentos para vias aéreas -->
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>💓 Compressões e Circulação</h3>
+                    <div id="compressoes">
+                        <!-- Será preenchido dinamicamente -->
+                    </div>
+                    <div id="equipamentos_compressoes">
+                        <!-- Equipamentos para compressões -->
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>💉 Medicamentos</h3>
+                    <div id="medicamentos">
+                        <!-- Será preenchido dinamicamente -->
+                    </div>
+                    <div id="equipamentos_medicamentos">
+                        <!-- Equipamentos para medicamentos -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Desfecho da PCR -->
+            <div class="card full-width" id="desfechoCard">
+                <h2>🏁 DESFECHO DA PCR</h2>
+                <div style="display: flex; flex-direction: column; gap: 15px; align-items: center; padding: 20px 0;">
+                    <p style="text-align: center; color: var(--text); font-size: 1.1rem; margin: 0;">
+                        Registre o desfecho da Reanimação Cardio Pulmonar:
+                    </p>
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+                        <button class="btn success" onclick="finalizarPCRNeonatal('recuperacao')" id="btnRecuperacao" style="padding: 15px 30px; font-size: 1.2rem; font-weight: bold; min-width: 150px;">
+                            ✅ RECUPERAÇÃO
+                        </button>
+                        <button class="btn danger" onclick="finalizarPCRNeonatal('obito')" id="btnObito" style="padding: 15px 30px; font-size: 1.2rem; font-weight: bold; min-width: 150px;">
+                            ❌ ÓBITO
+                        </button>
+                    </div>
+                    <div id="desfechoRegistrado" style="margin-top: 10px; padding: 15px; background: rgba(33, 192, 139, 0.1); border: 1px solid rgba(33, 192, 139, 0.3); border-radius: 8px; display: none; text-align: center; width: 100%; max-width: 500px;">
+                        <p style="margin: 0; color: var(--ok); font-weight: bold;">
+                            Desfecho registrado com sucesso!
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        
+        <!-- Botões de Ação -->
+        <div class="card full-width" style="margin-top: 20px;">
+            <div style="text-align: center;">
+                <span class="version-badge" style="margin-bottom: 15px; display: inline-block;">Versão 2025 - NRP Guidelines</span>
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;" class="action-buttons">
+                    <button class="btn info" onclick="mostrarREADME()">Como usar</button>
+                    <button class="btn success" onclick="salvarPaciente()">💾 Salvar Paciente</button>
+                    <button class="btn" onclick="carregarPaciente()">📁 Carregar Paciente</button>
+                    <button class="btn danger" onclick="gerarECopiarRelatorio()">📋 Copiar texto informativo</button>
+                    <button class="btn danger" onclick="limparTodosDados()" style="background: #dc3545; border-color: #dc3545;">🗑️ Limpar Tudo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // Variáveis globais
+        let drogasEmergenciaAdministradas = {};
+        let procedimentosRealizados = {};
+        let cronometroInterval = null;
+        let tempoInicio = null;
+        let countdownTimers = {};
+        let desfechoPCR = null;
+        
+        // Inicializar variáveis se não existirem
+        if (typeof procedimentosRealizados === 'undefined') {
+            procedimentosRealizados = {};
+        }
+        if (typeof drogasEmergenciaAdministradas === 'undefined') {
+            drogasEmergenciaAdministradas = {};
+        }
+
+        // Configuração de drogas neonatais
+        const DROGAS_CONFIG = {
+            epinefrina_iv: { dose: 0.01, unidade: 'mg/kg', concentracao: 0.1, unidade_conc: 'mg/mL' },
+            epinefrina_ett: { dose: 0.1, unidade: 'mg/kg', concentracao: 1, unidade_conc: 'mg/mL' },
+            atropina: { dose: 0.02, unidade: 'mg/kg', concentracao: 0.5, unidade_conc: 'mg/mL' },
+            naloxona: { dose: 0.1, unidade: 'mg/kg', concentracao: 0.4, unidade_conc: 'mg/mL' },
+            bicarbonato: { dose: 1, unidade: 'mEq/kg', concentracao: 1, unidade_conc: 'mEq/mL' },
+            glicose10: { dose: 2, unidade: 'mL/kg', concentracao: 100, unidade_conc: 'mg/dL' },
+            glicose25: { dose: 2, unidade: 'mL/kg', concentracao: 250, unidade_conc: 'mg/dL' },
+            calcio: { dose: 20, unidade: 'mg/kg', concentracao: 100, unidade_conc: 'mg/mL' }
+        };
+
+        // Procedimentos neonatais
+        const PROCEDIMENTOS = {
+            avaliacao_inicial: {
+                id: 'avaliacao_inicial',
+                nome: 'Avaliação Inicial (ABC)',
+                descricao: 'Respiração, Frequência Cardíaca, Tônus',
+                categoria: 'avaliacao_inicial',
+                ordem: 1
+            },
+            aquecimento: {
+                id: 'aquecimento',
+                nome: 'Aquecimento e Posicionamento',
+                descricao: 'Manter temperatura corporal adequada',
+                categoria: 'suporte',
+                ordem: 2
+            },
+            desobstrucao: {
+                id: 'desobstrucao',
+                nome: 'Desobstrução das Vias Aéreas',
+                descricao: 'Aspiração suave se necessário',
+                categoria: 'vias_aereas',
+                ordem: 3
+            },
+            ventilacao_positiva: {
+                id: 'ventilacao_positiva',
+                nome: 'Ventilação com Pressão Positiva',
+                descricao: 'VPP com máscara ou TET',
+                categoria: 'ventilacao',
+                ordem: 4
+            },
+            compressoes_toracicas: {
+                id: 'compressoes_toracicas',
+                nome: 'Compressões Torácicas',
+                descricao: 'FC < 60 bpm após VPP eficaz',
+                categoria: 'compressoes',
+                ordem: 5
+            },
+            epinefrina: {
+                id: 'epinefrina',
+                nome: 'Epinefrina IV/IO',
+                descricao: '0,01 mg/kg (0,1 mg/mL)',
+                categoria: 'medicamentos',
+                ordem: 6
+            },
+            epinefrina_2: {
+                id: 'epinefrina_2',
+                nome: 'Epinefrina 2ª dose',
+                descricao: 'Repetir a cada 3-5 min',
+                categoria: 'medicamentos',
+                repetivel: true,
+                ordem: 7,
+                dependente: 'epinefrina',
+                maxRepeticoes: 10
+            },
+            epinefrina_3: {
+                id: 'epinefrina_3',
+                nome: 'Epinefrina 3ª dose',
+                descricao: 'Repetir a cada 3-5 min',
+                categoria: 'medicamentos',
+                repetivel: true,
+                ordem: 8,
+                dependente: 'epinefrina_2',
+                maxRepeticoes: 10
+            },
+            epinefrina_4: {
+                id: 'epinefrina_4',
+                nome: 'Epinefrina 4ª dose',
+                descricao: 'Repetir a cada 3-5 min',
+                categoria: 'medicamentos',
+                repetivel: true,
+                ordem: 9,
+                dependente: 'epinefrina_3',
+                maxRepeticoes: 10
+            },
+            epinefrina_5: {
+                id: 'epinefrina_5',
+                nome: 'Epinefrina 5ª dose',
+                descricao: 'Repetir a cada 3-5 min',
+                categoria: 'medicamentos',
+                repetivel: true,
+                ordem: 10,
+                dependente: 'epinefrina_4',
+                maxRepeticoes: 10
+            },
+            epinefrina_6: {
+                id: 'epinefrina_6',
+                nome: 'Epinefrina 6ª dose',
+                descricao: 'Repetir a cada 3-5 min',
+                categoria: 'medicamentos',
+                repetivel: true,
+                ordem: 11,
+                dependente: 'epinefrina_5',
+                maxRepeticoes: 10
+            },
+            epinefrina_7: {
+                id: 'epinefrina_7',
+                nome: 'Epinefrina 7ª dose',
+                descricao: 'Repetir a cada 3-5 min',
+                categoria: 'medicamentos',
+                repetivel: true,
+                ordem: 12,
+                dependente: 'epinefrina_6',
+                maxRepeticoes: 10
+            },
+            epinefrina_8: {
+                id: 'epinefrina_8',
+                nome: 'Epinefrina 8ª dose',
+                descricao: 'Repetir a cada 3-5 min',
+                categoria: 'medicamentos',
+                repetivel: true,
+                ordem: 13,
+                dependente: 'epinefrina_7',
+                maxRepeticoes: 10
+            },
+            epinefrina_9: {
+                id: 'epinefrina_9',
+                nome: 'Epinefrina 9ª dose',
+                descricao: 'Repetir a cada 3-5 min',
+                categoria: 'medicamentos',
+                repetivel: true,
+                ordem: 14,
+                dependente: 'epinefrina_8',
+                maxRepeticoes: 10
+            },
+            epinefrina_10: {
+                id: 'epinefrina_10',
+                nome: 'Epinefrina 10ª dose',
+                descricao: 'Repetir a cada 3-5 min',
+                categoria: 'medicamentos',
+                repetivel: true,
+                ordem: 15,
+                dependente: 'epinefrina_9',
+                maxRepeticoes: 10
+            },
+            atropina: {
+                id: 'atropina',
+                nome: 'Atropina',
+                descricao: '0,02 mg/kg (dose mín: 0,1 mg)',
+                categoria: 'medicamentos',
+                ordem: 16
+            },
+            bicarbonato: {
+                id: 'bicarbonato',
+                nome: 'Bicarbonato de Sódio',
+                descricao: '1 mEq/kg (1 mEq/mL)',
+                categoria: 'medicamentos',
+                ordem: 17
+            },
+            naloxona: {
+                id: 'naloxona',
+                nome: 'Naloxona',
+                descricao: '0,1 mg/kg (0,4 mg/mL)',
+                categoria: 'medicamentos',
+                ordem: 18
+            },
+            glicose: {
+                id: 'glicose',
+                nome: 'Glicose 10%',
+                descricao: '2 mL/kg (100 mg/dL)',
+                categoria: 'medicamentos',
+                ordem: 19
+            },
+            glicose_2: {
+                id: 'glicose_2',
+                nome: 'Glicose 10% 2ª dose',
+                descricao: 'Repetir se necessário',
+                categoria: 'medicamentos',
+                repetivel: true,
+                ordem: 20,
+                dependente: 'glicose',
+                maxRepeticoes: 3
+            },
+            glicose_3: {
+                id: 'glicose_3',
+                nome: 'Glicose 10% 3ª dose',
+                descricao: 'Repetir se necessário',
+                categoria: 'medicamentos',
+                repetivel: true,
+                ordem: 21,
+                dependente: 'glicose_2',
+                maxRepeticoes: 3
+            },
+            calcio: {
+                id: 'calcio',
+                nome: 'Cloreto de Cálcio',
+                descricao: '20 mg/kg (100 mg/mL)',
+                categoria: 'medicamentos',
+                ordem: 22
+            }
+        };
+
+        // ========================================
+        // FUNÇÕES UTILITÁRIAS PARA PESO NEONATAL
+        // ========================================
+        
+        // Função para obter e normalizar o peso em kg (aceita vírgula ou ponto)
+        function obterPesoNeonatalEmKg() {
+            const input = document.getElementById('peso');
+            if (!input) return null;
+            
+            let valorBruto = (input.value || '').trim();
+            if (!valorBruto) return null;
+            
+            // Aceitar vírgula ou ponto
+            valorBruto = valorBruto.replace(',', '.');
+            // Remover espaços
+            valorBruto = valorBruto.replace(/\s+/g, '');
+            
+            const peso = parseFloat(valorBruto);
+            if (isNaN(peso) || peso <= 0) {
+                return null;
+            }
+            
+            return peso; // sempre Number em kg
+        }
+        
+        // Função para formatar peso para exibição em padrão brasileiro
+        function formatarPesoNeonatalParaExibicao(peso) {
+            if (peso == null || isNaN(peso)) return '-';
+            try {
+                return peso.toLocaleString('pt-BR', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 3
+                }) + ' kg';
+            } catch (e) {
+                return peso.toFixed(2) + ' kg';
+            }
+        }
+
+        // Função para calcular e exibir drogas de emergência
+        function calcularDrogas() {
+            const peso = obterPesoNeonatalEmKg();
+            
+            if (!peso || peso < 0.2) {
+                document.getElementById('drogas_emergencia').innerHTML = `
+                    <div style="text-align: center; color: var(--muted); padding: 30px; grid-column: 1 / -1; background: #f8f9fa; border-radius: 12px; border: 2px dashed #dee2e6;">
+                        <div style="font-size: 1.2rem; margin-bottom: 10px;">⚠️</div>
+                        <div style="font-weight: 600;">Informe o peso do recém-nascido para calcular as doses</div>
+                        <div style="font-size: 0.9rem; margin-top: 5px;">Peso mínimo: 0.2 kg (200g)</div>
+                    </div>
+                `;
+                return;
+            }
+
+            let htmlEmergencia = '';
+            
+            // 1. EPINEFRINA IV/IO
+            const epinefrinaIV = peso * 0.01; // 0,01 mg/kg
+            const epinefrinaIV_mL = epinefrinaIV / 0.1; // 0,1 mg/mL
+            const epinefrinaIVHorarios = drogasEmergenciaAdministradas['epinefrina_iv'] || [];
+            const epinefrinaIVStatus = epinefrinaIVHorarios.length > 0 ? '✅' : '⏱️';
+            const epinefrinaIVHorariosText = epinefrinaIVHorarios.length > 0 ? 
+                `<div style="color: var(--ok); font-size: 0.75rem; margin-top: 4px;">${epinefrinaIVHorarios.join(', ')}</div>` : '';
+            htmlEmergencia += `
+                <div class="drug-box">
+                    <div style="color: var(--bad); font-weight: bold; font-size: 1.1rem; margin-bottom: 8px;">EPINEFRINA IV/IO ${epinefrinaIVStatus}</div>
+                    <div style="color: white; font-size: 1rem; font-weight: bold; margin-bottom: 4px;">${epinefrinaIV_mL.toFixed(2)} mL</div>
+                    <div style="color: var(--muted); font-size: 0.9rem; margin-bottom: 6px;">${epinefrinaIV.toFixed(3)} mg (0,01 mg/kg)</div>
+                    <div style="color: var(--warn); font-size: 0.8rem; margin-bottom: 4px;">⏱️ Repetir a cada 3-5 min</div>
+                    <div style="color: var(--muted); font-size: 0.75rem; margin-bottom: 4px;">Via: IV/IO - Conc: 0,1 mg/mL</div>
+                    ${epinefrinaIVHorariosText}
+                </div>
+            `;
+            
+            // 2. EPINEFRINA ETT
+            const epinefrinaETT = peso * 0.1; // 0,1 mg/kg
+            const epinefrinaETT_mL = epinefrinaETT / 1; // 1 mg/mL
+            const epinefrinaETTHorarios = drogasEmergenciaAdministradas['epinefrina_ett'] || [];
+            const epinefrinaETTStatus = epinefrinaETTHorarios.length > 0 ? '✅' : '⏱️';
+            const epinefrinaETTHorariosText = epinefrinaETTHorarios.length > 0 ? 
+                `<div style="color: var(--ok); font-size: 0.75rem; margin-top: 4px;">${epinefrinaETTHorarios.join(', ')}</div>` : '';
+            htmlEmergencia += `
+                <div class="drug-box">
+                    <div style="color: var(--bad); font-weight: bold; font-size: 1.1rem; margin-bottom: 8px;">EPINEFRINA ETT ${epinefrinaETTStatus}</div>
+                    <div style="color: white; font-size: 1rem; font-weight: bold; margin-bottom: 4px;">${epinefrinaETT_mL.toFixed(2)} mL</div>
+                    <div style="color: var(--muted); font-size: 0.9rem; margin-bottom: 6px;">${epinefrinaETT.toFixed(2)} mg (0,1 mg/kg)</div>
+                    <div style="color: var(--warn); font-size: 0.8rem; margin-bottom: 4px;">⏱️ Via endotraqueal (diluir em 2-3 mL SF)</div>
+                    <div style="color: var(--muted); font-size: 0.75rem; margin-bottom: 4px;">Alternativa quando IV/IO não disponível</div>
+                    ${epinefrinaETTHorariosText}
+                </div>
+            `;
+            
+            // 3. ATROPINA
+            const atropina = peso * 0.02; // 0,02 mg/kg
+            const atropina_mL = atropina / 0.5; // 0,5 mg/mL
+            const atropinaHorarios = drogasEmergenciaAdministradas['atropina'] || [];
+            const atropinaStatus = atropinaHorarios.length > 0 ? '✅' : '⏱️';
+            const atropinaHorariosText = atropinaHorarios.length > 0 ? 
+                `<div style="color: var(--ok); font-size: 0.75rem; margin-top: 4px;">${atropinaHorarios.join(', ')}</div>` : '';
+            htmlEmergencia += `
+                <div class="drug-box">
+                    <div style="color: var(--bad); font-weight: bold; font-size: 1.1rem; margin-bottom: 8px;">ATROPINA ${atropinaStatus}</div>
+                    <div style="color: #dc3545; font-weight: bold; font-size: 0.85rem; margin-bottom: 6px; text-align: center; padding: 4px; background-color: rgba(220, 53, 69, 0.1); border-radius: 4px;">Medicação não padronizada nos protocolos de REANIMAÇÃO NEONATAL. Usar somente com critério clínico e se extremamente necessário.</div>
+                    <div style="color: white; font-size: 1rem; font-weight: bold; margin-bottom: 4px;">${atropina_mL.toFixed(2)} mL</div>
+                    <div style="color: var(--muted); font-size: 0.9rem; margin-bottom: 6px;">${atropina.toFixed(3)} mg (0,02 mg/kg)</div>
+                    <div style="color: var(--warn); font-size: 0.8rem; margin-bottom: 4px;">⏱️ Dose mínima: 0,1 mg</div>
+                    <div style="color: var(--muted); font-size: 0.75rem; margin-bottom: 4px;">Indicação: Bradicardia - Conc: 0,5 mg/mL</div>
+                    ${atropinaHorariosText}
+                </div>
+            `;
+            
+            // 4. NALOXONA
+            const naloxona = peso * 0.1; // 0,1 mg/kg
+            const naloxona_mL = naloxona / 0.4; // 0,4 mg/mL
+            const naloxonaHorarios = drogasEmergenciaAdministradas['naloxona'] || [];
+            const naloxonaStatus = naloxonaHorarios.length > 0 ? '✅' : '⏱️';
+            const naloxonaHorariosText = naloxonaHorarios.length > 0 ? 
+                `<div style="color: var(--ok); font-size: 0.75rem; margin-top: 4px;">${naloxonaHorarios.join(', ')}</div>` : '';
+            htmlEmergencia += `
+                <div class="drug-box">
+                    <div style="color: var(--bad); font-weight: bold; font-size: 1.1rem; margin-bottom: 8px;">NALOXONA ${naloxonaStatus}</div>
+                    <div style="color: #dc3545; font-weight: bold; font-size: 0.85rem; margin-bottom: 6px; text-align: center; padding: 4px; background-color: rgba(220, 53, 69, 0.1); border-radius: 4px;">Medicação não padronizada nos protocolos de REANIMAÇÃO NEONATAL. Usar somente com critério clínico e se extremamente necessário.</div>
+                    <div style="color: white; font-size: 1rem; font-weight: bold; margin-bottom: 4px;">${naloxona_mL.toFixed(2)} mL</div>
+                    <div style="color: var(--muted); font-size: 0.9rem; margin-bottom: 6px;">${naloxona.toFixed(2)} mg (0,1 mg/kg)</div>
+                    <div style="color: var(--warn); font-size: 0.8rem; margin-bottom: 4px;">⏱️ Reversão de opioides</div>
+                    <div style="color: var(--muted); font-size: 0.75rem; margin-bottom: 4px;">Indicação: Depressão respiratória - Conc: 0,4 mg/mL</div>
+                    ${naloxonaHorariosText}
+                </div>
+            `;
+            
+            // 5. BICARBONATO
+            const bicarbonato = peso * 1; // 1 mEq/kg
+            const bicarbonato_mL = bicarbonato / 1; // 1 mEq/mL
+            const bicarbonatoHorarios = drogasEmergenciaAdministradas['bicarbonato'] || [];
+            const bicarbonatoStatus = bicarbonatoHorarios.length > 0 ? '✅' : '⏱️';
+            const bicarbonatoHorariosText = bicarbonatoHorarios.length > 0 ? 
+                `<div style="color: var(--ok); font-size: 0.75rem; margin-top: 4px;">${bicarbonatoHorarios.join(', ')}</div>` : '';
+            htmlEmergencia += `
+                <div class="drug-box">
+                    <div style="color: var(--bad); font-weight: bold; font-size: 1.1rem; margin-bottom: 8px;">BICARBONATO DE SÓDIO ${bicarbonatoStatus}</div>
+                    <div style="color: #dc3545; font-weight: bold; font-size: 0.85rem; margin-bottom: 6px; text-align: center; padding: 4px; background-color: rgba(220, 53, 69, 0.1); border-radius: 4px;">Medicação não padronizada nos protocolos de REANIMAÇÃO NEONATAL. Usar somente com critério clínico e se extremamente necessário.</div>
+                    <div style="color: white; font-size: 1rem; font-weight: bold; margin-bottom: 4px;">${bicarbonato_mL.toFixed(1)} mL</div>
+                    <div style="color: var(--muted); font-size: 0.9rem; margin-bottom: 6px;">${bicarbonato.toFixed(1)} mEq (1 mEq/kg)</div>
+                    <div style="color: var(--warn); font-size: 0.8rem; margin-bottom: 4px;">⏱️ Acidose grave</div>
+                    <div style="color: var(--muted); font-size: 0.75rem; margin-bottom: 4px;">Indicação: Acidose metabólica - Conc: 1 mEq/mL</div>
+                    ${bicarbonatoHorariosText}
+                </div>
+            `;
+            
+            // 6. GLICOSE 10%
+            const glicose10 = peso * 2; // 2 mL/kg
+            const glicose10Horarios = drogasEmergenciaAdministradas['glicose10'] || [];
+            const glicose10Status = glicose10Horarios.length > 0 ? '✅' : '⏱️';
+            const glicose10HorariosText = glicose10Horarios.length > 0 ? 
+                `<div style="color: var(--ok); font-size: 0.75rem; margin-top: 4px;">${glicose10Horarios.join(', ')}</div>` : '';
+            htmlEmergencia += `
+                <div class="drug-box">
+                    <div style="color: var(--bad); font-weight: bold; font-size: 1.1rem; margin-bottom: 8px;">GLICOSE 10% ${glicose10Status}</div>
+                    <div style="color: #dc3545; font-weight: bold; font-size: 0.85rem; margin-bottom: 6px; text-align: center; padding: 4px; background-color: rgba(220, 53, 69, 0.1); border-radius: 4px;">Medicação não padronizada nos protocolos de REANIMAÇÃO NEONATAL. Usar somente com critério clínico e se extremamente necessário.</div>
+                    <div style="color: white; font-size: 1rem; font-weight: bold; margin-bottom: 4px;">${glicose10.toFixed(1)} mL</div>
+                    <div style="color: var(--muted); font-size: 0.9rem; margin-bottom: 6px;">${glicose10.toFixed(1)} mL (2 mL/kg)</div>
+                    <div style="color: var(--warn); font-size: 0.8rem; margin-bottom: 4px;">⏱️ Hipoglicemia</div>
+                    <div style="color: var(--muted); font-size: 0.75rem; margin-bottom: 4px;">Indicação: Glicemia < 45 mg/dL - Conc: 100 mg/dL</div>
+                    ${glicose10HorariosText}
+                </div>
+            `;
+            
+            // 7. CLORETO DE CÁLCIO
+            const calcio = peso * 20; // 20 mg/kg
+            const calcio_mL = calcio / 100; // 100 mg/mL
+            const calcioHorarios = drogasEmergenciaAdministradas['calcio'] || [];
+            const calcioStatus = calcioHorarios.length > 0 ? '✅' : '⏱️';
+            const calcioHorariosText = calcioHorarios.length > 0 ? 
+                `<div style="color: var(--ok); font-size: 0.75rem; margin-top: 4px;">${calcioHorarios.join(', ')}</div>` : '';
+            htmlEmergencia += `
+                <div class="drug-box">
+                    <div style="color: var(--bad); font-weight: bold; font-size: 1.1rem; margin-bottom: 8px;">CLORETO DE CÁLCIO ${calcioStatus}</div>
+                    <div style="color: #dc3545; font-weight: bold; font-size: 0.85rem; margin-bottom: 6px; text-align: center; padding: 4px; background-color: rgba(220, 53, 69, 0.1); border-radius: 4px;">Medicação não padronizada nos protocolos de REANIMAÇÃO NEONATAL. Usar somente com critério clínico e se extremamente necessário.</div>
+                    <div style="color: white; font-size: 1rem; font-weight: bold; margin-bottom: 4px;">${calcio_mL.toFixed(2)} mL</div>
+                    <div style="color: var(--muted); font-size: 0.9rem; margin-bottom: 6px;">${calcio.toFixed(1)} mg (20 mg/kg)</div>
+                    <div style="color: var(--warn); font-size: 0.8rem; margin-bottom: 4px;">⏱️ Hipocalcemia/Hipercalemia</div>
+                    <div style="color: var(--muted); font-size: 0.75rem; margin-bottom: 4px;">Indicação: Calcemia < 7 mg/dL - Conc: 100 mg/mL</div>
+                    ${calcioHorariosText}
+                </div>
+            `;
+            
+            document.getElementById('drogas_emergencia').innerHTML = htmlEmergencia;
+        }
+
+        // Função para marcar procedimento
+        function marcarProcedimento(categoria, id) {
+            console.log('Marcando procedimento:', categoria, id);
+            
+            // Garantir que a variável existe
+            if (typeof procedimentosRealizados === 'undefined') {
+                procedimentosRealizados = {};
+            }
+            
+            const procedimento = PROCEDIMENTOS[id];
+            if (!procedimento) return;
+            
+            const button = document.querySelector(`[data-procedimento="${id}"]`);
+            if (button) {
+                // Registrar horário do procedimento
+                const agora = new Date();
+                const horaFormatada = agora.toLocaleTimeString('pt-BR', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                
+                button.disabled = true;
+                button.classList.add('completed');
+                button.innerHTML = `✅ ${procedimento.nome}`;
+                
+                // Salvar horário do procedimento
+                if (!procedimentosRealizados) {
+                    procedimentosRealizados = {};
+                }
+                if (!procedimentosRealizados[id]) {
+                    procedimentosRealizados[id] = [];
+                }
+                procedimentosRealizados[id].push(horaFormatada);
+                localStorage.setItem('rcp_procedimentos_realizados', JSON.stringify(procedimentosRealizados));
+                
+                // Iniciar cronômetro principal se for avaliação inicial
+                if (id === 'avaliacao_inicial' && !cronometroInterval) {
+                    console.log('Iniciando cronômetro de tempo de parada...');
+                    
+                    // Registrar horário da avaliação
+                    document.getElementById('hora_avaliacao').value = horaFormatada;
+                    
+                    // Marcar automaticamente a Hora Início RCP
+                    const horaInicioFormatada = agora.toTimeString().substring(0, 5); // Formato HH:MM
+                    document.getElementById('hora_inicio').value = horaInicioFormatada;
+                    
+                    // Salvar no localStorage
+                    localStorage.setItem('rcp_hora_avaliacao', horaFormatada);
+                    localStorage.setItem('rcp_hora_inicio', horaInicioFormatada);
+                    
+                    iniciarCronometro();
+                }
+                
+                // Iniciar cronômetro regressivo para procedimentos com múltiplas doses
+                const procedimentosComCountdown = {
+                    'epinefrina': 'epinefrina_2',
+                    'epinefrina_2': 'epinefrina_3',
+                    'epinefrina_3': 'epinefrina_4',
+                    'epinefrina_4': 'epinefrina_5',
+                    'epinefrina_5': 'epinefrina_6',
+                    'epinefrina_6': 'epinefrina_7',
+                    'epinefrina_7': 'epinefrina_8',
+                    'epinefrina_8': 'epinefrina_9',
+                    'epinefrina_9': 'epinefrina_10',
+                    'glicose': 'glicose_2',
+                    'glicose_2': 'glicose_3'
+                };
+                
+                if (procedimentosComCountdown[id]) {
+                    console.log('Iniciando countdown para próximo procedimento:', procedimentosComCountdown[id]);
+                    // Aguardar um pouco para o DOM ser atualizado
+                    setTimeout(() => {
+                        iniciarCountdown(categoria, procedimentosComCountdown[id]);
+                    }, 100);
+                }
+                
+                // Regenerar procedimentos para mostrar mudanças
+                setTimeout(() => {
+                    gerarProcedimentos();
+                }, 100);
+                
+                salvarDadosLocal();
+            }
+        }
+
+        // Função para iniciar countdown
+        function iniciarCountdown(categoria, procedimentoId) {
+            console.log('Iniciando countdown para:', categoria, procedimentoId);
+            const chave = `${categoria}_${procedimentoId}`;
+            const tempoInicial = 3 * 60; // 3 minutos em segundos
+            let tempoRestante = tempoInicial;
+            
+            // Limpar timer anterior se existir
+            if (countdownTimers[chave]) {
+                clearInterval(countdownTimers[chave].interval);
+            }
+            
+            // Salvar estado do timer para persistência
+            countdownTimers[chave] = {
+                ativo: true,
+                tempoRestante: tempoInicial,
+                categoria: categoria,
+                procedimentoId: procedimentoId,
+                tempoInicio: new Date().getTime(),
+                interval: null
+            };
+            
+            // Atualizar botão para mostrar cronômetro
+            const botao = document.querySelector(`[data-procedimento="${procedimentoId}"]`);
+            console.log('Seletor usado:', `[data-procedimento="${procedimentoId}"]`);
+            console.log('Botão encontrado:', botao);
+            if (botao) {
+                botao.disabled = true;
+                botao.innerHTML = `Aguardando ${Math.floor(tempoRestante / 60)}:${(tempoRestante % 60).toString().padStart(2, '0')}`;
+                botao.style.backgroundColor = 'var(--muted)';
+                botao.style.cursor = 'not-allowed';
+            }
+            
+            // Iniciar cronômetro
+            countdownTimers[chave].interval = setInterval(() => {
+                countdownTimers[chave].tempoRestante--;
+                
+                if (countdownTimers[chave].tempoRestante <= 0) {
+                    // Tempo esgotado - liberar próximo procedimento
+                    clearInterval(countdownTimers[chave].interval);
+                    delete countdownTimers[chave];
+                    
+                    // Salvar dados após finalizar countdown
+                    salvarDadosLocal();
+                    
+                    // Regenerar interface para liberar próximos botões
+                    setTimeout(() => {
+                        gerarProcedimentos();
+                    }, 100);
+                } else {
+                    // Regenerar interface a cada segundo para mostrar countdown em tempo real
+                    gerarProcedimentos();
+                    
+                    // Salvar dados a cada 5 segundos durante o countdown
+                    if (countdownTimers[chave].tempoRestante % 5 === 0) {
+                        salvarDadosLocal();
+                    }
+                }
+            }, 1000);
+            
+            // Salvar dados imediatamente após iniciar countdown
+            salvarDadosLocal();
+        }
+
+        // Função para restaurar countdown timer
+        function restaurarCountdownTimer(categoria, procedimentoId, tempoRestante) {
+            console.log(`Restaurando countdown para ${procedimentoId} com ${tempoRestante} segundos restantes`);
+            const chave = `${categoria}_${procedimentoId}`;
+            
+            // Limpar timer anterior se existir
+            if (countdownTimers[chave]) {
+                clearInterval(countdownTimers[chave].interval);
+            }
+            
+            // Salvar estado do timer para persistência
+            countdownTimers[chave] = {
+                ativo: true,
+                tempoRestante: tempoRestante,
+                categoria: categoria,
+                procedimentoId: procedimentoId,
+                tempoInicio: new Date().getTime(),
+                interval: null
+            };
+            
+            // Atualizar botão para mostrar cronômetro
+            const botao = document.querySelector(`[data-procedimento="${procedimentoId}"]`);
+            if (botao) {
+                botao.disabled = true;
+                botao.innerHTML = `Aguardando ${Math.floor(tempoRestante / 60)}:${(tempoRestante % 60).toString().padStart(2, '0')}`;
+                botao.style.backgroundColor = 'var(--muted)';
+                botao.style.cursor = 'not-allowed';
+            }
+            
+            // Iniciar cronômetro
+            countdownTimers[chave].interval = setInterval(() => {
+                countdownTimers[chave].tempoRestante--;
+                
+                if (countdownTimers[chave].tempoRestante <= 0) {
+                    // Tempo esgotado - liberar próximo procedimento
+                    clearInterval(countdownTimers[chave].interval);
+                    delete countdownTimers[chave];
+                    
+                    // Salvar dados após finalizar countdown
+                    salvarDadosLocal();
+                    
+                    // Regenerar interface para liberar próximos botões
+                    setTimeout(() => {
+                        gerarProcedimentos();
+                    }, 100);
+                } else {
+                    // Regenerar interface a cada segundo para mostrar countdown em tempo real
+                    gerarProcedimentos();
+                    
+                    // Salvar dados a cada 5 segundos durante o countdown
+                    if (countdownTimers[chave].tempoRestante % 5 === 0) {
+                        salvarDadosLocal();
+                    }
+                }
+            }, 1000);
+            
+            // Salvar dados imediatamente após restaurar countdown
+            salvarDadosLocal();
+        }
+
+        // Função para iniciar cronômetro principal
+        function iniciarCronometro() {
+            if (cronometroInterval) return; // Já está rodando
+            
+            const campoCronometro = document.getElementById('cronometro');
+            if (!campoCronometro) {
+                console.error('Campo cronômetro não encontrado!');
+                return;
+            }
+            
+            // ✅ Ao iniciar uma nova PCR, destravar o cronômetro e limpar estado anterior
+            if (campoCronometro.dataset.travado === 'true') {
+                console.log('iniciarCronometro: removendo estado travado de PCR anterior');
+                campoCronometro.dataset.travado = 'false';
+                campoCronometro.classList.remove('cronometro-travado');
+                // Limpar estado de PCR finalizada (nova reanimação começando)
+                localStorage.removeItem('neonatal_pcr_finalizada');
+            }
+            
+            if (!tempoInicio) {
+                tempoInicio = new Date();
+                localStorage.setItem('rcp_tempo_inicio', tempoInicio.getTime().toString());
+            }
+            
+            cronometroInterval = setInterval(atualizarCronometro, 1000);
+            atualizarCronometro();
+            console.log('Cronômetro iniciado em:', tempoInicio.toLocaleTimeString());
+        }
+
+        // Função para atualizar cronômetro
+        function atualizarCronometro() {
+            if (!tempoInicio) return;
+            
+            const campoCronometro = document.getElementById('cronometro');
+            if (!campoCronometro) {
+                console.error('Campo cronômetro não encontrado em atualizarCronometro!');
+                return;
+            }
+            
+            // Verificar se o cronômetro está travado (PCR finalizada)
+            if (campoCronometro.dataset.travado === 'true') {
+                return; // Não atualizar se estiver travado
+            }
+            
+            const agora = new Date();
+            const diferenca = agora - tempoInicio;
+            
+            const minutos = Math.floor(diferenca / 60000);
+            const segundos = Math.floor((diferenca % 60000) / 1000);
+            
+            const tempoFormatado = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+            campoCronometro.value = tempoFormatado;
+        }
+
+        // Função para parar cronômetro
+        function pararCronometro() {
+            if (cronometroInterval) {
+                clearInterval(cronometroInterval);
+                cronometroInterval = null;
+            }
+        }
+
+        // Função para restaurar cronômetro
+        function restaurarCronometro() {
+            const campoCronometro = document.getElementById('cronometro');
+            if (!campoCronometro) {
+                console.error('Campo cronômetro não encontrado em restaurarCronometro!');
+                return false;
+            }
+            
+            const tempoSalvo = localStorage.getItem('rcp_tempo_inicio');
+            if (tempoSalvo) {
+                tempoInicio = new Date(parseInt(tempoSalvo));
+                cronometroInterval = setInterval(atualizarCronometro, 1000);
+                atualizarCronometro();
+                console.log('Cronômetro restaurado do localStorage - tempo inicial:', tempoInicio.toLocaleTimeString());
+                return true;
+            }
+            return false;
+        }
+
+        // Função para resetar cronômetro
+        function resetarCronometro() {
+            pararCronometro();
+            document.getElementById('cronometro').value = '00:00';
+            tempoInicio = null;
+            
+            // Remover tempo de início do localStorage
+            localStorage.removeItem('rcp_tempo_inicio');
+            console.log('Cronômetro resetado e dados limpos');
+        }
+
+        // Função para gerar equipamentos
+        function gerarEquipamentos() {
+            const peso = obterPesoNeonatalEmKg();
+            const idadeGestacionalInput = document.getElementById('idade_gestacional');
+            const idadeGestacional = parseInt(idadeGestacionalInput.value);
+            
+            if (!peso || peso < 0.2) {
+                // Limpar todos os containers de equipamentos
+                document.getElementById('equipamentos_vias_aereas').innerHTML = '';
+                document.getElementById('equipamentos_compressoes').innerHTML = '';
+                document.getElementById('equipamentos_medicamentos').innerHTML = '';
+                return;
+            }
+
+            // Equipamentos para Vias Aéreas/Ventilação
+            let tamanhoTET = '2.5';
+            if (peso >= 3.0) tamanhoTET = '3.5';
+            else if (peso >= 2.0) tamanhoTET = '3.0';
+            else if (peso >= 1.0) tamanhoTET = '2.5';
+            else tamanhoTET = '2.0';
+            
+            const profundidadeTET = Math.round(peso + 6);
+            
+            // Determinar lâmina do laringoscópio baseado em peso E idade gestacional
+            let laminaLaringoscopio = 'Miller 0';
+            let detalhelamina = '';
+            
+            if (idadeGestacional && peso) {
+                if (idadeGestacional < 28) {
+                    laminaLaringoscopio = 'Miller 0';
+                    detalhelamina = 'Prematuro extremo';
+                } else if (idadeGestacional < 32) {
+                    laminaLaringoscopio = 'Miller 0';
+                    detalhelamina = 'Prematuro';
+                } else if (idadeGestacional < 37) {
+                    laminaLaringoscopio = peso < 2.0 ? 'Miller 0' : 'Miller 1';
+                    detalhelamina = 'Prematuro tardio';
+                } else {
+                    // Termo (≥37 semanas)
+                    if (peso < 2.5) {
+                        laminaLaringoscopio = 'Miller 1';
+                        detalhelamina = 'RN termo baixo peso';
+                    } else if (peso < 4.0) {
+                        laminaLaringoscopio = 'Miller 1';
+                        detalhelamina = 'RN termo';
+                    } else {
+                        laminaLaringoscopio = 'Miller 1 ou 2';
+                        detalhelamina = 'RN termo grande';
+                    }
+                }
+            } else if (peso) {
+                // Apenas baseado em peso se IG não informada
+                if (peso < 1.0) laminaLaringoscopio = 'Miller 0';
+                else if (peso < 3.0) laminaLaringoscopio = 'Miller 1';
+                else laminaLaringoscopio = 'Miller 1 ou 2';
+                detalhelamina = 'Baseado no peso';
+            }
+            
+            const equipamentosViasAereas = `
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #dee2e6;">
+                    <h4 style="color: var(--secondary); margin-bottom: 10px; font-size: 1rem;">🔧 Equipamentos para Vias Aéreas</h4>
+                    <div class="equipment-grid">
+                        <div class="equipment-item">
+                            <h5>Tubo Endotraqueal</h5>
+                            <div class="size">Tamanho: ${tamanhoTET} mm</div>
+                            <div style="color: var(--muted); font-size: 0.8rem;">Profundidade: ${profundidadeTET} cm</div>
+                        </div>
+                        
+                        <div class="equipment-item">
+                            <h5>Lâmina Laringoscópio</h5>
+                            <div class="size">${laminaLaringoscopio}</div>
+                            <div style="color: var(--muted); font-size: 0.8rem;">${detalhelamina}</div>
+                        </div>
+                        
+                        <div class="equipment-item">
+                            <h5>Máscara Facial</h5>
+                            <div class="size">Tamanho: ${peso < 1.0 ? '0' : peso < 2.5 ? '1' : '2'}</div>
+                            <div style="color: var(--muted); font-size: 0.8rem;">Neonatal</div>
+                        </div>
+                        
+                        <div class="equipment-item">
+                            <h5>Sonda de Aspiração</h5>
+                            <div class="size">Tamanho: ${peso < 1.0 ? '6F' : peso < 2.5 ? '8F' : '10F'}</div>
+                            <div style="color: var(--muted); font-size: 0.8rem;">Suave</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Equipamentos para Compressões/Circulação
+            const equipamentosCompressoes = `
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #dee2e6;">
+                    <h4 style="color: var(--secondary); margin-bottom: 10px; font-size: 1rem;">🔧 Equipamentos para Compressões</h4>
+                    <div class="equipment-grid">
+                        <div class="equipment-item">
+                            <h5>Monitor Cardíaco</h5>
+                            <div class="size">Eletrodos Neonatais</div>
+                            <div style="color: var(--muted); font-size: 0.8rem;">3 derivações</div>
+                        </div>
+                        
+                        <div class="equipment-item">
+                            <h5>Oxímetro de Pulso</h5>
+                            <div class="size">Sensor Neonatal</div>
+                            <div style="color: var(--muted); font-size: 0.8rem;">Pé ou mão</div>
+                        </div>
+                        
+                        <div class="equipment-item">
+                            <h5>Estetoscópio</h5>
+                            <div class="size">Neonatal</div>
+                            <div style="color: var(--muted); font-size: 0.8rem;">Diafragma pequeno</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Equipamentos para Medicamentos
+            const equipamentosMedicamentos = `
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #dee2e6;">
+                    <h4 style="color: var(--secondary); margin-bottom: 10px; font-size: 1rem;">🔧 Equipamentos para Medicamentos</h4>
+                    <div class="equipment-grid">
+                        <div class="equipment-item">
+                            <h5>Cânula Umbilical</h5>
+                            <div class="size">Tamanho: ${peso < 1.0 ? '3.5F' : peso < 2.5 ? '5F' : '5F'}</div>
+                            <div style="color: var(--muted); font-size: 0.8rem;">Umbilical</div>
+                        </div>
+                        
+                        <div class="equipment-item">
+                            <h5>Cateter IV</h5>
+                            <div class="size">Tamanho: ${peso < 1.0 ? '24G' : peso < 2.5 ? '22G' : '22G'}</div>
+                            <div style="color: var(--muted); font-size: 0.8rem;">Periférico</div>
+                        </div>
+                        
+                        <div class="equipment-item">
+                            <h5>Seringas</h5>
+                            <div class="size">1mL, 3mL, 5mL</div>
+                            <div style="color: var(--muted); font-size: 0.8rem;">Precisão</div>
+                        </div>
+                        
+                        <div class="equipment-item">
+                            <h5>Agulhas</h5>
+                            <div class="size">25G, 27G, 30G</div>
+                            <div style="color: var(--muted); font-size: 0.8rem;">Fino calibre</div>
+                        </div>
+                        
+                        <div class="equipment-item">
+                            <h5>Balança Neonatal</h5>
+                            <div class="size">Peso: ${peso.toFixed(1)} kg</div>
+                            <div style="color: var(--muted); font-size: 0.8rem;">IG: ${idadeGestacional || '?'} sem</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('equipamentos_vias_aereas').innerHTML = equipamentosViasAereas;
+            document.getElementById('equipamentos_compressoes').innerHTML = equipamentosCompressoes;
+            document.getElementById('equipamentos_medicamentos').innerHTML = equipamentosMedicamentos;
+        }
+
+        // Função para calcular dose de medicamento
+        function calcularDoseMedicamento(procedimentoId) {
+            const peso = obterPesoNeonatalEmKg();
+            
+            if (!peso || peso < 0.2) return '⚠️ Informe o peso para calcular a dose';
+            
+            const doses = {
+                'epinefrina': {
+                    dose: peso * 0.01,
+                    unidade: 'mg',
+                    volume: peso * 0.01 / 0.1,
+                    volumeUnidade: 'mL',
+                    concentracao: '0,1 mg/mL'
+                },
+                'epinefrina_2': {
+                    dose: peso * 0.01,
+                    unidade: 'mg',
+                    volume: peso * 0.01 / 0.1,
+                    volumeUnidade: 'mL',
+                    concentracao: '0,1 mg/mL'
+                },
+                'epinefrina_3': {
+                    dose: peso * 0.01,
+                    unidade: 'mg',
+                    volume: peso * 0.01 / 0.1,
+                    volumeUnidade: 'mL',
+                    concentracao: '0,1 mg/mL'
+                },
+                'epinefrina_4': {
+                    dose: peso * 0.01,
+                    unidade: 'mg',
+                    volume: peso * 0.01 / 0.1,
+                    volumeUnidade: 'mL',
+                    concentracao: '0,1 mg/mL'
+                },
+                'epinefrina_5': {
+                    dose: peso * 0.01,
+                    unidade: 'mg',
+                    volume: peso * 0.01 / 0.1,
+                    volumeUnidade: 'mL',
+                    concentracao: '0,1 mg/mL'
+                },
+                'epinefrina_6': {
+                    dose: peso * 0.01,
+                    unidade: 'mg',
+                    volume: peso * 0.01 / 0.1,
+                    volumeUnidade: 'mL',
+                    concentracao: '0,1 mg/mL'
+                },
+                'epinefrina_7': {
+                    dose: peso * 0.01,
+                    unidade: 'mg',
+                    volume: peso * 0.01 / 0.1,
+                    volumeUnidade: 'mL',
+                    concentracao: '0,1 mg/mL'
+                },
+                'epinefrina_8': {
+                    dose: peso * 0.01,
+                    unidade: 'mg',
+                    volume: peso * 0.01 / 0.1,
+                    volumeUnidade: 'mL',
+                    concentracao: '0,1 mg/mL'
+                },
+                'epinefrina_9': {
+                    dose: peso * 0.01,
+                    unidade: 'mg',
+                    volume: peso * 0.01 / 0.1,
+                    volumeUnidade: 'mL',
+                    concentracao: '0,1 mg/mL'
+                },
+                'epinefrina_10': {
+                    dose: peso * 0.01,
+                    unidade: 'mg',
+                    volume: peso * 0.01 / 0.1,
+                    volumeUnidade: 'mL',
+                    concentracao: '0,1 mg/mL'
+                },
+                'atropina': {
+                    dose: Math.max(peso * 0.02, 0.1),
+                    unidade: 'mg',
+                    volume: Math.max(peso * 0.02, 0.1) / 0.5,
+                    volumeUnidade: 'mL',
+                    concentracao: '0,5 mg/mL'
+                },
+                'bicarbonato': {
+                    dose: peso * 1,
+                    unidade: 'mEq',
+                    volume: peso * 1,
+                    volumeUnidade: 'mL',
+                    concentracao: '1 mEq/mL'
+                },
+                'naloxona': {
+                    dose: peso * 0.1,
+                    unidade: 'mg',
+                    volume: peso * 0.1 / 0.4,
+                    volumeUnidade: 'mL',
+                    concentracao: '0,4 mg/mL'
+                },
+                'glicose': {
+                    dose: peso * 2,
+                    unidade: 'mL',
+                    volume: peso * 2,
+                    volumeUnidade: 'mL',
+                    concentracao: '10%'
+                },
+                'glicose_2': {
+                    dose: peso * 2,
+                    unidade: 'mL',
+                    volume: peso * 2,
+                    volumeUnidade: 'mL',
+                    concentracao: '10%'
+                },
+                'glicose_3': {
+                    dose: peso * 2,
+                    unidade: 'mL',
+                    volume: peso * 2,
+                    volumeUnidade: 'mL',
+                    concentracao: '10%'
+                },
+                'calcio': {
+                    dose: peso * 20,
+                    unidade: 'mg',
+                    volume: peso * 20 / 100,
+                    volumeUnidade: 'mL',
+                    concentracao: '100 mg/mL'
+                }
+            };
+            
+            const doseInfo = doses[procedimentoId];
+            if (!doseInfo) return '';
+            
+            return `Dose: ${doseInfo.dose.toFixed(2)} ${doseInfo.unidade} = ${doseInfo.volume.toFixed(2)} ${doseInfo.volumeUnidade} (${doseInfo.concentracao})`;
+        }
+
+        // Função para gerar procedimentos
+        function gerarProcedimentos() {
+            const categorias = {
+                avaliacao_inicial: 'avaliacao_inicial',
+                suporte: 'suporte',
+                vias_aereas: 'vias_aereas',
+                ventilacao: 'ventilacao',
+                compressoes: 'compressoes',
+                medicamentos: 'medicamentos'
+            };
+
+            Object.keys(categorias).forEach(categoriaId => {
+                const container = document.getElementById(categoriaId);
+                if (!container) {
+                    console.log(`Container não encontrado: ${categoriaId}`);
+                    return;
+                }
+
+                const procedimentosCategoria = Object.values(PROCEDIMENTOS)
+                    .filter(p => p.categoria === categoriaId)
+                    .sort((a, b) => a.ordem - b.ordem);
+                
+
+                let html = '';
+                procedimentosCategoria.forEach(proc => {
+                    // Verificar se deve mostrar este procedimento (lógica de dependência)
+                    if (proc.dependente) {
+                        const procedimentoDependente = procedimentosRealizados[proc.dependente];
+                        if (!procedimentoDependente || procedimentoDependente.length === 0) {
+                            return; // Não mostrar se o procedimento dependente não foi realizado
+                        }
+                        
+                        // Verificar se o procedimento dependente tem countdown ativo
+                        const timerKeyDependente = `medicamentos_${proc.dependente}`;
+                        const timerAtivoDependente = countdownTimers[timerKeyDependente] && countdownTimers[timerKeyDependente].ativo;
+                        
+                        if (timerAtivoDependente) {
+                            return; // Não mostrar se o countdown do procedimento dependente ainda está ativo
+                        }
+                    }
+                    
+                    const statusClass = proc.repetivel ? 'repeatable' : 'pending';
+                    const statusIcon = proc.repetivel ? '🔄' : '⏱️';
+                    
+                    // Verificar se o procedimento já foi realizado
+                    const horariosRealizados = procedimentosRealizados[proc.id] || [];
+                    const jaRealizado = horariosRealizados.length > 0;
+                    
+                    let botaoHtml = '';
+                    let horarioHtml = '';
+                    
+                    if (jaRealizado) {
+                        // Verificar se há um countdown ativo para este procedimento (mesmo que já realizado)
+                        const chave = `${categoriaId}_${proc.id}`;
+                        const timerAtivo = countdownTimers[chave] && countdownTimers[chave].ativo;
+                        
+                        if (timerAtivo) {
+                            // Mostrar countdown mesmo para procedimento já realizado
+                            const tempoRestante = countdownTimers[chave].tempoRestante;
+                            const minutos = Math.floor(tempoRestante / 60);
+                            const segs = tempoRestante % 60;
+                            const tempoFormatado = `${minutos}:${segs.toString().padStart(2, '0')}`;
+                            botaoHtml = `<button class="btn repeatable" disabled style="background: #6b7280; border-color: #d1d5db; color: #fff; font-weight: bold;">Aguardando ${tempoFormatado}</button>`;
+                        } else {
+                            // Procedimento realizado sem countdown ativo
+                            botaoHtml = `<button class="btn completed" disabled>✅ ${proc.nome}</button>`;
+                        }
+                        horarioHtml = `<div style="color: var(--ok); font-size: 0.9rem; font-weight: bold; margin-top: 5px;">🕐 ${horariosRealizados.join(', ')}</div>`;
+                    } else {
+                        // Verificar se há um countdown ativo para este procedimento
+                        const chave = `${categoriaId}_${proc.id}`;
+                        const timerAtivo = countdownTimers[chave] && countdownTimers[chave].ativo;
+                        
+                        if (timerAtivo) {
+                            const tempoRestante = countdownTimers[chave].tempoRestante;
+                            const minutos = Math.floor(tempoRestante / 60);
+                            const segs = tempoRestante % 60;
+                            const tempoFormatado = `${minutos}:${segs.toString().padStart(2, '0')}`;
+                            botaoHtml = `<button class="btn repeatable" disabled style="background: #6b7280; border-color: #d1d5db; color: #fff; font-weight: bold;">Aguardando ${tempoFormatado}</button>`;
+                        } else {
+                            botaoHtml = `<button class="btn" data-procedimento="${proc.id}" onclick="marcarProcedimento('${categoriaId}', '${proc.id}')">Marcar Realizado</button>`;
+                        }
+                    }
+                    
+                    // Calcular dose se for medicamento
+                    const doseCalculada = categoriaId === 'medicamentos' ? calcularDoseMedicamento(proc.id) : '';
+                    const isWarning = doseCalculada && doseCalculada.includes('⚠️');
+                    const doseHtml = doseCalculada ? `<div style="color: ${isWarning ? 'var(--warning)' : 'var(--primary)'}; font-size: 0.85rem; font-weight: bold; margin-top: 3px;">${doseCalculada}</div>` : '';
+                    
+                    // Adicionar observação para drogas não padronizadas
+                    const drogasNaoPadronizadas = ['atropina', 'bicarbonato', 'naloxona', 'glicose', 'calcio'];
+                    const observacaoHtml = (categoriaId === 'medicamentos' && drogasNaoPadronizadas.includes(proc.id)) ? 
+                        `<div style="color: #dc3545; font-weight: bold; font-size: 0.85rem; margin-top: 6px; text-align: center; padding: 4px; background-color: rgba(220, 53, 69, 0.1); border-radius: 4px;">Medicação não padronizada nos protocolos de REANIMAÇÃO NEONATAL. Usar somente com critério clínico e se extremamente necessário.</div>` : '';
+                    
+                    html += `
+                        <div class="procedure-item ${jaRealizado ? 'completed' : statusClass}">
+                            <div class="status-indicator ${jaRealizado ? 'completed' : statusClass}"></div>
+                            <div class="procedure-info">
+                                <h5>${statusIcon} ${proc.nome}</h5>
+                                <p>${proc.descricao}</p>
+                                ${doseHtml}
+                                ${observacaoHtml}
+                                ${horarioHtml}
+                            </div>
+                            <div class="procedure-actions">
+                                ${botaoHtml}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+            });
+        }
+
+        // Função para salvar dados localmente
+        function salvarDadosLocal() {
+            // Obter peso normalizado (Number) para salvar no estado
+            const pesoNormalizado = obterPesoNeonatalEmKg();
+            
+            const dados = {
+                paciente: {
+                    nome: document.getElementById('nome_paciente').value,
+                    peso: pesoNormalizado, // Salvar como Number em kg
+                    pesoOriginal: document.getElementById('peso').value, // Manter valor original para exibição
+                    idadeGestacional: document.getElementById('idade_gestacional').value,
+                    dataNascimento: document.getElementById('data_nascimento').value,
+                    horaInicio: document.getElementById('hora_inicio').value,
+                    horaAvaliacao: document.getElementById('hora_avaliacao').value
+                },
+                drogasEmergencia: drogasEmergenciaAdministradas,
+                procedimentosRealizados: procedimentosRealizados,
+                cronometro: {
+                    ativo: cronometroInterval !== null,
+                    tempoInicio: tempoInicio ? tempoInicio.getTime() : null
+                },
+                countdownTimers: countdownTimers,
+                desfecho: desfechoPCR,
+                timestamp: new Date().toISOString()
+            };
+            
+            localStorage.setItem('rcp_neonatal_paciente', JSON.stringify(dados));
+        }
+
+        // Função para carregar paciente
+        function carregarPaciente() {
+            const dadosSalvos = localStorage.getItem('rcp_neonatal_paciente');
+            if (!dadosSalvos) {
+                alert('Nenhum paciente salvo encontrado.');
+                return;
+            }
+            
+            const dados = JSON.parse(dadosSalvos);
+            
+            // Carregar dados do paciente
+            if (dados.paciente) {
+                document.getElementById('nome_paciente').value = dados.paciente.nome || '';
+                // Usar pesoOriginal se existir (para manter formato do usuário), senão usar peso normalizado formatado
+                const pesoParaExibir = dados.paciente.pesoOriginal || 
+                    (dados.paciente.peso ? formatarPesoNeonatalParaExibicao(dados.paciente.peso).replace(' kg', '') : '');
+                document.getElementById('peso').value = pesoParaExibir;
+                document.getElementById('idade_gestacional').value = dados.paciente.idadeGestacional || '';
+                document.getElementById('data_nascimento').value = dados.paciente.dataNascimento || '';
+                document.getElementById('hora_inicio').value = dados.paciente.horaInicio || '';
+                document.getElementById('hora_avaliacao').value = dados.paciente.horaAvaliacao || '';
+            }
+            
+            // Carregar drogas de emergência
+            if (dados.drogasEmergencia) {
+                drogasEmergenciaAdministradas = dados.drogasEmergencia;
+            }
+            
+            // Carregar procedimentos realizados
+            if (dados.procedimentosRealizados) {
+                procedimentosRealizados = dados.procedimentosRealizados;
+            }
+            
+            // Carregar cronômetro se existir E se avaliação inicial foi realizada
+            if (dados.cronometro && dados.procedimentosRealizados && dados.procedimentosRealizados['avaliacao_inicial'] && dados.procedimentosRealizados['avaliacao_inicial'].length > 0) {
+                const tempoSalvo = localStorage.getItem('rcp_tempo_inicio');
+                if (tempoSalvo && !cronometroInterval) {
+                    tempoInicio = new Date(parseInt(tempoSalvo));
+                    iniciarCronometro();
+                }
+            }
+            
+            // Restaurar countdown timers se existirem
+            if (dados.countdownTimers) {
+                Object.keys(dados.countdownTimers).forEach(timerKey => {
+                    const timerData = dados.countdownTimers[timerKey];
+                    if (timerData.ativo) {
+                        // Calcular tempo restante baseado no tempo decorrido
+                        const agora = new Date().getTime();
+                        const tempoDecorrido = Math.floor((agora - timerData.tempoInicio) / 1000);
+                        const tempoRestante = Math.max(0, timerData.tempoRestante - tempoDecorrido);
+                        
+                        if (tempoRestante > 0) {
+                            // Restaurar countdown com tempo restante
+                            restaurarCountdownTimer(timerData.categoria, timerData.procedimentoId, tempoRestante);
+                        } else {
+                            // Countdown já terminou, liberar próximo procedimento
+                            console.log(`Countdown para ${timerData.procedimentoId} já terminou, liberando próximo procedimento`);
+                        }
+                    }
+                });
+            }
+
+            // Carregar desfecho da PCR se existir
+            if (dados.desfecho) {
+                desfechoPCR = dados.desfecho;
+                
+                // Desabilitar botões se desfecho já foi registrado
+                const btnRecuperacao = document.getElementById('btnRecuperacao');
+                const btnObito = document.getElementById('btnObito');
+                
+                if (btnRecuperacao) btnRecuperacao.disabled = true;
+                if (btnObito) btnObito.disabled = true;
+                
+                // Mostrar confirmação do desfecho registrado
+                const confirmacaoDiv = document.getElementById('desfechoRegistrado');
+                if (confirmacaoDiv) {
+                    const tipoTexto = dados.desfecho.tipo === 'recuperacao' ? 'RECUPERAÇÃO' : 'ÓBITO';
+                    const corTexto = dados.desfecho.tipo === 'recuperacao' ? 'var(--ok)' : 'var(--danger)';
+                    
+                    confirmacaoDiv.innerHTML = `
+                        <p style="margin: 0; color: ${corTexto}; font-weight: bold; text-align: center;">
+                            ✅ Desfecho "${tipoTexto}" já registrado<br>
+                            📅 Data: ${dados.desfecho.data}<br>
+                            🕐 Horário: ${dados.desfecho.horario}
+                        </p>
+                    `;
+                    confirmacaoDiv.style.display = 'block';
+                    confirmacaoDiv.style.background = dados.desfecho.tipo === 'recuperacao' ? 'rgba(33, 192, 139, 0.1)' : 'rgba(220, 53, 69, 0.1)';
+                    confirmacaoDiv.style.border = dados.desfecho.tipo === 'recuperacao' ? '1px solid rgba(33, 192, 139, 0.3)' : '1px solid rgba(220, 53, 69, 0.3)';
+                }
+            }
+            
+            // Verificar se a PCR foi finalizada e restaurar estado travado
+            const estadoPCRFinalizada = localStorage.getItem('neonatal_pcr_finalizada');
+            if (estadoPCRFinalizada) {
+                try {
+                    const estado = JSON.parse(estadoPCRFinalizada);
+                    if (estado && estado.desfecho) {
+                        // Aguardar um pouco para garantir que o DOM está pronto
+                        setTimeout(() => {
+                            // Restaurar estado travado (sem chamar registrarDesfecho novamente)
+                            finalizarPCRNeonatal(estado.desfecho, true);
+                            console.log('Estado de PCR finalizada restaurado ao carregar paciente:', estado.desfecho);
+                        }, 600);
+                    }
+                } catch (error) {
+                    console.error('Erro ao restaurar estado de PCR finalizada:', error);
+                }
+            }
+            
+            // Recalcular tudo
+            setTimeout(() => {
+                calcularDrogas();
+                gerarEquipamentos();
+                gerarProcedimentos();
+            }, 100);
+            
+            alert('Paciente carregado com sucesso! Todos os procedimentos, horários e timers foram restaurados.');
+        }
+
+        // Função para salvar paciente
+        function salvarPaciente() {
+            salvarDadosLocal();
+            alert('Paciente salvo com sucesso!');
+        }
+
+        // Função para limpar todos os dados e reiniciar
+        function limparTodosDados(confirmar = true) {
+            if (!confirmar || confirm('Tem certeza que deseja limpar todos os dados? Esta ação não pode ser desfeita.')) {
+                // Limpar variáveis globais
+                drogasEmergenciaAdministradas = {};
+                procedimentosRealizados = {};
+                desfechoPCR = null;
+                
+                // Parar cronômetro principal
+                if (cronometroInterval) {
+                    clearInterval(cronometroInterval);
+                    cronometroInterval = null;
+                }
+                
+                // Parar todos os countdown timers
+                Object.keys(countdownTimers).forEach(timerKey => {
+                    if (countdownTimers[timerKey].interval) {
+                        clearInterval(countdownTimers[timerKey].interval);
+                    }
+                });
+                countdownTimers = {};
+                
+                // Limpar localStorage
+                localStorage.removeItem('rcp_neonatal_paciente');
+                localStorage.removeItem('rcp_tempo_inicio');
+                localStorage.removeItem('rcp_hora_avaliacao');
+                localStorage.removeItem('rcp_hora_inicio');
+                localStorage.removeItem('rcp_procedimentos_realizados');
+                localStorage.removeItem('neonatal_pcr_finalizada'); // Limpar estado de PCR finalizada
+                
+                // Remover travamento do cronômetro e resetar
+                const campoCronometro = document.getElementById('cronometro');
+                if (campoCronometro) {
+                    campoCronometro.value = '00:00';
+                    campoCronometro.dataset.travado = 'false';
+                    campoCronometro.classList.remove('cronometro-travado');
+                }
+                
+                // Limpar variáveis de tempo
+                tempoInicio = null;
+                
+                // Reabilitar todos os botões desabilitados
+                document.querySelectorAll('.botao-desativado').forEach(btn => {
+                    btn.disabled = false;
+                    btn.classList.remove('botao-desativado');
+                });
+                
+                // Limpar campos do formulário
+                document.getElementById('nome_paciente').value = '';
+                document.getElementById('peso').value = '';
+                document.getElementById('idade_gestacional').value = '';
+                document.getElementById('data_nascimento').value = '';
+                document.getElementById('hora_inicio').value = '';
+                document.getElementById('hora_avaliacao').value = '';
+                
+                // Reabilitar botões de desfecho
+                const btnRecuperacao = document.getElementById('btnRecuperacao');
+                const btnObito = document.getElementById('btnObito');
+                if (btnRecuperacao) btnRecuperacao.disabled = false;
+                if (btnObito) btnObito.disabled = false;
+                
+                // Limpar confirmação de desfecho
+                const confirmacaoDiv = document.getElementById('desfechoRegistrado');
+                if (confirmacaoDiv) {
+                    confirmacaoDiv.style.display = 'none';
+                    confirmacaoDiv.innerHTML = '<p style="margin: 0; color: var(--ok); font-weight: bold;">Desfecho registrado com sucesso!</p>';
+                }
+                
+                // Regenerar interface
+                calcularDrogas();
+                gerarEquipamentos();
+                gerarProcedimentos();
+                
+                alert('Todos os dados foram limpos. Interface reiniciada.');
+            }
+        }
+
+        // Função para gerar relatório completo
+        function gerarECopiarRelatorio() {
+            const nome = document.getElementById('nome_paciente').value || 'Recém-Nascido';
+            const pesoNum = obterPesoNeonatalEmKg(); // Obter peso normalizado (Number)
+            const idadeGestacional = document.getElementById('idade_gestacional').value;
+            const dataNascimento = document.getElementById('data_nascimento').value;
+            const horaInicio = document.getElementById('hora_inicio').value;
+            const horaAvaliacao = document.getElementById('hora_avaliacao').value;
+            
+            // Calcular tempo de parada corretamente
+            let tempoParada = '00:00';
+            if (tempoInicio) {
+                const agora = new Date();
+                const diferenca = agora - tempoInicio;
+                const minutos = Math.floor(diferenca / 60000);
+                const segundos = Math.floor((diferenca % 60000) / 1000);
+                tempoParada = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+            } else {
+                // Tentar obter do campo, se disponível
+                const campoCronometro = document.getElementById('cronometro');
+                if (campoCronometro && campoCronometro.value) {
+                    tempoParada = campoCronometro.value;
+                }
+            }
+            
+            let relatorio = `RESUMO INFORMATIVO — REANIMACAO NEONATAL 2025 (EDUCATIVO)\n`;
+            relatorio += `=====================================\n\n`;
+            relatorio += `NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n`;
+            
+            // DADOS DO RECÉM-NASCIDO
+            relatorio += `DADOS DO RECÉM-NASCIDO:\n`;
+            relatorio += `Nome: ${nome}\n`;
+            relatorio += `Peso: ${formatarPesoNeonatalParaExibicao(pesoNum)}\n`;
+            relatorio += `Idade Gestacional: ${idadeGestacional || 'Não informada'} semanas\n`;
+            relatorio += `Data de Nascimento: ${dataNascimento || 'Não informada'}\n`;
+            relatorio += `Hora de Início da RCP: ${horaInicio || 'Não informada'}\n`;
+            relatorio += `Hora da Avaliação Inicial: ${horaAvaliacao || 'Não iniciada'}\n`;
+            relatorio += `Tempo de Parada: ${tempoParada || '00:00'}\n\n`;
+            
+            // DROGAS DE EMERGÊNCIA CALCULADAS
+            relatorio += `DROGAS DE EMERGÊNCIA CALCULADAS:\n`;
+            if (pesoNum) {
+                if (pesoNum >= 0.2) {
+                    // Epinefrina IV/IO
+                    const epinefrinaIV = pesoNum * 0.01;
+                    const epinefrinaIV_mL = epinefrinaIV / 0.1;
+                    relatorio += `- Epinefrina IV/IO: ${epinefrinaIV.toFixed(3)} mg (0,01 mg/kg) = ${epinefrinaIV_mL.toFixed(2)} mL\n`;
+                    
+                    // Epinefrina ETT
+                    const epinefrinaETT = pesoNum * 0.1;
+                    const epinefrinaETT_mL = epinefrinaETT / 1;
+                    relatorio += `- Epinefrina ETT: ${epinefrinaETT.toFixed(3)} mg (0,1 mg/kg) = ${epinefrinaETT_mL.toFixed(2)} mL\n`;
+                    
+                    // Atropina
+                    const atropina = pesoNum * 0.02;
+                    const atropina_mL = atropina / 0.1;
+                    relatorio += `- Atropina: ${atropina.toFixed(3)} mg (0,02 mg/kg) = ${atropina_mL.toFixed(2)} mL\n`;
+                    relatorio += `  OBSERVACAO: Medicacao nao padronizada nos protocolos de REANIMACAO NEONATAL. Usar somente com criterio clinico e se extremamente necessario.\n`;
+                    
+                    // Naloxona
+                    const naloxona = pesoNum * 0.1;
+                    const naloxona_mL = naloxona / 0.4;
+                    relatorio += `- Naloxona: ${naloxona.toFixed(3)} mg (0,1 mg/kg) = ${naloxona_mL.toFixed(2)} mL\n`;
+                    relatorio += `  OBSERVACAO: Medicacao nao padronizada nos protocolos de REANIMACAO NEONATAL. Usar somente com criterio clinico e se extremamente necessario.\n`;
+                    
+                    // Bicarbonato de Sódio
+                    const bicarbonato = pesoNum * 1;
+                    const bicarbonato_mL = bicarbonato / 1;
+                    relatorio += `- Bicarbonato de Sódio: ${bicarbonato.toFixed(1)} mEq (1 mEq/kg) = ${bicarbonato_mL.toFixed(1)} mL\n`;
+                    relatorio += `  OBSERVACAO: Medicacao nao padronizada nos protocolos de REANIMACAO NEONATAL. Usar somente com criterio clinico e se extremamente necessario.\n`;
+                    
+                    // Glicose 10%
+                    const glicose = pesoNum * 2;
+                    relatorio += `- Glicose 10%: ${glicose.toFixed(1)} mL (2 mL/kg)\n`;
+                    relatorio += `  OBSERVACAO: Medicacao nao padronizada nos protocolos de REANIMACAO NEONATAL. Usar somente com criterio clinico e se extremamente necessario.\n`;
+                    
+                    // Cloreto de Cálcio
+                    const calcio = pesoNum * 20;
+                    const calcio_mL = calcio / 100;
+                    relatorio += `- Cloreto de Cálcio: ${calcio.toFixed(1)} mg (20 mg/kg) = ${calcio_mL.toFixed(2)} mL\n`;
+                    relatorio += `  OBSERVACAO: Medicacao nao padronizada nos protocolos de REANIMACAO NEONATAL. Usar somente com criterio clinico e se extremamente necessario.\n`;
+                    
+                    // Adenosina 1ª dose
+                    const adenosina1 = pesoNum * 0.1;
+                    const adenosina1_mL = adenosina1 / 3;
+                    relatorio += `- Adenosina 1ª dose: ${adenosina1.toFixed(3)} mg (0,1 mg/kg) = ${adenosina1_mL.toFixed(2)} mL\n`;
+                    
+                    // Adenosina 2ª dose
+                    const adenosina2 = pesoNum * 0.2;
+                    const adenosina2_mL = adenosina2 / 3;
+                    relatorio += `- Adenosina 2ª dose: ${adenosina2.toFixed(3)} mg (0,2 mg/kg) = ${adenosina2_mL.toFixed(2)} mL\n`;
+                    
+                    // Lidocaína
+                    const lidocaina = pesoNum * 1;
+                    const lidocaina_mL = lidocaina / 20;
+                    relatorio += `- Lidocaína: ${lidocaina.toFixed(1)} mg (1 mg/kg) = ${lidocaina_mL.toFixed(2)} mL\n`;
+                    
+                    // Magnésio Sulfato
+                    const magnesio = pesoNum * 25;
+                    const magnesio_mL = magnesio / 500;
+                    relatorio += `- Magnésio Sulfato: ${magnesio.toFixed(1)} mg (25 mg/kg) = ${magnesio_mL.toFixed(2)} mL\n`;
+                    
+                    // Glucagon
+                    const glucagon = pesoNum * 0.03;
+                    const glucagon_mL = glucagon / 1;
+                    relatorio += `- Glucagon: ${glucagon.toFixed(3)} mg (0,03 mg/kg) = ${glucagon_mL.toFixed(2)} mL\n`;
+                } else {
+                    relatorio += `Peso muito baixo - não é possível calcular doses seguras\n`;
+                }
+            } else {
+                relatorio += `Peso não informado - não é possível calcular doses\n`;
+            }
+            relatorio += `\n`;
+            
+            // PROCEDIMENTOS REALIZADOS POR CATEGORIA
+            relatorio += `PROCEDIMENTOS REALIZADOS:\n`;
+            const procedimentosComHorarios = Object.entries(procedimentosRealizados).filter(([_, horarios]) => horarios.length > 0);
+            if (procedimentosComHorarios.length > 0) {
+                // Agrupar por categoria
+                const categorias = {
+                    'avaliacao_inicial': 'AVALIACAO INICIAL',
+                    'suporte': 'SUPORTE BASICO',
+                    'vias_aereas': 'VIAS AEREAS',
+                    'ventilacao': 'VENTILACAO E SUPORTE RESPIRATORIO',
+                    'compressoes': 'COMPRESSOES E CIRCULACAO',
+                    'medicamentos': 'MEDICAMENTOS'
+                };
+                
+                const procedimentosPorCategoria = {};
+                procedimentosComHorarios.forEach(([procedimentoId, horarios]) => {
+                    const procedimento = PROCEDIMENTOS[procedimentoId];
+                    if (procedimento) {
+                        const categoria = procedimento.categoria || 'outros';
+                        if (!procedimentosPorCategoria[categoria]) {
+                            procedimentosPorCategoria[categoria] = [];
+                        }
+                        procedimentosPorCategoria[categoria].push({
+                            nome: procedimento.nome,
+                            horarios: horarios
+                        });
+                    }
+                });
+                
+                Object.entries(procedimentosPorCategoria).forEach(([categoria, procedimentos]) => {
+                    const nomeCategoria = categorias[categoria] || categoria.toUpperCase();
+                    relatorio += `${nomeCategoria}:\n`;
+                    procedimentos.forEach(proc => {
+                        relatorio += `  - ${proc.nome}: ${proc.horarios.join(', ')}\n`;
+                    });
+                    relatorio += `\n`;
+                });
+            } else {
+                relatorio += `Nenhum procedimento realizado.\n\n`;
+            }
+            
+            // EQUIPAMENTOS NECESSÁRIOS
+            relatorio += `EQUIPAMENTOS NECESSÁRIOS:\n`;
+            if (pesoNum && idadeGestacional) {
+                const idadeGestacionalNum = parseInt(idadeGestacional);
+                
+                if (pesoNum >= 0.2) {
+                    // Tubo Endotraqueal
+                    let tamanhoTET = '2.0';
+                    if (pesoNum >= 3.0) tamanhoTET = '3.5';
+                    else if (pesoNum >= 2.0) tamanhoTET = '3.0';
+                    else if (pesoNum >= 1.0) tamanhoTET = '2.5';
+                    relatorio += `- Tubo Endotraqueal: ${tamanhoTET}mm\n`;
+                    
+                    // Máscara Facial
+                    let tamanhoMascara = '0';
+                    if (pesoNum >= 2.5) tamanhoMascara = '1';
+                    if (pesoNum >= 3.5) tamanhoMascara = '2';
+                    relatorio += `- Máscara Facial: ${tamanhoMascara}\n`;
+                    
+                    // Laringoscópio - usar mesma lógica da interface
+                    let laringoscopio = 'Miller 0';
+                    
+                    if (idadeGestacionalNum) {
+                        if (idadeGestacionalNum < 28) {
+                            laringoscopio = 'Miller 0';
+                        } else if (idadeGestacionalNum < 32) {
+                            laringoscopio = 'Miller 0';
+                        } else if (idadeGestacionalNum < 37) {
+                            laringoscopio = pesoNum < 2.0 ? 'Miller 0' : 'Miller 1';
+                        } else {
+                            // Termo (≥37 semanas)
+                            if (pesoNum < 2.5) {
+                                laringoscopio = 'Miller 1';
+                            } else if (pesoNum < 4.0) {
+                                laringoscopio = 'Miller 1';
+                            } else {
+                                laringoscopio = 'Miller 1 ou 2';
+                            }
+                        }
+                    } else {
+                        // Apenas baseado em peso se IG não informada
+                        if (pesoNum < 1.0) laringoscopio = 'Miller 0';
+                        else if (pesoNum < 3.0) laringoscopio = 'Miller 1';
+                        else laringoscopio = 'Miller 1 ou 2';
+                    }
+                    
+                    relatorio += `- Laringoscópio: ${laringoscopio}\n`;
+                    
+                    // Cateter IV
+                    let cateterIV = '24G';
+                    if (pesoNum >= 2.0) cateterIV = '22G';
+                    relatorio += `- Cateter IV: ${cateterIV}\n`;
+                    
+                    // Cânula Umbilical
+                    let canulaUmbilical = '3.5F';
+                    if (pesoNum >= 2.0) canulaUmbilical = '4F';
+                    if (pesoNum >= 3.5) canulaUmbilical = '5F';
+                    relatorio += `- Cânula Umbilical: ${canulaUmbilical}\n`;
+                    
+                    // Máscara Laríngea
+                    let mascaraLaringea = '1.0';
+                    if (pesoNum >= 2.0) mascaraLaringea = '1.5';
+                    if (pesoNum >= 3.5) mascaraLaringea = '2.0';
+                    relatorio += `- Máscara Laríngea: ${mascaraLaringea}\n`;
+                    
+                    // Sonda de Aspiração
+                    let sondaAspiracao = '6F';
+                    if (pesoNum >= 2.0) sondaAspiracao = '8F';
+                    if (pesoNum >= 3.0) sondaAspiracao = '10F';
+                    relatorio += `- Sonda de Aspiração: ${sondaAspiracao}\n`;
+                } else {
+                    relatorio += `Peso muito baixo - equipamentos específicos não calculados.\n`;
+                }
+            } else {
+                relatorio += `Peso e/ou idade gestacional não informados - não é possível calcular equipamentos específicos.\n`;
+            }
+            relatorio += `\n`;
+            
+            // DESFECHO DA PCR
+            relatorio += `DESFECHO DA PCR:\n`;
+            if (desfechoPCR) {
+                const tipoDesfecho = desfechoPCR.tipo === 'recuperacao' ? 'RECUPERAÇÃO' : 'ÓBITO';
+                relatorio += `Desfecho: ${tipoDesfecho}\n`;
+                relatorio += `Data: ${desfechoPCR.data}\n`;
+                relatorio += `Horário: ${desfechoPCR.horario}\n\n`;
+            } else {
+                relatorio += `Desfecho: Não registrado\n\n`;
+            }
+            
+            // CRONÔMETROS ATIVOS
+            relatorio += `CRONÔMETROS ATIVOS:\n`;
+            const timersAtivos = Object.entries(countdownTimers).filter(([_, timer]) => timer.ativo);
+            if (timersAtivos.length > 0) {
+                timersAtivos.forEach(([timerKey, timer]) => {
+                    const minutos = Math.floor(timer.tempoRestante / 60);
+                    const segundos = timer.tempoRestante % 60;
+                    relatorio += `- ${timer.procedimentoId}: ${minutos}:${segundos.toString().padStart(2, '0')} restantes\n`;
+                });
+            } else {
+                relatorio += `Nenhum cronômetro ativo.\n`;
+            }
+            relatorio += `\n`;
+            
+            // RESUMO ESTATÍSTICO
+            relatorio += `RESUMO ESTATÍSTICO:\n`;
+            
+            // Contar medicamentos dos procedimentos
+            const medicamentosProcedimentos = procedimentosComHorarios.filter(([procedimentoId, _]) => {
+                const procedimento = PROCEDIMENTOS[procedimentoId];
+                return procedimento && procedimento.categoria === 'medicamentos';
+            });
+            
+            const totalDrogas = medicamentosProcedimentos.length;
+            relatorio += `Total de Drogas de Emergência Administradas: ${totalDrogas}\n`;
+            relatorio += `Total de Procedimentos Realizados: ${procedimentosComHorarios.length}\n`;
+            relatorio += `Tempo Total de RCP: ${tempoParada || '00:00'}\n`;
+            relatorio += `Peso do Recém-Nascido: ${pesoNum ? formatarPesoNeonatalParaExibicao(pesoNum) : 'Não informado'}\n`;
+            relatorio += `Idade Gestacional: ${idadeGestacional || 'Não informada'} semanas\n`;
+            if (desfechoPCR) {
+                relatorio += `Desfecho: ${desfechoPCR.tipo === 'recuperacao' ? 'RECUPERAÇÃO' : 'ÓBITO'}\n`;
+            }
+            relatorio += `\n`;
+            
+            // INFORMAÇÕES TÉCNICAS
+            relatorio += `INFORMAÇÕES TÉCNICAS:\n`;
+            relatorio += `Protocolo: NRP 2025 - Neonatal Resuscitation Program\n`;
+            relatorio += `Versão: 2025 Guidelines\n`;
+            relatorio += `Data/Hora do Relatório: ${new Date().toLocaleString('pt-BR')}\n`;
+            relatorio += `Gerado por: Sistema RCP Neonatal 2025\n`;
+            
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorio += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                relatorio += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            navigator.clipboard.writeText(relatorio).then(() => {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(() => {
+                try {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = relatorio;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                } catch (e) {
+                    if (typeof window.neopedCopyFail === 'function') window.neopedCopyFail();
+                    else alert('Nao foi possivel copiar automaticamente. Revise o texto e copie manualmente para uso informativo.');
+                }
+            });
+        }
+
+        // Função para mostrar README
+        function mostrarREADME() {
+            const readmeWindow = window.open('', '_blank', 'width=800,height=600,scrollbars=yes');
+            
+            if (!readmeWindow) {
+                alert('Popup bloqueado. Por favor, permita popups para visualizar o README.');
+                return;
+            }
+            
+            readmeWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="pt-BR">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>README - RCP Neonatal 2025</title>
+                    <style>
+                        body {
+                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                            line-height: 1.6;
+                            margin: 0;
+                            padding: 20px;
+                            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+                            color: #333;
+                        }
+                        .container {
+                            max-width: 800px;
+                            margin: 0 auto;
+                            background: white;
+                            padding: 30px;
+                            border-radius: 15px;
+                            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                        }
+                        h1 {
+                            color: #2c3e50;
+                            border-bottom: 3px solid #6b7280;
+                            padding-bottom: 10px;
+                            margin-bottom: 20px;
+                        }
+                        h2 {
+                            color: #34495e;
+                            margin-top: 25px;
+                            margin-bottom: 15px;
+                            border-left: none;
+                            padding-left: 15px;
+                        }
+                        h3 {
+                            color: #2c3e50;
+                            margin-top: 20px;
+                            margin-bottom: 10px;
+                        }
+                        .highlight {
+                            background: #ecf0f1;
+                            padding: 15px;
+                            border-radius: 8px;
+                            border-left: none;
+                            margin: 15px 0;
+                        }
+                        .warning {
+                            background: #fff3cd;
+                            padding: 15px;
+                            border-radius: 8px;
+                            border-left: 4px solid #d1d5db;
+                            margin: 15px 0;
+                        }
+                        .success {
+                            background: #d4edda;
+                            padding: 15px;
+                            border-radius: 8px;
+                            border-left: 4px solid #d1d5db;
+                            margin: 15px 0;
+                        }
+                        ul, ol {
+                            margin: 10px 0;
+                            padding-left: 25px;
+                        }
+                        li {
+                            margin: 5px 0;
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin: 15px 0;
+                        }
+                        th, td {
+                            border: 1px solid #ddd;
+                            padding: 8px;
+                            text-align: left;
+                        }
+                        th {
+                            background: #f8f9fa;
+                            font-weight: bold;
+                        }
+                        .close-btn {
+                            position: fixed;
+                            top: 20px;
+                            right: 20px;
+                            background: #e74c3c;
+                            color: white;
+                            border: none;
+                            width: 40px;
+                            height: 40px;
+                            border-radius: 50%;
+                            font-size: 20px;
+                            font-weight: bold;
+                            cursor: pointer;
+                            z-index: 1000;
+                            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                            transition: all 0.3s ease;
+                        }
+                        .close-btn:hover {
+                            background: #c0392b;
+                            transform: scale(1.1);
+                        }
+                    </style>
+                </head>
+                <body>
+                    <button class="close-btn" onclick="window.close()">×</button>
+                    
+                    <div class="container">
+                        <h1>🍼 RCP Neonatal 2025 – Aplicação de Suporte Avançado e Registro Automatizado</h1>
+                        
+                        <div class="highlight">
+                            <p>Aplicação web projetada para auxiliar profissionais de saúde em cenários de reanimação neonatal, seguindo princípios atualizados das diretrizes modernas de RCP.</p>
+                            <p>O objetivo é padronizar cálculos, reduzir erros, registrar procedimentos em tempo real e gerar relatórios completos automaticamente.</p>
+                        </div>
+                        
+                        <h2>⚡ Principais Funcionalidades</h2>
+                        
+                        <h3>1. Cálculo Automático Baseado no Peso</h3>
+                        <ul>
+                            <li>Aceita peso digitado com vírgula ou ponto (ex.: 3,250, 3.250 ou 3.25).</li>
+                            <li>O sistema converte automaticamente para o formato interno correto antes dos cálculos.</li>
+                            <li>Validação completa garantindo valores reais e utilizáveis.</li>
+                        </ul>
+                        
+                        <h3>2. Cálculo Automático de Drogas</h3>
+                        <p>Inclui doses e volumes precisos para:</p>
+                        <ul>
+                            <li>Epinefrina IV/IO</li>
+                            <li>Epinefrina ETT</li>
+                            <li>Atropina</li>
+                            <li>Naloxona</li>
+                            <li>Bicarbonato de Sódio</li>
+                            <li>Glicose 10%</li>
+                            <li>Cloreto de Cálcio</li>
+                        </ul>
+                        <p>Cada droga exibe:</p>
+                        <ul>
+                            <li>Volume (mL)</li>
+                            <li>Dose (mg ou mEq)</li>
+                            <li>Intervalo de repetição</li>
+                            <li>Indicações clínicas</li>
+                            <li>Concentrações</li>
+                        </ul>
+                        <div class="warning">
+                            <strong>🔕 O modal de visualização de "Drogas de Emergência – Neonatal" foi removido da interface, mas as funções internas permanecem preservadas para cálculos e relatórios.</strong>
+                        </div>
+                        
+                        <h3>3. Registro de Horários</h3>
+                        <ul>
+                            <li>Botões específicos permitem registrar automaticamente o horário exato da administração de cada medicação.</li>
+                            <li>Todo o histórico é incluído no relatório final.</li>
+                        </ul>
+                        
+                        <h3>4. Responsividade Total</h3>
+                        <p>O app foi otimizado para:</p>
+                        <ul>
+                            <li>Smartphones (modo retrato e paisagem, com ajuste automático)</li>
+                            <li>Tablets (iOS e Android)</li>
+                            <li>Desktops</li>
+                        </ul>
+                        <p>Todos os componentes foram centralizados e otimizados:</p>
+                        <ul>
+                            <li>Tabelas agora rolam horizontalmente em telas pequenas.</li>
+                            <li>Modais (como cadastro de paciente) foram refinados para caber na tela de celulares.</li>
+                        </ul>
+                        
+                        <h3>5. Dados do Recém-Nascido</h3>
+                        <p>O app armazena e exibe:</p>
+                        <ul>
+                            <li>Nome</li>
+                            <li>Data de nascimento</li>
+                            <li>Idade calculada</li>
+                            <li>Peso</li>
+                            <li>Leito</li>
+                            <li>Nº do prontuário</li>
+                            <li>Diagnóstico</li>
+                            <li>Data/Hora de admissão</li>
+                            <li>Observações (com destaque maior e cor vermelha)</li>
+                        </ul>
+                        <p>Todos os campos são salvos localmente no navegador.</p>
+                        
+                        <h3>6. Relatório Final Automático</h3>
+                        <p>Geração automática do relatório contendo:</p>
+                        <ul>
+                            <li>Todos os dados do recém-nascido</li>
+                            <li>Peso formatado corretamente (sem duplicar "kg")</li>
+                            <li>Procedimentos realizados com horários</li>
+                            <li>Medicações administradas</li>
+                            <li>Observações</li>
+                            <li>Data e hora da reanimação</li>
+                        </ul>
+                        <p>O relatório pode ser facilmente copiado ou exportado.</p>
+                        
+                        <h3>7. Persistência e Segurança dos Dados</h3>
+                        <ul>
+                            <li>Todos os dados permanecem salvos mesmo se a página for fechada ou houver queda de energia.</li>
+                            <li>Ao reiniciar o app, os dados anteriores são restaurados automaticamente.</li>
+                        </ul>
+                        
+                        <h3>8. Otimização do Processo de Trabalho</h3>
+                        <ul>
+                            <li>Removido o botão "Pausar/Retomar" do cronômetro de tempo de parada.</li>
+                            <li>Corrigido o erro que mostrava valores aleatórios ao retomar após queda de energia.</li>
+                            <li>Cronômetro só inicia após seleção de um paciente.</li>
+                        </ul>
+                        
+                        <h2>🛠️ Mudanças Técnicas Recentes</h2>
+                        
+                        <h3>✔ Aceitação universal de vírgula ou ponto no peso</h3>
+                        <p>Transformação automática para formato numérico interno.</p>
+                        
+                        <h3>✔ Remoção visual do modal "Drogas de Emergência – Neonatal"</h3>
+                        <p>Manutenção integral das funções internas.</p>
+                        
+                        <h3>✔ Modais 100% responsivos para mobile</h3>
+                        <p>Uso otimizado tanto em retrato quanto paisagem.</p>
+                        
+                        <h3>✔ Observações destacadas em vermelho e fonte ampliada</h3>
+                        <p>Melhor identificação de informações críticas.</p>
+                        
+                        <h3>✔ Correção do relatório duplicando "kg"</h3>
+                        <p>Formato agora correto e padronizado.</p>
+                        
+                        <h3>✔ Persistência confiável do estado mesmo após reiniciar o navegador</h3>
+                        
+                        <h2>🚀 Próximos passos sugeridos</h2>
+                        <ul>
+                            <li>Implementar trilha auditável completa (log de eventos).</li>
+                            <li>Exportação direta em PDF com assinatura digital.</li>
+                            <li>Integração com sistemas hospitalares via FHIR.</li>
+                        </ul>
+                        
+                        <h2>📄 Licença</h2>
+                        <p>Projeto para uso profissional clínico. Requer validação institucional antes de implementação em ambiente real.</p>
+                        
+                        <h2>👨‍⚕️ Autor</h2>
+                        <p>Aplicação desenvolvida por Médico especialista na area com refinamentos contínuos para uso em cenários neonatais críticos.</p>
+                    </div>
+                <script src="../js/neoped-nav.js"><\/script>
+</body>
+                </html>
+            `);
+            
+            readmeWindow.document.close();
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar campo do cronômetro com valor padrão
+            const campoCronometro = document.getElementById('cronometro');
+            if (campoCronometro) {
+                campoCronometro.value = '00:00';
+            }
+            
+            // Tentar restaurar cronômetro salvo
+            const tempoSalvo = localStorage.getItem('rcp_tempo_inicio');
+            if (tempoSalvo) {
+                restaurarCronometro();
+            }
+            
+            // Definir data e hora atuais como padrão
+            const agora = new Date();
+            const dataAtual = agora.toISOString().split('T')[0];
+            const horaAtual = agora.toTimeString().slice(0, 5);
+            
+            document.getElementById('data_nascimento').value = dataAtual;
+            document.getElementById('hora_inicio').value = horaAtual;
+            
+            // Verificar se a PCR foi finalizada e restaurar estado travado
+            const estadoPCRFinalizada = localStorage.getItem('neonatal_pcr_finalizada');
+            if (estadoPCRFinalizada) {
+                try {
+                    const estado = JSON.parse(estadoPCRFinalizada);
+                    if (estado && estado.desfecho) {
+                        // Aguardar um pouco para garantir que o DOM está pronto
+                        setTimeout(() => {
+                            // Restaurar estado travado (sem chamar registrarDesfecho novamente)
+                            finalizarPCRNeonatal(estado.desfecho, true);
+                            console.log('Estado de PCR finalizada restaurado:', estado.desfecho);
+                        }, 500);
+                    }
+                } catch (error) {
+                    console.error('Erro ao restaurar estado de PCR finalizada:', error);
+                }
+            }
+            
+            // Verificar se há dados salvos e perguntar se quer recarregar
+            const dadosSalvos = localStorage.getItem('rcp_neonatal_paciente');
+            if (dadosSalvos) {
+                const dados = JSON.parse(dadosSalvos);
+                if (dados.paciente && (dados.paciente.nome || dados.paciente.peso)) {
+                    const nomePaciente = dados.paciente.nome || 'Paciente sem nome';
+                    const pesoPaciente = dados.paciente.peso || 'Peso não informado';
+                    
+                    const resposta = confirm(`🔄 DADOS DE PACIENTE ANTERIOR ENCONTRADOS\n\n👶 Nome: ${nomePaciente}\n⚖️ Peso: ${pesoPaciente} kg\n\n❓ O que deseja fazer?\n\n✅ OK = Recarregar paciente anterior\n❌ Cancelar = Começar do zero`);
+                    
+                    if (resposta) {
+                        // Recarregar paciente anterior
+                        carregarPaciente();
+                        return; // Sair da função para não executar o resto
+                    } else {
+                        // Limpar dados e começar do zero
+                        limparTodosDados(false);
+                    }
+                }
+            }
+            
+            // Gerar interface inicial
+            calcularDrogas();
+            gerarEquipamentos();
+            gerarProcedimentos();
+            
+            // Tentar restaurar horário da avaliação
+            const horaAvaliacaoSalva = localStorage.getItem('rcp_hora_avaliacao');
+            if (horaAvaliacaoSalva) {
+                document.getElementById('hora_avaliacao').value = horaAvaliacaoSalva;
+            }
+            
+            // Tentar restaurar horário de início RCP
+            const horaInicioSalva = localStorage.getItem('rcp_hora_inicio');
+            if (horaInicioSalva) {
+                document.getElementById('hora_inicio').value = horaInicioSalva;
+            }
+            
+            // Tentar restaurar procedimentos realizados
+            const procedimentosSalvosCarregamento = localStorage.getItem('rcp_procedimentos_realizados');
+            if (procedimentosSalvosCarregamento) {
+                procedimentosRealizados = JSON.parse(procedimentosSalvosCarregamento);
+            }
+            
+            // Event listeners para cálculos automáticos
+            document.getElementById('peso').addEventListener('input', () => {
+                calcularDrogas();
+                gerarEquipamentos();
+                gerarProcedimentos();
+            });
+            
+            document.getElementById('idade_gestacional').addEventListener('input', () => {
+                gerarEquipamentos();
+            });
+        });
+
+        // Funções para desfecho da PCR integrado
+
+        // Função para finalizar PCR e travar tudo
+        function finalizarPCRNeonatal(desfecho, naoChamarRegistro = false) {
+            // A. Parar e travar cronômetro
+            if (cronometroInterval) {
+                clearInterval(cronometroInterval);
+                cronometroInterval = null;
+            }
+            
+            const campoCronometro = document.getElementById('cronometro');
+            if (campoCronometro) {
+                campoCronometro.dataset.travado = 'true';
+                campoCronometro.classList.add('cronometro-travado');
+            }
+            
+            // B. Desabilitar todos os botões de procedimentos
+            document.querySelectorAll('button').forEach(btn => {
+                const textoBtn = btn.textContent.trim().toUpperCase();
+                // Desabilitar botões de marcar procedimentos
+                if (textoBtn.includes('MARCAR REALIZADO') || 
+                    textoBtn.includes('MARCAR REALIZADA') ||
+                    textoBtn.includes('REALIZADO') ||
+                    textoBtn.includes('REALIZADA') ||
+                    (btn.onclick && btn.onclick.toString().includes('marcarProcedimento'))) {
+                    btn.disabled = true;
+                    btn.classList.add('botao-desativado');
+                }
+            });
+            
+            // Desabilitar também botões de drogas de emergência
+            document.querySelectorAll('.drug-box button, [onclick*="marcarDroga"]').forEach(btn => {
+                btn.disabled = true;
+                btn.classList.add('botao-desativado');
+            });
+            
+            // C. Salvar estado de PCR finalizada
+            localStorage.setItem('neonatal_pcr_finalizada', JSON.stringify({
+                desfecho: desfecho,
+                horario: new Date().toISOString(),
+                timestamp: Date.now()
+            }));
+            
+            // D. Chamar função original de registro de desfecho (apenas se não for restauração)
+            if (!naoChamarRegistro) {
+                registrarDesfecho(desfecho);
+            }
+            
+            console.log(`PCR finalizada: ${desfecho}. Cronômetro travado e botões desabilitados.`);
+        }
+
+        function registrarDesfecho(tipo) {
+            const agora = new Date();
+            const horario = agora.toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            const data = agora.toLocaleDateString('pt-BR');
+
+            desfechoPCR = {
+                tipo: tipo,
+                horario: horario,
+                data: data,
+                timestamp: agora.getTime()
+            };
+
+            // Salvar dados
+            salvarDadosLocal();
+
+            // Desabilitar botões após registro
+            const btnRecuperacao = document.getElementById('btnRecuperacao');
+            const btnObito = document.getElementById('btnObito');
+            
+            btnRecuperacao.disabled = true;
+            btnObito.disabled = true;
+
+            // Mostrar confirmação
+            const confirmacaoDiv = document.getElementById('desfechoRegistrado');
+            const tipoTexto = tipo === 'recuperacao' ? 'RECUPERAÇÃO' : 'ÓBITO';
+            const corTexto = tipo === 'recuperacao' ? 'var(--ok)' : 'var(--danger)';
+            
+            confirmacaoDiv.innerHTML = `
+                <p style="margin: 0; color: ${corTexto}; font-weight: bold; text-align: center;">
+                    ✅ Desfecho "${tipoTexto}" registrado com sucesso!<br>
+                    📅 Data: ${data}<br>
+                    🕐 Horário: ${horario}
+                </p>
+            `;
+            confirmacaoDiv.style.display = 'block';
+            confirmacaoDiv.style.background = tipo === 'recuperacao' ? 'rgba(33, 192, 139, 0.1)' : 'rgba(220, 53, 69, 0.1)';
+            confirmacaoDiv.style.border = tipo === 'recuperacao' ? '1px solid rgba(33, 192, 139, 0.3)' : '1px solid rgba(220, 53, 69, 0.3)';
+
+            // Manter confirmação sempre visível
+            // (Removido o setTimeout que escondia a confirmação)
+        }
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+</body>
+</html>

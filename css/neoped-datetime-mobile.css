@@ -1,0 +1,392 @@
+/**
+ * NeoPedCalc – contenção de date / time / datetime-local / month (smartphones)
+ * Complemento: js/neoped-nav.js marca ancestrais com .neoped-dt-chain (até 8 níveis).
+ *
+ * Causa: min-width:auto nos flex/grid + largura intrínseca do widget nativo (iOS/Android)
+ * + CSS local (min-width fixo, nowrap, overflow:visible) → vazamento horizontal.
+ */
+
+@import url("neoped-modal-no-border.css");
+
+html {
+    overflow-x: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+body {
+    overflow-x: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* ========== Inputs temporais ========== */
+input[type="month"],
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    display: block;
+    white-space: normal !important;
+}
+
+/* WebKit (Safari iOS, Chrome) */
+input[type="date"]::-webkit-datetime-edit,
+input[type="datetime-local"]::-webkit-datetime-edit,
+input[type="time"]::-webkit-datetime-edit,
+input[type="month"]::-webkit-datetime-edit {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    padding: 0;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+input[type="datetime-local"]::-webkit-datetime-edit-fields-wrapper,
+input[type="time"]::-webkit-datetime-edit-fields-wrapper,
+input[type="month"]::-webkit-datetime-edit-fields-wrapper {
+    max-width: 100% !important;
+    min-width: 0 !important;
+}
+
+input[type="date"]::-webkit-datetime-edit-text,
+input[type="datetime-local"]::-webkit-datetime-edit-text,
+input[type="time"]::-webkit-datetime-edit-text {
+    padding: 0 1px;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator,
+input[type="month"]::-webkit-calendar-picker-indicator {
+    flex-shrink: 0;
+    margin-left: 2px;
+    cursor: pointer;
+    opacity: 1;
+}
+
+/* ========== JS: ancestrais dos inputs temporais (neoped-nav.js) ========== */
+.neoped-dt-input {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.neoped-dt-chain {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+}
+
+@supports (overflow: clip) {
+    .neoped-dt-chain {
+        overflow-x: clip !important;
+    }
+}
+
+/* Caixas principais – sem rolagem horizontal no card */
+@media (max-width: 768px) {
+    .card,
+    .form-section,
+    .form-container,
+    .config-section,
+    .results-section,
+    .panel,
+    .box,
+    .calculator-box,
+    .app-shell,
+    .app-viewport,
+    .wrap,
+    main.container,
+    .container:not(.neoped-nav):not(#neoped-app-nav) {
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    .table-responsive,
+    .table-wrap {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        max-width: 100%;
+    }
+
+    img,
+    svg,
+    canvas {
+        max-width: 100% !important;
+        box-sizing: border-box;
+    }
+}
+
+/* Pais com tabela: rolagem horizontal (hidden acima corta tabelas largas; páginas só com este CSS incluem RCP) */
+@supports selector(:has(*)) {
+    @media (max-width: 768px) {
+        .form-section:has(table),
+        .results-section:has(table),
+        .config-section:has(table),
+        .card:has(table),
+        .panel:has(table),
+        .box:has(table),
+        .report-section:has(table),
+        main:has(table),
+        .content:has(table),
+        .wrap:has(table),
+        .container:has(table),
+        .app-viewport:has(table),
+        .app-shell:has(table),
+        .modal-body:has(table),
+        .modal-content:has(table) {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch;
+            max-width: 100%;
+            min-width: 0;
+        }
+    }
+}
+
+/* Tabelas com data/hora */
+table:has(input[type="date"]) th,
+table:has(input[type="date"]) td,
+table:has(input[type="time"]) th,
+table:has(input[type="time"]) td,
+table:has(input[type="datetime-local"]) th,
+table:has(input[type="datetime-local"]) td,
+table:has(input[type="month"]) th,
+table:has(input[type="month"]) td {
+    min-width: 0 !important;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+table input[type="date"],
+table input[type="time"],
+table input[type="datetime-local"],
+table input[type="month"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* Filhos de grid – encolhem abaixo do min-content */
+.form-row > .form-group,
+.form-row > div,
+.form-grid > *,
+.form-grid-2 > *,
+.form-grid-3 > *,
+.form-grid-4 > *,
+[class*="form-grid"] > .form-group,
+[class*="form-grid"] > div {
+    min-width: 0 !important;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.input-row,
+.input-row .form-group {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+}
+
+.form-group:has(input[type="date"]),
+.form-group:has(input[type="time"]),
+.form-group:has(input[type="datetime-local"]),
+.form-group:has(input[type="month"]) {
+    min-width: 0 !important;
+    max-width: 100% !important;
+}
+
+.form-inline,
+.date-time-row {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    flex-wrap: wrap !important;
+}
+
+/* Linhas flex que contêm data/hora */
+@media (max-width: 768px) {
+    .form-row.neoped-dt-chain,
+    .field-row.neoped-dt-chain,
+    .form-inline.neoped-dt-chain,
+    .d-flex.neoped-dt-chain,
+    .row.neoped-dt-chain,
+    div.neoped-dt-chain[style*="flex"] {
+        display: flex !important;
+        flex-direction: column !important;
+        flex-wrap: wrap !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    /* Tabelas: manter display nativo; só contenção */
+    td.neoped-dt-chain,
+    th.neoped-dt-chain {
+        min-width: 0 !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    tr.neoped-dt-chain {
+        min-width: 0 !important;
+    }
+
+    table.neoped-dt-chain {
+        max-width: 100% !important;
+        table-layout: auto !important;
+    }
+}
+
+@media (max-width: 768px) {
+    input[type="date"],
+    input[type="time"],
+    input[type="datetime-local"],
+    input[type="month"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        font-size: 16px !important;
+        line-height: 1.3 !important;
+    }
+
+    .form-grid:has(input[type="date"]),
+    .form-grid:has(input[type="time"]),
+    .form-grid:has(input[type="datetime-local"]),
+    .form-grid:has(input[type="month"]),
+    .form-grid-2:has(input[type="date"]),
+    .form-grid-2:has(input[type="time"]),
+    .form-grid-2:has(input[type="datetime-local"]),
+    .form-grid-2:has(input[type="month"]),
+    .form-grid-3:has(input[type="date"]),
+    .form-grid-3:has(input[type="time"]),
+    .form-grid-3:has(input[type="datetime-local"]),
+    .form-grid-4:has(input[type="date"]),
+    .form-grid-4:has(input[type="time"]),
+    .form-grid-4:has(input[type="datetime-local"]),
+    .form-grid-4:has(input[type="month"]) {
+        grid-template-columns: 1fr !important;
+    }
+
+    .form-row:has(input[type="date"]),
+    .form-row:has(input[type="time"]),
+    .form-row:has(input[type="datetime-local"]),
+    .form-row:has(input[type="month"]) {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+        align-items: stretch !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .form-row:has(input[type="date"]) > *,
+    .form-row:has(input[type="time"]) > *,
+    .form-row:has(input[type="datetime-local"]) > *,
+    .form-row:has(input[type="month"]) > * {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    /* Sobrescreve min-width fixo comum (ex.: 150px em linhas de número) quando há data na página */
+    .input-row .form-group:has(+ .form-group) input,
+    .input-row .form-group {
+        min-width: 0 !important;
+    }
+
+    /* ----- Border-radius nos 4 cantos (iPhone/Android): WebKit achata à direita; pais com overflow cortam o raio ----- */
+    input[type="date"],
+    input[type="time"],
+    input[type="datetime-local"],
+    input[type="month"],
+    input.neoped-dt-input {
+        border-radius: 12px !important;
+        -webkit-border-radius: 12px !important;
+        overflow: hidden !important;
+        background-clip: padding-box !important;
+        -webkit-background-clip: padding-box !important;
+        -webkit-appearance: none !important;
+        appearance: none !important;
+        /* Recuo para o arco do canto direito não ser cortado por .neoped-dt-chain / cards com overflow-x hidden */
+        margin-left: 4px !important;
+        margin-right: 4px !important;
+        width: calc(100% - 8px) !important;
+        max-width: calc(100% - 8px) !important;
+        min-height: 44px;
+        box-sizing: border-box !important;
+    }
+
+    /* WebKit: área interna acompanha o raio do input */
+    input[type="date"]::-webkit-datetime-edit,
+    input[type="datetime-local"]::-webkit-datetime-edit,
+    input[type="time"]::-webkit-datetime-edit,
+    input[type="month"]::-webkit-datetime-edit {
+        border-radius: 10px !important;
+        padding: 2px 4px !important;
+    }
+
+    input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+    input[type="datetime-local"]::-webkit-datetime-edit-fields-wrapper,
+    input[type="time"]::-webkit-datetime-edit-fields-wrapper,
+    input[type="month"]::-webkit-datetime-edit-fields-wrapper {
+        border-radius: 10px !important;
+        overflow: hidden !important;
+    }
+
+    /* Indicador calendário/relógio não “quebra” o canto direito */
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+    input[type="time"]::-webkit-calendar-picker-indicator,
+    input[type="month"]::-webkit-calendar-picker-indicator {
+        margin-right: 6px !important;
+        margin-left: 4px !important;
+        padding: 4px !important;
+        border-radius: 8px !important;
+        opacity: 1 !important;
+    }
+
+    /* Pai direto do input: não cortar o raio; leve padding extra */
+    .form-group.neoped-dt-chain:has(> .neoped-dt-input),
+    .form-group:has(> input[type="date"]),
+    .form-group:has(> input[type="time"]),
+    .form-group:has(> input[type="datetime-local"]),
+    .form-group:has(> input[type="month"]) {
+        overflow-x: visible !important;
+        overflow: visible !important;
+        padding-left: 2px !important;
+        padding-right: 2px !important;
+    }
+
+    /* Células de tabela com data/hora */
+    table td:has(> input[type="date"]),
+    table td:has(> input[type="time"]),
+    table td:has(> input[type="datetime-local"]),
+    table td:has(> input[type="month"]),
+    table th:has(> input[type="time"]) {
+        overflow: visible !important;
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+        vertical-align: middle !important;
+    }
+
+    table input[type="date"],
+    table input[type="time"],
+    table input[type="datetime-local"],
+    table input[type="month"] {
+        margin-left: 2px !important;
+        margin-right: 2px !important;
+        width: calc(100% - 4px) !important;
+        max-width: calc(100% - 4px) !important;
+    }
+}

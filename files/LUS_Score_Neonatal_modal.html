@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NeoPedCalc — LUS Score neonatal (educativo)</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --ink:#12324a;
+      --muted:#374151;
+      --line:#d9e5f0;
+      --brand:#0d6efd;
+      --brand-dark:#094ea9;
+      --brand-soft:#eaf3ff;
+      --ok:#198754;
+      --warn:#f0ad4e;
+      --bad:#dc3545;
+      --shadow:0 10px 24px rgba(18,50,74,.08);
+      --radius:18px;
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{
+      margin:0;padding:0;background:var(--bg);color:var(--ink);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      overflow-x:hidden;
+    }
+    body{touch-action:pan-y}
+    .wrap{width:100%;max-width:1100px;margin:0 auto;padding:14px;overflow-x:hidden}
+    .hero{background:linear-gradient(135deg,#0c5dc2,#1a7ae6);color:#fff;border-radius:24px;padding:20px 18px;box-shadow:var(--shadow)}
+    .hero h1{margin:0;font-size:clamp(1.4rem,4vw,2.2rem);line-height:1.15}
+    .hero p{margin:8px 0 0;line-height:1.5;color:rgba(255,255,255,.95);font-size:.98rem}
+    .grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
+    @media(min-width:980px){.grid{grid-template-columns:1.1fr .9fr}}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);max-width:100%;overflow-x:hidden}
+    .card h2{margin:0 0 10px;font-size:1.15rem}
+    .card h3{margin:16px 0 8px;font-size:1rem}
+    .muted{color:var(--muted);line-height:1.55;font-size:.95rem}
+    .row{display:grid;grid-template-columns:1fr;gap:12px}
+    @media(min-width:700px){.row.two{grid-template-columns:1fr 1fr}.row.three{grid-template-columns:1fr 1fr 1fr}}
+    label{display:block;font-size:.9rem;font-weight:700;margin-bottom:6px}
+    input,select,textarea{width:100%;border:1px solid #c7d7e7;border-radius:12px;padding:12px;font-size:1rem;background:#fff;color:var(--ink);outline:none}
+    textarea{min-height:180px;resize:vertical;line-height:1.5}
+    input:focus,select:focus,textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(13,110,253,.12)}
+    .zones{display:grid;grid-template-columns:1fr;gap:12px}
+    @media(min-width:700px){.zones{grid-template-columns:1fr 1fr}}
+    .zone{border:1px solid var(--line);border-radius:16px;background:#fbfdff;padding:12px}
+    .map{background:#fbfdff;border:1px dashed #bfd3e4;border-radius:18px;padding:8px;overflow:hidden;max-width:100%}
+    .map-legend{
+      margin-top:10px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:#fff;
+      padding:10px 12px;
+    }
+    .map-legend h4{
+      margin:0 0 8px;
+      font-size:.9rem;
+      color:var(--brand-dark);
+    }
+    .map-legend ul{
+      margin:0;
+      padding-left:1.05rem;
+      color:var(--muted);
+      line-height:1.45;
+      font-size:.88rem;
+      display:grid;
+      gap:4px;
+    }
+    .metrics{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px}
+    @media(min-width:700px){.metrics{grid-template-columns:repeat(3,1fr)}}
+    .metric{background:var(--brand-soft);border:1px solid var(--line);border-radius:16px;padding:14px}
+    .metric .k{font-size:.82rem;color:var(--muted);margin-bottom:6px}
+    .metric .v{font-size:1.5rem;font-weight:800;line-height:1.1}
+    .badge{display:inline-block;margin-top:10px;padding:10px 14px;border-radius:999px;font-size:.92rem;font-weight:800}
+    .ok{background:rgba(25,135,84,.13);color:var(--ok)}
+    .warn{background:rgba(240,173,78,.18);color:#9b6809}
+    .bad{background:rgba(220,53,69,.12);color:var(--bad)}
+    .summary{margin-top:12px;border:1px solid var(--line);border-radius:16px;padding:14px;background:#fff;line-height:1.6}
+    .buttons{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+    button{border:none;border-radius:12px;padding:12px 16px;font-size:.95rem;font-weight:800;cursor:pointer}
+    .btn-primary{background:var(--brand);color:#fff}
+    .btn-primary:active{background:var(--brand-dark)}
+    .btn-secondary{background:#eef5fc;color:var(--brand-dark);border:1px solid var(--line)}
+    .btn-danger{background:#fff2f4;color:#b42335;border:1px solid #f3c7cf}
+    .legend{display:grid;grid-template-columns:1fr;gap:12px}
+    @media(min-width:700px){.legend{grid-template-columns:1fr 1fr}}
+    .legend-card{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fff;min-width:0;overflow:hidden}
+    .legend-card h4{margin:0 0 8px;font-size:1rem}
+    .legend-card p{margin:8px 0 0;color:var(--muted);line-height:1.5;font-size:.92rem}
+    .imgbox{width:100%;max-width:100%;aspect-ratio:16/10;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#0f151b}
+    svg{max-width:100%;height:auto}
+    .imgbox svg{display:block;width:100% !important;max-width:100% !important;height:100% !important}
+    .map svg{display:block;width:100% !important;max-width:100% !important;height:auto !important}
+    .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;margin-top:10px;max-width:100%}
+    table{width:100%;min-width:640px;border-collapse:collapse;background:#fff}
+    th,td{padding:12px 10px;text-align:left;border-bottom:1px solid var(--line);font-size:.93rem;vertical-align:top}
+    th{background:#f6fbff;color:var(--brand-dark);font-size:.88rem}
+    .note{margin-top:12px;padding:12px 14px;border-left:4px solid var(--brand);background:#f7fbff;border-radius:12px;color:var(--muted);line-height:1.55;font-size:.92rem}
+    details{border:1px solid var(--line);border-radius:14px;background:#fff;padding:12px 14px;margin-top:10px}
+    summary{cursor:pointer;font-weight:800}
+    ol{color:var(--muted);line-height:1.6;padding-left:20px}
+    .credits{color:var(--muted);line-height:1.6;font-size:.93rem}
+    .footer-space{height:20px}
+    @media(max-width:640px){
+      .wrap{padding:10px}
+      .hero{border-radius:16px;padding:14px 12px}
+      .hero p{font-size:.92rem}
+      .card{padding:12px;border-radius:14px}
+      .card h2{font-size:1.02rem}
+      .card h3{font-size:.94rem}
+      input,select,textarea{padding:10px;font-size:.95rem}
+      textarea{min-height:140px}
+      .metric{padding:10px;border-radius:12px}
+      .metric .v{font-size:1.18rem}
+      .buttons button{width:100%}
+      .imgbox{aspect-ratio:4/3}
+      .legend{grid-template-columns:1fr !important}
+      .legend-card{padding:10px}
+      .map{padding:6px}
+      .map-legend{padding:8px 10px}
+      .map-legend ul{grid-template-columns:1fr}
+      table{min-width:520px}
+      th,td{padding:10px 8px;font-size:.86rem}
+      .note{font-size:.86rem;padding:10px 12px}
+      details{padding:10px 12px}
+      .credits{font-size:.88rem}
+      .map text.map-caption{display:none}
+      .map text.zone-label{font-size:22px}
+      .map-legend ul{grid-template-columns:1fr}
+    }
+    @media(max-width:430px){
+      .wrap{padding:8px}
+      .card{padding:10px}
+      .hero{padding:12px 10px}
+      .hero h1{font-size:1.22rem}
+      .hero p{font-size:.88rem}
+      .map{padding:4px;border-radius:12px}
+      .map svg{
+        width:calc(100% - 2px) !important;
+        margin:0 auto;
+      }
+      .map text.zone-label{font-size:18px}
+      .imgbox{aspect-ratio:1/1}
+      .legend-card h4{font-size:.92rem}
+      .legend-card p{font-size:.84rem}
+      .table-wrap{border-radius:10px}
+      table{min-width:480px}
+      th,td{font-size:.8rem;padding:8px 6px}
+      .metrics{gap:8px}
+      .metric .k{font-size:.76rem}
+      .metric .v{font-size:1.02rem}
+      .buttons{gap:8px}
+      .buttons button{padding:10px 12px;font-size:.88rem}
+    }
+    @media print{body{background:#fff}.wrap{width:100%;padding:0}.hero{box-shadow:none}.card{box-shadow:none;break-inside:avoid}.buttons{display:none!important}}
+  </style>
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <h1>NeoPedCalc - LUS Score Neonatal</h1>
+      <p>Calculadora clínica responsiva do escore de ultrassom pulmonar neonatal com 6 zonas, interpretação automática, relatório para prontuário, imagens esquemáticas de exemplo, créditos e referências bibliográficas.</p>
+    </section>
+
+    <div class="grid">
+      <section class="card">
+        <h2>1. Dados clínicos</h2>
+        <div class="row two">
+          <div><label for="paciente">Paciente</label><input id="paciente" type="text" placeholder="Nome ou identificação" oninput="calcularLUS()" /></div>
+        </div>
+        <div class="row three" style="margin-top:12px;">
+          <div><label for="ig">Idade gestacional</label><input id="ig" type="text" placeholder="Ex.: 29s 4d" oninput="calcularLUS()" /></div>
+          <div><label for="peso">Peso atual</label><input id="peso" type="text" placeholder="Ex.: 1280 g" oninput="calcularLUS()" /></div>
+          <div><label for="datahora">Data / hora</label><input id="datahora" type="text" placeholder="Ex.: 01/04/2026 20:30" oninput="calcularLUS()" /></div>
+        </div>
+
+        <h3>2. Mapa das 6 zonas</h3>
+        <div class="map">
+          <svg viewBox="0 0 900 500" width="100%" role="img" aria-label="Mapa das seis zonas pulmonares neonatais">
+            <rect x="0" y="0" width="900" height="500" fill="#f9fcff"/>
+            <text x="450" y="40" text-anchor="middle" font-size="26" font-weight="700" fill="#0d47a1">Divisão esquemática em 6 zonas</text>
+            <rect x="380" y="60" width="140" height="70" rx="24" fill="#dfeaf6"/>
+            <rect x="260" y="130" width="380" height="260" rx="80" fill="#edf4fb" stroke="#bfd2e6" stroke-width="4"/>
+            <line x1="450" y1="130" x2="450" y2="390" stroke="#9ab7d3" stroke-width="3" stroke-dasharray="8 8"/>
+            <rect x="295" y="155" width="120" height="85" rx="18" fill="#d9ebff" stroke="#7aa7d9" stroke-width="3"/>
+            <rect x="295" y="248" width="120" height="90" rx="18" fill="#d9ebff" stroke="#7aa7d9" stroke-width="3"/>
+            <rect x="250" y="180" width="35" height="145" rx="16" fill="#d9ebff" stroke="#7aa7d9" stroke-width="3"/>
+            <rect x="485" y="155" width="120" height="85" rx="18" fill="#d9ebff" stroke="#7aa7d9" stroke-width="3"/>
+            <rect x="485" y="248" width="120" height="90" rx="18" fill="#d9ebff" stroke="#7aa7d9" stroke-width="3"/>
+            <rect x="615" y="180" width="35" height="145" rx="16" fill="#d9ebff" stroke="#7aa7d9" stroke-width="3"/>
+            <text class="zone-label" x="355" y="205" text-anchor="middle" font-size="24" font-weight="800" fill="#0d47a1">R1</text>
+            <text class="zone-label" x="355" y="300" text-anchor="middle" font-size="24" font-weight="800" fill="#0d47a1">R2</text>
+            <text class="zone-label" x="267" y="260" text-anchor="middle" font-size="24" font-weight="800" fill="#0d47a1" transform="rotate(-90 267 260)">R3</text>
+            <text class="zone-label" x="545" y="205" text-anchor="middle" font-size="24" font-weight="800" fill="#0d47a1">L1</text>
+            <text class="zone-label" x="545" y="300" text-anchor="middle" font-size="24" font-weight="800" fill="#0d47a1">L2</text>
+            <text class="zone-label" x="632" y="260" text-anchor="middle" font-size="24" font-weight="800" fill="#0d47a1" transform="rotate(90 632 260)">L3</text>
+            <text class="map-caption" x="355" y="430" text-anchor="middle" font-size="18" fill="#415d78">R1 anterior superior direita</text>
+            <text class="map-caption" x="355" y="456" text-anchor="middle" font-size="18" fill="#415d78">R2 anterior inferior direita</text>
+            <text class="map-caption" x="355" y="482" text-anchor="middle" font-size="18" fill="#415d78">R3 lateral direita</text>
+            <text class="map-caption" x="545" y="430" text-anchor="middle" font-size="18" fill="#415d78">L1 anterior superior esquerda</text>
+            <text class="map-caption" x="545" y="456" text-anchor="middle" font-size="18" fill="#415d78">L2 anterior inferior esquerda</text>
+            <text class="map-caption" x="545" y="482" text-anchor="middle" font-size="18" fill="#415d78">L3 lateral esquerda</text>
+          </svg>
+        </div>
+        <div class="map-legend">
+          <h4>Legenda rápida das zonas</h4>
+          <ul>
+            <li>R1: anterior superior direita</li>
+            <li>R2: anterior inferior direita</li>
+            <li>R3: lateral direita</li>
+            <li>L1: anterior superior esquerda</li>
+            <li>L2: anterior inferior esquerda</li>
+            <li>L3: lateral esquerda</li>
+          </ul>
+        </div>
+
+        <h3>3. Seleção por zona</h3>
+        <div class="zones">
+          <div class="zone"><label for="z1">R1 - anterior superior direita</label><select id="z1" onchange="calcularLUS()"><option value="0">0 - A-lines / boa aeração</option><option value="1">1 - B-lines separadas</option><option value="2">2 - B-lines coalescentes / white lung</option><option value="3">3 - Consolidação</option></select></div>
+          <div class="zone"><label for="z2">R2 - anterior inferior direita</label><select id="z2" onchange="calcularLUS()"><option value="0">0 - A-lines / boa aeração</option><option value="1">1 - B-lines separadas</option><option value="2">2 - B-lines coalescentes / white lung</option><option value="3">3 - Consolidação</option></select></div>
+          <div class="zone"><label for="z3">R3 - lateral direita</label><select id="z3" onchange="calcularLUS()"><option value="0">0 - A-lines / boa aeração</option><option value="1">1 - B-lines separadas</option><option value="2">2 - B-lines coalescentes / white lung</option><option value="3">3 - Consolidação</option></select></div>
+          <div class="zone"><label for="z4">L1 - anterior superior esquerda</label><select id="z4" onchange="calcularLUS()"><option value="0">0 - A-lines / boa aeração</option><option value="1">1 - B-lines separadas</option><option value="2">2 - B-lines coalescentes / white lung</option><option value="3">3 - Consolidação</option></select></div>
+          <div class="zone"><label for="z5">L2 - anterior inferior esquerda</label><select id="z5" onchange="calcularLUS()"><option value="0">0 - A-lines / boa aeração</option><option value="1">1 - B-lines separadas</option><option value="2">2 - B-lines coalescentes / white lung</option><option value="3">3 - Consolidação</option></select></div>
+          <div class="zone"><label for="z6">L3 - lateral esquerda</label><select id="z6" onchange="calcularLUS()"><option value="0">0 - A-lines / boa aeração</option><option value="1">1 - B-lines separadas</option><option value="2">2 - B-lines coalescentes / white lung</option><option value="3">3 - Consolidação</option></select></div>
+        </div>
+
+        <h3>4. Apoio clínico</h3>
+        <div class="row two">
+          <div><label for="fio2">FiO₂ atual</label><input id="fio2" type="number" step="0.01" min="0.21" max="1" value="0.21" oninput="calcularLUS()" /></div>
+          <div><label for="suporte">Suporte respiratório</label><select id="suporte" onchange="calcularLUS()"><option>Ar ambiente</option><option>Cateter / O₂</option><option selected>CPAP</option><option>NIPPV</option><option>Ventilação invasiva</option></select></div>
+        </div>
+        <div class="row" style="margin-top:12px;"><div><label for="obs">Observações clínicas</label><textarea id="obs" placeholder="Ex.: desconforto respiratório, tiragens, Silverman, gasometria, surfactante prévio, evolução clínica..." oninput="calcularLUS()"></textarea></div></div>
+
+        <div class="metrics">
+          <div class="metric"><div class="k">Score total</div><div class="v" id="scoreTotal">0 / 18</div></div>
+          <div class="metric"><div class="k">Gravidade</div><div class="v" id="gravidade">Leve</div></div>
+          <div class="metric"><div class="k">Faixa operacional</div><div class="v" id="faixa">0-4</div></div>
+        </div>
+        <div id="badgeHolder"></div>
+        <div class="summary" id="conduta">Sem sinais de maior comprometimento ultrassonográfico. Correlacionar sempre com a clínica e a evolução.</div>
+        <div class="buttons">
+          <button class="btn-primary" onclick="gerarRelatorio()">Gerar relatório</button>
+          <button class="btn-secondary" onclick="copiarRelatorio()">Copiar relatório</button>
+          <button class="btn-secondary" onclick="window.print()">Imprimir / PDF</button>
+          <button class="btn-danger" onclick="resetar()">Limpar</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>5. Imagens esquemáticas dos padrões</h2>
+        <p class="muted">As imagens abaixo são exemplos esquemáticos didáticos para documentação, ensino e apoio visual no uso do score.</p>
+        <div class="legend">
+          <div class="legend-card"><h4>Score 0 - A-lines / boa aeração</h4><div class="imgbox"><svg viewBox="0 0 600 360" width="100%" height="100%"><rect width="600" height="360" fill="#111820"/><rect x="0" y="0" width="600" height="70" fill="#2c3138"/><path d="M120 0 Q140 44 160 0" stroke="#5e6670" stroke-width="18" fill="none"/><path d="M285 0 Q300 44 315 0" stroke="#5e6670" stroke-width="18" fill="none"/><path d="M445 0 Q460 44 475 0" stroke="#5e6670" stroke-width="18" fill="none"/><line x1="70" y1="78" x2="530" y2="78" stroke="#f1f6ff" stroke-width="5"/><line x1="90" y1="128" x2="510" y2="128" stroke="#d7e4f7" stroke-width="3" opacity=".8"/><line x1="110" y1="178" x2="490" y2="178" stroke="#d7e4f7" stroke-width="3" opacity=".65"/><line x1="130" y1="228" x2="470" y2="228" stroke="#d7e4f7" stroke-width="3" opacity=".5"/><line x1="150" y1="278" x2="450" y2="278" stroke="#d7e4f7" stroke-width="3" opacity=".35"/></svg></div><p>Pleura regular e artefatos horizontais. Representa boa aeração pulmonar.</p></div>
+          <div class="legend-card"><h4>Score 1 - B-lines separadas</h4><div class="imgbox"><svg viewBox="0 0 600 360" width="100%" height="100%"><rect width="600" height="360" fill="#111820"/><rect x="0" y="0" width="600" height="70" fill="#2c3138"/><path d="M120 0 Q140 44 160 0" stroke="#5e6670" stroke-width="18" fill="none"/><path d="M285 0 Q300 44 315 0" stroke="#5e6670" stroke-width="18" fill="none"/><path d="M445 0 Q460 44 475 0" stroke="#5e6670" stroke-width="18" fill="none"/><line x1="70" y1="78" x2="530" y2="78" stroke="#f1f6ff" stroke-width="5"/><line x1="160" y1="78" x2="160" y2="340" stroke="#ffffff" stroke-width="5" opacity=".95"/><line x1="300" y1="78" x2="300" y2="340" stroke="#ffffff" stroke-width="5" opacity=".95"/><line x1="430" y1="78" x2="430" y2="340" stroke="#ffffff" stroke-width="5" opacity=".95"/></svg></div><p>Linhas B distintas, não confluentes. Sugere perda leve de aeração.</p></div>
+          <div class="legend-card"><h4>Score 2 - B-lines coalescentes / white lung</h4><div class="imgbox"><svg viewBox="0 0 600 360" width="100%" height="100%"><defs><linearGradient id="fog" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#ffffff" stop-opacity=".95"/><stop offset="100%" stop-color="#c9d8ea" stop-opacity=".25"/></linearGradient></defs><rect width="600" height="360" fill="#111820"/><rect x="0" y="0" width="600" height="70" fill="#2c3138"/><path d="M120 0 Q140 44 160 0" stroke="#5e6670" stroke-width="18" fill="none"/><path d="M285 0 Q300 44 315 0" stroke="#5e6670" stroke-width="18" fill="none"/><path d="M445 0 Q460 44 475 0" stroke="#5e6670" stroke-width="18" fill="none"/><line x1="70" y1="78" x2="530" y2="78" stroke="#f1f6ff" stroke-width="5"/><rect x="85" y="82" width="430" height="250" rx="14" fill="url(#fog)"/><line x1="150" y1="78" x2="150" y2="340" stroke="#ffffff" stroke-width="7" opacity=".75"/><line x1="225" y1="78" x2="225" y2="340" stroke="#ffffff" stroke-width="7" opacity=".85"/><line x1="300" y1="78" x2="300" y2="340" stroke="#ffffff" stroke-width="8" opacity=".92"/><line x1="375" y1="78" x2="375" y2="340" stroke="#ffffff" stroke-width="7" opacity=".84"/><line x1="450" y1="78" x2="450" y2="340" stroke="#ffffff" stroke-width="7" opacity=".78"/></svg></div><p>B-lines numerosas e confluentes, compatíveis com importante perda de aeração.</p></div>
+          <div class="legend-card"><h4>Score 3 - Consolidação</h4><div class="imgbox"><svg viewBox="0 0 600 360" width="100%" height="100%"><rect width="600" height="360" fill="#111820"/><rect x="0" y="0" width="600" height="70" fill="#2c3138"/><path d="M120 0 Q140 44 160 0" stroke="#5e6670" stroke-width="18" fill="none"/><path d="M285 0 Q300 44 315 0" stroke="#5e6670" stroke-width="18" fill="none"/><path d="M445 0 Q460 44 475 0" stroke="#5e6670" stroke-width="18" fill="none"/><line x1="70" y1="78" x2="530" y2="78" stroke="#f1f6ff" stroke-width="5"/><path d="M140 120 C190 100, 250 110, 295 140 C350 100, 430 105, 475 160 L475 340 L140 340 Z" fill="#b8aa8c"/><circle cx="220" cy="176" r="7" fill="#f7f7f7"/><circle cx="250" cy="194" r="6" fill="#f7f7f7"/><circle cx="285" cy="172" r="8" fill="#f7f7f7"/><circle cx="330" cy="197" r="7" fill="#f7f7f7"/><circle cx="365" cy="178" r="6" fill="#f7f7f7"/><circle cx="405" cy="210" r="8" fill="#f7f7f7"/></svg></div><p>Padrão tecidual subpleural com possível broncograma aéreo. Indica maior gravidade.</p></div>
+        </div>
+        <h3>6. Tabela resumida</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Score</th><th>Padrão</th><th>Resumo ultrassonográfico</th><th>Leitura clínica</th></tr></thead>
+            <tbody>
+              <tr><td><strong>0</strong></td><td>A-lines</td><td>Pleura regular, boa aeração, artefatos horizontais</td><td>Comprometimento ausente ou mínimo</td></tr>
+              <tr><td><strong>1</strong></td><td>B-lines separadas</td><td>Linhas verticais isoladas</td><td>Perda leve de aeração</td></tr>
+              <tr><td><strong>2</strong></td><td>White lung</td><td>B-lines numerosas ou confluentes</td><td>Perda importante de aeração</td></tr>
+              <tr><td><strong>3</strong></td><td>Consolidação</td><td>Padrão tecidual subpleural</td><td>Comprometimento avançado</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note">Faixas operacionais sugeridas neste modelo: 0-4 leve, 5-8 moderado, 9-12 importante, 13-18 grave.</div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px;">
+      <h2>7. Relatório para prontuário</h2>
+      <p class="muted">Clique em <strong>Gerar relatório</strong> para criar automaticamente um texto pronto para copiar no prontuário eletrônico.</p>
+      <textarea id="relatorio" placeholder="O relatório será gerado aqui."></textarea>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <h2>8. Créditos e referências bibliográficas</h2>
+      <details><summary>Créditos</summary><div class="credits" style="margin-top:10px;"><p><strong>Aplicação:</strong> modelo educacional e operacional NeoPedCalc - LUS Score Neonatal.</p><p><strong>Estrutura:</strong> calculadora clínica responsiva em HTML, CSS e JavaScript.</p><p><strong>Imagens:</strong> ilustrações esquemáticas originais em SVG incorporadas ao próprio arquivo para uso offline e educacional.</p><p><strong>Finalidade:</strong> apoio à documentação, ensino e raciocínio clínico. Não substitui avaliação médica nem protocolo institucional.</p></div></details>
+      <details>
+        <summary>Referências bibliográficas</summary>
+        <ol>
+          <li>Sweet DG, Carnielli VP, Greisen G, et al. European Consensus Guidelines on the Management of Respiratory Distress Syndrome: 2025. Neonatology. 2026.</li>
+          <li>International expert consensus. Guidelines for the use of lung ultrasound to optimise the management of neonatal respiratory distress. 2025.</li>
+          <li>Singh Y, Dauengauer-Kirliene S, Yousef N. Setting the Standards: Neonatal Lung Ultrasound in Clinical Practice. Diagnostics. 2024;14(13):1413.</li>
+          <li>Capasso L, Pacella D, Migliaro F, et al. Can lung ultrasound score accurately predict surfactant replacement? A systematic review and meta-analysis of diagnostic test studies. Pediatric Pulmonology. 2023;58:1427-1437.</li>
+          <li>Liu J, Copetti R, Sorantin E, et al. Protocol and Guidelines for Point-of-Care Lung Ultrasound in Diagnosing Neonatal Pulmonary Diseases Based on International Expert Consensus. J Vis Exp. 2019.</li>
+          <li>Copetti R, Cattarossi L, Macagno F, Violino M, Furlan R. Lung ultrasound in respiratory distress syndrome: a useful tool for early diagnosis. Neonatology. 2008;94:52-59.</li>
+        </ol>
+      </details>
+      <div class="note">Sugestão: adaptar os limiares automáticos de conduta ao protocolo da sua UTI neonatal e à estratégia local de surfactante.</div>
+    </section>
+    <div class="footer-space"></div>
+  </main>
+
+  <script>
+    function getParam(nome){
+      const p = new URLSearchParams(window.location.search);
+      return (p.get(nome) || '').trim();
+    }
+
+    function preencherSeExiste(id, valor){
+      if(!valor) return;
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.value = valor;
+    }
+
+    function carregarDadosDoGuideline(){
+      preencherSeExiste("paciente", getParam("paciente"));
+      preencherSeExiste("ig", getParam("ig"));
+      preencherSeExiste("peso", getParam("peso"));
+      preencherSeExiste("datahora", getParam("datahora"));
+      preencherSeExiste("fio2", getParam("fio2"));
+      preencherSeExiste("obs", getParam("obs"));
+      const suporte = getParam("suporte");
+      if(suporte){
+        const sEl = document.getElementById("suporte");
+        if(sEl){
+          for(let i=0;i<sEl.options.length;i++){
+            if(sEl.options[i].value === suporte){
+              sEl.selectedIndex = i;
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    function textoZona(valor){ if(valor === 0) return "0 (A-lines / boa aeração)"; if(valor === 1) return "1 (B-lines separadas)"; if(valor === 2) return "2 (B-lines coalescentes / white lung)"; return "3 (Consolidação)"; }
+    function enviarAtualizacaoParaGuideline(score, res){
+      if(window.parent && window.parent !== window){
+        window.parent.postMessage({
+          type: "lus_update",
+          score: score,
+          gravidade: res.gravidade,
+          faixa: res.faixa,
+          sugestao_texto: res.texto,
+          sugere_usg: score >= 5
+        }, "*");
+      }
+    }
+    function interpretar(score, fio2, suporte){
+      let gravidade="Leve", faixa="0-4", badgeClass="badge ok", badgeText="Baixo comprometimento ultrassonográfico", texto="Padrão de baixo comprometimento ultrassonográfico. Manter correlação clínica e reavaliação conforme evolução.";
+      if(score <= 4){ gravidade="Leve"; faixa="0-4"; badgeClass="badge ok"; badgeText="Baixo comprometimento ultrassonográfico"; texto="Padrão compatível com boa aeração ou comprometimento leve. Em geral, manter observação clínica e reavaliar conforme necessidade."; }
+      else if(score <= 8){ gravidade="Moderado"; faixa="5-8"; badgeClass="badge warn"; badgeText="Comprometimento moderado"; texto="Há perda de aeração em múltiplas zonas. Reforçar monitorização e revisar resposta ao suporte respiratório."; }
+      else if(score <= 12){ gravidade="Importante"; faixa="9-12"; badgeClass="badge warn"; badgeText="Doença pulmonar significativa"; texto="Comprometimento ultrassonográfico significativo. Em RN com SDR e maior necessidade de oxigênio, pode reforçar a discussão sobre surfactante."; }
+      else { gravidade="Grave"; faixa="13-18"; badgeClass="badge bad"; badgeText="Comprometimento grave"; texto="Padrão de maior gravidade, com perda importante de aeração e/ou consolidações em várias zonas. Exige reavaliação imediata do suporte e da estratégia terapêutica."; }
+      if(fio2 >= 0.30 && suporte === "CPAP" && score >= 8){ texto += " Nesta combinação de CPAP, FiO₂ elevada e LUS elevado, o achado aumenta a relevância clínica da avaliação precoce para surfactante conforme protocolo local."; }
+      return {gravidade, faixa, badgeClass, badgeText, texto};
+    }
+    function calcularLUS(){
+      const valores=[Number(document.getElementById("z1").value),Number(document.getElementById("z2").value),Number(document.getElementById("z3").value),Number(document.getElementById("z4").value),Number(document.getElementById("z5").value),Number(document.getElementById("z6").value)];
+      const score=valores.reduce((a,b)=>a+b,0);
+      const fio2=Number(document.getElementById("fio2").value || 0.21);
+      const suporte=document.getElementById("suporte").value;
+      const res=interpretar(score, fio2, suporte);
+      document.getElementById("scoreTotal").textContent = score + " / 18";
+      document.getElementById("gravidade").textContent = res.gravidade;
+      document.getElementById("faixa").textContent = res.faixa;
+      document.getElementById("badgeHolder").innerHTML = '<span class="' + res.badgeClass + '">' + res.badgeText + '</span>';
+      document.getElementById("conduta").textContent = res.texto;
+      enviarAtualizacaoParaGuideline(score, res);
+    }
+    function gerarRelatorio(){
+      const paciente=document.getElementById("paciente").value||"-", ig=document.getElementById("ig").value||"-", peso=document.getElementById("peso").value||"-", datahora=document.getElementById("datahora").value||"-", fio2=document.getElementById("fio2").value||"-", suporte=document.getElementById("suporte").value||"-", obs=document.getElementById("obs").value||"Sem observações adicionais.";
+      const z1=Number(document.getElementById("z1").value), z2=Number(document.getElementById("z2").value), z3=Number(document.getElementById("z3").value), z4=Number(document.getElementById("z4").value), z5=Number(document.getElementById("z5").value), z6=Number(document.getElementById("z6").value);
+      const score=z1+z2+z3+z4+z5+z6;
+      const res=interpretar(score, Number(fio2 || 0.21), suporte);
+      const relatorio =
+`NEOPEDCALC - LUS SCORE NEONATAL
+
+Paciente: ${paciente}
+Idade gestacional: ${ig}
+Peso atual: ${peso}
+Data/hora: ${datahora}
+
+ULTRASSOM PULMONAR - AVALIAÇÃO POR 6 ZONAS
+R1 (anterior superior direita): ${textoZona(z1)}
+R2 (anterior inferior direita): ${textoZona(z2)}
+R3 (lateral direita): ${textoZona(z3)}
+L1 (anterior superior esquerda): ${textoZona(z4)}
+L2 (anterior inferior esquerda): ${textoZona(z5)}
+L3 (lateral esquerda): ${textoZona(z6)}
+
+Score total: ${score}/18
+Gravidade: ${res.gravidade}
+Faixa operacional: ${res.faixa}
+
+FiO₂ atual: ${fio2}
+Suporte respiratório: ${suporte}
+
+Interpretação automática:
+${res.texto}
+
+Observações clínicas:
+${obs}
+
+Observação:
+Ferramenta de apoio ao raciocínio clínico. Interpretar sempre em conjunto com exame clínico, gasometria, necessidade de oxigênio, idade gestacional e protocolo institucional.
+
+Créditos:
+NeoPedCalc - LUS Score Neonatal
+Imagens esquemáticas embutidas no aplicativo para uso educacional.`;
+      document.getElementById("relatorio").value = relatorio;
+    }
+    function copiarRelatorio(){ const area=document.getElementById("relatorio"); if(!area.value.trim()) gerarRelatorio(); area.select(); area.setSelectionRange(0, 99999); const ok = document.execCommand("copy"); if (ok) { if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.'); } else { if (typeof window.neopedCopyFail === 'function') window.neopedCopyFail(); else alert('Nao foi possivel copiar automaticamente. Revise o texto e copie manualmente para uso informativo.'); } }
+    function resetar(){
+      document.getElementById("paciente").value=""; document.getElementById("ig").value=""; document.getElementById("peso").value=""; document.getElementById("datahora").value=""; document.getElementById("fio2").value="0.21"; document.getElementById("suporte").value="CPAP"; document.getElementById("obs").value=""; document.getElementById("relatorio").value="";
+      ["z1","z2","z3","z4","z5","z6"].forEach(id => { document.getElementById(id).value="0"; });
+      calcularLUS();
+    }
+    carregarDadosDoGuideline();
+    calcularLUS();
+  </script>
+  <script src="../js/neoped-nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — Manuseio ventilatório neonatal (educativo)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .btn-info {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 15px;
+        }
+
+        .btn-info:hover {
+            background: white;
+            color: #111827;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-body h3 {
+            color: #111827;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: none;
+        }
+
+        .form-section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        .form-group input, .form-group select {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #d1d5db;
+        }
+
+        .results-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #27ae60;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .result-item {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .result-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .result-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .result-interpretation {
+            font-size: 0.8em;
+            color: #27ae60;
+        }
+
+        .reference-table {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #e74c3c;
+            overflow-x: auto;
+        }
+
+        .reference-table table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            min-width: 280px;
+        }
+
+        .reference-table th,
+        .reference-table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .reference-table th {
+            background: #34495e;
+            color: white;
+            font-weight: bold;
+        }
+
+        .reference-table .red-cell {
+            background-color: #ffebee;
+            color: #c62828;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .reference-table {
+                padding: 15px;
+            }
+
+            .reference-table table {
+                min-width: 280px;
+                font-size: 0.85em;
+            }
+
+            .reference-table th,
+            .reference-table td {
+                padding: 8px 6px;
+            }
+
+            .reference-table h3 {
+                font-size: 1.1em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .reference-table {
+                padding: 10px;
+            }
+
+            .reference-table table {
+                min-width: 280px;
+                font-size: 0.75em;
+            }
+
+            .reference-table th,
+            .reference-table td {
+                padding: 6px 4px;
+                font-size: 0.85em;
+            }
+
+            .reference-table h3 {
+                font-size: 1em;
+            }
+        }
+
+        .loops-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #9b59b6;
+        }
+
+        .loops-section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+        }
+
+        .loop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .loop-item {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .loop-item h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .loop-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .loop-interpretation {
+            background: #f8f9fa;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 0.9em;
+        }
+
+        .loop-interpretation h5 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .loop-interpretation ul {
+            margin-left: 20px;
+        }
+
+        .loop-interpretation li {
+            margin-bottom: 5px;
+        }
+
+        .loop-figure-placeholder {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #ccc;
+            text-align: center;
+        }
+
+        /* Estilos responsivos para imagens */
+        .responsive-image {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin: 20px auto;
+            display: block;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .responsive-image:hover {
+            transform: scale(1.02);
+        }
+
+        /* Responsividade para diferentes tamanhos de tela */
+        @media (max-width: 768px) {
+            .responsive-image {
+                max-width: 90%;
+                margin: 15px auto;
+            }
+            
+            .loop-figure-placeholder {
+                padding: 15px;
+                margin-top: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .responsive-image {
+                max-width: 95%;
+                margin: 10px auto;
+            }
+            
+            .loop-figure-placeholder {
+                padding: 10px;
+                margin-top: 10px;
+            }
+        }
+
+        #areaLooping {
+            display: block !important;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .report-btn {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .report-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .loop-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../../css/neoped-responsive.css">
+<link rel="stylesheet" href="../../css/neoped-modern.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Manuseio de Ventilacao Mecanica em Neonatos</h1>
+            <p>Calculadora NeoPedCalc - Parametros Ventilatorios em Recem-Nascidos</p>
+            <button class="btn-info" onclick="abrirModal()">
+                Como usar
+            </button>
+        </div>
+
+        <div class="content">
+            <!-- Dados do Paciente -->
+            <div class="form-section">
+                <h3>Dados do Paciente</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome">Nome:</label>
+                        <input type="text" id="nome" placeholder="Nome do paciente">
+                    </div>
+                    <div class="form-group">
+                        <label for="peso">Peso (kg):</label>
+                        <input type="number" id="peso" step="0.001" placeholder="Peso em kg" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="altura">Altura (cm):</label>
+                        <input type="number" id="altura" step="0.1" placeholder="Altura em cm" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="idadeGestacional">Idade Gestacional (semanas):</label>
+                        <input type="number" id="idadeGestacional" step="0.1" placeholder="Idade gestacional em semanas" onchange="calcularTudo()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parâmetros Ventilatórios Atuais -->
+            <div class="form-section">
+                <h3>Parametros Ventilatorios Atuais</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fio2Atual">FiO2 (%):</label>
+                        <input type="number" id="fio2Atual" step="1" placeholder="21" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="peepAtual">PEEP (cmH₂O):</label>
+                        <input type="number" id="peepAtual" step="0.1" placeholder="5" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="pipAtual">PIP (cmH₂O):</label>
+                        <input type="number" id="pipAtual" step="0.1" placeholder="20" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="frAtual">FR (rpm):</label>
+                        <input type="number" id="frAtual" step="1" placeholder="40" onchange="calcularTudo()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gasometria -->
+            <div class="form-section">
+                <h3>Gasometria</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pao2Atual">PaO2 (mmHg):</label>
+                        <input type="number" id="pao2Atual" step="0.1" placeholder="60" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="paco2Atual">PaCO2 (mmHg):</label>
+                        <input type="number" id="paco2Atual" step="0.1" placeholder="45" onchange="calcularTudo()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Objetivos Desejados -->
+            <div class="form-section">
+                <h3>Objetivos Desejados</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pao2Desejada">PaO2 Desejada (mmHg):</label>
+                        <input type="number" id="pao2Desejada" step="0.1" placeholder="60" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="paco2Desejada">PaCO2 Desejada (mmHg):</label>
+                        <input type="number" id="paco2Desejada" step="0.1" placeholder="45" onchange="calcularTudo()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cálculos Automáticos -->
+            <div class="results-section">
+                <h3>Calculos Automaticos</h3>
+                <div class="result-grid">
+                    <div class="result-item">
+                        <div class="result-label">FiO2 Desejada</div>
+                        <div class="result-number" id="fio2Desejada">-</div>
+                        <div class="result-interpretation" id="fio2DesejadaInterpretation">%</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">FR Desejada</div>
+                        <div class="result-number" id="frDesejada">-</div>
+                        <div class="result-interpretation" id="frDesejadaInterpretation">rpm</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Complacencia Esperada RNT</div>
+                        <div class="result-number" id="complacenciaRNT">-</div>
+                        <div class="result-interpretation" id="complacenciaRNTInterpretation">ml/cmH2O/Kg</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Complacencia Esperada RNPT</div>
+                        <div class="result-number" id="complacenciaRNPT">-</div>
+                        <div class="result-interpretation" id="complacenciaRNPTInterpretation">ml/cmH2O/Kg</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Resistencia Esperada RNT</div>
+                        <div class="result-number" id="resistenciaRNT">-</div>
+                        <div class="result-interpretation" id="resistenciaRNTInterpretation">cmH2O/l/seg</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Resistencia Esperada RNPT</div>
+                        <div class="result-number" id="resistenciaRNPT">-</div>
+                        <div class="result-interpretation" id="resistenciaRNPTInterpretation">cmH2O/l/seg</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabela de Ajustes -->
+            <div class="reference-table" id="tabelaAjustes" style="display: none;">
+                <h3>Ajustes de Parametros Ventilatorios</h3>
+                <table id="tabelaAjustesContent">
+                    <thead>
+                        <tr>
+                            <th>Valor</th>
+                            <th>FiO2</th>
+                            <th>PEEP</th>
+                            <th>PIP</th>
+                            <th>FR</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaAjustesBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Interpretação de Loopings -->
+            <div class="loops-section">
+                <h3>Interpretacao de Loopings Ventilatorios</h3>
+                
+                <!-- Dropdown para seleção de tipo de looping -->
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="tipoLooping">Selecione o tipo de looping:</label>
+                    <select id="tipoLooping" onchange="mostrarLooping()">
+                        <option value="">Selecione um tipo</option>
+                        <option value="pv-normal">Loop P-V: Normal</option>
+                        <option value="pv-complacencia-diminuida">Loop P-V: Complacencia Diminuida</option>
+                        <option value="pv-hiperinsuflacao">Loop P-V: Hiperinsuflacao</option>
+                        <option value="pv-colapso">Loop P-V: Colapso Alveolar</option>
+                        <option value="fv-normal">Loop F-V: Normal</option>
+                        <option value="fv-obstrucao">Loop F-V: Obstrucao Vias Aereas</option>
+                        <option value="fv-restricao">Loop F-V: Restricao</option>
+                        <option value="fv-autopeep">Loop F-V: Auto-PEEP</option>
+                    </select>
+                </div>
+
+                <!-- Área para exibir o looping selecionado -->
+                <div id="areaLooping" style="display: none;">
+                    <div class="loop-item">
+                        <h4 id="tituloLooping"></h4>
+                        <div class="loop-description" id="descricaoLooping"></div>
+                        <div class="loop-interpretation" id="interpretacaoLooping"></div>
+                        <div class="loop-figure-placeholder" id="figuraPlaceholder" style="display: none;">
+                            <img id="figuraLooping" class="responsive-image" style="display: none;">
+                            <p id="placeholderTexto" style="text-align: center; color: #666; font-style: italic; padding: 20px; border: 2px dashed #ccc; border-radius: 8px;">
+                                Area para Figura:<br>
+                                Inserir figura do looping selecionado aqui
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <button class="report-btn" onclick="gerarRelatorio()">Gerar Relatorio</button>
+
+            <!-- Informações Técnicas -->
+            <div class="form-section">
+                <h3>Informacoes Tecnicas</h3>
+                <div class="loop-description">
+                    <p><strong>Formulas utilizadas:</strong></p>
+                    <ul>
+                        <li>FiO2 Desejada = (PaO2 Desejada × FiO2 Conhecida) / PaO2 Conhecida</li>
+                        <li>FR Desejada = (PaCO2 Conhecida × FR Conhecida) / PaCO2 Desejada</li>
+                        <li>Complacencia RNT = 1.2 ml/cmH2O/Kg (RN a termo)</li>
+                        <li>Complacencia RNPT = 0.8 ml/cmH2O/Kg (RN pre-termo)</li>
+                        <li>Resistencia RNT = 30.0 cmH2O/l/seg (RN a termo)</li>
+                        <li>Resistencia RNPT = 50.0 cmH2O/l/seg (RN pre-termo)</li>
+                    </ul>
+                    <p><strong>Bibliografia:</strong></p>
+                    <ul>
+                        <li>RAMOS, JRM. Avaliacao longitudinal de prematuros [Dissertacao de Mestrado]. Rio de Janeiro. Pos Graduacao em Saude da Crianca e da Mulher Instituto Fernandes Figueira. Fundacao Oswaldo Cruz. 1994.</li>
+                        <li>RAMOS, JRM. Estudo da Complacencia e resistencia do pulmao e do sistema respiratorio do recem nascido a termo [Tese de Doutorado]. Rio de Janeiro. Pos Graduacao em Saude da Crianca e da Mulher Instituto Fernandes Figueira. Fundacao Oswaldo Cruz. 2004.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Função para calcular tudo automaticamente
+        function calcularTudo() {
+            calcularFio2Desejada();
+            calcularFrDesejada();
+            calcularComplacenciaEsperada();
+            calcularResistenciaEsperada();
+            atualizarTabelaAjustes();
+        }
+
+        // Calcular FiO2 desejada
+        function calcularFio2Desejada() {
+            const pao2Desejada = parseFloat(document.getElementById('pao2Desejada').value);
+            const fio2Atual = parseFloat(document.getElementById('fio2Atual').value);
+            const pao2Atual = parseFloat(document.getElementById('pao2Atual').value);
+
+            if (pao2Desejada && fio2Atual && pao2Atual) {
+                const fio2Desejada = (pao2Desejada * fio2Atual) / pao2Atual;
+                const fio2DesejadaInteiro = Math.round(fio2Desejada);
+                
+                document.getElementById('fio2Desejada').textContent = fio2DesejadaInteiro;
+                document.getElementById('fio2DesejadaInterpretation').textContent = '%';
+            } else {
+                document.getElementById('fio2Desejada').textContent = '-';
+                document.getElementById('fio2DesejadaInterpretation').textContent = '%';
+            }
+        }
+
+        // Calcular FR desejada
+        function calcularFrDesejada() {
+            const paco2Desejada = parseFloat(document.getElementById('paco2Desejada').value);
+            const frAtual = parseFloat(document.getElementById('frAtual').value);
+            const paco2Atual = parseFloat(document.getElementById('paco2Atual').value);
+
+            if (paco2Desejada && frAtual && paco2Atual) {
+                const frDesejada = (paco2Atual * frAtual) / paco2Desejada;
+                const frDesejadaInteiro = Math.round(frDesejada);
+                
+                document.getElementById('frDesejada').textContent = frDesejadaInteiro;
+                document.getElementById('frDesejadaInterpretation').textContent = 'rpm';
+            } else {
+                document.getElementById('frDesejada').textContent = '-';
+                document.getElementById('frDesejadaInterpretation').textContent = 'rpm';
+            }
+        }
+
+        // Calcular complacência esperada
+        // Valores de referência baseados na literatura científica
+        // RAMOS, JRM. Estudo da Complacência e resistência do pulmão e do sistema respiratório do recém nascido a termo. Fundação Oswaldo Cruz. 2004.
+        function calcularComplacenciaEsperada() {
+            const peso = parseFloat(document.getElementById('peso').value);
+            const altura = parseFloat(document.getElementById('altura').value);
+            const idadeGestacional = parseFloat(document.getElementById('idadeGestacional').value);
+            
+            if (peso && altura) {
+                // Complacência RNT (RN a termo >= 37 semanas): 1.2 ml/cmH2O/Kg
+                const complacenciaRNT = 1.2;
+                document.getElementById('complacenciaRNT').textContent = complacenciaRNT.toFixed(1);
+                document.getElementById('complacenciaRNTInterpretation').textContent = 'ml/cmH2O/Kg';
+                
+                // Complacência RNPT (RN pré-termo < 37 semanas): 0.8 ml/cmH2O/Kg
+                const complacenciaRNPT = 0.8;
+                document.getElementById('complacenciaRNPT').textContent = complacenciaRNPT.toFixed(1);
+                document.getElementById('complacenciaRNPTInterpretation').textContent = 'ml/cmH2O/Kg';
+            } else {
+                document.getElementById('complacenciaRNT').textContent = '-';
+                document.getElementById('complacenciaRNTInterpretation').textContent = 'ml/cmH2O/Kg';
+                document.getElementById('complacenciaRNPT').textContent = '-';
+                document.getElementById('complacenciaRNPTInterpretation').textContent = 'ml/cmH2O/Kg';
+            }
+        }
+
+        // Calcular resistência esperada
+        // Valores de referência baseados na literatura científica
+        // RAMOS, JRM. Estudo da Complacência e resistência do pulmão e do sistema respiratório do recém nascido a termo. Fundação Oswaldo Cruz. 2004.
+        function calcularResistenciaEsperada() {
+            const peso = parseFloat(document.getElementById('peso').value);
+            const altura = parseFloat(document.getElementById('altura').value);
+            const idadeGestacional = parseFloat(document.getElementById('idadeGestacional').value);
+            
+            if (peso && altura) {
+                // Resistência RNT (RN a termo >= 37 semanas): 30.0 cmH2O/l/seg
+                const resistenciaRNT = 30.0;
+                document.getElementById('resistenciaRNT').textContent = resistenciaRNT.toFixed(1);
+                document.getElementById('resistenciaRNTInterpretation').textContent = 'cmH2O/l/seg';
+                
+                // Resistência RNPT (RN pré-termo < 37 semanas): 50.0 cmH2O/l/seg
+                const resistenciaRNPT = 50.0;
+                document.getElementById('resistenciaRNPT').textContent = resistenciaRNPT.toFixed(1);
+                document.getElementById('resistenciaRNPTInterpretation').textContent = 'cmH2O/l/seg';
+            } else {
+                document.getElementById('resistenciaRNT').textContent = '-';
+                document.getElementById('resistenciaRNTInterpretation').textContent = 'cmH2O/l/seg';
+                document.getElementById('resistenciaRNPT').textContent = '-';
+                document.getElementById('resistenciaRNPTInterpretation').textContent = 'cmH2O/l/seg';
+            }
+        }
+
+        // Função para atualizar tabela de ajustes baseada na gasometria
+        function atualizarTabelaAjustes() {
+            const pao2Atual = parseFloat(document.getElementById('pao2Atual').value);
+            const paco2Atual = parseFloat(document.getElementById('paco2Atual').value);
+            const pao2Desejada = parseFloat(document.getElementById('pao2Desejada').value);
+            const paco2Desejada = parseFloat(document.getElementById('paco2Desejada').value);
+            
+            const tabelaAjustes = document.getElementById('tabelaAjustes');
+            const tabelaAjustesBody = document.getElementById('tabelaAjustesBody');
+            
+            // Limpar tabela
+            tabelaAjustesBody.innerHTML = '';
+            
+            // Verificar se há dados suficientes
+            if (!pao2Atual || !paco2Atual || !pao2Desejada || !paco2Desejada) {
+                tabelaAjustes.style.display = 'none';
+                return;
+            }
+            
+            // Mostrar tabela
+            tabelaAjustes.style.display = 'block';
+            
+            // Analisar PaO2
+            if (pao2Atual < pao2Desejada) {
+                // PaO2 baixo
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>PaO2 diminuido</td>
+                    <td class="red-cell">AUMENTAR</td>
+                    <td class="red-cell">AUMENTAR</td>
+                    <td class="red-cell">DIMINUIR</td>
+                    <td class="red-cell">DIMINUIR</td>
+                `;
+                tabelaAjustesBody.appendChild(row);
+            } else if (pao2Atual > pao2Desejada * 1.2) {
+                // PaO2 alto (20% acima do desejado)
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>PaO2 aumentado</td>
+                    <td class="red-cell">DIMINUIR</td>
+                    <td class="red-cell">DIMINUIR</td>
+                    <td class="red-cell">AUMENTAR</td>
+                    <td class="red-cell">AUMENTAR</td>
+                `;
+                tabelaAjustesBody.appendChild(row);
+            }
+            
+            // Analisar PaCO2
+            if (paco2Atual > paco2Desejada * 1.1) {
+                // PaCO2 alto (10% acima do desejado)
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>PaCO2 aumentado</td>
+                    <td class="red-cell">AUMENTAR</td>
+                    <td class="red-cell">AUMENTAR</td>
+                    <td class="red-cell">AUMENTAR</td>
+                    <td class="red-cell">AUMENTAR</td>
+                `;
+                tabelaAjustesBody.appendChild(row);
+            } else if (paco2Atual < paco2Desejada * 0.9) {
+                // PaCO2 baixo (10% abaixo do desejado)
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>PaCO2 diminuido</td>
+                    <td class="red-cell">DIMINUIR</td>
+                    <td class="red-cell">DIMINUIR</td>
+                    <td class="red-cell">DIMINUIR</td>
+                    <td class="red-cell">DIMINUIR</td>
+                `;
+                tabelaAjustesBody.appendChild(row);
+            }
+            
+            // Se não há ajustes necessários
+            if (tabelaAjustesBody.children.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="5" style="text-align: center; color: #27ae60; font-weight: bold;">
+                        Parametros dentro dos valores desejados
+                    </td>
+                `;
+                tabelaAjustesBody.appendChild(row);
+            }
+        }
+
+        // Função para verificar se a imagem existe
+        function verificarImagemExiste(src) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(true);
+                img.onerror = () => resolve(false);
+                img.src = src;
+            });
+        }
+
+        // Função para mostrar o looping selecionado
+        async function mostrarLooping() {
+            const tipoLooping = document.getElementById('tipoLooping').value;
+            const areaLooping = document.getElementById('areaLooping');
+            const tituloLooping = document.getElementById('tituloLooping');
+            const descricaoLooping = document.getElementById('descricaoLooping');
+            const interpretacaoLooping = document.getElementById('interpretacaoLooping');
+            const figuraLooping = document.getElementById('figuraLooping');
+            const placeholderTexto = document.getElementById('placeholderTexto');
+
+            if (!tipoLooping) {
+                areaLooping.style.display = 'none';
+                // Limpar conteúdo anterior
+                tituloLooping.textContent = '';
+                descricaoLooping.textContent = '';
+                interpretacaoLooping.innerHTML = '';
+                figuraLooping.src = '';
+                figuraLooping.style.display = 'none';
+                placeholderTexto.style.display = 'none';
+                document.getElementById('figuraPlaceholder').style.display = 'none';
+                return;
+            }
+
+            areaLooping.style.display = 'block';
+
+            switch (tipoLooping) {
+                case 'pv-normal':
+                    tituloLooping.textContent = 'Loop P-V: Normal';
+                    descricaoLooping.textContent = 'Loop Pressao-Volume normal com complacencia adequada e curva suave.';
+                    interpretacaoLooping.innerHTML = `
+                        <h5>Interpretacao:</h5>
+                        <ul>
+                            <li>Complacencia pulmonar normal</li>
+                            <li>Curva suave e ascendente</li>
+                            <li>Histerese fisiologica presente</li>
+                            <li>Sem sinais de hiperinsuflacao ou colapso</li>
+                        </ul>
+                    `;
+                    const srcNormal = 'imagens/loop_pv_normal.png';
+                    document.getElementById('figuraPlaceholder').style.display = 'block';
+                    if (await verificarImagemExiste(srcNormal)) {
+                        figuraLooping.src = srcNormal;
+                        figuraLooping.alt = 'Loop P-V Normal';
+                        figuraLooping.className = 'responsive-image';
+                        figuraLooping.style.display = 'block';
+                        placeholderTexto.style.display = 'none';
+                    } else {
+                        figuraLooping.style.display = 'none';
+                        placeholderTexto.style.display = 'block';
+                    }
+                    break;
+
+                case 'pv-complacencia-diminuida':
+                    tituloLooping.textContent = 'Loop P-V: Complacencia Diminuida';
+                    descricaoLooping.textContent = 'Loop deslocado para a direita, indicando diminuicao da complacencia pulmonar.';
+                    interpretacaoLooping.innerHTML = `
+                        <h5>Interpretacao:</h5>
+                        <ul>
+                            <li>Complacencia pulmonar diminuida</li>
+                            <li>Curva deslocada para a direita</li>
+                            <li>Maior pressao necessaria para mesmo volume</li>
+                            <li>Possivel fibrose, edema ou consolidacao</li>
+                        </ul>
+                    `;
+                    const srcComplacencia = 'imagens/loop_pv_complacencia_diminuida.png';
+                    document.getElementById('figuraPlaceholder').style.display = 'block';
+                    if (await verificarImagemExiste(srcComplacencia)) {
+                        figuraLooping.src = srcComplacencia;
+                        figuraLooping.alt = 'Loop P-V Complacencia Diminuida';
+                        figuraLooping.className = 'responsive-image';
+                        figuraLooping.style.display = 'block';
+                        placeholderTexto.style.display = 'none';
+                    } else {
+                        figuraLooping.style.display = 'none';
+                        placeholderTexto.style.display = 'block';
+                    }
+                    break;
+
+                case 'pv-hiperinsuflacao':
+                    tituloLooping.textContent = 'Loop P-V: Hiperinsuflacao';
+                    descricaoLooping.textContent = 'Loop com "joelho" superior, indicando hiperinsuflacao pulmonar.';
+                    interpretacaoLooping.innerHTML = `
+                        <h5>Interpretacao:</h5>
+                        <ul>
+                            <li>Hiperinsuflacao pulmonar</li>
+                            <li>Joelho superior (UIP) marcado</li>
+                            <li>Risco de barotrauma</li>
+                            <li>Necessario reduzir pressao ou volume</li>
+                        </ul>
+                    `;
+                    const srcHiperinsuflacao = 'imagens/loop_pv_hiperinsuflacao.png';
+                    document.getElementById('figuraPlaceholder').style.display = 'block';
+                    if (await verificarImagemExiste(srcHiperinsuflacao)) {
+                        figuraLooping.src = srcHiperinsuflacao;
+                        figuraLooping.alt = 'Loop P-V Hiperinsuflacao';
+                        figuraLooping.className = 'responsive-image';
+                        figuraLooping.style.display = 'block';
+                        placeholderTexto.style.display = 'none';
+                    } else {
+                        figuraLooping.style.display = 'none';
+                        placeholderTexto.style.display = 'block';
+                    }
+                    break;
+
+                case 'pv-colapso':
+                    tituloLooping.textContent = 'Loop P-V: Colapso Alveolar';
+                    descricaoLooping.textContent = 'Loop com "joelho" inferior, indicando colapso alveolar.';
+                    interpretacaoLooping.innerHTML = `
+                        <h5>Interpretacao:</h5>
+                        <ul>
+                            <li>Colapso alveolar (atelectasia)</li>
+                            <li>Joelho inferior (LIP) marcado</li>
+                            <li>Necessario aumentar PEEP</li>
+                            <li>Manobras de recrutamento podem ser uteis</li>
+                        </ul>
+                    `;
+                    const srcColapso = 'imagens/loop_pv_colapso.png';
+                    document.getElementById('figuraPlaceholder').style.display = 'block';
+                    if (await verificarImagemExiste(srcColapso)) {
+                        figuraLooping.src = srcColapso;
+                        figuraLooping.alt = 'Loop P-V Colapso';
+                        figuraLooping.className = 'responsive-image';
+                        figuraLooping.style.display = 'block';
+                        placeholderTexto.style.display = 'none';
+                    } else {
+                        figuraLooping.style.display = 'none';
+                        placeholderTexto.style.display = 'block';
+                    }
+                    break;
+
+                case 'fv-normal':
+                    tituloLooping.textContent = 'Loop F-V: Normal';
+                    descricaoLooping.textContent = 'Loop Fluxo-Volume normal com forma triangular simetrica.';
+                    interpretacaoLooping.innerHTML = `
+                        <h5>Interpretacao:</h5>
+                        <ul>
+                            <li>Vias aereas normais</li>
+                            <li>Forma triangular simetrica</li>
+                            <li>Fluxo inspiratorio e expiratorio adequados</li>
+                            <li>Sem obstrucao ou restricao</li>
+                        </ul>
+                    `;
+                    const srcFVNormal = 'imagens/loop_fv_normal.png';
+                    document.getElementById('figuraPlaceholder').style.display = 'block';
+                    if (await verificarImagemExiste(srcFVNormal)) {
+                        figuraLooping.src = srcFVNormal;
+                        figuraLooping.alt = 'Loop F-V Normal';
+                        figuraLooping.className = 'responsive-image';
+                        figuraLooping.style.display = 'block';
+                        placeholderTexto.style.display = 'none';
+                    } else {
+                        figuraLooping.style.display = 'none';
+                        placeholderTexto.style.display = 'block';
+                    }
+                    break;
+
+                case 'fv-obstrucao':
+                    tituloLooping.textContent = 'Loop F-V: Obstrucao Vias Aereas';
+                    descricaoLooping.textContent = 'Loop com curva expiratoria concava, indicando obstrucao das vias aereas.';
+                    interpretacaoLooping.innerHTML = `
+                        <h5>Interpretacao:</h5>
+                        <ul>
+                            <li>Obstrucao das vias aereas</li>
+                            <li>Curva expiratoria concava</li>
+                            <li>Fluxo expiratorio diminuido</li>
+                            <li>Possivel asma, bronquite ou edema</li>
+                        </ul>
+                    `;
+                    const srcFVObstrucao = 'imagens/loop_fv_obstrucao.png';
+                    document.getElementById('figuraPlaceholder').style.display = 'block';
+                    if (await verificarImagemExiste(srcFVObstrucao)) {
+                        figuraLooping.src = srcFVObstrucao;
+                        figuraLooping.alt = 'Loop F-V Obstrucao';
+                        figuraLooping.className = 'responsive-image';
+                        figuraLooping.style.display = 'block';
+                        placeholderTexto.style.display = 'none';
+                    } else {
+                        figuraLooping.style.display = 'none';
+                        placeholderTexto.style.display = 'block';
+                    }
+                    break;
+
+                case 'fv-restricao':
+                    tituloLooping.textContent = 'Loop F-V: Restricao';
+                    descricaoLooping.textContent = 'Loop estreito e alto, indicando restricao pulmonar.';
+                    interpretacaoLooping.innerHTML = `
+                        <h5>Interpretacao:</h5>
+                        <ul>
+                            <li>Restricao pulmonar</li>
+                            <li>Curva estreita e alta</li>
+                            <li>Volume corrente diminuido</li>
+                            <li>Possivel fibrose ou consolidacao</li>
+                        </ul>
+                    `;
+                    const srcFVRestricao = 'imagens/loop_fv_restricao.png';
+                    document.getElementById('figuraPlaceholder').style.display = 'block';
+                    if (await verificarImagemExiste(srcFVRestricao)) {
+                        figuraLooping.src = srcFVRestricao;
+                        figuraLooping.alt = 'Loop F-V Restricao';
+                        figuraLooping.className = 'responsive-image';
+                        figuraLooping.style.display = 'block';
+                        placeholderTexto.style.display = 'none';
+                    } else {
+                        figuraLooping.style.display = 'none';
+                        placeholderTexto.style.display = 'block';
+                    }
+                    break;
+
+                case 'fv-autopeep':
+                    tituloLooping.textContent = 'Loop F-V: Auto-PEEP';
+                    descricaoLooping.textContent = 'Loop onde o fluxo nao retorna a zero, indicando auto-PEEP.';
+                    interpretacaoLooping.innerHTML = `
+                        <h5>Interpretacao:</h5>
+                        <ul>
+                            <li>Auto-PEEP presente</li>
+                            <li>Fluxo nao retorna a zero</li>
+                            <li>Risco de barotrauma</li>
+                            <li>Necessario aumentar tempo expiratorio</li>
+                        </ul>
+                    `;
+                    const srcFVAutoPEEP = 'imagens/loop_fv_autopeep.png';
+                    document.getElementById('figuraPlaceholder').style.display = 'block';
+                    if (await verificarImagemExiste(srcFVAutoPEEP)) {
+                        figuraLooping.src = srcFVAutoPEEP;
+                        figuraLooping.alt = 'Loop F-V Auto-PEEP';
+                        figuraLooping.className = 'responsive-image';
+                        figuraLooping.style.display = 'block';
+                        placeholderTexto.style.display = 'none';
+                    } else {
+                        figuraLooping.style.display = 'none';
+                        placeholderTexto.style.display = 'block';
+                    }
+                    break;
+            }
+        }
+
+        // Função para gerar relatório
+        function gerarRelatorio() {
+            const nome = document.getElementById('nome').value || 'Paciente';
+            const peso = document.getElementById('peso').value || '-';
+            const altura = document.getElementById('altura').value || '-';
+            const idadeGestacional = document.getElementById('idadeGestacional').value || '-';
+            
+            const fio2Atual = document.getElementById('fio2Atual').value || '-';
+            const peepAtual = document.getElementById('peepAtual').value || '-';
+            const pipAtual = document.getElementById('pipAtual').value || '-';
+            const frAtual = document.getElementById('frAtual').value || '-';
+            
+            const pao2Atual = document.getElementById('pao2Atual').value || '-';
+            const paco2Atual = document.getElementById('paco2Atual').value || '-';
+            
+            const pao2Desejada = document.getElementById('pao2Desejada').value || '-';
+            const paco2Desejada = document.getElementById('paco2Desejada').value || '-';
+            
+            const fio2Desejada = document.getElementById('fio2Desejada').textContent;
+            const frDesejada = document.getElementById('frDesejada').textContent;
+            const complacenciaRNT = document.getElementById('complacenciaRNT').textContent;
+            const complacenciaRNPT = document.getElementById('complacenciaRNPT').textContent;
+            const resistenciaRNT = document.getElementById('resistenciaRNT').textContent;
+            const resistenciaRNPT = document.getElementById('resistenciaRNPT').textContent;
+            
+            const dataHora = new Date().toLocaleString('pt-BR');
+            
+            const relatorio = `RELATORIO - MANUSEIO DE VENTILACAO MECANICA EM NEONATOS
+========================================================
+
+DADOS DO PACIENTE
+-----------------
+Data/Hora: ${dataHora}
+Nome: ${nome}
+Peso: ${peso} kg
+Altura: ${altura} cm
+Idade Gestacional: ${idadeGestacional} semanas
+
+PARAMETROS VENTILATORIOS ATUAIS
+-------------------------------
+FiO2: ${fio2Atual}%
+PEEP: ${peepAtual} cmH2O
+PIP: ${pipAtual} cmH2O
+FR: ${frAtual} rpm
+
+GASOMETRIA
+----------
+PaO2: ${pao2Atual} mmHg
+PaCO2: ${paco2Atual} mmHg
+
+OBJETIVOS DESEJADOS
+-------------------
+PaO2 Desejada: ${pao2Desejada} mmHg
+PaCO2 Desejada: ${paco2Desejada} mmHg
+
+CALCULOS AUTOMATICOS
+--------------------
+FiO2 Desejada: ${fio2Desejada}%
+FR Desejada: ${frDesejada} rpm
+Complacencia Esperada RNT: ${complacenciaRNT} ml/cmH2O/Kg
+Complacencia Esperada RNPT: ${complacenciaRNPT} ml/cmH2O/Kg
+Resistencia Esperada RNT: ${resistenciaRNT} cmH2O/l/seg
+Resistencia Esperada RNPT: ${resistenciaRNPT} cmH2O/l/seg
+
+AJUSTES DE PARAMETROS VENTILATORIOS
+-----------------------------------
+PaO2 Diminuido: Aumentar FiO2, PEEP; Diminuir PIP, FR
+PaO2 Aumentado: Diminuir FiO2, PEEP; Aumentar PIP, FR
+PaCO2 Diminuido: Diminuir FiO2, PEEP, PIP, FR
+PaCO2 Aumentado: Aumentar FiO2, PEEP, PIP, FR
+
+INTERPRETACAO DE LOOPINGS
+-------------------------
+Loop P-V Normal: Complacencia pulmonar normal, curva suave
+Loop P-V Complacencia Diminuida: Curva deslocada para direita
+Loop P-V Hiperinsuflacao: Joelho superior (UIP) marcado
+Loop P-V Colapso: Joelho inferior (LIP) marcado
+Loop F-V Normal: Forma triangular simetrica
+Loop F-V Obstrucao: Curva expiratoria concava
+Loop F-V Restricao: Curva estreita e alta
+Loop F-V Auto-PEEP: Fluxo nao retorna a zero
+
+FORMULAS UTILIZADAS
+-------------------
+FiO2 Desejada = (PaO2 Desejada × FiO2 Conhecida) / PaO2 Conhecida
+FR Desejada = (PaCO2 Conhecida × FR Conhecida) / PaCO2 Desejada
+Complacencia RNT = 1.2 ml/cmH2O/Kg (RN a termo)
+Complacencia RNPT = 0.8 ml/cmH2O/Kg (RN pre-termo)
+Resistencia RNT = 30.0 cmH2O/l/seg (RN a termo)
+Resistencia RNPT = 50.0 cmH2O/l/seg (RN pre-termo)
+
+BIBLIOGRAFIA
+------------
+1. RAMOS, JRM. Avaliacao longitudinal de prematuros [Dissertacao de Mestrado]. Rio de Janeiro. Pos Graduacao em Saude da Crianca e da Mulher Instituto Fernandes Figueira. Fundacao Oswaldo Cruz. 1994.
+
+2. RAMOS, JRM. Estudo da Complacencia e resistencia do pulmao e do sistema respiratorio do recem nascido a termo [Tese de Doutorado]. Rio de Janeiro. Pos Graduacao em Saude da Crianca e da Mulher Instituto Fernandes Figueira. Fundacao Oswaldo Cruz. 2004.
+
+DETALHES TECNICOS
+-----------------
+Calculadora: NeoPedCalc - Manuseio de Ventilacao Mecanica em Neonatos
+Data de Geracao: ${dataHora}
+
+OBSERVACOES IMPORTANTES
+-----------------------
+- Verificar sempre os parametros ventilatorios antes de ajustar
+- Monitorar resposta do paciente apos mudancas
+- Considerar fatores que podem influenciar a complacencia
+- A interpretacao deve ser contextualizada com o quadro clinico
+- Diferenciar entre RN a termo (RNT) e RN pre-termo (RNPT)
+- Valores de complacencia e resistencia variam com idade gestacional`;
+
+            // Copiar para a área de transferência
+            navigator.clipboard.writeText(relatorio).then(() => {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(() => {
+                // Fallback para navegadores mais antigos
+                const textArea = document.createElement('textarea');
+                textArea.value = relatorio;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+
+        // Inicializar cálculos automáticos
+        document.addEventListener('DOMContentLoaded', function() {
+            // Não calcular automaticamente no carregamento
+            // calcularTudo();
+        });
+
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        };
+    </script>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🫁 Manuseio de Ventilação Mecânica em Neonatos</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>🎯 Objetivo</h3>
+                <p>Calculadora para ajuste de parâmetros ventilatórios em neonatos, interpretação de gasometrias e análise de loopings pressão-volume e fluxo-volume específicos para recém-nascidos.</p>
+
+                <h3>📋 Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Dados do Paciente:</strong> Preencha peso, altura e idade gestacional do neonato</li>
+                    <li><strong>Parâmetros Ventilatórios:</strong> Insira FiO2, PEEP, PIP e frequência respiratória atuais</li>
+                    <li><strong>Gasometria:</strong> Digite os valores de PaO2 e PaCO2 atuais</li>
+                    <li><strong>Objetivos:</strong> Defina os valores desejados de PaO2 e PaCO2</li>
+                    <li><strong>Resultados:</strong> A calculadora fornecerá os ajustes necessários</li>
+                    <li><strong>Interpretação:</strong> Analise os loopings e parâmetros sugeridos</li>
+                </ol>
+
+                <h3>🧮 Fórmulas Principais</h3>
+                <ul>
+                    <li><strong>FiO2 Desejada:</strong> (PaO2 Desejada × FiO2 Conhecida) / PaO2 Conhecida</li>
+                    <li><strong>FR Desejada:</strong> (PaCO2 Conhecida × FR Conhecida) / PaCO2 Desejada</li>
+                    <li><strong>Complacência RNT:</strong> 1.2 ml/cmH2O/Kg (RN a termo)</li>
+                    <li><strong>Complacência RNPT:</strong> 0.8 ml/cmH2O/Kg (RN pré-termo)</li>
+                    <li><strong>Resistência RNT:</strong> 30.0 cmH2O/l/seg (RN a termo)</li>
+                    <li><strong>Resistência RNPT:</strong> 50.0 cmH2O/l/seg (RN pré-termo)</li>
+                </ul>
+
+                <h3>⚙️ Ajustes de Parâmetros</h3>
+                <ul>
+                    <li><strong>PaO2 Diminuído:</strong> Aumentar FiO2, PEEP; Diminuir PIP, FR</li>
+                    <li><strong>PaO2 Aumentado:</strong> Diminuir FiO2, PEEP; Aumentar PIP, FR</li>
+                    <li><strong>PaCO2 Diminuído:</strong> Diminuir FiO2, PEEP, PIP, FR</li>
+                    <li><strong>PaCO2 Aumentado:</strong> Aumentar FiO2, PEEP, PIP, FR</li>
+                </ul>
+
+                <h3>📊 Interpretação de Loopings</h3>
+                <ul>
+                    <li><strong>Loop P-V Normal:</strong> Complacência pulmonar normal, curva suave</li>
+                    <li><strong>Loop P-V Complacência Diminuída:</strong> Curva deslocada para direita</li>
+                    <li><strong>Loop P-V Hiperinsuflação:</strong> Joelho superior (UIP) marcado</li>
+                    <li><strong>Loop P-V Colapso:</strong> Joelho inferior (LIP) marcado</li>
+                    <li><strong>Loop F-V Normal:</strong> Forma triangular simétrica</li>
+                    <li><strong>Loop F-V Obstrução:</strong> Curva expiratória côncava</li>
+                    <li><strong>Loop F-V Restrição:</strong> Curva estreita e alta</li>
+                    <li><strong>Loop F-V Auto-PEEP:</strong> Fluxo não retorna a zero</li>
+                </ul>
+
+                <h3>⚠️ Considerações Importantes</h3>
+                <ul>
+                    <li>Verificar sempre os parâmetros ventilatórios antes de ajustar</li>
+                    <li>Monitorar resposta do paciente após mudanças</li>
+                    <li>Considerar fatores que podem influenciar a complacência</li>
+                    <li>A interpretação deve ser contextualizada com o quadro clínico</li>
+                    <li>Diferenciar entre RN a termo (RNT) e RN pré-termo (RNPT)</li>
+                    <li>Valores de complacência e resistência variam com idade gestacional</li>
+                </ul>
+
+                <h3>📚 Referências</h3>
+                <ul>
+                    <li>RAMOS, JRM. Avaliação longitudinal de prematuros [Dissertação de Mestrado]. Rio de Janeiro. Pós Graduação em Saúde da Criança e da Mulher Instituto Fernandes Figueira. Fundação Oswaldo Cruz. 1994.</li>
+                    <li>RAMOS, JRM. Estudo da Complacência e resistência do pulmão e do sistema respiratório do recém nascido a termo [Tese de Doutorado]. Rio de Janeiro. Pós Graduação em Saúde da Criança e da Mulher Instituto Fernandes Figueira. Fundação Oswaldo Cruz. 2004.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<script src="../../js/neoped-datetime-fix.js"></script>
+<script src="../../js/neoped-nav.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.DS_Store
+artifacts/
+test-results/
+*.log
+
+# Projeto legado do Web Page Maker (contém senha)
+site.wss

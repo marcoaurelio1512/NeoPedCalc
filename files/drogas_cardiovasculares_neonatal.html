@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>NeoPedCalc — Drogas cardiovasculares neonatais (educativo)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            touch-action: pan-y;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            background: #f6f7fb;
+            min-height: 100vh;
+        }
+
+        .app-viewport {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+        .app-shell {
+            width: 100%;
+            max-width: 1200px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e7e7ee;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-group input, .form-group select {
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+        input[type="number"],
+        input[type="number"][readonly] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #111827;
+        }
+
+        .config-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: none;
+        }
+
+        .config-section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #e5e7eb, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .results {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 30px;
+            display: none;
+        }
+
+        .result-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .result-card h3 {
+            color: #111827;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .result-value {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.4em;
+            }
+
+            .header p {
+                font-size: 0.9em;
+            }
+
+            .form-container {
+                padding: 15px;
+            }
+
+            .section {
+                padding: 12px;
+            }
+
+            .section h3 {
+                font-size: 1.1em;
+            }
+
+            input, select {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            button {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+
+            .drug-results {
+                padding: 12px;
+            }
+
+            .drug-card {
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .app-viewport {
+                padding: 12px;
+            }
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-info {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-info:hover {
+            background: white;
+            color: #2c3e50;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
+            box-sizing: border-box;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 720px;
+            max-height: 86vh;
+            overflow: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #2c3e50;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .modal-header {
+                padding: 15px 20px;
+            }
+
+            .modal-header h2 {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 98%;
+            }
+
+            .modal-body {
+                padding: 15px;
+            }
+
+            .modal-header h2 {
+                font-size: 16px;
+            }
+
+            .modal-body h3 {
+                font-size: 16px;
+            }
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-report {
+            background: #28a745;
+        }
+
+        .result-actions {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .input-readonly {
+            background-color: #f8f9fa;
+        }
+
+        .config-hidden {
+            display: none;
+        }
+
+        .is-hidden {
+            display: none;
+        }
+
+        .card, .panel, .box {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        label {
+            display: block;
+        }
+
+        input, select, textarea, button {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        input, select, textarea {
+            width: 100%;
+        }
+
+        .table-wrap {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        th, td {
+            word-wrap: break-word;
+            overflow-wrap: anywhere;
+        }
+
+        body {
+            overscroll-behavior-x: none;
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <div class="app-viewport">
+        <div class="app-shell">
+            <div class="container">
+                <div class="header">
+                    <h1>Drogas Cardiovasculares</h1>
+                    <p>Calculadora Neonatal - Terapia Intensiva</p>
+                    <div class="header-actions">
+                        <button type="button" class="btn-info" onclick="abrirModal()">
+                            Como usar                        </button>
+                    </div>
+                </div>
+
+        <div class="form-container">
+            <form id="drogasForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome">Nome do Paciente:</label>
+                        <input type="text" id="nome" placeholder="Nome do recém-nascido">
+                    </div>
+                    <div class="form-group">
+                        <label for="dataAtual">Data Atual:</label>
+                        <input type="date" id="dataAtual">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="peso">Peso Atual (kg):</label>
+                        <input type="number" id="peso" step="0.001" placeholder="Ex: 2.500">
+                    </div>
+                    <div class="form-group">
+                        <label for="idadeGestacionalNascimento">Idade Gestacional ao Nascer (semanas):</label>
+                        <input type="number" id="idadeGestacionalNascimento" step="0.1" placeholder="Ex: 32.5">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="idadeGestacionalNascimentoDias">Idade Gestacional ao Nascer (dias):</label>
+                        <input type="number" id="idadeGestacionalNascimentoDias" min="0" max="6" placeholder="Ex: 3">
+                    </div>
+                    <div class="form-group">
+                        <label for="dataNascimento">Data de Nascimento:</label>
+                        <input type="date" id="dataNascimento">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="idadeGestacionalCorrigida">Idade Gestacional Corrigida:</label>
+                        <input type="text" id="idadeGestacionalCorrigida" readonly class="input-readonly">
+                    </div>
+                    <div class="form-group">
+                        <label for="diasVida">Dias de Vida:</label>
+                        <input type="text" id="diasVida" readonly class="input-readonly">
+                    </div>
+                </div>
+
+                <div class="config-section">
+                    <h3>Configuracao da Droga</h3>
+                    
+                    <div class="form-group">
+                        <label for="drogaSelecionada">Selecionar Droga:</label>
+                        <select id="drogaSelecionada">
+                            <option value="">Selecione uma droga...</option>
+                        </select>
+                    </div>
+
+                    <div id="configuracaoDroga" class="config-hidden">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="doseDroga">Dose:</label>
+                                <input type="number" id="doseDroga" step="0.01" placeholder="Ex: 0.05">
+                            </div>
+                            <div class="form-group">
+                                <label for="unidadeDose">Unidade da Dose:</label>
+                                <select id="unidadeDose">
+                                    <option value="mcg/kg/min">mcg/kg/min</option>
+                                    <option value="mcg/kg/hora">mcg/kg/hora</option>
+                                    <option value="mg/kg/hora">mg/kg/hora</option>
+                                    <option value="UI/kg/hora">UI/kg/hora</option>
+                                    <option value="mg/kg/dose">mg/kg/dose</option>
+                                    <option value="mcg/kg">mcg/kg</option>
+                                    <option value="mg/kg">mg/kg</option>
+                                    <option value="UI/kg">UI/kg</option>
+                                    <option value="UI/kg/bolus">UI/kg/bolus</option>
+                                    <option value="mg/dose">mg/dose</option>
+                                    <option value="mg/kg/dia">mg/kg/dia</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="apresentacaoDroga">Apresentação:</label>
+                                <input type="text" id="apresentacaoDroga" placeholder="Ex: 500 mcg/ml">
+                            </div>
+                            <div class="form-group">
+                                <label for="volumeInfusao">Volume de Infusão (ml):</label>
+                                <input type="number" id="volumeInfusao" step="1" placeholder="Ex: 24">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tempoInfusao">Tempo de Infusão (horas):</label>
+                                <select id="tempoInfusao">
+                                    <option value="1">1 hora</option>
+                                    <option value="6">6 horas</option>
+                                    <option value="12">12 horas</option>
+                                    <option value="24" selected>24 horas</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="observacoesDroga">Observações:</label>
+                                <textarea id="observacoesDroga" rows="3" placeholder="Observações específicas da droga..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="submit" class="btn" id="btnCalcular">Acrescentar Calculo ao Relatorio</button>
+                    <button type="button" id="limparDados" class="btn btn-secondary">Limpar Dados</button>
+                    <button type="button" id="limparHistorico" class="btn btn-danger">Limpar Historico</button>
+                </div>
+            </form>
+
+            <div id="results" class="results">
+                <div class="result-card">
+                    <h3>Nome da Droga</h3>
+                    <div class="result-value" id="nomeDrogaResultado">-</div>
+                </div>
+                <div class="result-card">
+                    <h3>Dosagem Escolhida</h3>
+                    <div class="result-value" id="dosagemCalculada">-</div>
+                    <div class="result-value" id="unidadeDosagem">-</div>
+                </div>
+                <div class="result-card">
+                    <h3>Dose Total no Tempo Escolhido</h3>
+                    <div class="result-value" id="doseTotalResultado">-</div>
+                    <div class="result-value" id="unidadeDoseTotal">-</div>
+                </div>
+                <div class="result-card">
+                    <h3>Volume da Droga (ml)</h3>
+                    <div class="result-value" id="volumeDrogaResultado">-</div>
+                </div>
+                <div class="result-card">
+                    <h3>Velocidade de Infusão</h3>
+                    <div class="result-value" id="velocidadeInfusaoResultado">-</div>
+                </div>
+                <div class="result-card">
+                    <h3>Informações da Droga</h3>
+                    <div class="result-value" id="informacoesDroga">-</div>
+                </div>
+            </div>
+
+            <div class="result-actions">
+                <button type="button" id="gerarRelatorio" class="btn btn-report is-hidden">Copiar texto informativo</button>
+            </div>
+        </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — Drogas cardiovasculares neonatais (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta calculadora organiza parametros para estimativa educativa de dose em terapias cardiovasculares neonatais. O conteudo e informativo e nao substitui avaliacao clinica, protocolo institucional ou prescricao.</p>
+                
+                <h3>Fórmulas de Dosagem</h3>
+                <div class="formula-box">
+                    <strong>Dose = Peso (kg) × Dose por kg × Concentração da droga</strong><br><br>
+                    <strong>Volume a Infundir = Dose total ÷ Concentração da solução</strong><br><br>
+                    <strong>Velocidade de Infusão = Volume ÷ Tempo (hora)</strong><br><br>
+                    <strong>Ajuste por Idade Gestacional:</strong><br>
+                    • <strong>Pré-termo:</strong> Dose reduzida em 25-50%<br>
+                    • <strong>Termo:</strong> Dose padrão<br>
+                    • <strong>Pós-termo:</strong> Dose padrão<br><br>
+                    <strong>Monitoramento Necessário:</strong><br>
+                    • Pressão arterial contínua<br>
+                    • Frequência cardíaca<br>
+                    • Perfusão periférica<br>
+                    • Função renal
+                </div>
+
+                <h3>Medicamentos Incluídos</h3>
+                <ul>
+                    <li><strong>Dobutamina:</strong> Inotrópico positivo, vasodilatador</li>
+                    <li><strong>Dopamina:</strong> Dose-dependente (renal, inotrópico, vasopressor)</li>
+                    <li><strong>Adrenalina:</strong> Vasopressor, inotrópico</li>
+                    <li><strong>Noradrenalina:</strong> Vasopressor potente</li>
+                    <li><strong>Milrinona:</strong> Inotrópico, vasodilatador</li>
+                    <li><strong>Digoxina:</strong> Inotrópico, cronotrópico negativo</li>
+                    <li><strong>Propranolol:</strong> Betabloqueador</li>
+                    <li><strong>Esmolol:</strong> Betabloqueador de ação rápida</li>
+                    <li><strong>Hidralazina:</strong> Vasodilatador</li>
+                    <li><strong>Nitroprussiato:</strong> Vasodilatador potente</li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Insira o Peso:</strong> Peso atual do recém-nascido em kg</li>
+                    <li><strong>Selecione a Droga:</strong> Escolha o medicamento desejado</li>
+                    <li><strong>Escolha a Indicação:</strong> Selecione o objetivo terapêutico</li>
+                    <li><strong>Calcule a Dose:</strong> Sistema calcula automaticamente</li>
+                    <li><strong>Verifique os Resultados:</strong> Dose, diluição e velocidade</li>
+                    <li><strong>Monitore o Paciente:</strong> Acompanhe resposta clínica</li>
+                </ol>
+
+                <h3>Considerações Especiais Neonatais</h3>
+                <ul>
+                    <li><strong>Idade Gestacional:</strong> Pré-termos requerem doses menores</li>
+                    <li><strong>Idade Pós-natal:</strong> Primeira semana de vida - doses reduzidas</li>
+                    <li><strong>Função Renal:</strong> Imatura nos primeiros dias</li>
+                    <li><strong>Função Hepática:</strong> Metabolismo reduzido</li>
+                    <li><strong>Volume de Distribuição:</strong> Maior em neonatos</li>
+                    <li><strong>Barreira Hematoencefálica:</strong> Mais permeável</li>
+                    <li><strong>Resposta aos Medicamentos:</strong> Variável e imprevisível</li>
+                </ul>
+
+                <h3>Monitoramento Obrigatório</h3>
+                <ul>
+                    <li><strong>Hemodinâmico:</strong> PA, FC, PVC, débito cardíaco</li>
+                    <li><strong>Eletrolítico:</strong> Na, K, Cl, Mg, Ca</li>
+                    <li><strong>Renal:</strong> Diurese, creatinina, ureia</li>
+                    <li><strong>Metabólico:</strong> Glicemia, lactato</li>
+                    <li><strong>Perfusão:</strong> Tempo de enchimento capilar</li>
+                    <li><strong>Neurológico:</strong> Nível de consciência</li>
+                </ul>
+
+                <h3>Indicações Principais</h3>
+                <ul>
+                    <li><strong>Choque:</strong> Cardiogênico, séptico, hipovolêmico</li>
+                    <li><strong>Insuficiência Cardíaca:</strong> Congestiva, aguda</li>
+                    <li><strong>Hipertensão:</strong> Arterial pulmonar, sistêmica</li>
+                    <li><strong>Arritmias:</strong> Taquicardia, bradicardia</li>
+                    <li><strong>Circulação Extracorpórea:</strong> Pós-operatório</li>
+                    <li><strong>Asfixia Perinatal:</strong> Disfunção miocárdica</li>
+                </ul>
+
+                <h3>Precauções e Contraindicações</h3>
+                <ul>
+                    <li><strong>Hipersensibilidade:</strong> Reações alérgicas</li>
+                    <li><strong>Disfunção Renal:</strong> Ajuste de dose necessário</li>
+                    <li><strong>Disfunção Hepática:</strong> Monitoramento rigoroso</li>
+                    <li><strong>Interações:</strong> Com outros medicamentos</li>
+                    <li><strong>Extravasamento:</strong> Necrose tecidual</li>
+                    <li><strong>Infecção:</strong> Via de acesso central</li>
+                </ul>
+
+                <h3>Administração Segura</h3>
+                <ul>
+                    <li><strong>Via de Acesso:</strong> Preferencialmente central</li>
+                    <li><strong>Diluição:</strong> Concentrações apropriadas</li>
+                    <li><strong>Velocidade:</strong> Bomba de infusão obrigatória</li>
+                    <li><strong>Compatibilidade:</strong> Verificar com outros medicamentos</li>
+                    <li><strong>Estabilidade:</strong> Tempo de uso da solução</li>
+                    <li><strong>Documentação:</strong> Dose, horário, resposta</li>
+                </ul>
+
+                <h3>Limitações</h3>
+                <ul>
+                    <li>Não substitui avaliação clínica</li>
+                    <li>Requer monitoramento contínuo</li>
+                    <li>Pode variar entre pacientes</li>
+                    <li>Necessita ajuste individual</li>
+                    <li>Baseado em evidências limitadas</li>
+                    <li>Requer experiência clínica</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Kluckow M, Seri I, Evans N. Functional echocardiography: an emerging clinical tool for the neonatologist. J Pediatr. 2007;150(2):125-30.<br>
+                    - Noori S, Seri I. Evidence-based versus pathophysiology-based approach to diagnosis and treatment of neonatal cardiovascular compromise. Semin Fetal Neonatal Med. 2015;20(4):238-45.<br>
+                    - El-Khuffash AF, McNamara PJ. Neonatal hemodynamics: from developmental physiology to comprehensive monitoring. Front Pediatr. 2018;6:87.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Variáveis globais
+        let historicoCalculos = [];
+        let timeoutCalculo = null;
+
+        // Função para cálculo automático com debounce (sem atualizar histórico)
+        function calcularDrogasAutomatico() {
+            if (timeoutCalculo) {
+                clearTimeout(timeoutCalculo);
+            }
+            timeoutCalculo = setTimeout(() => {
+                calcularDrogas(false);
+            }, 300);
+        }
+
+        // Função para cálculo com botão (atualiza histórico)
+        function calcularDrogasComBotao() {
+            calcularDrogas(true);
+        }
+
+        // Dados das drogas cardiovasculares neonatais baseados na planilha
+        const drogasPadrao = {
+            alprostadil: {
+                nome: "Alprostadil (PGE1)",
+                dose: 0.05,
+                unidade: "mcg/kg/min",
+                apresentacao: "500 mcg/ml",
+                volume: 24,
+                tempoInfusao: 24,
+                observacoes: "0,05 a 0,1 mcg/kg/min. Ampola usualmente com 500 mcg/ml"
+            },
+            alteplase: {
+                nome: "Alteplase",
+                dose: 200,
+                unidade: "mcg/kg/hora",
+                apresentacao: "1 mg/ml",
+                volume: 24,
+                tempoInfusao: 24,
+                observacoes: "TROMBOLÍTICO. Duração da terapia 6 a 48 hs. Dose 200mcg/kg/hora. Sol 1mg/ml"
+            },
+            amiodarona_ataque: {
+                nome: "Amiodarona (Ataque)",
+                dose: 5,
+                unidade: "mg/kg",
+                apresentacao: "50 mg/ml",
+                volume: 0,
+                tempoInfusao: 1,
+                observacoes: "Ataque correr em 30 a 60 minutos"
+            },
+            amiodarona_manutencao: {
+                nome: "Amiodarona (Manutenção)",
+                dose: 7,
+                unidade: "mcg/kg/min",
+                apresentacao: "50 mg/ml",
+                volume: 24,
+                tempoInfusao: 24,
+                observacoes: "7 a 15 mcg/kg/min. Iniciar com 7 mcg/kg/min e ir titulando. Ampola 50mg/ml"
+            },
+            amiodarona_oral: {
+                nome: "Amiodarona (Oral)",
+                dose: 5,
+                unidade: "mg/kg/dose",
+                apresentacao: "200 mg",
+                volume: 0,
+                tempoInfusao: 0,
+                observacoes: "5 a 10 mg/kg/dose de 12/12 hs"
+            },
+            atropina_ev: {
+                nome: "Atropina EV",
+                dose: 0.02,
+                unidade: "mg/kg/dose",
+                apresentacao: "1 mg/ml",
+                volume: 0,
+                tempoInfusao: 0,
+                observacoes: "Dose pode ser repetida a cada 10 a 15 minutos até total de 0,04 mg/kg"
+            },
+            atropina_et: {
+                nome: "Atropina ET",
+                dose: 0.02,
+                unidade: "mg/kg/dose",
+                apresentacao: "1 mg/ml",
+                volume: 0,
+                tempoInfusao: 0,
+                observacoes: "Após colocar a dose na COT, instilar sobre a mesma 1 ml de SF0,9%"
+            },
+            atropina_vo: {
+                nome: "Atropina VO",
+                dose: 0.05,
+                unidade: "mg/kg/dose",
+                apresentacao: "1 mg/ml",
+                volume: 0,
+                tempoInfusao: 0,
+                observacoes: "Iniciar com 0,02 e aumentar gradualmente até 0,09 mg/kg/dose"
+            },
+            enoxaparina_rnt: {
+                nome: "Enoxaparina (RNT)",
+                dose: 1.5,
+                unidade: "mg/kg/dose",
+                apresentacao: "40 mg/0.4ml",
+                volume: 0,
+                tempoInfusao: 0,
+                observacoes: "RNT - 1,5 mg/kg/dose de 12/12 hs"
+            },
+            enoxaparina_rnpt: {
+                nome: "Enoxaparina (RNPT)",
+                dose: 1.5,
+                unidade: "mg/kg/dose",
+                apresentacao: "40 mg/0.4ml",
+                volume: 0,
+                tempoInfusao: 0,
+                observacoes: "RNPT necessita de dose mais alta para manter RNI alargado - 0,8 a 3,0 mg/kg/dose"
+            },
+            enoxaparina_maior3meses: {
+                nome: "Enoxaparina (> 3 meses)",
+                dose: 1.0,
+                unidade: "mg/kg/dose",
+                apresentacao: "40 mg/0.4ml",
+                volume: 0,
+                tempoInfusao: 0,
+                observacoes: "RN com mais de 3 meses - 1,0 mg/kg/dose de 12/12 hs"
+            },
+            dopamina: {
+                nome: "Dopamina",
+                dose: 10,
+                unidade: "mcg/kg/min",
+                apresentacao: "40 mg/ml",
+                volume: 24,
+                tempoInfusao: 24,
+                observacoes: "Dose 2 a 20 mcg/kg/min"
+            },
+            dobutamina: {
+                nome: "Dobutamina",
+                dose: 10,
+                unidade: "mcg/kg/min",
+                apresentacao: "12.5 mg/ml",
+                volume: 24,
+                tempoInfusao: 24,
+                observacoes: "Dose 2 a 25 mcg/kg/min"
+            },
+            noradrenalina: {
+                nome: "Noradrenalina",
+                dose: 0.05,
+                unidade: "mcg/kg/min",
+                apresentacao: "1 mg/ml",
+                volume: 24,
+                tempoInfusao: 24,
+                observacoes: "Dose 0,05 a 1,0 mcg/kg/min - vasopressor"
+            },
+            milrinone_rnt: {
+                nome: "Milrinone (RNT)",
+                dose: 0.5,
+                unidade: "mcg/kg/min",
+                apresentacao: "1 mg/ml",
+                volume: 24,
+                tempoInfusao: 24,
+                observacoes: "Ataque 75,0 mcg/kg infundido EV em 1 hora. Manutenção 0,5 a 0,75 mcg/kg/min"
+            },
+            milrinone_rnpt: {
+                nome: "Milrinone (RNPT < 30 semanas)",
+                dose: 0.2,
+                unidade: "mcg/kg/min",
+                apresentacao: "1 mg/ml",
+                volume: 24,
+                tempoInfusao: 24,
+                observacoes: "Ataque 0,75 mcg/kg infundido EV em 1 hora. Manutenção 0,2 mcg/kg/min"
+            },
+            adrenalina: {
+                nome: "Adrenalina",
+                dose: 0.3,
+                unidade: "mcg/kg/min",
+                apresentacao: "1 mg/ml",
+                volume: 24,
+                tempoInfusao: 24,
+                observacoes: "Dose 0,05 a 1,0 mcg/kg/min (0,05-0,3 dose inotrópica, acima 0,3-vasopressor)"
+            },
+            nitroprussiato: {
+                nome: "Nitroprussiato",
+                dose: 0.25,
+                unidade: "mcg/kg/min",
+                apresentacao: "25 mg/ml",
+                volume: 24,
+                tempoInfusao: 24,
+                observacoes: "Dose 0,25 a 0,5 mcg/kg/min"
+            },
+            heparina_ataque: {
+                nome: "Heparina (Ataque)",
+                dose: 75,
+                unidade: "UI/kg/bolus",
+                apresentacao: "5000 UI/ml",
+                volume: 0,
+                tempoInfusao: 0,
+                observacoes: "Tratamento de trombose"
+            },
+            heparina_manutencao: {
+                nome: "Heparina (Manutenção)",
+                dose: 28,
+                unidade: "UI/kg/hora",
+                apresentacao: "1000 UI/ml",
+                volume: 24,
+                tempoInfusao: 24,
+                observacoes: "Tratamento de trombose. Calculado na apresentação de 1000UI/ml"
+            },
+            esmolol: {
+                nome: "Esmolol",
+                dose: 100,
+                unidade: "mcg/kg/min",
+                apresentacao: "20 mg/ml",
+                volume: 24,
+                tempoInfusao: 24,
+                observacoes: "TSV dose 100 mcg/kg/min. Crise hipertensiva no PO 50mcg/kg/min. Dose máxima 200 - 1ml/20mg"
+            }
+        };
+
+        // Função para calcular idade gestacional corrigida e dias de vida
+        function calcularIdadeGestacionalCorrigida() {
+            const idadeGestacionalSemanas = parseFloat(document.getElementById('idadeGestacionalNascimento').value) || 0;
+            const idadeGestacionalDias = parseFloat(document.getElementById('idadeGestacionalNascimentoDias').value) || 0;
+            const dataNascimento = document.getElementById('dataNascimento').value;
+            const dataAtual = document.getElementById('dataAtual').value;
+
+            if (dataNascimento && dataAtual) {
+                // Calcular dias de vida
+                const dataNasc = new Date(dataNascimento);
+                const dataAtualDate = new Date(dataAtual);
+                const diffTime = Math.abs(dataAtualDate - dataNasc);
+                const diasVida = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                // Calcular idade gestacional corrigida
+                const semanasAdicionais = Math.floor(diasVida / 7);
+                const diasAdicionais = diasVida % 7;
+                
+                const igcSemanas = idadeGestacionalSemanas + semanasAdicionais;
+                const igcDias = idadeGestacionalDias + diasAdicionais;
+                
+                // Ajustar se os dias excederem 6
+                let igcSemanasFinal = igcSemanas;
+                let igcDiasFinal = igcDias;
+                if (igcDiasFinal >= 7) {
+                    igcSemanasFinal += Math.floor(igcDiasFinal / 7);
+                    igcDiasFinal = igcDiasFinal % 7;
+                }
+
+                // Exibir resultados
+                document.getElementById('diasVida').value = `${diasVida} dias`;
+                document.getElementById('idadeGestacionalCorrigida').value = `${igcSemanasFinal} sem ${igcDiasFinal} d`;
+
+                return {
+                    diasVida: diasVida,
+                    igcSemanas: igcSemanasFinal,
+                    igcDias: igcDiasFinal,
+                    igcTotal: igcSemanasFinal + (igcDiasFinal / 7)
+                };
+            }
+
+            return null;
+        }
+
+        // Função para determinar categoria do RN baseado na IG
+        function determinarCategoriaRN(igcTotal) {
+            if (igcTotal < 37) {
+                return 'RNPT'; // Recém-nascido pré-termo
+            } else if (igcTotal >= 37 && igcTotal < 42) {
+                return 'RNT'; // Recém-nascido a termo
+            } else {
+                return 'RNPT'; // Recém-nascido pós-termo (tratado como pré-termo para fins de dosagem)
+            }
+        }
+
+        // Função para preencher dropdown de drogas
+        function preencherDropdownDrogas() {
+            const select = document.getElementById('drogaSelecionada');
+            select.innerHTML = '<option value="">Selecione uma droga...</option>';
+            
+            Object.keys(drogasPadrao).forEach(key => {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = drogasPadrao[key].nome;
+                select.appendChild(option);
+            });
+        }
+
+        // Função para preencher campos da droga selecionada
+        function preencherCamposDroga(drogaKey) {
+            const droga = drogasPadrao[drogaKey];
+            if (!droga) return;
+
+            const doseElement = document.getElementById('doseDroga');
+            const unidadeElement = document.getElementById('unidadeDose');
+            const apresentacaoElement = document.getElementById('apresentacaoDroga');
+            const volumeElement = document.getElementById('volumeInfusao');
+            const tempoElement = document.getElementById('tempoInfusao');
+            const observacoesElement = document.getElementById('observacoesDroga');
+
+            if (doseElement) doseElement.value = droga.dose;
+            if (unidadeElement) unidadeElement.value = droga.unidade;
+            if (apresentacaoElement) apresentacaoElement.value = droga.apresentacao;
+            if (volumeElement) volumeElement.value = droga.volume;
+            if (tempoElement) tempoElement.value = droga.tempoInfusao || 24;
+            if (observacoesElement) observacoesElement.value = droga.observacoes;
+        }
+
+        // Função para calcular dosagem
+        function calcularDosagem() {
+            const peso = parseFloat(document.getElementById('peso').value);
+            const drogaSelecionada = document.getElementById('drogaSelecionada').value;
+
+            if (!peso || !drogaSelecionada) {
+                return null;
+            }
+
+            // Calcular idade gestacional corrigida e dias de vida
+            const dadosIG = calcularIdadeGestacionalCorrigida();
+            if (!dadosIG) {
+                alert('Por favor, preencha a data de nascimento e data atual para calcular a idade gestacional corrigida.');
+                return null;
+            }
+
+            const dose = parseFloat(document.getElementById('doseDroga').value);
+            const unidade = document.getElementById('unidadeDose').value;
+            const apresentacao = document.getElementById('apresentacaoDroga').value;
+            const volume = parseFloat(document.getElementById('volumeInfusao').value);
+            const tempoInfusao = parseFloat(document.getElementById('tempoInfusao').value);
+            const observacoes = document.getElementById('observacoesDroga').value;
+
+            const droga = drogasPadrao[drogaSelecionada];
+            
+            if (!dose || !unidade) {
+                return null;
+            }
+
+            // Determinar categoria do RN (RNT/RNPT) baseado na IG corrigida
+            const categoriaRN = determinarCategoriaRN(dadosIG.igcTotal);
+
+            let resultado = {
+                dosagem: dose,
+                unidade: unidade,
+                volumeInfusao: volume || 24,
+                tempoInfusao: tempoInfusao || 24,
+                velocidadeInfusao: 0,
+                doseTotal: 0,
+                doseTotalMg: 0,
+                doseTotalMcg: 0,
+                volumeDroga: 0,
+                droga: {
+                    nome: droga.nome,
+                    dose: dose,
+                    unidade: unidade,
+                    apresentacao: apresentacao,
+                    volume: volume || 24,
+                    tempoInfusao: tempoInfusao || 24,
+                    observacoes: observacoes || droga.observacoes
+                }
+            };
+
+            return resultado;
+        }
+
+        // Função para calcular drogas
+        function calcularDrogas(atualizarHistorico = false) {
+            const peso = parseFloat(document.getElementById('peso').value);
+            const drogaSelecionada = document.getElementById('drogaSelecionada').value;
+            const dose = parseFloat(document.getElementById('doseDroga').value);
+            const unidade = document.getElementById('unidadeDose').value;
+
+            if (!peso || !drogaSelecionada || !dose || !unidade) {
+                document.getElementById('results').style.display = 'none';
+                return;
+            }
+
+            const droga = drogasPadrao[drogaSelecionada];
+            const apresentacao = document.getElementById('apresentacaoDroga').value;
+            const volumeInfusao = parseFloat(document.getElementById('volumeInfusao').value) || 24;
+            const tempoInfusao = parseFloat(document.getElementById('tempoInfusao').value) || 24;
+
+            // Calcular volume da droga baseado na apresentação
+            let volumeDroga = 0;
+            let doseTotalMg = 0;
+            let doseTotalMcg = 0;
+            
+            if (apresentacao && apresentacao.includes('/')) {
+                const [concentracao, unidadeApresentacao] = apresentacao.split('/');
+                const concentracaoNum = parseFloat(concentracao.replace(',', '.'));
+                
+                // Calcular dose total em mg e mcg para todas as drogas
+                if (unidade === 'mcg/kg/min') {
+                    doseTotalMcg = dose * peso * 60 * tempoInfusao;
+                    doseTotalMg = doseTotalMcg / 1000;
+                } else if (unidade === 'mcg/kg/hora') {
+                    doseTotalMcg = dose * peso * tempoInfusao;
+                    doseTotalMg = doseTotalMcg / 1000;
+                } else if (unidade === 'mg/kg/hora') {
+                    doseTotalMg = dose * peso * tempoInfusao;
+                    doseTotalMcg = doseTotalMg * 1000;
+                } else if (unidade === 'UI/kg/hora') {
+                    doseTotalMg = dose * peso * tempoInfusao;
+                    doseTotalMcg = doseTotalMg * 1000;
+                } else if (unidade === 'mg/kg/dose') {
+                    doseTotalMg = dose * peso;
+                    doseTotalMcg = doseTotalMg * 1000;
+                } else if (unidade === 'mg/kg') {
+                    doseTotalMg = dose * peso;
+                    doseTotalMcg = doseTotalMg * 1000;
+                } else if (unidade === 'mcg/kg') {
+                    doseTotalMcg = dose * peso;
+                    doseTotalMg = doseTotalMcg / 1000;
+                } else if (unidade === 'UI/kg') {
+                    doseTotalMg = dose * peso;
+                    doseTotalMcg = doseTotalMg * 1000;
+                } else if (unidade === 'UI/kg/bolus') {
+                    doseTotalMg = dose * peso;
+                    doseTotalMcg = doseTotalMg * 1000;
+                } else if (unidade === 'mg/dose') {
+                    doseTotalMg = dose;
+                    doseTotalMcg = doseTotalMg * 1000;
+                } else if (unidade === 'mg/kg/dia') {
+                    doseTotalMg = dose * peso;
+                    doseTotalMcg = doseTotalMg * 1000;
+                } else {
+                    doseTotalMg = dose * peso;
+                    doseTotalMcg = doseTotalMg * 1000;
+                }
+                
+                // Calcular volume baseado na unidade da apresentação
+                if (concentracao.toLowerCase().includes('mcg')) {
+                    volumeDroga = doseTotalMcg / concentracaoNum;
+                } else if (concentracao.toLowerCase().includes('ui')) {
+                    volumeDroga = doseTotalMg / concentracaoNum;
+                } else {
+                    volumeDroga = doseTotalMg / concentracaoNum;
+                }
+            }
+
+            // Calcular velocidade de infusão
+            let velocidadeInfusao = 0;
+            if (unidade === 'mcg/kg/min') {
+                // Para infusão contínua por minuto
+                const concentracaoMcgMl = (doseTotalMcg / volumeInfusao);
+                velocidadeInfusao = (dose * peso * 60) / concentracaoMcgMl;
+            } else if (unidade === 'mcg/kg/hora') {
+                // Para infusão contínua por hora
+                const concentracaoMcgMl = (doseTotalMcg / volumeInfusao);
+                velocidadeInfusao = (dose * peso) / concentracaoMcgMl;
+            } else if (unidade === 'mg/kg/hora') {
+                // Para infusão contínua por hora
+                const concentracaoMgMl = (doseTotalMg / volumeInfusao);
+                velocidadeInfusao = (dose * peso) / concentracaoMgMl;
+            } else if (unidade === 'UI/kg/hora') {
+                // Para infusão contínua por hora
+                const concentracaoUIMl = (doseTotalMg / volumeInfusao);
+                velocidadeInfusao = (dose * peso) / concentracaoUIMl;
+            } else {
+                // Para doses únicas, velocidade é 0
+                velocidadeInfusao = 0;
+            }
+
+            let resultado = {
+                dosagem: dose,
+                unidade: unidade,
+                volumeInfusao: volumeInfusao,
+                tempoInfusao: tempoInfusao,
+                velocidadeInfusao: velocidadeInfusao,
+                doseTotal: 0,
+                doseTotalMg: doseTotalMg,
+                doseTotalMcg: doseTotalMcg,
+                volumeDroga: volumeDroga,
+                droga: droga || { observacoes: 'Informações não disponíveis' }
+            };
+
+            // Exibir resultados
+            document.getElementById('nomeDrogaResultado').textContent = droga ? droga.nome : drogaSelecionada;
+            document.getElementById('dosagemCalculada').textContent = dose.toFixed(1);
+            document.getElementById('unidadeDosagem').textContent = unidade;
+            
+            const doseTotalTexto = `${resultado.doseTotalMg.toFixed(1)} mg (${resultado.doseTotalMcg.toFixed(1)} mcg)`;
+            document.getElementById('doseTotalResultado').textContent = doseTotalTexto;
+            document.getElementById('unidadeDoseTotal').textContent = '';
+            
+            // Volume da droga com formatação inteligente
+            let volumeFormatado;
+            if (resultado.volumeDroga > 0) {
+                volumeFormatado = Number(resultado.volumeDroga).toFixed(1);
+            } else {
+                volumeFormatado = "0.0";
+            }
+            document.getElementById('volumeDrogaResultado').textContent = volumeFormatado;
+            
+            // Velocidade de infusão
+            if (resultado.velocidadeInfusao > 0) {
+                document.getElementById('velocidadeInfusaoResultado').textContent = `${resultado.velocidadeInfusao.toFixed(1)} ml/h`;
+            } else {
+                document.getElementById('velocidadeInfusaoResultado').textContent = 'Dose unica - nao aplicavel';
+            }
+            
+            document.getElementById('informacoesDroga').textContent = resultado.droga.observacoes;
+
+            // Atualizar histórico apenas se solicitado
+            if (atualizarHistorico) {
+                const nome = document.getElementById('nome').value || 'Paciente';
+                const dataNascimento = document.getElementById('dataNascimento').value || new Date().toISOString().split('T')[0];
+                const dadosIG = calcularIdadeGestacionalCorrigida();
+                
+                const calculoAtual = {
+                    timestamp: new Date(),
+                    nome: nome,
+                    dataNascimento: dataNascimento,
+                    peso: peso,
+                    idadeGestacionalNascimento: document.getElementById('idadeGestacionalNascimento').value,
+                    idadeGestacionalNascimentoDias: document.getElementById('idadeGestacionalNascimentoDias').value,
+                    idadeGestacionalCorrigida: dadosIG ? `${dadosIG.igcSemanas} sem ${dadosIG.igcDias} d` : 'N/A',
+                    diasVida: dadosIG ? dadosIG.diasVida : 'N/A',
+                    categoriaRN: dadosIG ? determinarCategoriaRN(dadosIG.igcTotal) : 'N/A',
+                    droga: droga ? droga.nome : drogaSelecionada,
+                    dose: dose,
+                    unidade: unidade,
+                    doseTotal: resultado.doseTotal,
+                    doseTotalMg: resultado.doseTotalMg,
+                    doseTotalMcg: resultado.doseTotalMcg,
+                    volumeDroga: resultado.volumeDroga,
+                    apresentacao: apresentacao || 'N/A',
+                    volume: volumeInfusao,
+                    tempoInfusao: tempoInfusao,
+                    velocidade: resultado.velocidadeInfusao,
+                    dosagemCalculada: resultado.dosagem,
+                    observacoes: resultado.droga.observacoes
+                };
+                
+                // Verificar se já existe um cálculo idêntico
+                const calculoExistente = historicoCalculos.find(calc => 
+                    calc.nome === calculoAtual.nome &&
+                    calc.droga === calculoAtual.droga &&
+                    calc.dose === calculoAtual.dose &&
+                    calc.peso === calculoAtual.peso &&
+                    calc.apresentacao === calculoAtual.apresentacao &&
+                    calc.volume === calculoAtual.volume &&
+                    calc.tempoInfusao === calculoAtual.tempoInfusao
+                );
+                
+                if (!calculoExistente) {
+                    historicoCalculos.push(calculoAtual);
+                } else {
+                    const index = historicoCalculos.findIndex(calc => 
+                        calc.nome === calculoAtual.nome &&
+                        calc.droga === calculoAtual.droga &&
+                        calc.dose === calculoAtual.dose &&
+                        calc.peso === calculoAtual.peso &&
+                        calc.apresentacao === calculoAtual.apresentacao &&
+                        calc.volume === calculoAtual.volume &&
+                        calc.tempoInfusao === calculoAtual.tempoInfusao
+                    );
+                    if (index !== -1) {
+                        historicoCalculos[index] = calculoAtual;
+                    }
+                }
+            }
+
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('gerarRelatorio').classList.remove('is-hidden');
+        }
+
+        // Função para limpar dados
+        function limparDados() {
+            document.getElementById('nome').value = '';
+            document.getElementById('dataNascimento').value = '';
+            document.getElementById('peso').value = '';
+            document.getElementById('idadeGestacional').value = '';
+            document.getElementById('pesoNascimento').value = '';
+            document.getElementById('diasVida').value = '';
+            document.getElementById('doseDroga').value = '';
+            document.getElementById('apresentacaoDroga').value = '';
+            document.getElementById('volumeInfusao').value = '';
+            document.getElementById('tempoInfusao').value = '24';
+            document.getElementById('observacoesDroga').value = '';
+            document.getElementById('drogaSelecionada').value = '';
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('configuracaoDroga').style.display = 'none';
+            alert('Dados limpos! Pronto para novo calculo.');
+        }
+
+        // Função para limpar histórico
+        function limparHistorico() {
+            historicoCalculos = [];
+            alert('Historico de calculos limpo!');
+        }
+
+        // Função para remover acentos
+        function removerAcentos(texto) {
+            return texto
+                .replace(/[áàâãä]/g, 'a')
+                .replace(/[éèêë]/g, 'e')
+                .replace(/[íìîï]/g, 'i')
+                .replace(/[óòôõö]/g, 'o')
+                .replace(/[úùûü]/g, 'u')
+                .replace(/[ç]/g, 'c')
+                .replace(/[ÁÀÂÃÄ]/g, 'A')
+                .replace(/[ÉÈÊË]/g, 'E')
+                .replace(/[ÍÌÎÏ]/g, 'I')
+                .replace(/[ÓÒÔÕÖ]/g, 'O')
+                .replace(/[ÚÙÛÜ]/g, 'U')
+                .replace(/[Ç]/g, 'C')
+                .replace(/[ñ]/g, 'n')
+                .replace(/[Ñ]/g, 'N');
+        }
+
+        function formatarNumero(valor) {
+            if (valor === null || valor === undefined || valor === '') {
+                return 'n/a';
+            }
+            const numero = Number(valor);
+            if (Number.isNaN(numero)) {
+                return valor;
+            }
+            return numero.toFixed(1);
+        }
+
+        // Função para gerar relatório
+        function gerarRelatorio() {
+            if (historicoCalculos.length === 0) {
+                alert('Nenhum calculo foi realizado ainda. Execute pelo menos um calculo antes de gerar o relatorio.');
+                return;
+            }
+
+            let relatorio = 'RESUMO INFORMATIVO — DROGAS CARDIOVASCULARES NEONATAIS (EDUCATIVO)\n';
+            relatorio += '==========================================\n\n';
+            relatorio += 'historico de calculos realizados:\n\n';
+
+            historicoCalculos.forEach((calculo, index) => {
+                relatorio += `calculo ${index + 1}:\n`;
+                
+                // Mostrar dados do paciente apenas no primeiro cálculo
+                if (index === 0) {
+                    relatorio += `- data/hora: ${calculo.timestamp.toLocaleString('pt-BR')}\n`;
+                    relatorio += `- nome: ${removerAcentos(calculo.nome)}\n`;
+                    relatorio += `- data de nascimento: ${new Date(calculo.dataNascimento).toLocaleDateString('pt-BR')}\n`;
+                    relatorio += `- peso atual: ${formatarNumero(calculo.peso)} kg\n`;
+                    relatorio += `- idade gestacional ao nascer: ${formatarNumero(calculo.idadeGestacionalNascimento)} sem ${formatarNumero(calculo.idadeGestacionalNascimentoDias)} d\n`;
+                    relatorio += `- idade gestacional corrigida: ${removerAcentos(calculo.idadeGestacionalCorrigida)}\n`;
+                    relatorio += `- dias de vida: ${formatarNumero(calculo.diasVida)} dias\n`;
+                    relatorio += `- categoria: ${removerAcentos(calculo.categoriaRN)}\n`;
+                }
+                
+                relatorio += `\ndroga utilizada:\n`;
+                relatorio += `1. nome da droga: ${removerAcentos(calculo.droga)}\n`;
+                relatorio += `2. dosagem escolhida: ${formatarNumero(calculo.dose)} ${removerAcentos(calculo.unidade)}\n`;
+                relatorio += `3. dose total no tempo escolhido: ${formatarNumero(calculo.doseTotalMg)} mg (${formatarNumero(calculo.doseTotalMcg)} mcg)\n`;
+                relatorio += `4. volume da droga: ${formatarNumero(calculo.volumeDroga)} ml\n`;
+                relatorio += `5. velocidade de infusao: ${formatarNumero(calculo.velocidade)} ml/h\n`;
+                relatorio += `6. informacoes da droga: ${removerAcentos(calculo.observacoes)}\n\n`;
+                relatorio += `detalhes tecnicos:\n`;
+                relatorio += `- apresentacao: ${removerAcentos(calculo.apresentacao)}\n`;
+                relatorio += `- volume de infusao: ${formatarNumero(calculo.volume)} ml\n`;
+                relatorio += `- tempo de infusao: ${formatarNumero(calculo.tempoInfusao)} horas\n`;
+                relatorio += `- velocidade de infusao: ${formatarNumero(calculo.velocidade)} ml/h\n\n`;
+                relatorio += `----------------------------------------\n\n`;
+            });
+
+            relatorio += `consideracoes gerais:\n`;
+            relatorio += `- calculadora especifica para recem-nascidos\n`;
+            relatorio += `- considerar idade gestacional e peso ao nascer\n`;
+            relatorio += `- monitorar sinais vitais durante infusao\n`;
+            relatorio += `- ajustar doses conforme resposta clinica\n`;
+            relatorio += `- verificar interacoes medicamentosas\n\n`;
+            relatorio += `data do relatorio: ${new Date().toLocaleDateString('pt-BR')}\n`;
+            relatorio += `hora do relatorio: ${new Date().toLocaleTimeString('pt-BR')}\n`;
+
+            relatorio = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorio;
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorio += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                relatorio += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            // Copiar para área de transferência
+            navigator.clipboard.writeText(relatorio).then(() => {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(() => {
+                // Fallback para navegadores mais antigos
+                const textArea = document.createElement('textarea');
+                textArea.value = relatorio;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Definir data atual como padrão
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('dataAtual').value = hoje;
+            
+            preencherDropdownDrogas();
+
+            // Event listener para o formulário
+            const form = document.getElementById('drogasForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    calcularDrogasComBotao();
+                });
+            }
+            
+            // Event listener direto no botão de calcular
+            const botaoCalcular = document.getElementById('btnCalcular');
+            if (botaoCalcular) {
+                botaoCalcular.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    calcularDrogasComBotao();
+                });
+            }
+            
+            // Event listener para droga selecionada
+            const drogaSelecionada = document.getElementById('drogaSelecionada');
+            if (drogaSelecionada) {
+                drogaSelecionada.addEventListener('change', function(e) {
+                    const configuracaoDiv = document.getElementById('configuracaoDroga');
+                    if (configuracaoDiv) {
+                        if (e.target.value) {
+                            configuracaoDiv.style.display = 'block';
+                            preencherCamposDroga(e.target.value);
+                        } else {
+                            configuracaoDiv.style.display = 'none';
+                        }
+                    }
+                    calcularDrogasAutomatico();
+                });
+            }
+            
+            // Event listeners para cálculo automático da IG corrigida
+            const camposIG = [
+                'idadeGestacionalNascimento', 'idadeGestacionalNascimentoDias', 
+                'dataNascimento', 'dataAtual'
+            ];
+            
+            camposIG.forEach(campoId => {
+                const campo = document.getElementById(campoId);
+                if (campo) {
+                    campo.addEventListener('input', function() {
+                        calcularIdadeGestacionalCorrigida();
+                        calcularDrogasAutomatico();
+                    });
+                    campo.addEventListener('change', function() {
+                        calcularIdadeGestacionalCorrigida();
+                        calcularDrogasAutomatico();
+                    });
+                }
+            });
+
+            // Event listeners para cálculo automático
+            const camposCalculo = [
+                'peso', 'doseDroga', 'unidadeDose', 'apresentacaoDroga', 
+                'volumeInfusao', 'tempoInfusao'
+            ];
+            
+            camposCalculo.forEach(campoId => {
+                const campo = document.getElementById(campoId);
+                if (campo) {
+                    campo.addEventListener('input', calcularDrogasAutomatico);
+                    campo.addEventListener('change', calcularDrogasAutomatico);
+                }
+            });
+
+            // Event listener para o botão de relatório
+            const botaoRelatorio = document.getElementById('gerarRelatorio');
+            if (botaoRelatorio) {
+                botaoRelatorio.addEventListener('click', function() {
+                    gerarRelatorio();
+                });
+            }
+
+            // Event listener para o botão de limpar dados
+            const botaoLimpar = document.getElementById('limparDados');
+            if (botaoLimpar) {
+                botaoLimpar.addEventListener('click', function() {
+                    limparDados();
+                });
+            }
+
+            // Event listener para o botão de limpar histórico
+            const botaoLimparHistorico = document.getElementById('limparHistorico');
+            if (botaoLimparHistorico) {
+                botaoLimparHistorico.addEventListener('click', function() {
+                    limparHistorico();
+                });
+            }
+        });
+
+        // Event listener para limpar histórico ao fechar a aplicação
+        window.addEventListener('beforeunload', function() {
+            historicoCalculos = [];
+        });
+
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

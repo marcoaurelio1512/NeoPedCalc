@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — Pediatric Trauma Score (educativo)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            margin: 0 0 15px 0;
+            color: #111;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .alert-box {
+            background: #fff3cd;
+            border: 1px solid #e5e7eb;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .alert-box h3 { margin: 0 0 5px 0; font-size: 15px; }
+
+        .parameter-card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .parameter-card h3 {
+            font-size: 13px;
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .radio-option:hover { background: #eee; }
+
+        .radio-option input { width: auto !important; margin-right: 10px; }
+
+        .score-display {
+            background: #f0f4ff;
+            border: 1px solid #b4cfff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .score-value {
+            font-size: 48px;
+            font-weight: 900;
+            color: #111;
+            margin: 10px 0;
+        }
+
+        .score-interpretation {
+            font-size: 14px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .mortality-box {
+            background: #fff;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #e7e7ee;
+        }
+
+        .mortality-box h3 { font-size: 12px; margin: 0; color: #666; }
+        .mortality-value { font-size: 20px; font-weight: 900; color: #e74c3c; }
+
+        .action-btn, .report-btn {
+            background: #111;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .report-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #374151;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        .reference-info {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .reference-info h3 { font-size: 13px; color: #333; margin: 0 0 10px 0; }
+
+        .reference-info p { margin-bottom: 8px; }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .score-value {
+                font-size: 3em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 5px; }
+            .header h1 { font-size: 1.4em; }
+            .header p { font-size: 0.9em; }
+            .content { padding: 15px; }
+            .section { padding: 12px; }
+            .section h3 { font-size: 1.1em; }
+            select { padding: 10px; font-size: 14px; }
+            button { padding: 10px; font-size: 14px; }
+            .results { padding: 12px; }
+            .score-display { font-size: 2.5em; }
+        }
+
+        /* Modal Styles */
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(17, 17, 17, 0.1);
+            color: #111;
+            border: 2px solid #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-info:hover {
+            background: #111;
+            color: #fff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 { margin: 0; font-size: 22px; }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover { transform: rotate(90deg); }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child { margin-top: 0; }
+        .modal-body p { line-height: 1.6; margin-bottom: 15px; color: #34495e; }
+        .modal-body ul, .modal-body ol { margin: 10px 0; padding-left: 25px; }
+        .modal-body li { margin-bottom: 8px; line-height: 1.5; }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong { color: #2c3e50; }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong { color: #27ae60; }
+
+        @media (max-width: 768px) {
+            .modal { padding: 10px; }
+            .modal-content { width: 95%; max-height: 95vh; }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <header>
+        <h1>🚑 Pediatric Trauma Score</h1>
+        <p>Avaliação da Gravidade do Trauma Pediátrico</p>
+        <div class="header-actions">
+            <button class="btn-info" onclick="abrirModal()">
+                Como usar
+            </button>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="card">
+
+        <div class="content">
+            <!-- Alert Box -->
+            <div class="alert-box">
+                <h3>⚠️ ATENÇÃO</h3>
+                <p>ESCORE < 8: Pacientes devem ser encaminhados para local apropriado de atendimento a crianças traumatizadas</p>
+            </div>
+
+            <!-- Dados do Paciente -->
+            <div class="section">
+                <h2>👤 Dados do Paciente</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome">Nome do Paciente:</label>
+                        <input type="text" id="nome" placeholder="Digite o nome">
+                    </div>
+                    <div class="form-group">
+                        <label for="data">Data da Avaliação:</label>
+                        <input type="datetime-local" id="data">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parâmetros de Avaliação -->
+            <div class="section">
+                <h2>📋 Parâmetros de Avaliação</h2>
+
+                <!-- Peso -->
+                <div class="parameter-card">
+                    <h3>1. Peso (kg)</h3>
+                    <div class="radio-group" id="peso-group">
+                        <label class="radio-option">
+                            <input type="radio" name="peso" value="2" onchange="calcularScore()">
+                            <span>> 20 kg (2 pontos)</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="peso" value="1" onchange="calcularScore()">
+                            <span>10 - 20 kg (1 ponto)</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="peso" value="-1" onchange="calcularScore()">
+                            <span>< 10 kg (-1 ponto)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Pressão Arterial Sistólica -->
+                <div class="parameter-card">
+                    <h3>2. Pressão Arterial Sistólica (mmHg)</h3>
+                    <div class="radio-group" id="pas-group">
+                        <label class="radio-option">
+                            <input type="radio" name="pas" value="2" onchange="calcularScore()">
+                            <span>> 90 mmHg (2 pontos)</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="pas" value="1" onchange="calcularScore()">
+                            <span>50 - 90 mmHg (1 ponto)</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="pas" value="-1" onchange="calcularScore()">
+                            <span>< 50 mmHg (-1 ponto)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Lesão na Pele -->
+                <div class="parameter-card">
+                    <h3>3. Lesão na Pele</h3>
+                    <div class="radio-group" id="pele-group">
+                        <label class="radio-option">
+                            <input type="radio" name="pele" value="2" onchange="calcularScore()">
+                            <span>Ausente (2 pontos)</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="pele" value="1" onchange="calcularScore()">
+                            <span>Menor (1 ponto)</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="pele" value="-1" onchange="calcularScore()">
+                            <span>Maior / Penetrante (-1 ponto)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Estado Neurológico -->
+                <div class="parameter-card">
+                    <h3>4. Estado Neurológico</h3>
+                    <div class="radio-group" id="neuro-group">
+                        <label class="radio-option">
+                            <input type="radio" name="neuro" value="2" onchange="calcularScore()">
+                            <span>Consciente (2 pontos)</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="neuro" value="1" onchange="calcularScore()">
+                            <span>Obnubilado / Perda de consciência (1 ponto)</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="neuro" value="-1" onchange="calcularScore()">
+                            <span>Coma / Não responde (-1 ponto)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Vias Aéreas -->
+                <div class="parameter-card">
+                    <h3>5. Vias Aéreas</h3>
+                    <div class="radio-group" id="vias-group">
+                        <label class="radio-option">
+                            <input type="radio" name="vias" value="2" onchange="calcularScore()">
+                            <span>Normal (2 pontos)</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="vias" value="1" onchange="calcularScore()">
+                            <span>Mantível (1 ponto)</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="vias" value="-1" onchange="calcularScore()">
+                            <span>Não mantível (-1 ponto)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Fraturas de Extremidades -->
+                <div class="parameter-card">
+                    <h3>6. Fraturas de Extremidades</h3>
+                    <div class="radio-group" id="fraturas-group">
+                        <label class="radio-option">
+                            <input type="radio" name="fraturas" value="2" onchange="calcularScore()">
+                            <span>Sem fratura (2 pontos)</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="fraturas" value="1" onchange="calcularScore()">
+                            <span>Fratura fechada (1 ponto)</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="fraturas" value="-1" onchange="calcularScore()">
+                            <span>Fratura exposta / Múltiplas fraturas (-1 ponto)</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resultado -->
+            <div class="score-display" id="scoreDisplay" style="display: none;">
+                <h2>ESCORE TOTAL</h2>
+                <div class="score-value" id="scoreValue">0</div>
+                <div class="score-interpretation" id="scoreInterpretation"></div>
+                
+                <div class="mortality-box">
+                    <h3>Mortalidade Estimada</h3>
+                    <div class="mortality-value" id="mortalityValue">-</div>
+                </div>
+            </div>
+
+            <!-- Botão Gerar Relatório -->
+            <button type="button" class="report-btn" onclick="gerarRelatorio()" id="reportBtn" disabled>
+                📋 Copiar texto informativo
+            </button>
+
+            <!-- Referências -->
+            <div class="reference-info">
+                <h3>📚 Referências</h3>
+                <p>1. TEPAS JJ et al. The Pediatric Trauma Score as a predictor of injury severity in the injured child. J. Pediat. Surg 1987;22:14-8.</p>
+                <p>2. TEPAS JJ et al. The Pediatric Trauma Score as a predictor of injury severity: an objective. J. Trauma. 1988 Apr; 28(4): 425-9.</p>
+                <p>3. RAMENOFSKY M et al. The Predictive Validity of the Pediatric Trauma Score. J. Trauma 1988;28:1038-42.</p>
+            </div>
+            </div> <!-- End content -->
+        </div> <!-- End card -->
+
+        <div class="footer">
+            NeoPedCalc &copy; <span data-neoped-year></span> - Suporte Avançado no Trauma Pediátrico
+        </div>
+    </div> <!-- End wrap -->
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — Pediatric Trauma Score (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta calculadora organiza critérios para estimativa educativa de gravidade em trauma pediátrico. O conteúdo é informativo e não substitui avaliação clínica, protocolo institucional ou prescrição.</p>
+                
+                <h3>Fórmula do Score</h3>
+                <div class="formula-box">
+                    <strong>PTS = Peso + Consciência + Pressão Sistólica + Fraturas + Ferimentos + Respiração</strong><br><br>
+                    <strong>Componentes do Score:</strong><br>
+                    • <strong>Peso:</strong> -1 a +2 pontos<br>
+                    • <strong>Consciência:</strong> -1 a +2 pontos<br>
+                    • <strong>Pressão Sistólica:</strong> -1 a +2 pontos<br>
+                    • <strong>Fraturas:</strong> -1 a +2 pontos<br>
+                    • <strong>Ferimentos:</strong> -1 a +2 pontos<br>
+                    • <strong>Respiração:</strong> -1 a +2 pontos<br><br>
+                    <strong>Score Total:</strong> -6 a +12 pontos
+                </div>
+
+                <h3>Componentes de Avaliação</h3>
+                <ul>
+                    <li><strong>Peso:</strong> Relacionado à idade e desenvolvimento</li>
+                    <li><strong>Consciência:</strong> Nível de consciência</li>
+                    <li><strong>Pressão Sistólica:</strong> Estabilidade hemodinâmica</li>
+                    <li><strong>Fraturas:</strong> Presença de fraturas</li>
+                    <li><strong>Ferimentos:</strong> Lesões cutâneas</li>
+                    <li><strong>Respiração:</strong> Função respiratória</li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Avalie o Peso:</strong> Relacionado à idade</li>
+                    <li><strong>Verifique a Consciência:</strong> Nível de consciência</li>
+                    <li><strong>Meça a Pressão:</strong> Sistólica</li>
+                    <li><strong>Identifique Fraturas:</strong> Presença e tipo</li>
+                    <li><strong>Avalie Ferimentos:</strong> Lesões cutâneas</li>
+                    <li><strong>Verifique a Respiração:</strong> Função respiratória</li>
+                    <li><strong>Calcule o Score:</strong> Sistema calcula automaticamente</li>
+                </ol>
+
+                <h3>Interpretação do Score</h3>
+                <ul>
+                    <li><strong>Score 9-12:</strong> Trauma menor</li>
+                    <li><strong>Score 6-8:</strong> Trauma moderado</li>
+                    <li><strong>Score 0-5:</strong> Trauma grave</li>
+                    <li><strong>Score < 0:</strong> Trauma crítico</li>
+                    <li><strong>Contexto:</strong> Clínico e laboratorial</li>
+                    <li><strong>Monitoramento:</strong> Contínuo</li>
+                </ul>
+
+                <h3>Condutas Baseadas no Score</h3>
+                <ul>
+                    <li><strong>Score Alto (9-12):</strong> Tratamento ambulatorial</li>
+                    <li><strong>Score Moderado (6-8):</strong> Observação hospitalar</li>
+                    <li><strong>Score Baixo (0-5):</strong> Trauma center</li>
+                    <li><strong>Score Crítico (< 0):</strong> Suporte intensivo</li>
+                    <li><strong>Tratamento:</strong> Específico por score</li>
+                    <li><strong>Monitoramento:</strong> Contínuo</li>
+                </ul>
+
+                <h3>Fatores de Risco</h3>
+                <ul>
+                    <li><strong>Idade:</strong> < 2 anos</li>
+                    <li><strong>Peso:</strong> Baixo para idade</li>
+                    <li><strong>Consciência:</strong> Alterada</li>
+                    <li><strong>Pressão:</strong> Baixa</li>
+                    <li><strong>Fraturas:</strong> Múltiplas</li>
+                    <li><strong>Ferimentos:</strong> Extensos</li>
+                    <li><strong>Respiração:</strong> Comprometida</li>
+                </ul>
+
+                <h3>Limitações e Considerações</h3>
+                <ul>
+                    <li>Não substitui avaliação clínica</li>
+                    <li>Requer contexto clínico</li>
+                    <li>Variações individuais</li>
+                    <li>Fatores não incluídos</li>
+                    <li>Evolução clínica</li>
+                    <li>Tratamento precoce</li>
+                    <li>Monitoramento contínuo</li>
+                    <li>Interpretação experiente</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Tepas JJ, et al. Pediatric trauma score as a predictor of injury severity. J Pediatr Surg. 1987;22(1):14-18.<br>
+                    - Kaufmann CR, et al. Evaluation of the pediatric trauma score. JAMA. 1990;263(1):69-72.<br>
+                    - Nayduch DA, et al. Comparison of the ability of adult and pediatric trauma scores to predict pediatric outcome following major trauma. J Trauma. 1991;31(4):452-458.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Inicializar data atual
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+                .toISOString()
+                .slice(0, 16);
+            document.getElementById('data').value = localDateTime;
+        });
+
+        // Calcular score
+        function calcularScore() {
+            const peso = document.querySelector('input[name="peso"]:checked');
+            const pas = document.querySelector('input[name="pas"]:checked');
+            const pele = document.querySelector('input[name="pele"]:checked');
+            const neuro = document.querySelector('input[name="neuro"]:checked');
+            const vias = document.querySelector('input[name="vias"]:checked');
+            const fraturas = document.querySelector('input[name="fraturas"]:checked');
+
+            // Verificar se todos os parâmetros foram selecionados
+            if (!peso || !pas || !pele || !neuro || !vias || !fraturas) {
+                document.getElementById('scoreDisplay').style.display = 'none';
+                document.getElementById('reportBtn').disabled = true;
+                return;
+            }
+
+            // Calcular score total
+            const score = parseInt(peso.value) + parseInt(pas.value) + parseInt(pele.value) + 
+                         parseInt(neuro.value) + parseInt(vias.value) + parseInt(fraturas.value);
+
+            // Exibir score
+            document.getElementById('scoreValue').textContent = score;
+            document.getElementById('scoreDisplay').style.display = 'block';
+            document.getElementById('reportBtn').disabled = false;
+
+            // Interpretar score
+            let interpretacao = '';
+            let mortalidade = '';
+
+            if (score >= 9) {
+                interpretacao = 'Trauma Menor - Diretrizes e protocolos de uso local';
+                mortalidade = 'ZERO%';
+            } else if (score === 8) {
+                interpretacao = 'Trauma Potencialmente Grave - Avaliação criteriosa necessária';
+                mortalidade = '< 1%';
+            } else if (score >= 6 && score <= 7) {
+                interpretacao = 'Trauma Grave - Encaminhar para centro de trauma pediátrico';
+                mortalidade = '1-5%';
+            } else if (score >= 4 && score <= 5) {
+                interpretacao = 'Trauma Muito Grave - Necessita intervenção imediata';
+                mortalidade = '5-25%';
+            } else if (score >= 1 && score <= 3) {
+                interpretacao = 'Trauma Crítico - Risco de morte iminente';
+                mortalidade = '25-50%';
+            } else {
+                interpretacao = 'Trauma Extremamente Crítico - Risco de morte muito elevado';
+                mortalidade = '> 50%';
+            }
+
+            document.getElementById('scoreInterpretation').textContent = interpretacao;
+            document.getElementById('mortalityValue').textContent = mortalidade;
+
+            // Atualizar classes dos radio buttons selecionados
+            updateRadioStyles();
+        }
+
+        function updateRadioStyles() {
+            const allOptions = document.querySelectorAll('.radio-option');
+            allOptions.forEach(option => {
+                const radio = option.querySelector('input[type="radio"]');
+                if (radio.checked) {
+                    option.classList.add('selected');
+                } else {
+                    option.classList.remove('selected');
+                }
+            });
+        }
+
+        function gerarRelatorio() {
+            const nome = document.getElementById('nome').value || 'Não informado';
+            const data = document.getElementById('data').value || 'Não informada';
+            
+            const peso = document.querySelector('input[name="peso"]:checked');
+            const pas = document.querySelector('input[name="pas"]:checked');
+            const pele = document.querySelector('input[name="pele"]:checked');
+            const neuro = document.querySelector('input[name="neuro"]:checked');
+            const vias = document.querySelector('input[name="vias"]:checked');
+            const fraturas = document.querySelector('input[name="fraturas"]:checked');
+
+            if (!peso || !pas || !pele || !neuro || !vias || !fraturas) {
+                alert('Por favor, preencha todos os parâmetros antes de gerar o relatório.');
+                return;
+            }
+
+            const score = parseInt(peso.value) + parseInt(pas.value) + parseInt(pele.value) + 
+                         parseInt(neuro.value) + parseInt(vias.value) + parseInt(fraturas.value);
+
+            const interpretacao = document.getElementById('scoreInterpretation').textContent;
+            const mortalidade = document.getElementById('mortalityValue').textContent;
+
+            // Formatar data
+            let dataFormatada = 'Nao informada';
+            if (data) {
+                const dt = new Date(data);
+                dataFormatada = dt.toLocaleString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+
+            let relatorio = `RESUMO INFORMATIVO — PEDIATRIC TRAUMA SCORE (EDUCATIVO)
+========================================
+
+DADOS DO PACIENTE
+-----------------
+Nome: ${nome}
+Data da Avaliacao: ${dataFormatada}
+
+PARAMETROS AVALIADOS
+--------------------
+1. Peso: ${peso.parentElement.textContent.trim()} = ${peso.value} pontos
+2. Pressao Arterial Sistolica: ${pas.parentElement.textContent.trim()} = ${pas.value} pontos
+3. Lesao na Pele: ${pele.parentElement.textContent.trim()} = ${pele.value} pontos
+4. Estado Neurologico: ${neuro.parentElement.textContent.trim()} = ${neuro.value} pontos
+5. Vias Aereas: ${vias.parentElement.textContent.trim()} = ${vias.value} pontos
+6. Fraturas de Extremidades: ${fraturas.parentElement.textContent.trim()} = ${fraturas.value} pontos
+
+RESULTADO
+---------
+ESCORE TOTAL: ${score}
+Interpretacao: ${interpretacao}
+Mortalidade Estimada: ${mortalidade}
+
+RECOMENDACOES
+-------------
+${score < 8 ? 'ATENCAO: Paciente deve ser encaminhado para local apropriado de atendimento a criancas traumatizadas!' : 'Seguir diretrizes e protocolos de uso local.'}
+
+REFERENCIAS
+-----------
+1. TEPAS JJ et al. The Pediatric Trauma Score as a predictor of injury severity in the injured child. J. Pediat. Surg 1987;22:14-8.
+2. TEPAS JJ et al. The Pediatric Trauma Score as a predictor of injury severity: an objective. J. Trauma. 1988 Apr; 28(4): 425-9.
+3. RAMENOFSKY M et al. The Predictive Validity of the Pediatric Trauma Score. J. Trauma 1988;28:1038-42.
+
+Data de Geracao: ${new Date().toLocaleString('pt-BR')}
+`;
+
+            relatorio = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorio;
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorio += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                relatorio += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            // Copiar para a área de transferência
+            navigator.clipboard.writeText(relatorio).then(() => {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(() => {
+                // Fallback para navegadores que não suportam clipboard API
+                const textArea = document.createElement('textarea');
+                textArea.value = relatorio;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

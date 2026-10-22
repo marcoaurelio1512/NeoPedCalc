@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>NeoPedCalc — FiO2 por interface (educativo)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .patient-info, .interface-selection, .calculation-section {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .patient-info h3, .interface-selection h3, .calculation-section h3 {
+            font-size: 14px;
+            margin: 0 0 15px 0;
+            color: #111;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .interface-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .interface-btn {
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            background: #fff;
+            color: #111;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .interface-btn.active {
+            background: #111;
+            color: #fff;
+            border-color: #111;
+        }
+
+        .fio2-display {
+            background: #111;
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .fio2-number {
+            font-size: 48px;
+            font-weight: 900;
+            margin: 5px 0;
+        }
+
+        .fio2-interpretation {
+            font-size: 14px;
+            font-weight: 700;
+            color: #374151;
+        }
+
+        .calculate-btn, .generate-report-btn {
+            background: #111;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .results {
+            background: #e8f0ff;
+            border: 1px solid #b4cfff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .result-card {
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            border: 1px solid #e7e7ee;
+        }
+
+        .result-card h4 {
+            font-size: 12px;
+            margin: 0 0 8px 0;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        .result-card p {
+            margin: 0;
+            font-size: 14px;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .warning, .info-section {
+            background: #fffbe0;
+            border: 1px solid #f1e49a;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .reference-table {
+            margin-top: 25px;
+            overflow-x: auto;
+        }
+
+        .reference-table table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .reference-table th, .reference-table td {
+            padding: 10px;
+            border: 1px solid #e7e7ee;
+            text-align: left;
+        }
+
+        .reference-table th {
+            background: #f6f7fb;
+            font-weight: 800;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #374151;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        .is-hidden { display: none; }
+
+        /* Modal Styles */
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(17, 17, 17, 0.1);
+            color: #111;
+            border: 2px solid #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-info:hover {
+            background: #111;
+            color: #fff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 { margin: 0; font-size: 22px; }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover { transform: rotate(90deg); }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child { margin-top: 0; }
+        .modal-body p { line-height: 1.6; margin-bottom: 15px; color: #34495e; }
+        .modal-body ul, .modal-body ol { margin: 10px 0; padding-left: 25px; }
+        .modal-body li { margin-bottom: 8px; line-height: 1.5; }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong { color: #2c3e50; }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong { color: #27ae60; }
+
+        @media (max-width: 768px) {
+            .modal { padding: 10px; }
+            .modal-content { width: 95%; max-height: 95vh; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <header>
+        <h1>🧪 Calculadora de FiO2</h1>
+        <p>Apoio informativo para estimativa educativa de FiO2 em diferentes interfaces</p>
+        <div class="header-actions">
+            <button type="button" class="btn-info" onclick="abrirModal()">
+                Como usar
+            </button>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="card">
+            <div class="content">
+            <div class="patient-info">
+                <h3>Dados do Paciente</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome">Nome do Paciente:</label>
+                        <input type="text" id="nome" placeholder="Digite o nome do paciente">
+                    </div>
+                    <div class="form-group">
+                        <label for="idade">Idade:</label>
+                        <input type="number" id="idade" placeholder="Idade em anos" min="0" max="120" step="0.1">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="data">Data/Hora:</label>
+                        <input type="datetime-local" id="data">
+                    </div>
+                    <div class="form-group">
+                        <label for="avaliador">Avaliador:</label>
+                        <input type="text" id="avaliador" placeholder="Nome do médico avaliador">
+                    </div>
+                </div>
+            </div>
+
+            <div class="interface-selection">
+                <h3>Selecione a Interface de Oxigenoterapia</h3>
+                <div class="interface-buttons">
+                    <button type="button" class="interface-btn active" onclick="selecionarInterface('halo')">Halo com Ar/O₂</button>
+                    <button type="button" class="interface-btn" onclick="selecionarInterface('cateter')">Catéter Nasal</button>
+                    <button type="button" class="interface-btn" onclick="selecionarInterface('mascara')">Máscara Facial</button>
+                    <button type="button" class="interface-btn" onclick="selecionarInterface('venturi')">Máscara Venturi</button>
+                    <button type="button" class="interface-btn" onclick="selecionarInterface('reinalante')">Máscara Reinalante</button>
+                </div>
+                <p id="interfaceInfo">Halo com Ar/O₂: Mistura de ar ambiente e oxigênio em diferentes proporções.</p>
+            </div>
+
+            <div class="calculation-section">
+                <h3>Parâmetros de Cálculo</h3>
+                <div class="calculation-grid">
+                    <div class="calculation-group" id="haloGroup">
+                        <h4>Halo com Ar/O₂</h4>
+                        <div class="form-group">
+                            <label for="arHalo">Fluxo de Ar no Halo (L/min):</label>
+                            <input type="number" id="arHalo" placeholder="0.0" min="0" max="8" step="0.5" onchange="calcularFio2()">
+                        </div>
+                        <div class="form-group">
+                            <label for="o2Halo">Fluxo de O₂ no Halo (L/min):</label>
+                            <input type="number" id="o2Halo" placeholder="0.0" min="0" max="8" step="0.5" onchange="calcularFio2()">
+                        </div>
+                    </div>
+
+                    <div class="calculation-group is-hidden" id="cateterGroup">
+                        <h4>Catéter Nasal</h4>
+                        <div class="form-group">
+                            <label for="o2Cateter">Fluxo de O₂ no Catéter (L/min):</label>
+                            <input type="number" id="o2Cateter" placeholder="0.0" min="0" max="6" step="0.5" onchange="calcularFio2()">
+                        </div>
+                    </div>
+
+                    <div class="calculation-group is-hidden" id="mascaraGroup">
+                        <h4>Máscara Facial</h4>
+                        <div class="form-group">
+                            <label for="o2Mascara">Fluxo de O₂ na Máscara (L/min):</label>
+                            <input type="number" id="o2Mascara" placeholder="0.0" min="0" max="15" step="0.5" onchange="calcularFio2()">
+                        </div>
+                    </div>
+
+                    <div class="calculation-group is-hidden" id="venturiGroup">
+                        <h4>Máscara Venturi</h4>
+                        <div class="form-group">
+                            <label for="fio2Venturi">FiO₂ da Máscara Venturi (%):</label>
+                            <select id="fio2Venturi" onchange="calcularFio2()">
+                                <option value="24">24% (Azul)</option>
+                                <option value="28">28% (Branco)</option>
+                                <option value="31">31% (Laranja)</option>
+                                <option value="35">35% (Amarelo)</option>
+                                <option value="40">40% (Vermelho)</option>
+                                <option value="50">50% (Verde)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="calculation-group is-hidden" id="reinalanteGroup">
+                        <h4>Máscara Reinalante</h4>
+                        <div class="form-group">
+                            <label for="o2Reinalante">Fluxo de O₂ na Máscara (L/min):</label>
+                            <input type="number" id="o2Reinalante" placeholder="0.0" min="10" max="15" step="0.5" onchange="calcularFio2()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="fio2-display is-hidden" id="fio2Display">
+                <div class="fio2-number" id="fio2Number">0</div>
+                <div class="fio2-interpretation" id="fio2Interpretation">FiO2 Calculada</div>
+            </div>
+
+            <button type="button" class="calculate-btn" onclick="calcularFio2()">Calcular FiO2</button>
+
+            <div class="results" id="results">
+                <div class="result-card" id="resultado">
+                    <h4>Resultado do Cálculo</h4>
+                    <p id="resultadoTexto">Clique em "Calcular FiO2" para ver o resultado.</p>
+                </div>
+
+                <div class="result-card" id="detalhes">
+                    <h4>Detalhes do Cálculo</h4>
+                    <p id="detalhesTexto">Aguarde o calculo da FiO2.</p>
+                </div>
+
+            <button type="button" class="generate-report-btn" onclick="gerarRelatorio()">Copiar texto informativo</button>
+        </div>
+    </div>
+</div>
+
+    <div class="footer">
+        <p>Calculadora de FiO2 - Fraco Inspirada de Oxigenio</p>
+        <p><strong>Referências:</strong> Protocolos de Terapia Intensiva Pediátrica e Neonatal.</p>
+    </div>
+
+            <div class="info-section">
+                <h4>Informacoes Importantes sobre FiO2</h4>
+                <ul>
+                    <li><strong>FiO₂ (Fração Inspirada de Oxigênio):</strong> Percentual de oxigênio no ar inspirado</li>
+                    <li><strong>Ar Ambiente:</strong> Contém aproximadamente 21% de oxigênio</li>
+                    <li><strong>Halo:</strong> Permite mistura precisa de ar e oxigênio</li>
+                    <li><strong>Catéter Nasal:</strong> FiO₂ varia de 24% a 44% dependendo do fluxo</li>
+                    <li><strong>Máscara Venturi:</strong> Fornece FiO₂ fixo baseado no adaptador colorido</li>
+                    <li><strong>Máscara Reinalante:</strong> Pode fornecer até 100% de FiO₂</li>
+                    <li><strong>Monitorização:</strong> Sempre monitorar SpO₂ e ajustar conforme necessário</li>
+                </ul>
+            </div>
+
+            <div class="reference-table">
+                <h3 class="info-title">Tabela de Referencia - FiO2 por Interface</h3>
+                <div class="table-wrap">
+                    <table>
+                    <thead>
+                        <tr>
+                            <th>Interface</th>
+                            <th>Fluxo (L/min)</th>
+                            <th>FiO₂ Estimada</th>
+                            <th>Observações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td rowspan="4"><strong>Catéter Nasal</strong></td>
+                            <td>1-2</td>
+                            <td>24-28%</td>
+                            <td>Baixo fluxo</td>
+                        </tr>
+                        <tr>
+                            <td>3-4</td>
+                            <td>32-36%</td>
+                            <td>Fluxo moderado</td>
+                        </tr>
+                        <tr>
+                            <td>5-6</td>
+                            <td>40-44%</td>
+                            <td>Alto fluxo</td>
+                        </tr>
+                        <tr>
+                            <td>>6</td>
+                            <td>Sem benefício adicional</td>
+                            <td>Limitação do dispositivo</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="3"><strong>Máscara Facial</strong></td>
+                            <td>5-8</td>
+                            <td>40-60%</td>
+                            <td>Fluxo mínimo 5 L/min</td>
+                        </tr>
+                        <tr>
+                            <td>8-10</td>
+                            <td>50-70%</td>
+                            <td>Fluxo adequado</td>
+                        </tr>
+                        <tr>
+                            <td>10-15</td>
+                            <td>60-80%</td>
+                            <td>Alto fluxo</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Máscara Venturi</strong></td>
+                            <td>Variável</td>
+                            <td>24-50%</td>
+                            <td>FiO₂ fixo por adaptador</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Máscara Reinalante</strong></td>
+                            <td>10-15</td>
+                            <td>80-100%</td>
+                            <td>Com reservatório</td>
+                        </tr>
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="footer">
+                <p><strong>Calculadora de FiO2</strong> - Fracao Inspirada de Oxigenio</p>
+                <p>Desenvolvido para uso clinico | Baseado em evidencias cientificas</p>
+                <p><strong>Importante:</strong> Esta ferramenta e auxiliar e nao substitui a avaliacao clinica completa.</p>
+            </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — FiO2 por interface (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta calculadora organiza parâmetros para estimativa educativa de FiO2 em interfaces de oxigenoterapia. O conteúdo é informativo e não substitui avaliação clínica, protocolo institucional ou prescrição.</p>
+                
+                <h3>Fórmulas de FiO₂</h3>
+                <div class="formula-box">
+                    <strong>Fórmulas por Dispositivo:</strong><br><br>
+                    <strong>1. Máscara Simples:</strong><br>
+                    FiO₂ = 0.21 + (Fluxo × 0.04)<br>
+                    • Fluxo: 1-6 L/min<br>
+                    • FiO₂ máxima: ~45%<br><br>
+                    <strong>2. Máscara com Reservatório:</strong><br>
+                    FiO₂ = 0.21 + (Fluxo × 0.06)<br>
+                    • Fluxo: 6-15 L/min<br>
+                    • FiO₂ máxima: ~90%<br><br>
+                    <strong>3. Máscara Venturi:</strong><br>
+                    FiO₂ = 0.21 + (Fluxo × 0.03)<br>
+                    • Fluxo: 4-12 L/min<br>
+                    • FiO₂: 24-60%<br><br>
+                    <strong>4. Cânula Nasal:</strong><br>
+                    FiO₂ = 0.21 + (Fluxo × 0.04)<br>
+                    • Fluxo: 1-6 L/min<br>
+                    • FiO₂ máxima: ~45%<br><br>
+                    <strong>5. Halo:</strong><br>
+                    FiO₂ = 0.21 + (Fluxo × 0.05)<br>
+                    • Fluxo: 2-8 L/min<br>
+                    • FiO₂ máxima: ~60%
+                </div>
+
+                <h3>Parâmetros Avaliados</h3>
+                <ul>
+                    <li><strong>Tipo de Dispositivo:</strong> Máscara, cânula, halo</li>
+                    <li><strong>Fluxo de Oxigênio:</strong> L/min</li>
+                    <li><strong>FiO₂ Calculada:</strong> %</li>
+                    <li><strong>PaO₂ Estimada:</strong> mmHg</li>
+                    <li><strong>SaO₂ Estimada:</strong> %</li>
+                    <li><strong>PaO₂/FiO₂:</strong> Relação</li>
+                    <li><strong>Gravidade:</strong> Leve, moderada, grave</li>
+                    <li><strong>Conduta:</strong> Recomendada</li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Selecione Dispositivo:</strong> Tipo de oxigenoterapia</li>
+                    <li><strong>Insira Fluxo:</strong> L/min</li>
+                    <li><strong>Informe PaO₂:</strong> mmHg (se disponível)</li>
+                    <li><strong>Calcule:</strong> Sistema calcula automaticamente</li>
+                    <li><strong>Interprete:</strong> FiO₂ e adequação</li>
+                    <li><strong>Monitore:</strong> Evolução</li>
+                </ol>
+
+                <h3>Dispositivos de Oxigenoterapia</h3>
+                <ul>
+                    <li><strong>Cânula Nasal:</strong> Baixo fluxo, conforto</li>
+                    <li><strong>Máscara Simples:</strong> Médio fluxo</li>
+                    <li><strong>Máscara com Reservatório:</strong> Alto fluxo</li>
+                    <li><strong>Máscara Venturi:</strong> FiO₂ precisa</li>
+                    <li><strong>Halo:</strong> Pediátrico, conforto</li>
+                    <li><strong>CPAP:</strong> Pressão positiva</li>
+                    <li><strong>BIPAP:</strong> Duplo nível</li>
+                    <li><strong>Ventilação:</strong> Mecânica</li>
+                </ul>
+
+                <h3>Interpretação da FiO₂</h3>
+                <ul>
+                    <li><strong>21%:</strong> Ar ambiente</li>
+                    <li><strong>24-28%:</strong> Baixa</li>
+                    <li><strong>30-40%:</strong> Moderada</li>
+                    <li><strong>40-60%:</strong> Alta</li>
+                    <li><strong>60-100%:</strong> Muito alta</li>
+                    <li><strong>100%:</strong> Oxigênio puro</li>
+                    <li><strong>FiO₂ > 60%:</strong> > 48h cuidadoso</li>
+                    <li><strong>FiO₂ = 100%:</strong> < 24h</li>
+                </ul>
+
+                <h3>PaO₂/FiO₂ - Classificação</h3>
+                <ul>
+                    <li><strong>> 300:</strong> Normal</li>
+                    <li><strong>200-300:</strong> Insuficiência respiratória leve</li>
+                    <li><strong>100-200:</strong> Insuficiência respiratória moderada</li>
+                    <li><strong>< 100:</strong> Insuficiência respiratória grave</li>
+                    <li><strong>200-300:</strong> SDRA leve</li>
+                    <li><strong>100-200:</strong> SDRA moderada</li>
+                    <li><strong>< 100:</strong> SDRA grave</li>
+                    <li><strong>< 200:</strong> Ventilação mecânica</li>
+                </ul>
+
+                <h3>Indicações por FiO₂</h3>
+                <ul>
+                    <li><strong>24-28%:</strong> Hipoxemia leve</li>
+                    <li><strong>30-40%:</strong> Hipoxemia moderada</li>
+                    <li><strong>40-60%:</strong> Hipoxemia grave</li>
+                    <li><strong>60-100%:</strong> Emergência</li>
+                    <li><strong>CPAP:</strong> FiO₂ + PEEP</li>
+                    <li><strong>BIPAP:</strong> FiO₂ + pressões</li>
+                    <li><strong>Ventilação:</strong> FiO₂ + parâmetros</li>
+                    <li><strong>ECMO:</strong> Oxigenação extracorpórea</li>
+                </ul>
+
+                <h3>Fatores que Influenciam FiO₂</h3>
+                <ul>
+                    <li><strong>Fluxo:</strong> L/min</li>
+                    <li><strong>Tipo Dispositivo:</strong> Cânula vs máscara</li>
+                    <li><strong>Vazamento:</strong> Vedação</li>
+                    <li><strong>Frequência Respiratória:</strong> Ventilação</li>
+                    <li><strong>Volume Corrente:</strong> mL</li>
+                    <li><strong>PEEP:</strong> cmH₂O</li>
+                    <li><strong>Pressão Inspiratória:</strong> cmH₂O</li>
+                    <li><strong>Compliance:</strong> Pulmonar</li>
+                </ul>
+
+                <h3>Complicações da Oxigenoterapia</h3>
+                <ul>
+                    <li><strong>Toxicidade:</strong> Pulmonar</li>
+                    <li><strong>Fibrose:</strong> Pulmonar</li>
+                    <li><strong>Atelectasia:</strong> Absorção</li>
+                    <li><strong>Broncoespasmo:</strong> Irritação</li>
+                    <li><strong>Retinopatia:</strong> Prematuros</li>
+                    <li><strong>Sequelas:</strong> Neurológicas</li>
+                    <li><strong>Dependência:</strong> Psicológica</li>
+                    <li><strong>Queimaduras:</strong> Fogo</li>
+                </ul>
+
+                <h3>Monitoramento</h3>
+                <ul>
+                    <li><strong>Gasometria:</strong> Arterial</li>
+                    <li><strong>Oximetria:</strong> Pulso</li>
+                    <li><strong>Sinais Vitais:</strong> FC, FR, PA</li>
+                    <li><strong>Exame Físico:</strong> Respiratório</li>
+                    <li><strong>Radiografia:</strong> Tórax</li>
+                    <li><strong>FiO₂:</strong> Monitorada</li>
+                    <li><strong>Fluxo:</strong> Verificado</li>
+                    <li><strong>Dispositivo:</strong> Posicionamento</li>
+                </ul>
+
+                <h3>Desmame da Oxigenoterapia</h3>
+                <ul>
+                    <li><strong>Critérios:</strong> PaO₂ > 60 mmHg</li>
+                    <li><strong>SaO₂:</strong> > 90%</li>
+                    <li><strong>Redução:</strong> Gradual</li>
+                    <li><strong>Intervalos:</strong> 6-12 horas</li>
+                    <li><strong>Monitoramento:</strong> Contínuo</li>
+                    <li><strong>Reversão:</strong> Se necessário</li>
+                    <li><strong>Documentação:</strong> Registro</li>
+                    <li><strong>Equipe:</strong> Experiente</li>
+                </ul>
+
+                <h3>Considerações Especiais</h3>
+                <ul>
+                    <li><strong>Pediátricos:</strong> Halo, fluxo</li>
+                    <li><strong>Neonatais:</strong> Cuidado especial</li>
+                    <li><strong>Idosos:</strong> Comorbidades</li>
+                    <li><strong>Cardiopatas:</strong> Oxigenação</li>
+                    <li><strong>Neurológicos:</strong> Consciência</li>
+                    <li><strong>Trauma:</strong> Lesões</li>
+                    <li><strong>Sepse:</strong> Oxigenação</li>
+                    <li><strong>Queimados:</strong> Inalação</li>
+                </ul>
+
+                <h3>Limitações e Considerações</h3>
+                <ul>
+                    <li>Estimativas aproximadas</li>
+                    <li>Variações individuais</li>
+                    <li>Fatores não incluídos</li>
+                    <li>Monitoramento clínico</li>
+                    <li>Interpretação experiente</li>
+                    <li>Ajuste individual</li>
+                    <li>Protocolos institucionais</li>
+                    <li>Correlação clínica</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - O'Driscoll BR, et al. BTS guideline for oxygen use in adults in healthcare and emergency settings. Thorax. 2017;72(Suppl 1):ii1-ii90.<br>
+                    - MacIntyre NR, et al. Oxygen therapy for adults in the acute care facility--2002 revision & update. Respir Care. 2002;47(6):717-720.<br>
+                    - Esteban A, et al. Characteristics and outcomes in adult patients receiving mechanical ventilation: a 28-day international study. JAMA. 2002;287(3):345-355.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formatarNumero(valor) {
+            const numero = Number(valor);
+            if (Number.isNaN(numero)) {
+                return valor;
+            }
+            return numero.toFixed(1);
+        }
+
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        let interfaceAtual = 'halo';
+
+        // Definir data atual
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const dateTimeString = now.toISOString().slice(0, 16);
+            document.getElementById('data').value = dateTimeString;
+        });
+
+        function selecionarInterface(interface) {
+            interfaceAtual = interface;
+            
+            // Atualizar botões
+            document.querySelectorAll('.interface-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Ocultar todos os grupos
+            document.querySelectorAll('.calculation-group').forEach(group => group.classList.add('is-hidden'));
+            
+            // Mostrar grupo selecionado
+            document.getElementById(interface + 'Group').classList.remove('is-hidden');
+            
+            // Atualizar informações
+            const informacoes = {
+                'halo': 'Halo com Ar/O2: Mistura de ar ambiente e oxigenio em diferentes proporcoes.',
+                'cateter': 'Cateter Nasal: FiO2 varia de 24% a 44% dependendo do fluxo de oxigenio.',
+                'mascara': 'Mascara Facial: Requer fluxo minimo de 5 L/min para evitar reinalacao de CO2.',
+                'venturi': 'Mascara Venturi: Fornece FiO2 fixo baseado no adaptador colorido.',
+                'reinalante': 'Mascara Reinalante: Pode fornecer ate 100% de FiO2 com reservatorio.'
+            };
+            
+            document.getElementById('interfaceInfo').textContent = informacoes[interface];
+            
+            // Limpar resultados
+            document.getElementById('fio2Display').classList.add('is-hidden');
+            document.getElementById('results').classList.remove('show');
+        }
+
+        function calcularFio2() {
+            let fio2 = 21; // FiO₂ do ar ambiente
+            let detalhes = '';
+            
+            switch (interfaceAtual) {
+                case 'halo':
+                    const arHalo = parseFloat(document.getElementById('arHalo').value) || 0;
+                    const o2Halo = parseFloat(document.getElementById('o2Halo').value) || 0;
+                    
+                    if (arHalo + o2Halo > 0) {
+                        // Fórmula: FiO₂ = (0.21 * fluxo_ar + 1.0 * fluxo_o2) / (fluxo_ar + fluxo_o2) * 100
+                        fio2 = ((0.21 * arHalo + 1.0 * o2Halo) / (arHalo + o2Halo)) * 100;
+                        detalhes = `Ar no halo: ${arHalo} L/min<br>O2 no halo: ${o2Halo} L/min<br>Total: ${formatarNumero(arHalo + o2Halo)} L/min`;
+                    }
+                    break;
+                    
+                case 'cateter':
+                    const o2Cateter = parseFloat(document.getElementById('o2Cateter').value) || 0;
+                    
+                    if (o2Cateter > 0) {
+                        // Fórmula aproximada: FiO₂ = 21 + (4 * fluxo_o2)
+                        fio2 = 21 + (4 * o2Cateter);
+                        if (fio2 > 44) fio2 = 44; // Limitacao do cateter nasal
+                        detalhes = `Fluxo de O2: ${o2Cateter} L/min<br>FiO2 estimada: ${formatarNumero(fio2)}%`;
+                    }
+                    break;
+                    
+                case 'mascara':
+                    const o2Mascara = parseFloat(document.getElementById('o2Mascara').value) || 0;
+                    
+                    if (o2Mascara >= 5) {
+                        // Fórmula aproximada para máscara facial
+                        fio2 = 21 + (o2Mascara * 4.5);
+                        if (fio2 > 80) fio2 = 80; // Limitacao da mascara facial
+                        detalhes = `Fluxo de O2: ${o2Mascara} L/min<br>FiO2 estimada: ${formatarNumero(fio2)}%`;
+                    } else if (o2Mascara > 0) {
+                        fio2 = 21;
+                        detalhes = `Fluxo insuficiente (minimo 5 L/min)<br>FiO2: ${fio2}% (ar ambiente)`;
+                    }
+                    break;
+                    
+                case 'venturi':
+                    fio2 = parseFloat(document.getElementById('fio2Venturi').value) || 21;
+                    const corVenturi = document.getElementById('fio2Venturi').selectedOptions[0].text;
+                    detalhes = `Mascara Venturi: ${corVenturi}<br>FiO2 fixa: ${fio2}%`;
+                    break;
+                    
+                case 'reinalante':
+                    const o2Reinalante = parseFloat(document.getElementById('o2Reinalante').value) || 0;
+                    
+                    if (o2Reinalante >= 10) {
+                        fio2 = 80 + ((o2Reinalante - 10) * 4); // 80% + 4% por L/min acima de 10
+                        if (fio2 > 100) fio2 = 100;
+                        detalhes = `Fluxo de O2: ${o2Reinalante} L/min<br>FiO2 estimada: ${formatarNumero(fio2)}%`;
+                    } else if (o2Reinalante > 0) {
+                        fio2 = 21;
+                        detalhes = `Fluxo insuficiente (minimo 10 L/min)<br>FiO2: ${fio2}% (ar ambiente)`;
+                    }
+                    break;
+            }
+            
+            if (fio2 > 21) {
+                document.getElementById('fio2Number').textContent = formatarNumero(fio2);
+                document.getElementById('fio2Display').classList.remove('is-hidden');
+                
+                let interpretacao = '';
+                if (fio2 <= 30) {
+                    interpretacao = 'Suplementacao Leve';
+                } else if (fio2 <= 50) {
+                    interpretacao = 'Suplementacao Moderada';
+                } else if (fio2 <= 80) {
+                    interpretacao = 'Suplementacao Alta';
+                } else {
+                    interpretacao = 'Suplementacao Muito Alta';
+                }
+                
+                document.getElementById('fio2Interpretation').textContent = interpretacao;
+                
+                // Exibir resultados
+                document.getElementById('resultadoTexto').innerHTML = `
+                    <strong>FiO2 Calculada: ${formatarNumero(fio2)}%</strong><br>
+                    <strong>Interpretacao: ${interpretacao}</strong>
+                `;
+                
+                document.getElementById('detalhesTexto').innerHTML = detalhes;
+                
+                document.getElementById('results').classList.add('show');
+                
+                // Salvar dados para relatório
+                window.currentFio2 = {
+                    fio2: fio2,
+                    interpretacao: interpretacao,
+                    interface: interfaceAtual,
+                    detalhes: detalhes,
+                    nome: document.getElementById('nome').value,
+                    idade: document.getElementById('idade').value,
+                    data: document.getElementById('data').value,
+                    avaliador: document.getElementById('avaliador').value
+                };
+            } else {
+                document.getElementById('fio2Display').classList.add('is-hidden');
+                document.getElementById('results').classList.remove('show');
+            }
+        }
+
+        function gerarRelatorio() {
+            if (!window.currentFio2) {
+                alert('Por favor, calcule a FiO2 primeiro.');
+                return;
+            }
+
+            const data = new Date(window.currentFio2.data);
+            const dataFormatada = data.toLocaleString('pt-BR');
+
+            const nomesInterfaces = {
+                'halo': 'Halo com Ar/O2',
+                'cateter': 'Cateter Nasal',
+                'mascara': 'Mascara Facial',
+                'venturi': 'Mascara Venturi',
+                'reinalante': 'Mascara Reinalante'
+            };
+
+            let relatorio = `RESUMO INFORMATIVO — CALCULO DE FIO2 (EDUCATIVO)
+========================================
+
+DADOS DO PACIENTE
+-----------------
+Data/Hora: ${dataFormatada}
+Nome: ${window.currentFio2.nome || 'Nao informado'}
+Idade: ${window.currentFio2.idade || 'Nao informada'} anos
+Avaliador: ${window.currentFio2.avaliador || 'Nao informado'}
+
+CALCULO DE FIO2
+---------------
+Interface: ${nomesInterfaces[window.currentFio2.interface]}
+FiO2 Calculada: ${formatarNumero(window.currentFio2.fio2)}%
+Interpretacao: ${window.currentFio2.interpretacao}
+
+DETALHES DO CALCULO
+-------------------
+${window.currentFio2.detalhes.replace(/<br>/g, '\n')}
+
+INTERPRETACAO CLINICA
+---------------------
+`;
+
+            if (window.currentFio2.fio2 <= 30) {
+                relatorio += `SUPLEMENTACAO LEVE (FiO2 ≤ 30%):
+- Indicada para hipoxemia leve
+- Monitorizacao de SpO2 necessaria
+- Reavaliacao periodica recomendada
+- Geralmente bem tolerada
+`;
+            } else if (window.currentFio2.fio2 <= 50) {
+                relatorio += `SUPLEMENTACAO MODERADA (FiO2 31-50%):
+- Indicada para hipoxemia moderada
+- Monitorizacao continua de SpO2
+- Avaliacao clinica seriada
+- Considerar exames complementares
+`;
+            } else if (window.currentFio2.fio2 <= 80) {
+                relatorio += `SUPLEMENTACAO ALTA (FiO2 51-80%):
+- Indicada para hipoxemia grave
+- Monitorizacao intensiva necessaria
+- Avaliacao clinica frequente
+- Considerar suporte ventilatorio
+`;
+            } else {
+                relatorio += `SUPLEMENTACAO MUITO ALTA (FiO2 > 80%):
+- Indicada para hipoxemia severa
+- Monitorizacao continua obrigatoria
+- Avaliacao clinica imediata
+- Considerar suporte ventilatorio avancado
+`;
+            }
+
+            relatorio += `
+DETALHES TECNICOS
+-----------------
+Calculadora: FiO2 - Fracao Inspirada de Oxigenio
+Data de Geracao: ${new Date().toLocaleString('pt-BR')}
+
+OBSERVACOES IMPORTANTES
+-----------------------
+- A FiO2 e uma estimativa baseada em formulas padronizadas
+- Valores reais podem variar conforme condicoes do paciente
+- Sempre monitorar SpO2 e ajustar conforme necessario
+- Considerar fatores como padrao respiratorio e volume corrente
+- Reavaliacao clinica periodica e essencial
+- Esta ferramenta nao substitui a avaliacao clinica completa
+
+REFERENCIAS
+-----------
+- American Thoracic Society. Oxygen Therapy Guidelines.
+- Respiratory Care Journal. Oxygen Delivery Systems.
+- Protocolos de Oxigenoterapia - Evidencias Cientificas
+`;
+
+            relatorio = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorio;
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorio += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                relatorio += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            // Copiar para área de transferência
+            navigator.clipboard.writeText(relatorio).then(function() {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(function() {
+                // Fallback para navegadores mais antigos
+                const textArea = document.createElement('textarea');
+                textArea.value = relatorio;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

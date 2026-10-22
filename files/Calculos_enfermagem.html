@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>NeoPedCalc — Dosagem para enfermagem (educativo)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .section h2 {
+            font-size: 16px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-weight: 700;
+            border-bottom: 1px solid #f0f0f5;
+            padding-bottom: 8px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            background: #111;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .btn-green {
+            background: #28a745;
+        }
+
+        .result-card {
+            background: #e8fff0;
+            border: 1px solid #b4ffcf;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: #111;
+        }
+
+        .result-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .formula-section {
+            background: #fffbe6;
+            border: 1px solid #e5e7eb;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 12px;
+        }
+
+        .formula-text {
+            font-family: monospace;
+            background: #fff;
+            padding: 8px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        .variables-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+        .variable-item {
+            font-size: 11px;
+        }
+
+        .variable-name {
+            font-weight: 700;
+        }
+
+        .calculation-results {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .calculation-card {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .calculation-value {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .unit-pill {
+            background: #f0f0f5;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 12px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .note {
+            background: #e6f7ff;
+            border: 1px solid #91d5ff;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            margin: 10px 0;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        @media (min-width: 600px) {
+            .variables-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .calculation-results {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        header .header-actions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        header .header-actions .btn-info {
+            width: auto;
+            max-width: 100%;
+        }
+        #modalInfo {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            inset: 0;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
+            box-sizing: border-box;
+            background: rgba(15, 23, 42, 0.5);
+            overflow: auto;
+        }
+        #modalInfo .modal-content {
+            background: #fff;
+            border-radius: 14px;
+            width: 100%;
+            max-height: 86vh;
+            overflow: auto;
+            padding: 0;
+        }
+        #modalInfo .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: #f8fafc;
+            border-radius: 14px 14px 0 0;
+        }
+        #modalInfo .modal-header h2 {
+            margin: 0;
+            font-size: 1.15rem;
+            color: #1e293b;
+        }
+        #modalInfo .modal-body {
+            padding: 18px 20px 22px;
+            line-height: 1.55;
+            color: #334155;
+        }
+        #modalInfo .modal-body h3 {
+            margin: 1.1em 0 0.5em;
+            font-size: 1rem;
+            color: #0f172a;
+        }
+        #modalInfo .modal-body h3:first-child { margin-top: 0; }
+        #modalInfo .modal-body ul, #modalInfo .modal-body ol {
+            margin: 0.4em 0 0.8em 1.2em;
+            padding: 0;
+        }
+        #modalInfo .modal-body li { margin-bottom: 0.35em; }
+        #modalInfo .close {
+            cursor: pointer;
+            font-size: 1.5rem;
+            line-height: 1;
+            color: #64748b;
+            border: none;
+            background: none;
+            padding: 4px 8px;
+        }
+        #modalInfo .close:hover { color: #0f172a; }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <header>
+        <h1>NeoPedCalc</h1>
+        <p>Cálculos de dosagem e mistura para apoio educativo na prática de enfermagem</p>
+        <div class="header-actions">
+            <button type="button" class="btn-info" onclick="abrirModalComoUsar()">Como usar</button>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <form id="calculatorForm">
+            <!-- Seção 1: Cálculo de Dosagem Básico -->
+            <div class="card">
+                <div class="section">
+                    <h2>1. Cálculo de Dosagem Básico</h2>
+                    
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label for="medicationName">Nome da Medicação</label>
+                        <input type="text" id="medicationName" placeholder="Ex: Dipirona, Paracetamol...">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="presentationAmount">Apresentação</label>
+                            <input type="number" id="presentationAmount" step="0.1" placeholder="Ex: 500">
+                        </div>
+                        <div class="form-group">
+                            <label for="presentationUnit">Unidade</label>
+                            <select id="presentationUnit">
+                                <option value="microgramas (mcg)">microgramas (mcg)</option>
+                                <option value="miligramas (mg)" selected>miligramas (mg)</option>
+                                <option value="gramas (g)">gramas (g)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="presentationVolume">em (ml)</label>
+                            <input type="number" id="presentationVolume" step="0.1" placeholder="Ex: 2">
+                        </div>
+                        <div class="form-group">
+                            <label for="desiredDose">Dose desejada</label>
+                            <input type="number" id="desiredDose" step="0.1" placeholder="Ex: 250">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label for="desiredDoseUnit">Unidade da dose</label>
+                        <input type="text" id="desiredDoseUnit" readonly>
+                    </div>
+
+                    <div class="result-card">
+                        <div class="result-value" id="calculatedDoseML">0,0</div>
+                        <div class="result-label">ml a administrar</div>
+                    </div>
+
+                    <div class="form-row" style="margin-top: 20px;">
+                        <div class="form-group">
+                            <label for="desiredVolume">Volume desejado (ml)</label>
+                            <input type="number" id="desiredVolume" step="0.1" placeholder="Ex: 5">
+                        </div>
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <div class="unit-pill">ml</div>
+                        </div>
+                    </div>
+
+                    <div class="result-card">
+                        <div class="result-value" id="calculatedDoseForVolume">0,0</div>
+                        <div class="result-label" id="calculatedDoseForVolumeUnit">mg para o volume acima</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção 2: Mistura de Soluções -->
+            <div class="card">
+                <div class="section">
+                    <h2>2. Cálculo da Mistura de Soluções</h2>
+                    
+                    <div class="formula-section">
+                        <h3>Fórmula de Cálculo</h3>
+                        <div class="formula-text">
+                            C x V = C1 x V1 + C2 x V2<br>
+                            sendo que V2 = V - V1
+                        </div>
+                        
+                        <div class="variables-grid">
+                            <div class="variable-item">
+                                <span class="variable-name">C:</span> conc. desejada (%)
+                            </div>
+                            <div class="variable-item">
+                                <span class="variable-name">V:</span> volume final (ml)
+                            </div>
+                            <div class="variable-item">
+                                <span class="variable-name">C1:</span> conc. menor (%)
+                            </div>
+                            <div class="variable-item">
+                                <span class="variable-name">C2:</span> conc. maior (%)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="solutionNameLow">Solução conc. menor</label>
+                            <input type="text" id="solutionNameLow" placeholder="Ex: SF 0,9%">
+                        </div>
+                        <div class="form-group">
+                            <label for="concentrationLow">à (%)</label>
+                            <input type="number" id="concentrationLow" step="0.1" placeholder="Ex: 0,9">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="solutionNameHigh">Solução MAIOR conc.</label>
+                            <input type="text" id="solutionNameHigh" placeholder="Ex: SF 20%">
+                        </div>
+                        <div class="form-group">
+                            <label for="concentrationHigh">à (%)</label>
+                            <input type="number" id="concentrationHigh" step="0.1" placeholder="Ex: 20">
+                        </div>
+                    </div>
+
+                    <div class="note">
+                        <strong>Obs:</strong> Para água destilada, use 0 na concentração.
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="desiredConcentration">Conc. desejada (%)</label>
+                            <input type="number" id="desiredConcentration" step="0.1" placeholder="Ex: 5">
+                        </div>
+                        <div class="form-group">
+                            <label for="desiredVolumeMix">Volume desejado (ml)</label>
+                            <input type="number" id="desiredVolumeMix" step="0.1" placeholder="Ex: 100">
+                        </div>
+                    </div>
+
+                    <div class="calculation-results">
+                        <div class="calculation-card">
+                            <div class="result-label">Solução final à</div>
+                            <div class="calculation-value" id="finalConcentration">0,0</div>
+                            <div class="result-label">%</div>
+                        </div>
+                        
+                        <div class="calculation-card">
+                            <div class="result-label">Misture:</div>
+                            <div class="calculation-value" id="volumeSolution1">0,0</div>
+                            <div class="result-label">ml de <span id="solution1Name"></span> à <span id="solution1Conc">0,0</span>%</div>
+                        </div>
+                        
+                        <div class="calculation-card">
+                            <div class="result-label">E também:</div>
+                            <div class="calculation-value" id="volumeSolution2">0,0</div>
+                            <div class="result-label">ml de <span id="solution2Name"></span> à <span id="solution2Conc">0,0</span>%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">
+                <button type="button" class="btn btn-green" onclick="copyReport()">Copiar texto informativo</button>
+                <p style="font-size: 12px; color: #666; margin-top: 15px;">
+                    NeoPedCalc &copy; <span data-neoped-year></span> - Calculadora de Dosagem para Enfermagem
+                </p>
+            </div>
+        </form>
+    </div> <!-- End wrap -->    </p>
+        </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalInfo" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalComoUsarTitulo" onclick="if(event.target===this)fecharModalComoUsar()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 id="modalComoUsarTitulo">Como usar — Dosagem para Enfermagem</h2>
+                <button type="button" class="close" onclick="fecharModalComoUsar()" aria-label="Fechar">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3>Seção 1 — Dosagem básica</h3>
+                <ul>
+                    <li>Informe o nome da medicação (opcional, para o relatório).</li>
+                    <li><strong>Apresentação:</strong> quantidade da droga (mcg, mg ou g) e o volume em que ela está diluída (ml).</li>
+                    <li><strong>Dose desejada:</strong> na mesma unidade da apresentação; o app mostra <strong>ml a administrar</strong>.</li>
+                    <li>Se preencher <strong>volume desejado (ml)</strong>, o segundo cartão mostra quanto de princípio ativo corresponde a esse volume.</li>
+                </ul>
+                <h3>Seção 2 — Mistura de soluções</h3>
+                <ul>
+                    <li>Use a fórmula C×V = C1×V1 + C2×V2: indique as duas soluções (nome e %), a concentração final desejada (%) e o volume final (ml).</li>
+                    <li>Para água destilada, use 0% na concentração, conforme a observação na tela.</li>
+                    <li>Os cartões exibem quanto aspirar de cada frasco para montar a mistura.</li>
+                </ul>
+                <h3>Relatório</h3>
+                <p>No rodapé, <strong>Copiar texto informativo</strong> gera texto com os valores atuais para revisão antes de colar em prontuário ou planilha.</p>
+                <h3>Limitações</h3>
+                <p>Confira sempre a prescrição, a via, diluições institucionais e estabilidade; a calculadora não substitui validação farmacêutica ou médica.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModalComoUsar() {
+            document.getElementById('modalInfo').style.display = 'flex';
+        }
+        function fecharModalComoUsar() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        // Funções de cálculo preservadas da versão original
+        function eeparseFloat(str) {
+            str = String(str).replace(/,/g, ".");
+            var res = parseFloat(str);
+            if (isNaN(res)) {
+                return 0;
+            } else {
+                return res;
+            }
+        }
+
+        function round(n, nd) {
+            if (isFinite(n) && isFinite(nd)) {
+                var sign_n = (n < 0) ? -1 : 1;
+                var abs_n = Math.abs(n);
+                var factor = Math.pow(10, nd);
+                return sign_n * Math.round(abs_n * factor) / factor;
+            } else {
+                return NaN;
+            }
+        }
+
+        function eedisplayFloat(x) {
+            if (isNaN(x)) {
+                return "";
+            } else {
+                return String(x).replace(/\./g, ",");
+            }
+        }
+
+        function eedisplayFloatND(x, nd) {
+            if (isNaN(x)) {
+                return "";
+            } else {
+                var res = round(x, nd);
+                if (nd > 0) {
+                    var str = String(res);
+                    if (str.indexOf('e') != -1) return str;
+                    if (str.indexOf('E') != -1) return str;
+                    var parts = str.split('.');
+                    if (parts.length < 2) {
+                        var decimals = ('00000000000000').substring(0, nd);
+                        return (parts[0]).toString() + ',' + decimals;
+                    } else {
+                        var decimals = ((parts[1]).toString() + '00000000000000').substring(0, nd);
+                        return (parts[0]).toString() + ',' + decimals;
+                    }
+                } else {
+                    return res;
+                }
+            }
+        }
+
+        function eegetdropdownvalue_str(ctl) {
+            return ctl.selectedIndex >= 0 && ctl[ctl.selectedIndex] ? ctl[ctl.selectedIndex].value : '';
+        }
+
+        // Função de cálculo principal (preservada da versão original)
+        function calc(data) {
+            var c1D4 = data.XLEW_1_4_4; // nome da medicação
+            var c1D6 = data.XLEW_1_6_4; // apresentação
+            var c1F6 = data.XLEW_1_6_6; // unidade da apresentação
+            var c1J6 = data.XLEW_1_6_10; // volume da apresentação
+            var c1D10 = data.XLEW_1_10_4; // dose desejada
+            var c1D14 = data.XLEW_1_14_4; // volume desejado
+            var c1H32 = data.XLEW_1_32_8; // nome solução menor conc
+            var c1N32 = data.XLEW_1_32_14; // concentração menor
+            var c1H33 = data.XLEW_1_33_8; // nome solução maior conc
+            var c1N33 = data.XLEW_1_33_14; // concentração maior
+            var c1H37 = data.XLEW_1_37_8; // concentração desejada
+            var c1H38 = data.XLEW_1_38_8; // volume desejado
+
+            var c1F51 = (1);
+            var c1F10 = (c1F6);
+            var c1D12 = (((((c1D10) * (c1J6))) / (c1D6)));
+            var c1F16 = (((((c1D14) * (c1D6))) / (c1J6)));
+            var c1H16 = (c1F6);
+            var c1H39 = (c1N33);
+            var c1H40 = (c1N32);
+            var c1G42 = (c1H37);
+            var c1E43 = (c1H32);
+            var c1E44 = (c1H33);
+            var c1C49 = (c1H37);
+            var c1B47 = (c1H39);
+            var c1B51 = (c1H40);
+            var c1D51 = (Math.abs(((c1B47) - (c1C49))));
+            var c1I43 = (c1B51);
+            var c1I44 = (c1B47);
+            var c1D47 = (Math.abs(((c1B51) - (c1C49))));
+            var c1F47 = (((c1D47) / (c1D51)));
+            var c1H47 = (((((c1H38) / (((c1F47) + (c1F51))))) * (c1F47)));
+            var c1H51 = (((((c1H38) / (((c1F47) + (c1F51))))) * (c1F51)));
+            var c1C43 = (c1H51);
+            var c1C44 = (c1H47);
+
+            data.XLEW_1_10_6 = c1F10;
+            data.XLEW_1_12_4 = c1D12;
+            data.XLEW_1_16_6 = c1F16;
+            data.XLEW_1_16_8 = c1H16;
+            data.XLEW_1_39_8 = c1H39;
+            data.XLEW_1_40_8 = c1H40;
+            data.XLEW_1_42_7 = c1G42;
+            data.XLEW_1_43_3 = c1C43;
+            data.XLEW_1_43_5 = c1E43;
+            data.XLEW_1_43_9 = c1I43;
+            data.XLEW_1_44_3 = c1C44;
+            data.XLEW_1_44_5 = c1E44;
+            data.XLEW_1_44_9 = c1I44;
+            data.XLEW_1_47_2 = c1B47;
+            data.XLEW_1_47_4 = c1D47;
+            data.XLEW_1_47_6 = c1F47;
+            data.XLEW_1_47_8 = c1H47;
+            data.XLEW_1_49_3 = c1C49;
+            data.XLEW_1_51_2 = c1B51;
+            data.XLEW_1_51_4 = c1D51;
+            data.XLEW_1_51_8 = c1H51;
+        }
+
+        // Função para atualizar cálculos
+        function updateCalculations() {
+            var data = {
+                XLEW_1_4_4: document.getElementById('medicationName').value,
+                XLEW_1_6_4: eeparseFloat(document.getElementById('presentationAmount').value),
+                XLEW_1_6_6: document.getElementById('presentationUnit').value,
+                XLEW_1_6_10: eeparseFloat(document.getElementById('presentationVolume').value),
+                XLEW_1_10_4: eeparseFloat(document.getElementById('desiredDose').value),
+                XLEW_1_14_4: eeparseFloat(document.getElementById('desiredVolume').value),
+                XLEW_1_32_8: document.getElementById('solutionNameLow').value,
+                XLEW_1_32_14: eeparseFloat(document.getElementById('concentrationLow').value),
+                XLEW_1_33_8: document.getElementById('solutionNameHigh').value,
+                XLEW_1_33_14: eeparseFloat(document.getElementById('concentrationHigh').value),
+                XLEW_1_37_8: eeparseFloat(document.getElementById('desiredConcentration').value),
+                XLEW_1_38_8: eeparseFloat(document.getElementById('desiredVolumeMix').value)
+            };
+
+            calc(data);
+
+            // Atualizar resultados da dosagem básica
+            document.getElementById('desiredDoseUnit').value = data.XLEW_1_10_6;
+            document.getElementById('calculatedDoseML').textContent = eedisplayFloatND(data.XLEW_1_12_4, 1);
+            document.getElementById('calculatedDoseForVolume').textContent = eedisplayFloatND(data.XLEW_1_16_6, 1);
+            document.getElementById('calculatedDoseForVolumeUnit').textContent = data.XLEW_1_16_8 + ' para o volume acima';
+
+            // Atualizar resultados da mistura de soluções
+            document.getElementById('finalConcentration').textContent = eedisplayFloatND(data.XLEW_1_42_7, 1);
+            document.getElementById('volumeSolution1').textContent = eedisplayFloatND(data.XLEW_1_43_3, 1);
+            document.getElementById('solution1Name').textContent = data.XLEW_1_43_5;
+            document.getElementById('solution1Conc').textContent = eedisplayFloat(data.XLEW_1_43_9);
+            document.getElementById('volumeSolution2').textContent = eedisplayFloatND(data.XLEW_1_44_3, 1);
+            document.getElementById('solution2Name').textContent = data.XLEW_1_44_5;
+            document.getElementById('solution2Conc').textContent = eedisplayFloat(data.XLEW_1_44_9);
+        }
+
+        // Função para copiar relatório para prontuário eletrônico
+        function copyReport() {
+            const report = generateReport();
+            
+            // Tentar copiar para a área de transferência
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(report).then(() => {
+                    if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                }).catch(() => {
+                    fallbackCopy(report);
+                });
+            } else {
+                fallbackCopy(report);
+            }
+        }
+
+        // Método alternativo para navegadores mais antigos
+        function fallbackCopy(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            } catch (err) {
+                if (typeof window.neopedCopyFail === 'function') window.neopedCopyFail(); else alert('Nao foi possivel copiar automaticamente. Revise o texto e copie manualmente para uso informativo.');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        // Função para gerar relatório em texto simples
+        function generateReport() {
+            const medicationName = document.getElementById('medicationName').value || 'Nao informado';
+            const presentationAmount = document.getElementById('presentationAmount').value || '0';
+            const presentationUnit = document.getElementById('presentationUnit').value || 'miligramas (mg)';
+            const presentationVolume = document.getElementById('presentationVolume').value || '0';
+            const desiredDose = document.getElementById('desiredDose').value || '0';
+            const desiredVolume = document.getElementById('desiredVolume').value || '0';
+            const calculatedDoseML = document.getElementById('calculatedDoseML').textContent || '0,0';
+            const calculatedDoseForVolume = document.getElementById('calculatedDoseForVolume').textContent || '0,0';
+            const calculatedDoseForVolumeUnit = document.getElementById('calculatedDoseForVolumeUnit').textContent || 'mg para o volume acima';
+            
+            const solutionNameLow = document.getElementById('solutionNameLow').value || 'Nao informado';
+            const concentrationLow = document.getElementById('concentrationLow').value || '0';
+            const solutionNameHigh = document.getElementById('solutionNameHigh').value || 'Nao informado';
+            const concentrationHigh = document.getElementById('concentrationHigh').value || '0';
+            const desiredConcentration = document.getElementById('desiredConcentration').value || '0';
+            const desiredVolumeMix = document.getElementById('desiredVolumeMix').value || '0';
+            const finalConcentration = document.getElementById('finalConcentration').textContent || '0,0';
+            const volumeSolution1 = document.getElementById('volumeSolution1').textContent || '0,0';
+            const solution1Name = document.getElementById('solution1Name').textContent || 'Nao informado';
+            const solution1Conc = document.getElementById('solution1Conc').textContent || '0,0';
+            const volumeSolution2 = document.getElementById('volumeSolution2').textContent || '0,0';
+            const solution2Name = document.getElementById('solution2Name').textContent || 'Nao informado';
+            const solution2Conc = document.getElementById('solution2Conc').textContent || '0,0';
+
+            const currentDate = new Date().toLocaleDateString('pt-BR');
+            const currentTime = new Date().toLocaleTimeString('pt-BR');
+
+            let report = '';
+            report += 'RESUMO INFORMATIVO — CALCULO DE DOSAGEM (EDUCATIVO)\n';
+            report += 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n';
+            report += 'NeoPedCalc - Calculadora de Dosagem para Enfermagem\n';
+            report += 'Data: ' + currentDate + '\n';
+            report += 'Hora: ' + currentTime + '\n';
+            report += '=' .repeat(50) + '\n\n';
+
+            report += '1. CALCULO DE DOSAGEM BASICO\n';
+            report += '-' .repeat(30) + '\n';
+            report += 'Medicacao: ' + medicationName + '\n';
+            report += 'Apresentacao: ' + presentationAmount + ' ' + presentationUnit + ' em ' + presentationVolume + ' ml\n';
+            report += 'Dose desejada: ' + desiredDose + ' ' + presentationUnit.split(' ')[0] + '\n';
+            report += 'Volume desejado: ' + desiredVolume + ' ml\n';
+            report += 'RESULTADO: ' + calculatedDoseML + ' ml a administrar\n';
+            report += 'Dose calculada para o volume: ' + calculatedDoseForVolume + ' ' + calculatedDoseForVolumeUnit + '\n\n';
+
+            if (desiredConcentration && desiredVolumeMix) {
+                report += '2. CALCULO DE MISTURA DE SOLUCOES\n';
+                report += '-' .repeat(30) + '\n';
+                report += 'Concentracao desejada: ' + desiredConcentration + '%\n';
+                report += 'Volume desejado: ' + desiredVolumeMix + ' ml\n';
+                report += 'Solucao de menor concentracao: ' + solutionNameLow + ' a ' + concentrationLow + '%\n';
+                report += 'Solucao de maior concentracao: ' + solutionNameHigh + ' a ' + concentrationHigh + '%\n\n';
+                report += 'RESULTADO DA MISTURA:\n';
+                report += 'Para fazer uma solucao a ' + finalConcentration + '% misture:\n';
+                report += '- ' + volumeSolution1 + ' ml de ' + solution1Name + ' a ' + solution1Conc + '%\n';
+                report += '- ' + volumeSolution2 + ' ml de ' + solution2Name + ' a ' + solution2Conc + '%\n\n';
+            }
+
+            report += '=' .repeat(50) + '\n';
+            report += 'Texto gerado automaticamente pelo NeoPedCalc\n';
+            report += 'Data/Hora: ' + currentDate + ' ' + currentTime + '\n';
+
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                report += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                report += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            return report;
+        }
+
+        // Adicionar event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('input', updateCalculations);
+                input.addEventListener('change', updateCalculations);
+            });
+            
+            // Calcular inicialmente
+            updateCalculations();
+        });
+
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

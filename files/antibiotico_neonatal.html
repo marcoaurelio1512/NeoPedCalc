@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>NeoPedCalc — Medicamentos neonatais (educativo)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            margin: 0 0 15px 0;
+            color: #111;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .alert-box {
+            background: #fff3cd;
+            border: 1px solid #e5e7eb;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .alert-box h3 { margin: 0 0 5px 0; font-size: 15px; }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .result-card {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .result-card h3 {
+            font-size: 12px;
+            color: #666;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: 900;
+            color: #111;
+        }
+
+        .result-description {
+            font-size: 12px;
+            color: #374151;
+            margin-top: 4px;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #e5e7eb;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        .info {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .action-btn, .btn {
+            background: #111;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #374151;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        /* Modal Styles */
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(17, 17, 17, 0.1);
+            color: #111;
+            border: 2px solid #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-info:hover {
+            background: #111;
+            color: #fff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 { margin: 0; font-size: 22px; }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover { transform: rotate(90deg); }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child { margin-top: 0; }
+        .modal-body p { line-height: 1.6; margin-bottom: 15px; color: #34495e; }
+        .modal-body ul, .modal-body ol { margin: 10px 0; padding-left: 25px; }
+        .modal-body li { margin-bottom: 8px; line-height: 1.5; }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong { color: #2c3e50; }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong { color: #27ae60; }
+
+        @media (max-width: 768px) {
+            .modal { padding: 10px; }
+            .modal-content { width: 95%; max-height: 95vh; }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+
+<body>
+    <header>
+        <h1>Medicamentos neonatais</h1>
+        <p>Ferramenta educativa — valores a partir de tabelas tipo handbook (IG, dias de vida, peso). <strong>Não prescreve</strong>; confirme sempre com Neofax/bulário e equipe.</p>
+        <div class="header-actions">
+            <button type="button" class="btn-info" onclick="abrirModal()">Como usar</button>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="card">
+
+                <div class="form-container">
+                    <form id="antibioticoForm">
+                        <div class="form-group">
+                            <label for="peso">Peso (kg):</label>
+                            <input type="number" id="peso" step="0.001" min="0.1" max="10" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="idadeGestacional">Idade Gestacional (semanas):</label>
+                            <input type="number" id="idadeGestacional" step="0.1" min="22" max="42" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="idadePosNatal">Idade Pós-Natal (dias):</label>
+                            <input type="number" id="idadePosNatal" step="0.1" min="0" max="28" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="antibiotico">Medicamento:</label>
+                            <select id="antibiotico" required>
+                                <option value="">Selecione o medicamento</option>
+                                <optgroup label="Antivirais">
+                                    <option value="aciclovir">Aciclovir</option>
+                                    <option value="ganciclovir">Ganciclovir</option>
+                                    <option value="lamivudina">Lamivudina</option>
+                                    <option value="nevirapina">Nevirapina</option>
+                                    <option value="zidovudina">Zidovudina (AZT)</option>
+                                </optgroup>
+                                <optgroup label="Penicilinas">
+                                    <option value="ampicilina">Ampicilina</option>
+                                    <option value="nafcillina">Nafcillina</option>
+                                    <option value="oxacilina">Oxacilina</option>
+                                    <option value="penicilina">Penicilina G</option>
+                                    <option value="piperacilina">Piperacilina</option>
+                                    <option value="piperacilina_tazobactam">Piperacilina/Tazobactam</option>
+                                    <option value="ticarcilina_clavulanato">Ticarcilina/Clavulanato</option>
+                                </optgroup>
+                                <optgroup label="Aminoglicosídeos">
+                                    <option value="amicacina">Amicacina</option>
+                                    <option value="gentamicina">Gentamicina</option>
+                                    <option value="netilmicina">Netilmicina</option>
+                                    <option value="tobramicina">Tobramicina</option>
+                                </optgroup>
+                                <optgroup label="Cefalosporinas">
+                                    <option value="cefazolina">Cefazolina</option>
+                                    <option value="cefepime">Cefepime</option>
+                                    <option value="cefotaxima">Cefotaxima</option>
+                                    <option value="cefoxitina">Cefoxitina</option>
+                                    <option value="ceftazidima">Ceftazidima</option>
+                                    <option value="ceftriaxona">Ceftriaxona</option>
+                                </optgroup>
+                                <optgroup label="Carbapenems">
+                                    <option value="imipenem">Imipenem/Cilastina</option>
+                                    <option value="meropenem">Meropenem</option>
+                                </optgroup>
+                                <optgroup label="Outros Antibióticos">
+                                    <option value="azitromicina">Azitromicina</option>
+                                    <option value="aztreonam">Aztreonam</option>
+                                    <option value="clindamicina">Clindamicina</option>
+                                    <option value="cloranfenicol">Cloranfenicol</option>
+                                    <option value="eritromicina">Eritromicina</option>
+                                    <option value="linezolida">Linezolida</option>
+                                    <option value="metronidazol">Metronidazol</option>
+                                    <option value="quinupristina_dalfopristina">Quinupristina/Dalfopristina</option>
+                                    <option value="rifampicina">Rifampicina</option>
+                                    <option value="vancomicina">Vancomicina</option>
+                                </optgroup>
+                                <optgroup label="Antifúngicos">
+                                    <option value="anfotericina">Anfotericina B</option>
+                                    <option value="caspofungin">Caspofungin</option>
+                                    <option value="fluconazol">Fluconazol</option>
+                                    <option value="flucytosina">Flucytosina</option>
+                                    <option value="micafungina">Micafungina</option>
+                                </optgroup>
+                                <optgroup label="Outros">
+                                    <option value="palivizumab">Palivizumab (Synagis)</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="indicacao">Indicação:</label>
+                            <select id="indicacao" required>
+                                <option value="">Selecione a indicação</option>
+                                <option value="sepse">Sepse neonatal</option>
+                                <option value="meningite">Meningite</option>
+                                <option value="meningoencefalite">Meningoencefalite</option>
+                                <option value="imunossuprimido">Imunossuprimido</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn">Calcular Dosagem</button>
+                    </form>
+
+                    <div id="resultado" style="display: none;">
+                        <div class="results-grid">
+                            <div class="result-card">
+                                <h3>Dosagem por Dose</h3>
+                                <div class="result-value" id="doseValue">0.0</div>
+                                <div class="result-description" id="doseUnit">mg</div>
+                            </div>
+
+                            <div class="result-card">
+                                <h3>Intervalo entre Doses</h3>
+                                <div class="result-value" id="intervaloValue">0</div>
+                                <div class="result-description">horas</div>
+                            </div>
+
+                            <div class="result-card">
+                                <h3>Dosagem Diária Total</h3>
+                                <div class="result-value" id="doseDiariaValue">0.0</div>
+                                <div class="result-description" id="doseDiariaUnit">mg/dia</div>
+                            </div>
+
+                            <div class="result-card">
+                                <h3>Dosagem por Peso</h3>
+                                <div class="result-value" id="dosePesoValue">0.0</div>
+                                <div class="result-description" id="dosePesoUnit">mg/kg/dose</div>
+                            </div>
+                        </div>
+                        <button type="button" id="gerarRelatorio" class="btn"
+                            style="margin-top: 20px; background: #28a745;">
+                            Copiar texto informativo
+                        </button>
+                    </div>
+
+                    <div class="warning">
+                        <strong>Atenção:</strong> Uso educacional e informativo. Não substitui prescrição, cultura/antibiograma nem decisão da neonatologia/farmácia clínica.
+                    </div>
+
+                    <div class="info">
+                        <strong>Lembretes (contexto clínico real):</strong><br>
+                        • Função renal/hepática e cultura podem exigir ajustes não refletidos aqui<br>
+                        • Níveis séricos e interações: conforme protocolo institucional<br>
+                        • “Copiar texto informativo” gera rascunho — revise antes de qualquer registro
+                    </div>
+                </div> <!-- End form-container -->
+            </div> <!-- End card -->
+
+            <div class="footer">
+                NeoPedCalc &copy; <span data-neoped-year></span> - Medicamentos Neonatais
+            </div>
+        </div> <!-- End wrap -->
+
+            <!-- Modal de Informações -->
+            <div id="modalInfo" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Como usar — medicamentos neonatais (educativo)</h2>
+                        <span class="close" onclick="fecharModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <h3>Objetivo (educativo)</h3>
+                        <p>Exibir <strong>números de referência</strong> (mg ou UI por kg, dose por aplicação, intervalo) a partir de uma base embutida que combina <strong>idade gestacional</strong>, <strong>dias de vida</strong> e <strong>peso</strong>. É material para <strong>estudo e checagem</strong> — <strong>não substitui</strong> prescrição, cultura, ajuste renal ou protocolo da unidade.</p>
+
+                        <h3>Lógica resumida</h3>
+                        <div class="formula-box">
+                            Dose por aplicação ≈ peso (kg) × dose por kg (tabela)<br>
+                            Intervalo em horas vem da mesma tabela conforme faixa de IG/dias ou indicação escolhida<br>
+                            Doses/dia ≈ 24 ÷ intervalo; dose diária ≈ dose por aplicação × doses/dia
+                        </div>
+
+                        <h3>Faixas usadas pelo app (simplificado)</h3>
+                        <p>IG ≤29 sem (0–7 vs 8–28 dias), 30–34 sem (0–7 vs ≥8 dias), ≥35 sem; indicações especiais (ex.: meningite, imunossuprimido) podem trocar a chave da tabela quando existir no medicamento.</p>
+
+                        <h3>Passos na tela</h3>
+                        <ol>
+                            <li>Preencha peso, IG, dias de vida, medicamento e indicação.</li>
+                            <li>Use <strong>Calcular Dosagem</strong> para ver os cartões de resultado.</li>
+                            <li><strong>Copiar texto informativo</strong> cola um resumo — revise cada linha antes de usar em prontuário ou mensagem.</li>
+                        </ol>
+
+                        <h3>Limitações</h3>
+                        <ul>
+                            <li>Se não houver linha na tabela para a combinação IG/dias/indicação, o app bloqueia o cálculo — isso não “prova” que não exista outra fonte.</li>
+                            <li>Não inclui todos os cenários de clearance, diálise ou interações.</li>
+                        </ul>
+
+                        <h3>Tipos de fármacos no seletor</h3>
+                        <p>Antibióticos, antifúngicos, antivirais e outros itens neonatais presentes na lista do aplicativo (cada ficha segue a base interna, não este resumo).</p>
+
+                        <div class="reference-box">
+                            <strong>Referências:</strong><br>
+                            - Young TE, Mangum B. Neofax 2026: A Manual of Drugs Used in Neonatal Care.<br>
+                            - Taketomo CK, et al. Pediatric & Neonatal Dosage Handbook with International Trade Names
+                            Index. 29th ed. 2022.<br>
+                            - Allegaert K, et al. Clinical pharmacology in neonates and young infants: the benefit of a
+                            population-tailored approach. Expert Rev Clin Pharmacol. 2012.<br>
+                            - Smits A, et al. Clinical pharmacokinetics of drugs in neonates. Expert Opin Drug Metab
+                            Toxicol. 2015.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                // Base de dados completa de medicamentos neonatais
+                const medicamentos = {
+                    // ANTIVIRAIS
+                    aciclovir: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 20, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 20, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 20, intervalo: 12 },
+                            "30-34_sem_>=8_dias": { dose: 20, intervalo: 12 },
+                            ">=35_sem_todos": { dose: 20, intervalo: 8 },
+                            imunossuprimido: { dose: 75, intervalo: 12 },
+                            meningoencefalite: { dose: 20, intervalo: 6 }
+                        },
+                        info: "Antiviral. Para herpes simples, varicela e infecções por citomegalovírus.",
+                        classe: "Antiviral"
+                    },
+                    ganciclovir: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 6, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 6, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 6, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 6, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 6, intervalo: 8 },
+                            imunossuprimido: { dose: 30, intervalo: 8 }
+                        },
+                        info: "Antiviral. Para infecções por citomegalovírus.",
+                        classe: "Antiviral"
+                    },
+                    lamivudina: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 2, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 2, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 2, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 2, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 2, intervalo: 8 }
+                        },
+                        info: "Antiviral. Para infecções por HIV.",
+                        classe: "Antiviral"
+                    },
+                    nevirapina: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 2, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 2, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 2, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 2, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 2, intervalo: 8 }
+                        },
+                        info: "Antiviral. Para infecções por HIV.",
+                        classe: "Antiviral"
+                    },
+                    zidovudina: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 2, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 2, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 2, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 2, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 2, intervalo: 8 }
+                        },
+                        info: "Antiviral. Para infecções por HIV.",
+                        classe: "Antiviral"
+                    },
+
+                    // PENICILINAS
+                    ampicilina: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 50, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 50, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 50, intervalo: 12 },
+                            "30-34_sem_>=8_dias": { dose: 50, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 50, intervalo: 8 },
+                            sepse: { dose: 100, intervalo: 6 },
+                            meningite: { dose: 200, intervalo: 6 }
+                        },
+                        info: "Penicilina de amplo espectro. Primeira escolha para sepse neonatal precoce.",
+                        classe: "Penicilina"
+                    },
+                    nafcillina: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 25, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 25, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 25, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 25, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 25, intervalo: 8 }
+                        },
+                        info: "Penicilina antiestafilocócica. Cobertura para S. aureus.",
+                        classe: "Penicilina"
+                    },
+                    oxacilina: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 25, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 25, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 25, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 25, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 25, intervalo: 8 }
+                        },
+                        info: "Penicilina antiestafilocócica. Cobertura para S. aureus.",
+                        classe: "Penicilina"
+                    },
+                    penicilina: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 50000, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 50000, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 50000, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 50000, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 50000, intervalo: 8 },
+                            sepse: { dose: 100000, intervalo: 6 },
+                            meningite: { dose: 100000, intervalo: 6 }
+                        },
+                        info: "Penicilina G. Primeira escolha para infecções por estreptococos.",
+                        classe: "Penicilina"
+                    },
+                    piperacilina: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 100, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 100, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 100, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 100, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 100, intervalo: 8 }
+                        },
+                        info: "Penicilina de amplo espectro. Cobertura para Pseudomonas.",
+                        classe: "Penicilina"
+                    },
+                    piperacilina_tazobactam: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 100, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 100, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 100, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 100, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 100, intervalo: 8 }
+                        },
+                        info: "Penicilina com inibidor de beta-lactamase. Cobertura ampla.",
+                        classe: "Penicilina + Inibidor"
+                    },
+                    ticarcilina_clavulanato: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 75, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 75, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 75, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 75, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 75, intervalo: 8 }
+                        },
+                        info: "Penicilina com inibidor de beta-lactamase. Cobertura ampla.",
+                        classe: "Penicilina + Inibidor"
+                    },
+
+                    // AMINOGLICOSÍDEOS
+                    amicacina: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 18, intervalo: 48 },
+                            "<=29_sem_8-28_dias": { dose: 15, intervalo: 36 },
+                            "30-34_sem_0-7_dias": { dose: 18, intervalo: 36 },
+                            "30-34_sem_>=8_dias": { dose: 15, intervalo: 24 },
+                            ">=35_sem_todos": { dose: 15, intervalo: 24 }
+                        },
+                        info: "Aminoglicosídeo. Cobertura para Gram-negativos resistentes.",
+                        classe: "Aminoglicosídeo"
+                    },
+                    gentamicina: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 2.5, intervalo: 24 },
+                            "<=29_sem_8-28_dias": { dose: 2.5, intervalo: 24 },
+                            "30-34_sem_0-7_dias": { dose: 2.5, intervalo: 12 },
+                            "30-34_sem_>=8_dias": { dose: 2.5, intervalo: 12 },
+                            ">=35_sem_todos": { dose: 2.5, intervalo: 12 }
+                        },
+                        info: "Aminoglicosídeo. Monitorar níveis séricos obrigatório.",
+                        classe: "Aminoglicosídeo"
+                    },
+                    netilmicina: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 2.5, intervalo: 24 },
+                            "<=29_sem_8-28_dias": { dose: 2.5, intervalo: 24 },
+                            "30-34_sem_0-7_dias": { dose: 2.5, intervalo: 12 },
+                            "30-34_sem_>=8_dias": { dose: 2.5, intervalo: 12 },
+                            ">=35_sem_todos": { dose: 2.5, intervalo: 12 }
+                        },
+                        info: "Aminoglicosídeo. Alternativa à gentamicina.",
+                        classe: "Aminoglicosídeo"
+                    },
+                    tobramicina: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 2.5, intervalo: 24 },
+                            "<=29_sem_8-28_dias": { dose: 2.5, intervalo: 24 },
+                            "30-34_sem_0-7_dias": { dose: 2.5, intervalo: 12 },
+                            "30-34_sem_>=8_dias": { dose: 2.5, intervalo: 12 },
+                            ">=35_sem_todos": { dose: 2.5, intervalo: 12 }
+                        },
+                        info: "Aminoglicosídeo. Cobertura para Gram-negativos.",
+                        classe: "Aminoglicosídeo"
+                    },
+
+                    // CEFALOSPORINAS
+                    cefazolina: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 25, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 25, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 25, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 25, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 25, intervalo: 8 }
+                        },
+                        info: "Cefalosporina de primeira geração. Cobertura para Gram-positivos.",
+                        classe: "Cefalosporina"
+                    },
+                    cefepime: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 50, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 50, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 50, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 50, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 50, intervalo: 8 }
+                        },
+                        info: "Cefalosporina de quarta geração. Cobertura ampla incluindo Pseudomonas.",
+                        classe: "Cefalosporina"
+                    },
+                    cefotaxima: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 50, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 50, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 50, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 50, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 50, intervalo: 8 }
+                        },
+                        info: "Cefalosporina de terceira geração. Boa penetração no SNC.",
+                        classe: "Cefalosporina"
+                    },
+                    cefoxitina: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 30, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 30, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 30, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 30, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 30, intervalo: 8 }
+                        },
+                        info: "Cefamicina. Cobertura para anaeróbios e Gram-negativos.",
+                        classe: "Cefamicina"
+                    },
+                    ceftazidima: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 50, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 50, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 50, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 50, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 50, intervalo: 8 }
+                        },
+                        info: "Cefalosporina de terceira geração. Excelente cobertura para Pseudomonas.",
+                        classe: "Cefalosporina"
+                    },
+                    ceftriaxona: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 50, intervalo: 24 },
+                            "<=29_sem_8-28_dias": { dose: 50, intervalo: 24 },
+                            "30-34_sem_0-7_dias": { dose: 50, intervalo: 12 },
+                            "30-34_sem_>=8_dias": { dose: 50, intervalo: 12 },
+                            ">=35_sem_todos": { dose: 50, intervalo: 12 }
+                        },
+                        info: "Cefalosporina de terceira geração. Dose única diária.",
+                        classe: "Cefalosporina"
+                    },
+
+                    // CARBAPENEMS
+                    imipenem: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 20, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 20, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 20, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 20, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 20, intervalo: 8 }
+                        },
+                        info: "Carbapenem. Cobertura ampla incluindo anaeróbios.",
+                        classe: "Carbapenem"
+                    },
+                    meropenem: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 20, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 20, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 20, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 20, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 20, intervalo: 8 }
+                        },
+                        info: "Carbapenem. Reservado para infecções graves e multirresistentes.",
+                        classe: "Carbapenem"
+                    },
+
+                    // OUTROS ANTIBIÓTICOS
+                    azitromicina: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 20, intervalo: 24 },
+                            "<=29_sem_8-28_dias": { dose: 20, intervalo: 24 },
+                            "30-34_sem_0-7_dias": { dose: 20, intervalo: 24 },
+                            "30-34_sem_>=8_dias": { dose: 20, intervalo: 24 },
+                            ">=35_sem_todos": { dose: 20, intervalo: 24 }
+                        },
+                        info: "Macrolídeo. Cobertura para Chlamydia, Mycoplasma e alguns Gram-positivos.",
+                        classe: "Macrolídeo"
+                    },
+                    aztreonam: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 30, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 30, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 30, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 30, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 30, intervalo: 8 }
+                        },
+                        info: "Monobactam. Cobertura específica para Gram-negativos.",
+                        classe: "Monobactam"
+                    },
+                    clindamicina: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 10, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 10, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 10, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 10, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 10, intervalo: 8 }
+                        },
+                        info: "Lincosamida. Cobertura para Gram-positivos e anaeróbios.",
+                        classe: "Lincosamida"
+                    },
+                    cloranfenicol: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 12.5, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 12.5, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 12.5, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 12.5, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 12.5, intervalo: 8 }
+                        },
+                        info: "Antibiótico de amplo espectro. Cobertura para Gram-positivos e negativos.",
+                        classe: "Fenicol"
+                    },
+                    eritromicina: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 10, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 10, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 10, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 10, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 10, intervalo: 8 }
+                        },
+                        info: "Macrolídeo. Cobertura para Gram-positivos e alguns Gram-negativos.",
+                        classe: "Macrolídeo"
+                    },
+                    linezolida: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 10, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 10, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 10, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 10, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 10, intervalo: 8 }
+                        },
+                        info: "Oxazolidinona. Cobertura para Gram-positivos resistentes.",
+                        classe: "Oxazolidinona"
+                    },
+                    metronidazol: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 7.5, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 7.5, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 7.5, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 7.5, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 7.5, intervalo: 8 }
+                        },
+                        info: "Antibiótico para anaeróbios. Cobertura para Bacteroides e Clostridium.",
+                        classe: "Nitroimidazol"
+                    },
+                    quinupristina_dalfopristina: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 7.5, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 7.5, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 7.5, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 7.5, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 7.5, intervalo: 8 }
+                        },
+                        info: "Estreptogramina. Cobertura para Gram-positivos resistentes.",
+                        classe: "Estreptogramina"
+                    },
+                    rifampicina: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 10, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 10, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 10, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 10, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 10, intervalo: 8 }
+                        },
+                        info: "Rifamicina. Cobertura para Gram-positivos e alguns Gram-negativos.",
+                        classe: "Rifamicina"
+                    },
+                    vancomicina: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 10, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 10, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 10, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 10, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 10, intervalo: 8 }
+                        },
+                        info: "Glicopeptídeo. Monitorar níveis séricos obrigatório.",
+                        classe: "Glicopeptídeo"
+                    },
+
+                    // ANTIFÚNGICOS
+                    anfotericina: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 0.5, intervalo: 24 },
+                            "<=29_sem_8-28_dias": { dose: 0.5, intervalo: 24 },
+                            "30-34_sem_0-7_dias": { dose: 0.5, intervalo: 24 },
+                            "30-34_sem_>=8_dias": { dose: 0.5, intervalo: 24 },
+                            ">=35_sem_todos": { dose: 0.5, intervalo: 24 }
+                        },
+                        info: "Antifúngico de amplo espectro. Cobertura para fungos filamentosos.",
+                        classe: "Antifúngico"
+                    },
+                    caspofungin: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 25, intervalo: 24 },
+                            "<=29_sem_8-28_dias": { dose: 25, intervalo: 24 },
+                            "30-34_sem_0-7_dias": { dose: 25, intervalo: 24 },
+                            "30-34_sem_>=8_dias": { dose: 25, intervalo: 24 },
+                            ">=35_sem_todos": { dose: 25, intervalo: 24 }
+                        },
+                        info: "Antifúngico equinocandina. Cobertura para Candida e Aspergillus.",
+                        classe: "Antifúngico"
+                    },
+                    fluconazol: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 6, intervalo: 24 },
+                            "<=29_sem_8-28_dias": { dose: 6, intervalo: 24 },
+                            "30-34_sem_0-7_dias": { dose: 6, intervalo: 12 },
+                            "30-34_sem_>=8_dias": { dose: 6, intervalo: 12 },
+                            ">=35_sem_todos": { dose: 6, intervalo: 12 }
+                        },
+                        info: "Antifúngico. Cobertura para Candida e Cryptococcus.",
+                        classe: "Antifúngico"
+                    },
+                    flucytosina: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 5, intervalo: 12 },
+                            "<=29_sem_8-28_dias": { dose: 5, intervalo: 12 },
+                            "30-34_sem_0-7_dias": { dose: 5, intervalo: 8 },
+                            "30-34_sem_>=8_dias": { dose: 5, intervalo: 8 },
+                            ">=35_sem_todos": { dose: 5, intervalo: 8 }
+                        },
+                        info: "Antifúngico. Usado em associação com anfotericina B.",
+                        classe: "Antifúngico"
+                    },
+                    micafungina: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 2, intervalo: 24 },
+                            "<=29_sem_8-28_dias": { dose: 2, intervalo: 24 },
+                            "30-34_sem_0-7_dias": { dose: 2, intervalo: 24 },
+                            "30-34_sem_>=8_dias": { dose: 2, intervalo: 24 },
+                            ">=35_sem_todos": { dose: 2, intervalo: 24 }
+                        },
+                        info: "Antifúngico equinocandina. Cobertura para Candida.",
+                        classe: "Antifúngico"
+                    },
+
+                    // OUTROS
+                    palivizumab: {
+                        doses: {
+                            "<=29_sem_0-7_dias": { dose: 15, intervalo: 720 }, // 30 dias
+                            "<=29_sem_8-28_dias": { dose: 15, intervalo: 720 },
+                            "30-34_sem_0-7_dias": { dose: 15, intervalo: 720 },
+                            "30-34_sem_>=8_dias": { dose: 15, intervalo: 720 },
+                            ">=35_sem_todos": { dose: 15, intervalo: 720 }
+                        },
+                        info: "Anticorpo monoclonal. Para prevenção de VSR.",
+                        classe: "Anticorpo Monoclonal"
+                    }
+                };
+
+                document.getElementById('antibioticoForm').addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    console.log('=== INÍCIO DO CÁLCULO ===');
+
+                    const peso = parseFloat(document.getElementById('peso').value);
+                    const idadeGestacional = parseInt(document.getElementById('idadeGestacional').value);
+                    const idadePosNatal = parseInt(document.getElementById('idadePosNatal').value);
+                    const antibiotico = document.getElementById('antibiotico').value;
+                    const indicacao = document.getElementById('indicacao').value;
+
+                    console.log('Dados de entrada:', { peso, idadeGestacional, idadePosNatal, antibiotico, indicacao });
+
+                    // VALIDAÇÃO CRÍTICA NEONATAL (Fourth-Pass Audit Fix)
+                    if (peso > 10 || peso <= 0 || isNaN(peso)) {
+                        alert('ERRO DE SEGURANÇA CLÍNICA: O peso informado (' + peso + ' kg) é inválido para a faixa neonatal. O peso máximo permitido nesta calculadora específica é 10 kg. Verifique se você digitou gramas no lugar de quilogramas (ex: digite 0.5 em vez de 500).');
+                        document.getElementById('resultado').style.display = 'none';
+                        return;
+                    }
+
+                    // Determinar categoria baseada na idade gestacional e dias de vida
+                    let doseKey = '';
+
+                    // Primeiro, verificar indicações especiais
+                    if (indicacao === 'imunossuprimido' || indicacao === 'meningoencefalite') {
+                        doseKey = indicacao;
+                    } else {
+                        // Determinar categoria baseada na idade gestacional e dias de vida
+                        if (idadeGestacional <= 29) {
+                            if (idadePosNatal <= 7) {
+                                doseKey = '<=29_sem_0-7_dias';
+                            } else {
+                                doseKey = '<=29_sem_8-28_dias';
+                            }
+                        } else if (idadeGestacional >= 30 && idadeGestacional <= 34) {
+                            if (idadePosNatal <= 7) {
+                                doseKey = '30-34_sem_0-7_dias';
+                            } else {
+                                doseKey = '30-34_sem_>=8_dias';
+                            }
+                        } else if (idadeGestacional >= 35) {
+                            doseKey = '>=35_sem_todos';
+                        } else {
+                            // Fallback para categorias antigas
+                            doseKey = idadeGestacional < 37 ? 'prematuro' : 'termo';
+                        }
+                    }
+
+                    console.log('DoseKey calculado:', doseKey);
+
+                    const antibioticoData = medicamentos[antibiotico];
+
+                    if (!antibioticoData) {
+                        alert('Medicamento não encontrado!');
+                        return;
+                    }
+
+                    console.log('Doses disponíveis:', Object.keys(antibioticoData.doses));
+
+                    // Verificar se a dose existe para a indicação
+                    if (!antibioticoData.doses[doseKey]) {
+                        console.log(`Dosagem não disponível para a chave protocolar exata: ${doseKey}.`);
+                        alert('ALERTA DE SEGURANÇA: Não foi possível calcular a dosagem exata. O cruzamento entre Indicação, Idade Gestacional e Dias de Vida deste paciente não está coberto pelo protocolo estrito do medicamento selecionado. Por segurança, o sistema bloqueou o uso automático. Consulte o Neofax ou bula.');
+                        document.getElementById('resultado').style.display = 'none';
+                        return;
+                    }
+
+                    const doseData = antibioticoData.doses[doseKey];
+
+                    if (!doseData) {
+                        alert('Dados de dosagem não encontrados para este medicamento!');
+                        return;
+                    }
+
+                    // Calcular dosagem
+                    const dosePorPeso = doseData.dose;
+                    const doseTotal = peso * dosePorPeso;
+                    const intervalo = doseData.intervalo;
+                    const dosesPorDia = 24 / intervalo;
+                    const doseDiaria = doseTotal * dosesPorDia;
+
+                    console.log('Cálculos finais:', { dosePorPeso, doseTotal, intervalo, dosesPorDia, doseDiaria });
+                    console.log('DoseKey usado:', doseKey);
+
+                    // Exibir resultados
+                    document.getElementById('doseValue').textContent = doseTotal.toFixed(1);
+                    document.getElementById('doseUnit').textContent = antibiotico === 'penicilina' ? 'UI' : 'mg';
+
+                    document.getElementById('intervaloValue').textContent = intervalo;
+
+                    document.getElementById('doseDiariaValue').textContent = doseDiaria.toFixed(1);
+                    document.getElementById('doseDiariaUnit').textContent = antibiotico === 'penicilina' ? 'UI/dia' : 'mg/dia';
+
+                    document.getElementById('dosePesoValue').textContent = dosePorPeso.toFixed(1);
+                    document.getElementById('dosePesoUnit').textContent = antibiotico === 'penicilina' ? 'UI/kg/dose' : 'mg/kg/dose';
+
+                    document.getElementById('resultado').style.display = 'block';
+                });
+
+                // Função para gerar relatório
+                function gerarRelatorio() {
+                    // Verificar se os elementos existem antes de acessá-los
+                    const pesoElement = document.getElementById('peso');
+                    const idadeGestacionalElement = document.getElementById('idadeGestacional');
+                    const diasVidaElement = document.getElementById('idadePosNatal');
+                    const antibioticoElement = document.getElementById('antibiotico');
+                    const indicacaoElement = document.getElementById('indicacao');
+
+                    if (!pesoElement || !idadeGestacionalElement || !diasVidaElement || !antibioticoElement || !indicacaoElement) {
+                        alert('Erro: Campos obrigatorios nao encontrados. Execute o calculo primeiro.');
+                        return;
+                    }
+
+                    // Obter dados do formulário
+                    const peso = parseFloat(pesoElement.value);
+                    const idadeGestacional = parseFloat(idadeGestacionalElement.value);
+                    const diasVida = parseFloat(diasVidaElement.value);
+                    const antibiotico = antibioticoElement.value;
+                    const indicacao = indicacaoElement.value;
+
+                    // Verificar se os valores são válidos
+                    if (isNaN(peso) || isNaN(idadeGestacional) || isNaN(diasVida) || !antibiotico || !indicacao) {
+                        alert('Erro: Dados invalidos. Verifique se todos os campos foram preenchidos.');
+                        return;
+                    }
+
+                    // MESA DE VALIDAÇÃO (Fourth-Pass) - Recheca peso limitante para não salvar relatório falso
+                    if (peso > 10 || peso <= 0) {
+                        alert('ERRO: Não é possível gerar relatório para pesos superiores a 10kg em ambiente neonatal.');
+                        return;
+                    }
+
+                    // Recalcular valores
+                    let doseKey = '';
+                    if (idadeGestacional <= 29) {
+                        if (diasVida <= 7) {
+                            doseKey = '<=29_sem_0-7_dias';
+                        } else {
+                            doseKey = '<=29_sem_8-28_dias';
+                        }
+                    } else if (idadeGestacional <= 34) {
+                        if (diasVida <= 7) {
+                            doseKey = '30-34_sem_0-7_dias';
+                        } else {
+                            doseKey = '30-34_sem_>=8_dias';
+                        }
+                    } else {
+                        if (diasVida <= 7) {
+                            doseKey = '>=35_sem_0-7_dias';
+                        } else {
+                            doseKey = '>=35_sem_>=8_dias';
+                        }
+                    }
+
+                    // Ajustar para indicações específicas
+                    if (indicacao === 'meningite' || indicacao === 'meningoencefalite' || indicacao === 'imunossuprimido') {
+                        doseKey = indicacao;
+                    }
+
+                    const antibioticoData = medicamentos[antibiotico];
+                    if (!antibioticoData) {
+                        alert('Medicamento nao encontrado!');
+                        return;
+                    }
+
+                    console.log('Dados do medicamento:', antibioticoData);
+
+                    // Verificar se a dose existe para a indicação
+                    if (!antibioticoData.doses[doseKey]) {
+                        alert('ALERTA DE SEGURANÇA: Impressão bloqueada. O cruzamento entre Indicação, Idade Gestacional e Dias de Vida deste paciente não existe nativamente no protocolo do medicamento.');
+                        return;
+                    }
+
+                    const doseData = antibioticoData.doses[doseKey];
+                    if (!doseData) {
+                        alert('Dados de dosagem nao encontrados!');
+                        return;
+                    }
+
+                    // Calcular dosagem
+                    const dosePorPeso = doseData.dose;
+                    const doseTotal = peso * dosePorPeso;
+                    const intervalo = doseData.intervalo;
+                    const dosesPorDia = 24 / intervalo;
+                    const doseDiaria = doseTotal * dosesPorDia;
+
+                    // Determinar unidade
+                    const unidade = antibiotico === 'penicilina' ? 'UI' : 'mg';
+                    const unidadeDose = antibiotico === 'penicilina' ? 'UI/kg/dose' : 'mg/kg/dose';
+                    const unidadeDiaria = antibiotico === 'penicilina' ? 'UI/dia' : 'mg/dia';
+
+                    // Categoria do paciente
+                    let categoriaPaciente = '';
+                    if (idadeGestacional <= 29) {
+                        categoriaPaciente = 'Prematuro extremo (≤29 semanas)';
+                    } else if (idadeGestacional <= 34) {
+                        categoriaPaciente = 'Prematuro moderado (30-34 semanas)';
+                    } else {
+                        categoriaPaciente = 'Termo (≥35 semanas)';
+                    }
+
+                    const foot = (typeof window.neopedLegalReportFooter === 'function')
+                        ? window.neopedLegalReportFooter()
+                        : '';
+
+                    const relatorio = `RESUMO INFORMATIVO — Medicamento neonatal (NeoPedCalc, uso educativo)
+===============================
+
+NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Conferir com Neofax/bulario, cultura e funcao renal/hepatica antes de qualquer decisao clinica.
+
+DADOS INFORMADOS:
+- Peso: ${peso} kg
+- Idade gestacional: ${idadeGestacional} semanas
+- Dias de vida: ${diasVida} dias
+- Categoria (rotulo do app): ${categoriaPaciente}
+
+MEDICAMENTO (selecao no app):
+- Nome: ${antibioticoData.nome || antibiotico}
+- Classe: ${antibioticoData.classe || 'Nao informada'}
+- Indicacao (campo): ${indicacao}
+
+VALORES CALCULADOS (aritmeticos a partir da tabela embutida):
+- Dose por peso: ${dosePorPeso.toFixed(1)} ${unidadeDose}
+- Dose por aplicacao: ${doseTotal.toFixed(1)} ${unidade}
+- Intervalo: ${intervalo} horas
+- Doses por dia (24/intervalo): ${dosesPorDia.toFixed(1)}
+- Dose diaria total (extrapolacao): ${doseDiaria.toFixed(1)} ${unidadeDiaria}
+
+LEMBRETES EDUCATIVOS:
+- Correlacionar com cultura, clearance e protocolo institucional.
+- Prematuridade e dias de vida mudam rapidamente — reavaliacao clinica independe deste texto.
+
+---
+NOTA EDUCATIVA: Revise todos os valores. A NeoPedCalc nao substitui julgamento clinico nem protocolos institucionais.
+
+${foot ? foot.trim() : ''}`;
+
+                    const msgCopia = 'Texto copiado. Revise numeros e contexto antes de usar em registro clinico ou mensagem.';
+
+                    navigator.clipboard.writeText(relatorio).then(() => {
+                        if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                    }).catch(() => {
+                        const textArea = document.createElement('textarea');
+                        textArea.value = relatorio;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                        if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                    });
+                }
+
+                // Event listener para o botão de relatório - usando delegação de eventos
+                document.addEventListener('click', function (e) {
+                    if (e.target && e.target.id === 'gerarRelatorio') {
+                        gerarRelatorio();
+                    }
+                });
+
+                function abrirModal() {
+                    document.getElementById('modalInfo').style.display = 'flex';
+                }
+
+                function fecharModal() {
+                    document.getElementById('modalInfo').style.display = 'none';
+                }
+
+                window.onclick = function (event) {
+                    const modal = document.getElementById('modalInfo');
+                    if (event.target == modal) {
+                        modal.style.display = 'none';
+                    }
+                }
+            </script>
+            <script>
+
+            </script>
+
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+
+</html>

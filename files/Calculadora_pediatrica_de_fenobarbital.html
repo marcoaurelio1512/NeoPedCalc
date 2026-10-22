@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>NeoPedCalc — Fenobarbital pediátrico (educativo)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .btn {
+            background: #111;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .btn-secondary {
+            background: #fff;
+            border: 1px solid #d9d9e6;
+            color: #111;
+        }
+
+        .results {
+            background: #e8fff0;
+            border: 1px solid #b4ffcf;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .result-item {
+            margin-bottom: 12px;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .info-section {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .info-section h3, .info-section h4 {
+            color: #111;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 10px;
+        }
+
+        /* Modal Styles */
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(17, 17, 17, 0.1);
+            color: #111;
+            border: 2px solid #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-info:hover {
+            background: #111;
+            color: #fff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 { margin: 0; font-size: 22px; }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover { transform: rotate(90deg); }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child { margin-top: 0; }
+        .modal-body p { line-height: 1.6; margin-bottom: 15px; color: #34495e; }
+        .modal-body ul, .modal-body ol { margin: 10px 0; padding-left: 25px; }
+        .modal-body li { margin-bottom: 8px; line-height: 1.5; }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .modal { padding: 10px; }
+            .modal-content { width: 95%; max-height: 95vh; }
+        }
+
+        pre {
+            white-space: pre-wrap;
+            background: #0b1020;
+            color: #eaf2ff;
+            padding: 12px;
+            border-radius: 12px;
+            overflow: auto;
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <header>
+        <h1>Calculadora Pediátrica de Fenobarbital</h1>
+        <p>Cálculo de dose baseado em parâmetros farmacocinéticos</p>
+        <div class="header-actions">
+            <button class="btn-info" onclick="abrirModal()">Como usar</button>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="card">
+            <div class="form-container">
+                <div class="form-group">
+                    <label for="idade">Idade (anos):</label>
+                    <input type="number" id="idade" step="0.1" placeholder="Ex: 4.5">
+                </div>
+
+                <div class="form-group">
+                    <label for="peso">Peso (kg):</label>
+                    <input type="number" id="peso" step="0.001" placeholder="Ex: 18.500">
+                </div>
+
+                <div class="form-group">
+                    <label for="dose">Dose atual (mg/dia):</label>
+                    <input type="number" id="dose" step="0.1" placeholder="Ex: 60">
+                </div>
+
+                <div class="form-group">
+                    <label for="nivel">Nível sérico atual (mcg/mL):</label>
+                    <input type="number" id="nivel" step="0.1" placeholder="Ex: 25">
+                </div>
+
+                <div class="form-group">
+                    <label for="alvo">Nível alvo desejado (mcg/mL):</label>
+                    <input type="number" id="alvo" step="0.1" placeholder="Ex: 30">
+                </div>
+
+                <button class="btn" onclick="calcularDose()">Calcular</button>
+                <button class="btn btn-secondary" onclick="gerarRelatorio()">Gerar Relatorio</button>
+
+                <div id="resultado"></div>
+            </div> <!-- End form-container -->
+        </div> <!-- End card -->
+
+        <div class="card">
+            <div class="info-section">
+                <h3>Como usar esta calculadora</h3>
+                <p>Esta calculadora estima os principais parâmetros farmacocinéticos do fenobarbital em crianças com base no peso corporal e em concentrações séricas reais.</p>
+                
+                <h4>Parâmetros Calculados:</h4>
+                <p><strong>Volume de distribuição (Vd):</strong> 0,7 L/kg em crianças (>1 mês). Representa o volume teórico em que o fármaco se distribui.</p>
+                
+                <p><strong>Clearance (CL):</strong> Calculado pela fórmula:<br>
+                CL = Dose diária / Nível sérico</p>
+                
+                <p><strong>Meia-vida (t1/2):</strong> Calculada por:<br>
+                t1/2 = 0,693 × Vd / CL</p>
+                
+                <p><strong>Dose de ataque:</strong><br>
+                Dose = Vd × Nível alvo</p>
+                
+                <p><strong>Dose de manutenção:</strong><br>
+                Dose = CL × Nível alvo</p>
+
+                <h4>Referências</h4>
+                <ul>
+                    <li>Rosenberg et al. - Clinical Pharmacokinetics in Pediatrics</li>
+                    <li>Neonatal Formulary - Guy's, St. Thomas' & Lewisham Hospitals</li>
+                    <li>Lexicomp Pediatric and Neonatal Dosage Handbook</li>
+                    <li>Pediatrics Pharmacokinetics Review - American Society of Health-System Pharmacists</li>
+                </ul>
+            </div>
+        </div> <!-- End card -->
+
+        <div class="footer">
+            NeoPedCalc &copy; <span data-neoped-year></span> - Calculadora Pediátrica de Fenobarbital
+        </div>
+    </div> <!-- End wrap -->iv>
+
+    <script>
+        let resultadosGlobais = null;
+
+        function calcularDose() {
+            const idade = parseFloat(document.getElementById("idade").value);
+            const peso = parseFloat(document.getElementById("peso").value);
+            const dose = parseFloat(document.getElementById("dose").value);
+            const nivel = parseFloat(document.getElementById("nivel").value);
+            const alvo = parseFloat(document.getElementById("alvo").value);
+
+            if (![idade, peso, dose, nivel, alvo].every(Number.isFinite) || idade < 0 || peso <= 0 || dose <= 0 || nivel <= 0 || alvo <= 0) {
+                resultadosGlobais = null;
+                document.getElementById("resultado").innerHTML = '<div class="results"><p class="text-error">Informe idade não negativa e valores maiores que zero para peso, dose e níveis séricos.</p></div>';
+                return;
+            }
+
+            const vd = 0.7 * peso;
+            const cl = dose / nivel;
+            // Vd (L) / CL (L/dia) resulta em dias; converter para horas.
+            const t12 = ((0.693 * vd) / cl) * 24;
+            const doseAtaque = vd * alvo;
+            const doseManut = cl * alvo;
+
+            resultadosGlobais = {
+                idade,
+                peso,
+                dose,
+                nivel,
+                alvo,
+                vd,
+                cl,
+                t12,
+                doseAtaque,
+                doseManut
+            };
+
+            document.getElementById("resultado").innerHTML = `
+                <div class="results">
+                    <h3>Resultados</h3>
+                    <div class="result-item"><strong>Volume de distribuicao (Vd):</strong> ${vd.toFixed(2)} L</div>
+                    <div class="result-item"><strong>Clearance estimado (CL):</strong> ${cl.toFixed(2)} L/dia</div>
+                    <div class="result-item"><strong>Meia-vida estimada (t1/2):</strong> ${t12.toFixed(1)} horas</div>
+                    <div class="result-item"><strong>Dose de ataque para alvo ${alvo.toFixed(1)} mcg/mL:</strong> ${doseAtaque.toFixed(1)} mg</div>
+                    <div class="result-item"><strong>Dose de manutencao para alvo ${alvo.toFixed(1)} mcg/mL:</strong> ${doseManut.toFixed(1)} mg/dia</div>
+                </div>
+            `;
+        }
+
+        function gerarRelatorio() {
+            if (!resultadosGlobais) {
+                alert("Por favor, calcule os resultados primeiro.");
+                return;
+            }
+
+            const { idade, peso, dose, nivel, alvo, vd, cl, t12, doseAtaque, doseManut } = resultadosGlobais;
+            const dataHora = new Date().toLocaleString('pt-BR');
+
+            const relatorio = `
+CALCULADORA PEDIATRICA DE FENOBARBITAL
+======================================
+
+Data e hora do relatorio: ${dataHora}
+
+DADOS DO PACIENTE:
+- Idade: ${idade.toFixed(1)} anos
+- Peso: ${peso.toFixed(3)} kg
+- Dose atual: ${dose.toFixed(1)} mg/dia
+- Nivel serico atual: ${nivel.toFixed(1)} mcg/mL
+- Nivel alvo desejado: ${alvo.toFixed(1)} mcg/mL
+
+PARAMETROS FARMACOCINETICOS CALCULADOS:
+- Volume de distribuicao (Vd): ${vd.toFixed(2)} L
+- Clearance estimado (CL): ${cl.toFixed(2)} L/dia
+- Meia-vida estimada (t1/2): ${t12.toFixed(1)} horas
+
+RECOMENDACOES DE DOSE:
+- Dose de ataque para nivel alvo ${alvo.toFixed(1)} mcg/mL: ${doseAtaque.toFixed(1)} mg
+- Dose de manutencao para nivel alvo ${alvo.toFixed(1)} mcg/mL: ${doseManut.toFixed(1)} mg/dia
+
+FORMULAS UTILIZADAS:
+- Volume de distribuicao (Vd) = 0,7 L/kg (criancas >1 mes)
+- Clearance (CL) = Dose diaria / Nivel serico
+- Meia-vida (t1/2) = 0,693 x Vd / CL
+- Dose de ataque = Vd x Nivel alvo
+- Dose de manutencao = CL x Nivel alvo
+
+REFERENCIAS:
+- Rosenberg et al. - Clinical Pharmacokinetics in Pediatrics
+- Neonatal Formulary - Guy's, St. Thomas' & Lewisham Hospitals
+- Lexicomp Pediatric and Neonatal Dosage Handbook
+- Pediatrics Pharmacokinetics Review - American Society of Health-System Pharmacists
+
+OBSERVACOES:
+- Niveis terapeuticos: 15-40 mcg/mL
+- Ajustar dose conforme resposta clinica e niveis seriados
+- Considerar funcao renal e hepatica do paciente
+- Monitorar sinais de toxicidade
+
+======================================
+Gerado por: NeoPedCalc - Calculadora Pediatrica de Fenobarbital
+`;
+
+            // Copiar para area de transferencia
+            navigator.clipboard.writeText(relatorio).then(() => {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(() => {
+                // Fallback para navegadores mais antigos
+                const textArea = document.createElement('textarea');
+                textArea.value = relatorio;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        };
+
+    </script>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — Fenobarbital pediátrico (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta calculadora auxilia no ajuste de dose de fenobarbital em crianças, baseando-se em parâmetros farmacocinéticos específicos da população pediátrica.</p>
+
+                <h3>Fórmulas Utilizadas</h3>
+                <div class="formula-box">
+                    <strong>1. Volume de Distribuição (Vd):</strong><br>
+                    Vd = 0.8 × Peso<br><br>
+
+                    <strong>2. Clearance (CL):</strong><br>
+                    CL = Dose Atual / Nível Sérico Atual<br><br>
+
+                    <strong>3. Meia-Vida (t1/2):</strong><br>
+                    t1/2 (horas) = ((0.693 × Vd) / CL) × 24<br><br>
+
+                    <strong>4. Dose de Ataque:</strong><br>
+                    Dose Ataque = Vd × Nível Alvo<br><br>
+
+                    <strong>5. Dose de Manutenção:</strong><br>
+                    Dose Manutenção = CL × Nível Alvo
+                </div>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Idade (anos):</strong> Informe a idade da criança em anos (ex: 4.5 anos)</li>
+                    <li><strong>Peso (kg):</strong> Informe o peso atual em quilogramas com até 3 casas decimais (ex: 18.750 kg)</li>
+                    <li><strong>Dose atual (mg/dia):</strong> Informe a dose diária atual de fenobarbital (ex: 60 mg/dia)</li>
+                    <li><strong>Nível sérico atual (mcg/mL):</strong> Informe o nível sérico medido (ex: 20 mcg/mL)</li>
+                    <li><strong>Nível alvo desejado (mcg/mL):</strong> Informe o nível terapêutico desejado (ex: 25 mcg/mL)</li>
+                    <li>Clique em <strong>"Calcular Dose"</strong> para obter os resultados</li>
+                </ol>
+
+                <h3>Interpretação dos Resultados</h3>
+                <ul>
+                    <li><strong>Volume de Distribuição (Vd):</strong> Espaço aparente onde o fármaco se distribui no organismo. Em crianças, geralmente 0.8 L/kg</li>
+                    <li><strong>Clearance (CL):</strong> Capacidade do organismo de eliminar o fármaco por unidade de tempo. Aumenta com a idade e maturação hepática</li>
+                    <li><strong>Meia-Vida (t1/2):</strong> Tempo necessário para que a concentração plasmática caia pela metade. Em crianças é geralmente 40-80 horas</li>
+                    <li><strong>Dose de Ataque:</strong> Dose necessária para atingir o nível alvo rapidamente</li>
+                    <li><strong>Dose de Manutenção:</strong> Dose diária necessária para manter o nível alvo</li>
+                </ul>
+
+                <h3>Faixa Terapêutica</h3>
+                <p>A faixa terapêutica do fenobarbital em crianças é de <strong>15-40 mcg/mL</strong>:</p>
+                <ul>
+                    <li><strong>Nível baixo (< 15 mcg/mL):</strong> Considerar aumento de dose</li>
+                    <li><strong>Nível adequado (15-40 mcg/mL):</strong> Faixa terapêutica ideal</li>
+                    <li><strong>Nível alto (> 40 mcg/mL):</strong> Risco de toxicidade - considerar redução de dose</li>
+                </ul>
+
+                <h3>Considerações Importantes</h3>
+                <ul>
+                    <li>O clearance do fenobarbital aumenta com a idade devido à maturação das enzimas hepáticas</li>
+                    <li>Crianças mais velhas podem necessitar doses maiores por peso corporal do que neonatos</li>
+                    <li>Monitorar sinais de toxicidade: sedação excessiva, ataxia, irritabilidade paradoxal</li>
+                    <li>Reavaliar doses regularmente conforme a criança cresce</li>
+                    <li>Considerar interações medicamentosas: valproato aumenta níveis, carbamazepina e fenitoína diminuem</li>
+                    <li>Efeitos colaterais comuns: sedação, hiperatividade paradoxal, déficit de atenção</li>
+                </ul>
+
+                <p class="info-text">Unidades: CL em L/dia; meia-vida = (0,693 × Vd / CL) × 24, em horas. Relação farmacocinética: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7241423/" target="_blank" rel="noopener noreferrer">referência sobre volume de distribuição e clearance</a>. O modelo e as estimativas requerem conferência profissional.</p>
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Anderson BJ, Holford NHG. Mechanistic basis of using body size and maturation to predict clearance in humans. Drug Metab Pharmacokinet. 2009.<br>
+                    - Patsalos PN, et al. Antiepileptic drugs - best practice guidelines for therapeutic drug monitoring: a position paper by the subcommission on therapeutic drug monitoring, ILAE Commission on Therapeutic Strategies. Epilepsia. 2008.<br>
+                    - Young TE, Mangum B. Neofax 2024: A Manual of Drugs Used in Neonatal Care. 37th ed. 2024.
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

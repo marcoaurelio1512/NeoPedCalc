@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — nSOFA neonatal (educativo)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            margin: 0 0 15px 0;
+            color: #111;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .subsection-title {
+            font-size: 13px;
+            margin: 15px 0 10px 0;
+            color: #333;
+            font-weight: 700;
+        }
+
+        .results-section {
+            background: #f0f4ff;
+            border: 1px solid #b4cfff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .result-item {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .result-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 700;
+        }
+
+        .result-value {
+            font-size: 18px;
+            font-weight: 900;
+            color: #111;
+        }
+
+        .action-btn {
+            background: #111;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .secondary-btn {
+            background: #eee;
+            color: #111;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .copy-btn {
+            background: #27ae60;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .info-section {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .info-section ul {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #374151;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        .components-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+        }
+
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .component-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .component-item .label {
+            font-size: 10px;
+            color: #666;
+            font-weight: 700;
+        }
+
+        .component-item .value {
+            font-size: 16px;
+            font-weight: 900;
+            color: #111;
+        }
+
+        /* Modal Styles */
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(17, 17, 17, 0.1);
+            color: #111;
+            border: 2px solid #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-info:hover {
+            background: #111;
+            color: #fff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 { margin: 0; font-size: 22px; }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover { transform: rotate(90deg); }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child { margin-top: 0; }
+        .modal-body p { line-height: 1.6; margin-bottom: 15px; color: #34495e; }
+        .modal-body ul, .modal-body ol { margin: 10px 0; padding-left: 25px; }
+        .modal-body li { margin-bottom: 8px; line-height: 1.5; }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong { color: #2c3e50; }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong { color: #27ae60; }
+
+        @media (max-width: 768px) {
+            .modal { padding: 10px; }
+            .modal-content { width: 95%; max-height: 95vh; }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <header>
+        <h1>🧪 nSOFA</h1>
+        <p>Neonatal Sequential Organ Failure Assessment — apoio educativo para estimativa sequencial de disfunção orgânica</p>
+        <div class="header-actions">
+            <button type="button" class="btn-info" onclick="abrirModal()">
+                Como usar
+            </button>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="card">
+            <div class="content">
+            <div class="info-section">
+                <h3>Instruções de Uso</h3>
+                <ul>
+                    <li><strong>Quando usar:</strong> Avaliação sequencial de falência de órgãos em recém-nascidos</li>
+                    <li><strong>Sistemas avaliados:</strong> Respiratório, Cardiovascular, Hematológico</li>
+                    <li><strong>Interpretação:</strong> 0-3 baixo risco, 4-6 intermediário, ≥7 alto risco</li>
+                    <li><strong>VIS:</strong> Vasoactive-Inotrope Score calculado automaticamente</li>
+                    <li><strong>SF:</strong> SpO₂/FiO₂ como proxy quando PaO₂ não disponível</li>
+                </ul>
+            </div>
+
+            <div class="form-grid">
+                <!-- Dados do Paciente -->
+                <div class="form-section">
+                    <h2 class="section-title">Dados do Paciente</h2>
+                    
+                    <div class="form-group">
+                        <label for="nome">Nome do Paciente</label>
+                        <input type="text" id="nome" placeholder="Nome completo">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="data_nascimento">Data de Nascimento</label>
+                        <input type="date" id="data_nascimento">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="idade_gestacional_nascimento">Idade Gestacional no Nascimento</label>
+                        <input type="number" id="idade_gestacional_nascimento" min="22" max="44" step="0.1" placeholder="Ex.: 32.5">
+                        <span class="unit">semanas</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="data_avaliacao">Data da Avaliação</label>
+                        <input type="date" id="data_avaliacao">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="hora_avaliacao">Hora da Avaliação</label>
+                        <input type="time" id="hora_avaliacao">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="idade_dias">Idade em Dias (Calculada)</label>
+                        <input type="number" id="idade_dias" readonly>
+                        <span class="unit">dias</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="idade_gestacional_corrigida">Idade Gestacional Corrigida</label>
+                        <input type="text" id="idade_gestacional_corrigida" readonly>
+                        <span class="unit">semanas e dias</span>
+                    </div>
+                </div>
+
+                <!-- Parâmetros nSOFA -->
+                <div class="form-section">
+                    <h2 class="section-title">Parâmetros nSOFA</h2>
+                    
+                    <div class="subsection-title">Sistema Respiratório</div>
+                    
+                    <div class="form-group">
+                        <label for="resp_support">Suporte Respiratório</label>
+                        <select id="resp_support">
+                            <option value="">Selecione...</option>
+                            <option value="AA">Ar ambiente</option>
+                            <option value="O2_baixo">O₂ baixo fluxo</option>
+                            <option value="CPAP_VNI">CPAP / VNI</option>
+                            <option value="VM">Ventilação mecânica invasiva</option>
+                            <option value="VM_FiO2_alta">VM com FiO₂ ≥ 0,60</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fio2">FiO₂</label>
+                        <input type="number" id="fio2" min="0" max="1" step="0.01" placeholder="Ex.: 0.40">
+                        <span class="unit">(0-1)</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="spo2">SpO₂</label>
+                        <input type="number" id="spo2" min="50" max="100" step="1" placeholder="Ex.: 90">
+                        <span class="unit">%</span>
+                    </div>
+
+                    <div class="subsection-title">Sistema Cardiovascular</div>
+                    
+                    <div class="form-group">
+                        <label for="dopamine">Dopamina</label>
+                        <input type="number" id="dopamine" min="0" max="50" step="0.1" placeholder="0">
+                        <span class="unit">µg/kg/min</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dobutamine">Dobutamina</label>
+                        <input type="number" id="dobutamine" min="0" max="50" step="0.1" placeholder="0">
+                        <span class="unit">µg/kg/min</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="epi">Epinefrina</label>
+                        <input type="number" id="epi" min="0" max="2" step="0.01" placeholder="0">
+                        <span class="unit">µg/kg/min</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="norepi">Norepinefrina</label>
+                        <input type="number" id="norepi" min="0" max="2" step="0.01" placeholder="0">
+                        <span class="unit">µg/kg/min</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="milri">Milrinona</label>
+                        <input type="number" id="milri" min="0" max="1" step="0.01" placeholder="0">
+                        <span class="unit">µg/kg/min</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vaso">Vasopressina</label>
+                        <input type="number" id="vaso" min="0" max="0.01" step="0.0001" placeholder="0">
+                        <span class="unit">U/kg/min</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vis">VIS (Calculado)</label>
+                        <input type="number" id="vis" readonly class="no-border">
+                    </div>
+
+                    <div class="subsection-title">Sistema Hematológico</div>
+                    
+                    <div class="form-group">
+                        <label for="platelets">Plaquetas</label>
+                        <input type="number" id="platelets" min="0" max="1000" step="1" placeholder="Ex.: 120">
+                        <span class="unit">10³/µL</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="obs">Observações</label>
+                        <input type="text" id="obs" placeholder="Sedação? Contexto clínico?">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botões de Ação -->
+            <div style="text-align: center; margin: 30px 0;">
+                <button class="action-btn" onclick="calcularNSOFA()">
+                    Calcular nSOFA
+                </button>
+                <button class="secondary-btn" onclick="limparDados()">
+                    Limpar Dados
+                </button>
+            </div>
+
+            <!-- Resultados -->
+            <div class="results-section">
+                <h2 class="section-title">Resultado nSOFA</h2>
+                <div class="results-grid">
+                    <div class="result-item">
+                        <div class="label">Pontuação Total nSOFA</div>
+                        <div class="value" id="nsofa-total">0</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="label">Classificação de Risco</div>
+                        <div class="value" id="risk-classification">-</div>
+                    </div>
+                </div>
+                <div id="risk-assessment" style="margin-top: 20px; text-align: center;"></div>
+            </div>
+
+            <!-- Componentes -->
+            <div class="components-section">
+                <h2 class="section-title">Componentes nSOFA</h2>
+                <div class="components-grid">
+                    <div class="component-item">
+                        <div class="label">Sistema Respiratório</div>
+                        <div class="value" id="respiratory-score">0</div>
+                    </div>
+                    <div class="component-item">
+                        <div class="label">Sistema Cardiovascular</div>
+                        <div class="value" id="cardiovascular-score">0</div>
+                    </div>
+                    <div class="component-item">
+                        <div class="label">Sistema Hematológico</div>
+                        <div class="value" id="hematologic-score">0</div>
+                    </div>
+                </div>
+                <div id="detailed-result" style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;"></div>
+            </div>
+
+            <!-- Texto informativo -->
+            <div class="report-section">
+                <h2 class="section-title">Texto informativo para prontuário eletrônico (revisar)</h2>
+                <button type="button" class="copy-btn" onclick="gerarECopiarRelatorio()">
+                    Gerar e copiar texto informativo
+                </button>
+            </div>
+
+    </div>
+</div>
+
+    <div class="footer">
+        <p>nSOFA - Neonatal Sequential Organ Failure Assessment</p>
+        <p><strong>Referências:</strong> Protocolos de Terapia Intensiva Pediátrica e Neonatal.</p>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — nSOFA (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>O nSOFA organiza parâmetros clínicos para estimativa educativa de disfunção orgânica neonatal. O uso nesta página é informativo e não substitui avaliação clínica, protocolos institucionais ou prescrição.</p>
+                
+                <h3>Fórmula do nSOFA</h3>
+                <div class="formula-box">
+                    <strong>nSOFA = Sistema Cardiovascular + Sistema Respiratório + Sistema Hematológico + Sistema Neurológico + Sistema Hepático + Sistema Renal</strong><br><br>
+                    Cada sistema é pontuado de 0-4 pontos:<br>
+                    • 0 pontos: Função normal<br>
+                    • 1-2 pontos: Disfunção leve a moderada<br>
+                    • 3-4 pontos: Disfunção grave a falência<br><br>
+                    <strong>Escala Total:</strong> 0-24 pontos (quanto maior, pior prognóstico)
+                </div>
+
+                <h3>Sistemas Avaliados</h3>
+                <ul>
+                    <li><strong>Sistema Cardiovascular:</strong> Pressão arterial, uso de vasopressores</li>
+                    <li><strong>Sistema Respiratório:</strong> Oxigenação, suporte ventilatório</li>
+                    <li><strong>Sistema Hematológico:</strong> Plaquetas, uso de transfusões</li>
+                    <li><strong>Sistema Neurológico:</strong> Nível de consciência, convulsões</li>
+                    <li><strong>Sistema Hepático:</strong> Bilirrubina total</li>
+                    <li><strong>Sistema Renal:</strong> Creatinina, diurese</li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Dados Cardiovasculares:</strong> Informe PAM e uso de vasopressores</li>
+                    <li><strong>Dados Respiratórios:</strong> Informe PaO2/FiO2 e tipo de suporte</li>
+                    <li><strong>Dados Hematológicos:</strong> Informe contagem de plaquetas</li>
+                    <li><strong>Dados Neurológicos:</strong> Informe nível de consciência e convulsões</li>
+                    <li><strong>Dados Hepáticos:</strong> Informe bilirrubina total em mg/dL</li>
+                    <li><strong>Dados Renais:</strong> Informe creatinina em mg/dL e diurese</li>
+                    <li>Clique em <strong>"Calcular nSOFA"</strong> para obter o escore</li>
+                </ol>
+
+                <h3>Interpretação dos Resultados</h3>
+                <ul>
+                    <li><strong>0-6 pontos:</strong> Baixo risco de mortalidade</li>
+                    <li><strong>7-12 pontos:</strong> Risco moderado de mortalidade</li>
+                    <li><strong>13-18 pontos:</strong> Alto risco de mortalidade</li>
+                    <li><strong>19-24 pontos:</strong> Muito alto risco de mortalidade</li>
+                    <li><strong>Mudança no escore:</strong> Melhora ou piora da disfunção orgânica</li>
+                </ul>
+
+                <h3>Considerações Importantes</h3>
+                <ul>
+                    <li>Use valores atuais ou piores das últimas 24 horas</li>
+                    <li>Pode ser calculado seriamente para monitorar evolução</li>
+                    <li>Útil para identificar falência de múltiplos órgãos</li>
+                    <li>Complementar à avaliação clínica individual</li>
+                    <li>Valores laboratoriais devem ser recentes</li>
+                    <li>Considerar idade gestacional e peso</li>
+                    <li>Reavaliar conforme evolução clínica</li>
+                </ul>
+
+                <h3>Aplicações Clínicas</h3>
+                <ul>
+                    <li><strong>Prognóstico:</strong> Estimativa de mortalidade</li>
+                    <li><strong>Monitoramento:</strong> Evolução da disfunção orgânica</li>
+                    <li><strong>Pesquisa:</strong> Classificação de gravidade</li>
+                    <li><strong>Qualidade:</strong> Comparação entre UTINs</li>
+                    <li><strong>Triagem:</strong> Identificação de pacientes de alto risco</li>
+                </ul>
+
+                <h3>Limitações</h3>
+                <ul>
+                    <li>Não substitui avaliação clínica individual</li>
+                    <li>Validação limitada em diferentes populações</li>
+                    <li>Pode não capturar todas as nuances clínicas</li>
+                    <li>Depende da disponibilidade de exames laboratoriais</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Zinter MS, et al. Pediatric intensive care unit mortality risk prediction using pediatric sequential organ failure assessment (pSOFA) score. Pediatr Crit Care Med. 2018;19(12):e615-e622.<br>
+                    - Matics TJ, Sanchez-Pinto LN. Adaptation and validation of a pediatric sequential organ failure assessment score and evaluation of the sepsis-3 definitions in critically ill children. JAMA Pediatr. 2017;171(10):e172352.<br>
+                    - Vincent JL, et al. The SOFA (Sepsis-related Organ Failure Assessment) score to describe organ dysfunction/failure. Intensive Care Med. 1996;22(7):707-10.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Configuração nSOFA baseada na literatura
+        const NSOFA_CFG = {
+            respiratory: {
+                support_points: { AA: 0, O2_baixo: 1, CPAP_VNI: 2, VM: 3, VM_FiO2_alta: 4 },
+                sf_points: [
+                    { min: 0, max: 100, pts: 4 },
+                    { min: 101, max: 150, pts: 3 },
+                    { min: 151, max: 200, pts: 2 },
+                    { min: 201, max: 263, pts: 1 },
+                    { min: 264, max: Infinity, pts: 0 }
+                ],
+                max_points: 8
+            },
+            cardiovascular: {
+                vis_to_points: [
+                    { max: 0, pts: 0 },
+                    { max: 5, pts: 1 },
+                    { max: 15, pts: 3 },
+                    { max: 30, pts: 5 },
+                    { max: 60, pts: 7 },
+                    { max: Infinity, pts: 9 }
+                ]
+            },
+            hematologic: {
+                platelets_points: [
+                    { min: 0, max: 49, pts: 3 },
+                    { min: 50, max: 99, pts: 2 },
+                    { min: 100, max: 149, pts: 1 },
+                    { min: 150, max: Infinity, pts: 0 }
+                ]
+            }
+        };
+
+        function calcVIS(dopa, dobut, epi, norepi, milri, vaso) {
+            return (dopa || 0) + (dobut || 0) + 100 * (epi || 0) + 100 * (norepi || 0) + 10 * (milri || 0) + 10000 * (vaso || 0);
+        }
+
+        function sfRatio(spo2, fio2) {
+            if (!fio2 || fio2 <= 0) return Infinity;
+            return (spo2 || 0) / fio2;
+        }
+
+        function mapByRange(value, arr, keyLow = 'min', keyHigh = 'max') {
+            for (const r of arr) {
+                const lo = r[keyLow] ?? -Infinity;
+                const hi = r[keyHigh] ?? Infinity;
+                if (value >= lo && value <= hi) return r.pts;
+            }
+            return 0;
+        }
+
+        function respPoints(supportKey, sf) {
+            const sp = NSOFA_CFG.respiratory.support_points[supportKey] ?? 0;
+            const sfPts = mapByRange(sf, NSOFA_CFG.respiratory.sf_points, 'min', 'max');
+            return Math.min(NSOFA_CFG.respiratory.max_points, sp + sfPts);
+        }
+
+        function cvPoints(vis) {
+            for (const r of NSOFA_CFG.cardiovascular.vis_to_points) {
+                if (vis <= r.max) return r.pts;
+            }
+            return 0;
+        }
+
+        function hemePoints(plaq) {
+            return mapByRange(plaq, NSOFA_CFG.hematologic.platelets_points, 'min', 'max');
+        }
+
+        function getRiskLevel(score) {
+            if (score <= 3) return { label: 'Baixo Risco', cls: 'baixo' };
+            if (score <= 6) return { label: 'Risco Intermediário', cls: 'intermediario' };
+            return { label: 'Alto Risco', cls: 'alto' };
+        }
+
+        function getSupportDescription(key) {
+            const descriptions = {
+                AA: 'Ar ambiente',
+                O2_baixo: 'O₂ baixo fluxo',
+                CPAP_VNI: 'CPAP/VNI',
+                VM: 'VM invasiva',
+                VM_FiO2_alta: 'VM FiO₂ ≥0,60'
+            };
+            return descriptions[key] || key;
+        }
+
+        function calcularNSOFA() {
+            const support = document.getElementById('resp_support').value;
+            const fio2 = parseFloat(document.getElementById('fio2').value);
+            const spo2 = parseFloat(document.getElementById('spo2').value);
+            const platelets = parseFloat(document.getElementById('platelets').value);
+
+            const dopa = parseFloat(document.getElementById('dopamine').value) || 0;
+            const dobut = parseFloat(document.getElementById('dobutamine').value) || 0;
+            const epi = parseFloat(document.getElementById('epi').value) || 0;
+            const norepi = parseFloat(document.getElementById('norepi').value) || 0;
+            const milri = parseFloat(document.getElementById('milri').value) || 0;
+            const vaso = parseFloat(document.getElementById('vaso').value) || 0;
+
+            if (!support || [fio2, spo2, platelets].some(v => Number.isNaN(v))) {
+                alert('Preencha suporte respiratório, FiO₂, SpO₂ e plaquetas. Drogas vasoativas são opcionais (0 = ausente).');
+                return;
+            }
+
+            const vis = calcVIS(dopa, dobut, epi, norepi, milri, vaso);
+            document.getElementById('vis').value = vis.toFixed(1);
+
+            const sf = sfRatio(spo2, fio2);
+
+            const respiratoryScore = respPoints(support, sf);
+            const cardiovascularScore = cvPoints(vis);
+            const hematologicScore = hemePoints(platelets);
+            const totalScore = respiratoryScore + cardiovascularScore + hematologicScore;
+
+            const risk = getRiskLevel(totalScore);
+
+            // Atualizar display
+            document.getElementById('nsofa-total').textContent = totalScore;
+            document.getElementById('risk-classification').textContent = risk.label;
+            document.getElementById('respiratory-score').textContent = respiratoryScore;
+            document.getElementById('cardiovascular-score').textContent = cardiovascularScore;
+            document.getElementById('hematologic-score').textContent = hematologicScore;
+
+            const riskDiv = document.getElementById('risk-assessment');
+            riskDiv.innerHTML = `<div class="risk-badge ${risk.cls}">${risk.label}</div>`;
+
+            // Detalhes do resultado
+            const detailedResult = document.getElementById('detailed-result');
+            const supportDesc = getSupportDescription(support);
+            detailedResult.innerHTML = `
+                Detalhamento: Resp ${respiratoryScore}pts [${supportDesc}, SF=${isFinite(sf) ? sf.toFixed(0) : '∞'}] • 
+                CV ${cardiovascularScore}pts [VIS=${vis.toFixed(1)}] • 
+                Hem ${hematologicScore}pts [Plaqs=${platelets}k]
+            `;
+        }
+
+        function limparDados() {
+            ['nome', 'data_nascimento', 'idade_gestacional_nascimento', 'data_avaliacao', 'hora_avaliacao', 
+             'idade_dias', 'idade_gestacional_corrigida', 'resp_support', 'fio2', 'spo2', 'dopamine', 
+             'dobutamine', 'epi', 'norepi', 'milri', 'vaso', 'vis', 'platelets', 'obs'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+
+            document.getElementById('nsofa-total').textContent = '0';
+            document.getElementById('risk-classification').textContent = '-';
+            document.getElementById('respiratory-score').textContent = '0';
+            document.getElementById('cardiovascular-score').textContent = '0';
+            document.getElementById('hematologic-score').textContent = '0';
+            document.getElementById('risk-assessment').innerHTML = '';
+            document.getElementById('detailed-result').innerHTML = '';
+        }
+
+        function calcularIdade() {
+            const dataNascimento = document.getElementById('data_nascimento').value;
+            const dataAvaliacao = document.getElementById('data_avaliacao').value;
+            const idadeGestacionalNascimento = parseFloat(document.getElementById('idade_gestacional_nascimento').value);
+
+            if (dataNascimento && dataAvaliacao) {
+                const nascimento = new Date(dataNascimento);
+                const avaliacao = new Date(dataAvaliacao);
+
+                const diffTime = Math.abs(avaliacao - nascimento);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                document.getElementById('idade_dias').value = diffDays;
+
+                if (idadeGestacionalNascimento && !isNaN(idadeGestacionalNascimento)) {
+                    const semanasAdicionais = Math.floor(diffDays / 7);
+                    const diasAdicionais = diffDays % 7;
+
+                    const idadeGestacionalCorrigida = idadeGestacionalNascimento + semanasAdicionais + (diasAdicionais / 7);
+                    const semanasCorrigidas = Math.floor(idadeGestacionalCorrigida);
+                    const diasCorrigidos = Math.round((idadeGestacionalCorrigida - semanasCorrigidas) * 7);
+
+                    document.getElementById('idade_gestacional_corrigida').value =
+                        `${semanasCorrigidas} sem ${diasCorrigidos} dias`;
+                }
+            }
+        }
+
+        function preencherDataAtual() {
+            const hoje = new Date();
+            const dataAtual = hoje.toISOString().split('T')[0];
+            const horaAtual = hoje.toTimeString().slice(0, 5);
+
+            if (!document.getElementById('data_avaliacao').value) {
+                document.getElementById('data_avaliacao').value = dataAtual;
+            }
+            if (!document.getElementById('hora_avaliacao').value) {
+                document.getElementById('hora_avaliacao').value = horaAtual;
+            }
+        }
+
+        function gerarECopiarRelatorio() {
+            const nsofaTotal = document.getElementById('nsofa-total').textContent;
+            const riskClassification = document.getElementById('risk-classification').textContent;
+            const riskLevel = document.getElementById('risk-assessment').textContent;
+
+            if (nsofaTotal === '0') {
+                alert('Calcule primeiro o nSOFA antes de gerar o texto informativo.');
+                return;
+            }
+
+            // Obter dados do paciente
+            const nome = document.getElementById('nome').value;
+            const dataNascimento = document.getElementById('data_nascimento').value;
+            const idadeGestacionalNascimento = document.getElementById('idade_gestacional_nascimento').value;
+            const dataAvaliacao = document.getElementById('data_avaliacao').value;
+            const horaAvaliacao = document.getElementById('hora_avaliacao').value;
+            const idadeDias = document.getElementById('idade_dias').value;
+            const idadeGestacionalCorrigida = document.getElementById('idade_gestacional_corrigida').value;
+
+            // Obter dados nSOFA
+            const support = document.getElementById('resp_support').value;
+            const fio2 = document.getElementById('fio2').value;
+            const spo2 = document.getElementById('spo2').value;
+            const platelets = document.getElementById('platelets').value;
+            const vis = document.getElementById('vis').value;
+            const obs = document.getElementById('obs').value;
+
+            const respiratoryScore = document.getElementById('respiratory-score').textContent;
+            const cardiovascularScore = document.getElementById('cardiovascular-score').textContent;
+            const hematologicScore = document.getElementById('hematologic-score').textContent;
+
+            let relatorioTexto = `RESUMO INFORMATIVO — nSOFA (EDUCATIVO)
+${nome ? `Paciente: ${nome}` : ''}
+${dataAvaliacao ? `Data da Avaliação: ${dataAvaliacao}` : ''}${horaAvaliacao ? ` - Hora: ${horaAvaliacao}` : ''}
+
+DADOS DO PACIENTE:
+${dataNascimento ? `- Data de Nascimento: ${dataNascimento}` : ''}
+${idadeGestacionalNascimento ? `- Idade Gestacional no Nascimento: ${idadeGestacionalNascimento} semanas` : ''}
+${idadeDias ? `- Idade em Dias: ${idadeDias} dias` : ''}
+${idadeGestacionalCorrigida ? `- Idade Gestacional Corrigida: ${idadeGestacionalCorrigida}` : ''}
+
+AVALIAÇÃO nSOFA:
+Sistema Respiratório: ${respiratoryScore} pontos
+- Suporte Respiratório: ${getSupportDescription(support)}
+- FiO₂: ${fio2}
+- SpO₂: ${spo2}%
+- SpO₂/FiO₂: ${fio2 ? (parseFloat(spo2) / parseFloat(fio2)).toFixed(0) : 'N/A'}
+
+Sistema Cardiovascular: ${cardiovascularScore} pontos
+- VIS (Vasoactive-Inotrope Score): ${vis}
+- Dopamina: ${document.getElementById('dopamine').value || '0'} µg/kg/min
+- Dobutamina: ${document.getElementById('dobutamine').value || '0'} µg/kg/min
+- Epinefrina: ${document.getElementById('epi').value || '0'} µg/kg/min
+- Norepinefrina: ${document.getElementById('norepi').value || '0'} µg/kg/min
+- Milrinona: ${document.getElementById('milri').value || '0'} µg/kg/min
+- Vasopressina: ${document.getElementById('vaso').value || '0'} U/kg/min
+
+Sistema Hematológico: ${hematologicScore} pontos
+- Plaquetas: ${platelets} x10³/µL
+
+RESULTADOS:
+- Pontuação Total nSOFA: ${nsofaTotal} pontos
+- Classificação de Risco: ${riskClassification}
+- Nível de Risco: ${riskLevel}
+
+INTERPRETAÇÃO:
+O nSOFA avalia sequencialmente a falência de órgãos em recém-nascidos.
+Valores mais altos indicam maior disfunção orgânica.
+Classificação: 0-3 baixo risco, 4-6 intermediário, ≥7 alto risco.
+
+CRITÉRIOS nSOFA:
+Sistema Respiratório (máx 8pts):
+- Suporte: Ar ambiente=0pts, O₂ baixo=1pt, CPAP/VNI=2pts, VM=3pts, VM FiO₂≥0.6=4pts
+- SpO₂/FiO₂: ≤100=4pts, 101-150=3pts, 151-200=2pts, 201-263=1pt, ≥264=0pts
+
+Sistema Cardiovascular (máx 9pts):
+- VIS: 0=0pts, 1-5=1pt, 6-15=3pts, 16-30=5pts, 31-60=7pts, >60=9pts
+
+Sistema Hematológico (máx 3pts):
+- Plaquetas: ≤49k=3pts, 50-99k=2pts, 100-149k=1pt, ≥150k=0pts
+
+${obs ? `Observações: ${obs}` : ''}
+
+Referência: nSOFA - Neonatal Sequential Organ Failure Assessment para avaliação sequencial de falência de órgãos em recém-nascidos.`;
+
+            relatorioTexto = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorioTexto;
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorioTexto += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                relatorioTexto += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            // Copiar para área de transferência
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(relatorioTexto).then(() => {
+                    if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                }).catch(err => {
+                    copiarTextoFallback(relatorioTexto);
+                });
+            } else {
+                copiarTextoFallback(relatorioTexto);
+            }
+        }
+
+        function copiarTextoFallback(texto) {
+            const textArea = document.createElement('textarea');
+            textArea.value = texto;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                document.execCommand('copy');
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            } catch (err) {
+                if (typeof window.neopedCopyFail === 'function') window.neopedCopyFail(); else alert('Nao foi possivel copiar automaticamente. Revise o texto e copie manualmente para uso informativo.');
+            }
+
+            document.body.removeChild(textArea);
+        }
+
+        // Event listeners para cálculo automático
+        document.addEventListener('DOMContentLoaded', function () {
+            preencherDataAtual();
+
+            ['data_nascimento', 'data_avaliacao', 'idade_gestacional_nascimento'].forEach(id => {
+                document.getElementById(id).addEventListener('input', calcularIdade);
+            });
+        });
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>NeoPedCalc — SDR do prematuro (educativo)</title>
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --panel: #ffffff;
+      --soft: #f8fafc;
+      --line: #e2e8f0;
+      --text: #1f2937;
+      --muted: #374151;
+      --accent: #2563eb;
+      --ok: #059669;
+      --warn: #d97706;
+      --danger: #dc2626;
+      --shadow: 0 4px 18px rgba(15, 23, 42, 0.07);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background: linear-gradient(160deg, #f1f5f9 0%, #e8eef5 45%, #f1f5f9 100%);
+      color: var(--text);
+      -webkit-text-size-adjust: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      touch-action: pan-y;
+    }
+
+    .container {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: 1.6rem;
+      line-height: 1.2;
+    }
+
+    .title p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.45;
+      max-width: 760px;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+    }
+
+    .card.modal-like {
+      border: 0;
+      background: #f1f5f9;
+    }
+
+    .card.modal-like .result-box,
+    .card.modal-like details {
+      border: 0;
+      background: #f1f5f9;
+    }
+
+    .grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .field label {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .field textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      appearance: none;
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 0.98rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .05s ease, opacity .2s ease;
+    }
+
+    .btn:active { transform: scale(0.99); }
+    .btn-primary { background: var(--accent); color: #ffffff; }
+
+    /* Botão principal de ação — destaque visual */
+    .btn.btn-conduta {
+      background: linear-gradient(135deg, #4b5563 0%, #6b7280 100%);
+      color: #f8fafc;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+    }
+
+    .btn.btn-conduta:hover {
+      filter: brightness(1.05);
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.15);
+    }
+
+    .btn.btn-conduta:active {
+      filter: brightness(0.97);
+    }
+    .btn-soft { background: var(--soft); color: var(--text); border: 1px solid var(--line); }
+    .btn-ok { background: var(--ok); color: #ffffff; }
+    .btn-warn { background: var(--warn); color: #241700; }
+    .btn-danger { background: var(--danger); color: white; }
+    .btn-lus {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #93c5fd;
+      padding: 8px 10px;
+      font-size: 0.84rem;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-lus:hover { filter: brightness(1.07); }
+
+    .pill {
+      display: inline-block;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+
+    .pill-ok {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #6ee7b7;
+    }
+
+    .pill-warn {
+      background: #fffbeb;
+      color: #b45309;
+      border: 1px solid #fcd34d;
+    }
+
+    .pill-danger {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fca5a5;
+    }
+
+    .result-box {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      white-space: pre-wrap;
+      line-height: 1.58;
+    }
+
+    .resumo-analise-box {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      font-size: 0.92rem;
+      line-height: 1.55;
+      color: var(--text);
+    }
+
+
+
+    .resumo-analise-box .resumo-analise-titulo {
+      font-weight: 700;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--accent);
+      margin: 0 0 8px;
+    }
+
+    .resumo-analise-box .resumo-bloco {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+    }
+
+    .resumo-analise-box .resumo-bloco:first-of-type {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .resumo-analise-box .resumo-bloco h4 {
+      margin: 0 0 6px;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    .resumo-analise-box ul {
+      margin: 0;
+      padding-left: 1.15rem;
+      color: var(--muted);
+    }
+
+    .resumo-analise-box li { margin: 4px 0; }
+
+    .resumo-analise-box.resumo-vazio {
+      border-style: dashed;
+      border-color: var(--line);
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    #resumoAntenatal {
+      display: none;
+    }
+
+    #btnGerarConduta {
+      display: none;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+
+    .checklist {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .checklist label {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin: 0;
+      padding: 12px 14px;
+      color: var(--text);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .checklist label:hover {
+      background: #f1f5f9;
+      border-color: #93c5fd;
+    }
+
+    .checklist label > span {
+      flex: 1;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .checklist input[type="checkbox"] {
+      flex-shrink: 0;
+      width: 1.15rem;
+      height: 1.15rem;
+      margin: 0.2rem 0 0 0;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .checklist-lus-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .checklist-lus-row > label {
+      margin: 0;
+    }
+
+    .lus-retorno-info {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin: -2px 0 8px 2px;
+    }
+
+    .lus-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 14px;
+    }
+
+    .lus-modal.open { display: flex; }
+
+    .lus-modal-dialog {
+      width: min(1200px, 100%);
+      height: min(92vh, 900px);
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      box-shadow: var(--shadow);
+    }
+
+    .lus-modal-head {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 8px;
+      padding: 10px 52px 10px 12px;
+      border-bottom: 1px solid var(--line);
+      background: #f8fafc;
+    }
+
+    .lus-modal-head h3 {
+      margin: 0;
+      font-size: 0.96rem;
+      line-height: 1.2;
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* Alinhado ao padrão NeoPedCalc: X preto em círculo vermelho sólido */
+    .lus-modal-close {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      min-height: 36px;
+      padding: 0;
+      border: none;
+      border-radius: 999px;
+      background: #d40000;
+      color: #000;
+      font-size: 24px;
+      font-weight: 900;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .lus-modal-frame {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #fff;
+    }
+
+    .checklist-obs {
+      margin-top: 16px;
+    }
+
+    .field.checklist-obs > label {
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .field.checklist-obs textarea {
+      min-height: 120px;
+      line-height: 1.55;
+      font-size: 0.95rem;
+      padding: 12px 14px;
+      resize: vertical;
+    }
+
+    .section-title {
+      font-size: 1.08rem;
+      margin: 0 0 12px;
+      line-height: 1.3;
+    }
+
+    .hr {
+      height: 1px;
+      background: var(--line);
+      margin: 10px 0 14px;
+      border: 0;
+    }
+
+    .footer {
+      color: var(--muted);
+      font-size: 0.84rem;
+      padding-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    details {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #f8fafc;
+      overflow: hidden;
+    }
+
+    details + details { margin-top: 12px; }
+
+    summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 14px;
+      font-weight: 700;
+      background: #f1f5f9;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+
+    .details-body {
+      padding: 14px;
+      line-height: 1.58;
+    }
+
+    .reference-list {
+      margin: 0;
+      padding-left: 18px;
+      line-height: 1.6;
+    }
+
+    .reference-list li + li { margin-top: 10px; }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.95rem;
+    }
+
+    /* Protocolo operacional SDR 2026 (complemento master) */
+    .proto-master {
+      padding-top: 4px;
+      display: none;
+    }
+
+    #cardDoseSurfactante {
+      display: none;
+    }
+
+    .proto-master .section-title {
+      margin-bottom: 6px;
+    }
+
+    .proto-header {
+      text-align: center;
+      padding-bottom: 18px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid #cbd5e1;
+    }
+
+    .proto-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #f8fafc;
+      background: linear-gradient(135deg, #4b5563, #6b7280);
+      padding: 5px 12px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    .proto-tagline {
+      margin: 8px 0 0;
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.45;
+      max-width: 640px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .proto-intro-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      font-size: 0.88rem;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+
+    .proto-intro-box strong {
+      color: #1f2937;
+      font-weight: 700;
+    }
+
+    .proto-panel {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px 16px 14px;
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    .proto-panel-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: #1f2937;
+      letter-spacing: 0.01em;
+    }
+
+    .proto-panel-title .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .proto-panel-title .dot--amber { background: #f0b429; box-shadow: 0 0 0 2px rgba(240, 180, 41, 0.35); }
+    .proto-panel-title .dot--cyan { background: #20c997; box-shadow: 0 0 0 2px rgba(32, 201, 151, 0.35); }
+    .proto-panel-title .dot--blue { background: #67b7ff; box-shadow: 0 0 0 2px rgba(103, 183, 255, 0.35); }
+    .proto-panel-title .dot--violet { background: #a78bfa; box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.35); }
+
+    .proto-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.45fr;
+      gap: 14px;
+      margin-bottom: 14px;
+      align-items: stretch;
+    }
+
+    /* Checklist só do protocolo — compacta, sem herdar “achados clínicos” */
+    .proto-gatilhos {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .proto-gatilhos label {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 0;
+      padding: 8px 10px;
+      font-size: 0.86rem;
+      line-height: 1.45;
+      color: var(--text);
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .proto-gatilhos label:hover {
+      border-color: #93c5fd;
+    }
+
+    .proto-gatilhos input[type="checkbox"] {
+      flex-shrink: 0;
+      width: 1rem;
+      height: 1rem;
+      margin-top: 2px;
+      accent-color: var(--accent);
+    }
+
+    .proto-gatilhos label span {
+      flex: 1;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .proto-pane {
+      padding: 14px 16px;
+      border-radius: 10px;
+      line-height: 1.6;
+      margin-top: 0;
+      font-size: 0.88rem;
+      border: 1px solid var(--line);
+    }
+
+    .proto-pane b,
+    .proto-pane strong {
+      color: #111827;
+      font-weight: 700;
+    }
+
+    .proto-pane.proto-yellow {
+      border-left: 4px solid #f0b429;
+      background: #fffbeb;
+    }
+
+    .proto-pane.proto-green {
+      border-left: 4px solid #20c997;
+      background: #ecfdf5;
+    }
+
+    .proto-pane.proto-blue {
+      border-left: 4px solid #67b7ff;
+      background: #eff6ff;
+    }
+
+    .highlight-proto {
+      color: #b45309;
+      font-weight: 700;
+    }
+
+    .sala-check-block {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(240, 180, 41, 0.28);
+    }
+
+    .sala-check-heading {
+      margin: 0 0 12px;
+      padding: 0;
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #92400e;
+      line-height: 1.3;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sala-check-heading::before {
+      content: "";
+      width: 4px;
+      height: 1rem;
+      border-radius: 3px;
+      background: linear-gradient(180deg, #f5d547, #d4a012);
+      flex-shrink: 0;
+    }
+
+    .sala-check-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+    }
+
+    .sala-check-grid label {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 0;
+      font-size: 0.86rem;
+      padding: 10px 12px;
+      background: #fffbeb;
+      border-radius: 10px;
+      border: 1px solid #fde68a;
+      cursor: pointer;
+      line-height: 1.45;
+      color: var(--text);
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .sala-check-grid label:hover {
+      border-color: #f59e0b;
+      background: #fef3c7;
+    }
+
+    .sala-check-grid label span {
+      flex: 1;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .sala-check-grid input[type="checkbox"] {
+      flex-shrink: 0;
+      width: 1rem;
+      height: 1rem;
+      margin-top: 2px;
+      accent-color: #f0b429;
+    }
+
+    .proto-duo {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .proto-safety-block {
+      margin-top: 4px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(103, 183, 255, 0.15);
+    }
+
+    .proto-safety-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 12px;
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: #b91c1c;
+    }
+
+    .proto-safety-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+    }
+
+    .proto-safety-item {
+      font-size: 0.84rem;
+      line-height: 1.5;
+      padding: 12px 14px;
+      background: #fef2f2;
+      border-radius: 10px;
+      border: 1px solid #fecaca;
+    }
+
+    .proto-safety-item strong {
+      color: #991b1b;
+      font-weight: 700;
+    }
+
+    @media (max-width: 900px) {
+      .proto-grid { grid-template-columns: 1fr; }
+      .proto-duo { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .title h1 { font-size: 1.3rem; }
+      .container { padding: 12px; }
+      .card { padding: 14px; border-radius: 16px; }
+      .btn { width: 100%; }
+      .checklist label { padding: 11px 12px; font-size: 0.92rem; }
+      .checklist input[type="checkbox"] { width: 1.25rem; height: 1.25rem; }
+      .sala-check-grid { grid-template-columns: 1fr; }
+    }
+
+    .header-actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 12px 0 4px;
+    }
+    .header-actions .btn-info {
+      width: auto;
+      max-width: 100%;
+    }
+    #modalInfo {
+      display: none;
+      position: fixed;
+      z-index: 10000;
+      inset: 0;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      box-sizing: border-box;
+      background: rgba(15, 23, 42, 0.5);
+      overflow: auto;
+    }
+    #modalInfo .modal-content {
+      background: #fff;
+      border-radius: 14px;
+      width: 100%;
+      max-height: 86vh;
+      overflow: auto;
+      padding: 0;
+    }
+    #modalInfo .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: #f8fafc;
+      border-radius: 14px 14px 0 0;
+    }
+    #modalInfo .modal-header h2 {
+      margin: 0;
+      font-size: 1.15rem;
+      color: #1e293b;
+    }
+    #modalInfo .modal-body {
+      padding: 18px 20px 22px;
+      line-height: 1.55;
+      color: #334155;
+    }
+    #modalInfo .modal-body h3 {
+      margin: 1.1em 0 0.5em;
+      font-size: 1rem;
+      color: #0f172a;
+    }
+    #modalInfo .modal-body h3:first-child { margin-top: 0; }
+    #modalInfo .modal-body ul, #modalInfo .modal-body ol {
+      margin: 0.4em 0 0.8em 1.2em;
+      padding: 0;
+    }
+    #modalInfo .modal-body li { margin-bottom: 0.35em; }
+    #modalInfo .close {
+      cursor: pointer;
+      font-size: 1.5rem;
+      line-height: 1;
+      color: #64748b;
+      border: none;
+      background: none;
+      padding: 4px 8px;
+    }
+    #modalInfo .close:hover { color: #0f172a; }
+  </style>
+  <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="title">
+        <h1>NeoPedCalc — SDR do Prematuro</h1>
+        <p>Aplicação prática para apoio informativo na sala de parto e na UTI neonatal, com foco em suporte respiratório inicial, indicação comparativa de surfactante, alvo de saturação, texto técnico e base bibliográfica visível dentro da própria ferramenta.</p>
+      </div>
+      <div class="row">
+        <button class="btn btn-soft" onclick="carregarExemplo()">Carregar exemplo</button>
+        <button class="btn btn-soft" onclick="limparTudo()">Limpar</button>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="btn-info" onclick="abrirModalComoUsar()">Como usar</button>
+    </div>
+
+    <div class="card modal-like">
+      <h2 class="section-title">Dados do paciente</h2>
+      <div class="grid grid-3">
+        <div class="field">
+          <label>Identificação do paciente</label>
+          <input id="paciente" placeholder="Ex.: RN João / Leito 3" />
+        </div>
+        <div class="field">
+          <label>Idade gestacional ao nascer (semanas)</label>
+          <input id="ig" type="number" min="22" max="42" step="0.1" placeholder="Ex.: 28.4" />
+        </div>
+        <div class="field">
+          <label>Peso atual (g)</label>
+          <input id="peso" type="number" min="300" max="7000" step="1" placeholder="Ex.: 980" />
+        </div>
+      </div>
+
+      <div class="grid grid-3" style="margin-top:12px;">
+        <div class="field">
+          <label>Idade de vida (horas)</label>
+          <input id="idadeHoras" type="number" min="0" max="720" step="1" placeholder="Ex.: 2" />
+        </div>
+        <div class="field">
+          <label>Tipo de suporte atual</label>
+          <select id="suporte">
+            <option value="cpap">CPAP</option>
+            <option value="nippv">NIPPV / ventilação nasal</option>
+            <option value="hfnc">HFNC</option>
+            <option value="vm">Ventilação mecânica</option>
+            <option value="ar">Ar ambiente / sem suporte</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>MAP / CPAP atual (cmH2O)</label>
+          <input id="map" type="number" min="0" max="20" step="0.5" placeholder="Ex.: 6" />
+        </div>
+      </div>
+
+      <div class="grid grid-3" style="margin-top:12px;">
+        <div class="field">
+          <label>FiO2 atual</label>
+          <input id="fio2" type="number" min="0.21" max="1" step="0.01" placeholder="Ex.: 0.30" />
+        </div>
+        <div class="field">
+          <label>SpO2 atual (%)</label>
+          <input id="spo2" type="number" min="40" max="100" step="1" placeholder="Ex.: 91" />
+        </div>
+        <div class="field">
+          <label>FC atual (bpm)</label>
+          <input id="fc" type="number" min="30" max="250" step="1" placeholder="Ex.: 148" />
+        </div>
+      </div>
+
+      <div class="grid grid-3" style="margin-top:12px;">
+        <div class="field" style="grid-column: 1 / -1; max-width: min(100%, 420px);">
+          <label for="especial">Condição especial (alvos de SpO₂ — protocolo operacional)</label>
+          <select id="especial">
+            <option value="none">Nenhuma</option>
+            <option value="dbp_hp">DBP com hipertensão pulmonar</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card modal-like">
+      <h2 class="section-title">Medicação antenatal materna</h2>
+      <p class="small" style="margin:0 0 12px;">Checklist de antecedentes maternos alinhado ao Consenso Europeu de SDR 2025/2026 (Sweet DG et al., <em>Neonatology</em>, 2026).</p>
+
+      <div class="sala-check-block">
+        <h4 class="sala-check-heading" id="ancs-heading">Corticosteroides antenatais (ANCS)</h4>
+        <div class="small" style="margin:0 0 10px; padding-left: 2px; line-height:1.5;">
+          Deve ser oferecido <strong>um curso único</strong> a todas as gestantes com risco de parto prematuro da <strong>viabilidade até 34 semanas</strong>, idealmente <strong>pelo menos 24 horas</strong> antes do parto. O benefício máximo ocorre entre 24 h e <strong>7–10 dias</strong> após a administração. <strong>Dilatação avançada</strong> não deve impedir o tratamento — o efeito benéfico começa nas <strong>primeiras 24 h</strong>. <strong>Um único curso de repetição</strong> pode ser administrado <strong>antes de 32 semanas</strong> se o primeiro curso foi há <strong>mais de 1–2 semanas</strong>. O uso de corticoides <strong>após 34 semanas</strong> em trabalho de parto espontâneo <strong>não é aconselhável</strong> (risco de hipoglicemia neonatal e falta de benefício em mortalidade).
+        </div>
+        <div class="sala-check-grid" role="group" aria-labelledby="ancs-heading">
+          <label><input type="checkbox" id="ancs_curso_unico" name="ancs_curso_unico" /> <span>Curso único de ANCS documentado (risco de PTB até 34s; ideal ≥24 h antes do parto)</span></label>
+          <label><input type="checkbox" id="ancs_repeticao" name="ancs_repeticao" /> <span>Curso de repetição documentado (antes de 32s; 1º curso há &gt;1–2 semanas)</span></label>
+          <label><input type="checkbox" id="ancs_nao" name="ancs_nao" /> <span>Não recebeu ANCS / não documentado neste episódio</span></label>
+        </div>
+      </div>
+
+      <div class="sala-check-block" style="margin-top:14px;">
+        <h4 class="sala-check-heading" id="mgso4-heading">Neuroproteção — sulfato de magnésio (MgSO₄)</h4>
+        <div class="small" style="margin:0 0 10px; padding-left: 2px; line-height:1.5;">
+          O sulfato de magnésio deve ser administrado a gestantes com <strong>parto iminente antes de 32 semanas</strong> de gestação para <strong>neuroproteção fetal</strong>.
+        </div>
+        <div class="sala-check-grid" role="group" aria-labelledby="mgso4-heading">
+          <label><input type="checkbox" id="mgso4_neuro" name="mgso4_neuro" /> <span>MgSO₄ materno para neuroproteção documentado (parto iminente antes de 32s)</span></label>
+          <label><input type="checkbox" id="mgso4_nao" name="mgso4_nao" /> <span>Não recebeu MgSO₄ / não aplicável ou não documentado</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card modal-like">
+      <h2 class="section-title">Sala de parto — estabilização</h2>
+      <p class="small" style="margin:0 0 12px;">Recomendações iniciais conforme a idade gestacional informada acima (European Consensus RDS).</p>
+      <div id="out_parto" class="proto-pane proto-yellow">Informe a IG em “Dados do paciente” para as recomendações.</div>
+      <div class="sala-check-block">
+        <h4 class="sala-check-heading" id="sala-check-heading">Checklist rápido</h4>
+        <div class="sala-check-grid" role="group" aria-labelledby="sala-check-heading">
+          <label><input type="checkbox" id="sala_clamp" name="sala_clamp" /> <span>Clampeamento ≥ 60 s</span></label>
+          <label><input type="checkbox" id="sala_saco" name="sala_saco" /> <span>Saco / gases aquecidos</span></label>
+          <label><input type="checkbox" id="sala_preductal" name="sala_preductal" /> <span>Monitorar SpO₂ pré-ductal</span></label>
+          <label><input type="checkbox" id="sala_tpiece" name="sala_tpiece" /> <span>T-piece (PIP ~ 25)</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card modal-like">
+      <h2 class="section-title">Achados clínicos — avaliação na UTI neonatal</h2>
+      <p class="small" style="margin:-4px 0 12px;">Este checklist refere-se ao exame e à monitorização do recém-nascido <strong>no contexto da UTI neonatal</strong> (estado respiratório e achados correlatos no momento da avaliação).</p>
+      <div class="checklist" role="group" aria-label="Achados clínicos na UTI neonatal">
+        <label><input type="checkbox" id="retracoes" /> <span>Retrações / aumento do trabalho respiratório</span></label>
+        <label><input type="checkbox" id="gemencia" /> <span>Gemência / desconforto respiratório significativo</span></label>
+        <label><input type="checkbox" id="apneia" /> <span>Apneia recorrente</span></label>
+        <label><input type="checkbox" id="bradicardia" /> <span>Bradicardia / instabilidade</span></label>
+        <div class="checklist-lus-row">
+          <label><input type="checkbox" id="lus" /> <span>Ultrassom pulmonar com padrão descrito na literatura como associado a SDR (referência consultiva)</span></label>
+          <button type="button" class="btn-lus" onclick="abrirModalLus()">Abrir LUS Score</button>
+        </div>
+        <div id="lusRetornoInfo" class="lus-retorno-info">LUS sem retorno ainda.</div>
+        <label><input type="checkbox" id="intubSala" /> <span>Foi intubado para estabilização</span></label>
+        <label><input type="checkbox" id="hipertPulm" /> <span>Contexto de hipertensão pulmonar (suspeita ou registro assistencial) — apenas para ajuste de metas informativas na ferramenta</span></label>
+      </div>
+
+      <div class="field checklist-obs">
+        <label for="obs">Observações clínicas (UTI neonatal)</label>
+        <textarea id="obs" placeholder="Ex.: piora progressiva da FiO2 nas últimas 2 horas, RX compatível com SDR, esforço respiratório importante..."></textarea>
+      </div>
+
+      <div class="row" style="margin-top:12px;">
+        <button type="button" id="btnGerarConduta" class="btn btn-primary btn-conduta" onclick="calcularConduta()">Gerar resumo informativo</button>
+        <button type="button" class="btn btn-ok" onclick="copiarRelatorio()">Copiar texto informativo</button>
+      </div>
+    </div>
+
+    <div class="card modal-like">
+      <h2 class="section-title">Resultado da análise</h2>
+      <div id="badges"></div>
+      <div id="resumoAntenatal" class="resumo-analise-box resumo-vazio" aria-live="polite">Gere o <strong>resumo informativo</strong> para ver aqui a <strong>síntese educacional</strong>, a <strong>comparação com critérios da diretriz</strong> (surfactante) e o resumo antenatal/sala. O texto corrido para cópia segue abaixo — interpretação e decisão são do profissional assistente.</div>
+      <div id="resultado" class="result-box">Preencha os dados e clique em “Gerar resumo informativo”.</div>
+    </div>
+
+    <div id="lusModal" class="lus-modal" role="dialog" aria-modal="true" aria-labelledby="lusModalTitle">
+      <div class="lus-modal-dialog">
+        <div class="lus-modal-head">
+          <h3 id="lusModalTitle">LUS Score Neonatal — Ultrassom de Pulmão</h3>
+          <button type="button" class="lus-modal-close" onclick="fecharModalLus()" aria-label="Fechar">&times;</button>
+        </div>
+        <iframe
+          id="lusModalFrame"
+          class="lus-modal-frame"
+          src=""
+          loading="lazy"
+          title="LUS Score Neonatal">
+        </iframe>
+      </div>
+    </div>
+
+    <div class="card modal-like" id="cardDoseSurfactante">
+      <h2 class="section-title">Dose teórica de surfactante</h2>
+      <div class="grid grid-2">
+        <div>
+          <div class="small">Este cálculo mostra apenas a dose teórica em miligramas com base no peso informado. O volume em mL, a preparação final, a técnica de administração e as redoses devem seguir o produto disponível e o protocolo da sua unidade.</div>
+          <div class="hr"></div>
+          <div id="doseSurfactante" class="result-box">Informe o peso para calcular.</div>
+        </div>
+        <div>
+          <div class="small">Resumo educativo (diretriz)</div>
+          <div class="result-box">Produto frequentemente citado na diretriz de referência: poractant alfa.
+Dose usualmente discutida na literatura de referência: 200 mg/kg (conferir produto e protocolo institucional).
+Vias descritas na diretriz incluem LISA/MIST em contexto de respiração espontânea — aplicabilidade depende de cenário clínico e unidade.
+Redoses são debatidas na diretriz quando há persistência de padrão compatível com SDR após exclusão de outras causas — decisão assistencial.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card modal-like proto-master">
+      <div class="proto-header">
+        <span class="proto-badge">RDS 2025 · 2026</span>
+        <h2 class="section-title">Protocolo operacional SDR</h2>
+        <p class="proto-tagline">Painéis educativos sobre terapia de reposição, metas usualmente citadas na UTI/VM e trechos de segurança da diretriz. Os critérios numéricos exibidos para surfactante são calculados a partir de FiO₂, MAP/CPAP e do checklist acima — servem para comparação com a literatura, não como prescrição.</p>
+      </div>
+
+      <div class="proto-intro-box">
+        Os critérios de surfactante <strong>não são repetidos aqui</strong>: vêm de <strong>FiO₂</strong>, <strong>MAP/CPAP</strong>, <strong>USG</strong> e <strong>esforço respiratório</strong> (achados clínicos na UTI neonatal) nos blocos anteriores. Estes painéis atualizam com IG, peso e condição especial.
+      </div>
+
+      <div class="proto-duo">
+        <section class="proto-panel" aria-labelledby="proto-surf-title">
+          <h3 class="proto-panel-title" id="proto-surf-title"><span class="dot dot--cyan" aria-hidden="true"></span> Terapia de reposição</h3>
+          <div id="out_surf" class="proto-pane proto-green">Informe o peso (g); FiO₂, MAP e achados atualizam a indicação.</div>
+        </section>
+        <section class="proto-panel" aria-labelledby="proto-uti-title">
+          <h3 class="proto-panel-title" id="proto-uti-title"><span class="dot dot--blue" aria-hidden="true"></span> Suporte UTI e VM</h3>
+          <div id="out_uti" class="proto-pane proto-blue">Informe a IG para as metas.</div>
+        </section>
+      </div>
+
+      <div class="proto-safety-block">
+        <h3 class="proto-safety-title" id="proto-safety-title">Cuidados de suporte e segurança</h3>
+        <div class="proto-safety-grid" role="group" aria-labelledby="proto-safety-title">
+          <div class="proto-safety-item"><strong>Hipotensão:</strong> não usar bolus salino de rotina; avaliar perfusão global.</div>
+          <div class="proto-safety-item"><strong>Antibióticos:</strong> suspender em 36–48 h se culturas negativas.</div>
+          <div class="proto-safety-item"><strong>Nutrição:</strong> nutrição parenteral precoce + enteral mínima.</div>
+          <div class="proto-safety-item"><strong>PDA:</strong> tratamento conservador; intervir se sintomático.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card modal-like">
+      <h2 class="section-title">Como funciona</h2>
+
+      <details>
+        <summary>Lógica clínica resumida</summary>
+        <div class="details-body">
+          A aplicação organiza a avaliação do prematuro com desconforto respiratório com base na diretriz europeia de SDR 2025/2026. O fluxo na tela é:
+          <br><br>
+          1. <strong>Dados do paciente</strong> — IG, peso, idade de vida, tipo de suporte, MAP/CPAP, FiO₂, SpO₂, FC e condição especial (alvos de oxigenação quando há DBP com hipertensão pulmonar).<br>
+          2. <strong>Medicação antenatal materna</strong> — checklist de ANCS (corticoides) e sulfato de magnésio para neuroproteção, com texto resumido da diretriz; entra no relatório como antecedente, sem alterar o cálculo automático de surfactante.<br>
+          3. <strong>Sala de parto</strong> — recomendações automáticas pela IG e checklist rápido opcional (não alteram o cálculo dos critérios de surfactante).<br>
+          4. <strong>Achados clínicos na UTI neonatal</strong> — trabalho respiratório, USG, intubação na estabilização, hipertensão pulmonar e observações livres (avaliação no contexto da UTI NN).<br>
+          5. <strong>Critérios de surfactante</strong> — calculados <em>uma única vez</em> a partir de FiO₂ ≥ 0,30, MAP/CPAP ≥ 6 cmH₂O, USG sugestivo e achados de esforço/apneia/bradicardia. O bloco “Protocolo operacional” reutiliza esses mesmos campos (não há segundo formulário de “gatilhos”).<br>
+          6. <strong>Idade de vida, SpO₂ e FC</strong> — entram no relatório como <em>vigilância</em> (interpretação em relação às metas da ferramenta e alertas), não como quarto critério numérico formal de surfactante neste módulo.<br>
+          7. Prematuros &lt; 32 semanas intubados na estabilização: reforço de surfactante o mais precocemente possível.<br>
+          8. Em ventilação mecânica: lembrete de estratégia protetora (VG / volume-targeted) e extubação quando seguro.<br><br>
+          A ferramenta é apoio de beira-leito; não substitui julgamento clínico, gasometria, imagem, protocolo institucional e experiência da equipe.
+        </div>
+      </details>
+
+      <details>
+        <summary>Base científica utilizada</summary>
+        <div class="details-body">
+          Este módulo foi construído com base principalmente na seguinte referência:
+          <br><br>
+          <strong>Sweet DG, Carnielli VP, Greisen G, Hallman M, Klebermass-Schrehof K, Lavizzari A, Ozek E, te Pas A, Roehr CC, Saugstad OD, Simeoni U, Vento M, Visser GHA, Speer CP. European Consensus Guidelines on the Management of Respiratory Distress Syndrome – 2025. Neonatology. 2026. DOI: 10.1159/000551062.</strong>
+          <br><br>
+          Principais pontos incorporados à lógica da aplicação:
+          <br>
+          - CPAP como suporte inicial do prematuro respirando espontaneamente.<br>
+          - Uso de blender e titulação criteriosa de oxigênio.<br>
+          - FiO2 de 0,30 como limiar prático frequente para considerar surfactante em bebês em suporte não invasivo.<br>
+          - Preferência por administração menos invasiva com cateter fino quando viável.<br>
+          - Preferência por dose inicial de 200 mg/kg de poractant alfa quando esse surfactante estiver disponível.<br>
+          - Meta habitual de saturação em torno de 90–94% para prematuros em oxigênio, com alarmes sugeridos de 89–95%.<br>
+          - Em contexto de hipertensão pulmonar (checkbox e/ou opção “DBP com hipertensão pulmonar”), a calculadora propõe faixa mais alta (94–97%) e alarmes distintos, alinhados ao painel “Suporte UTI e VM”.<br>
+          - O checklist antenatal resume ANCS (curso único até 34s; repetição antes de 32s; cautela após 34s em TPE) e MgSO₄ para neuroproteção antes de 32s, para registro no relatório junto aos dados do RN.
+        </div>
+      </details>
+    </div>
+
+    <div class="card modal-like">
+      <h2 class="section-title">Referências bibliográficas</h2>
+      <details>
+        <summary>Lista curta para visualização na tela</summary>
+        <div class="details-body">
+          <ol class="reference-list">
+            <li>
+              Sweet DG, Carnielli VP, Greisen G, Hallman M, Klebermass-Schrehof K, Lavizzari A, Ozek E, te Pas A, Roehr CC, Saugstad OD, Simeoni U, Vento M, Visser GHA, Speer CP. <strong>European Consensus Guidelines on the Management of Respiratory Distress Syndrome – 2025</strong>. <em>Neonatology</em>. 2026. DOI: 10.1159/000551062.
+            </li>
+          </ol>
+        </div>
+      </details>
+
+      <details>
+        <summary>Como citar no relatório ou prontuário</summary>
+        <div class="details-body mono">Referência técnica utilizada: Sweet DG et al. European Consensus Guidelines on the Management of Respiratory Distress Syndrome – 2025. Neonatology. 2026. DOI: 10.1159/000551062.</div>
+      </details>
+    </div>
+
+    <div class="footer">
+      NeoPedCalc — ferramenta educacional e informativa. Não prescreve nem automatiza decisão clínica. Valide sempre com protocolo institucional, disponibilidade de medicamentos, estado hemodinâmico, gasometria, imagem e avaliação clínica completa do recém-nascido.
+      <br><br>
+      <span class="mono" style="font-size:0.8rem;">Protocolo operacional: European Consensus Guidelines on the Management of RDS — atualização 2025/2026 (referência Sweet DG et al., Neonatology, DOI 10.1159/000551062).</span>
+    </div>
+  </div>
+
+  <div id="modalInfo" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalComoUsarTitulo" onclick="if(event.target===this)fecharModalComoUsar()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h2 id="modalComoUsarTitulo">Como usar — SDR do prematuro</h2>
+        <button type="button" class="close" onclick="fecharModalComoUsar()" aria-label="Fechar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h3>Objetivo (educativo)</h3>
+        <p>Organizar dados do RN prematuro com desconforto respiratório, checklist antenatal, sala de parto e achados na UTI, e gerar <strong>texto informativo</strong> alinhado ao Consenso Europeu de SDR (referência Sweet DG et al., 2025/2026), para comparação com a literatura — sem prescrever conduta.</p>
+        <h3>Ordem sugerida na tela</h3>
+        <ol>
+          <li><strong>Dados do paciente:</strong> identificação, IG, peso (g), idade de vida (h), tipo de suporte, MAP/CPAP, FiO₂, SpO₂, FC e condição especial (ex.: DBP com hipertensão pulmonar) quando alterar metas de oxigenação.</li>
+          <li><strong>Medicação antenatal:</strong> marque ANCS e MgSO₄ conforme documentação; entram no relatório.</li>
+          <li><strong>Sala de parto:</strong> leia as recomendações automáticas pela IG e use o checklist rápido se desejar.</li>
+          <li><strong>Achados na UTI:</strong> esforço respiratório, LUS (botão abre a calculadora em janela), intubação na estabilização, hipertensão pulmonar e observações livres.</li>
+          <li>Clique em <strong>Gerar resumo informativo</strong>; em seguida pode <strong>Copiar texto informativo</strong>. Os painéis de surfactante e protocolo operacional reutilizam os mesmos campos de FiO₂, MAP e checklist (finalidade educativa).</li>
+          <li>Consulte a dose teórica de surfactante pelo peso e a seção <strong>Como funciona</strong> mais abaixo na página para a lógica detalhada e citações.</li>
+        </ol>
+        <h3>Importante</h3>
+        <p>Ferramenta de apoio; confirme sempre com protocolo local, gasometria, imagem e estado clínico do paciente.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function abrirModalComoUsar() {
+      document.getElementById('modalInfo').style.display = 'flex';
+    }
+    function fecharModalComoUsar() {
+      document.getElementById('modalInfo').style.display = 'none';
+    }
+
+    function v(id) {
+      const el = document.getElementById(id);
+      return el ? el.value : '';
+    }
+    function c(id) {
+      const el = document.getElementById(id);
+      return !!(el && el.checked);
+    }
+    function num(id) {
+      const x = parseFloat(v(id));
+      return Number.isFinite(x) ? x : null;
+    }
+
+    function badge(text, type) {
+      return `<span class="pill pill-${type}">${text}</span>`;
+    }
+
+    function calcularDose() {
+      const peso = num('peso');
+      const el = document.getElementById('doseSurfactante');
+
+      if (!peso) {
+        el.textContent = 'Informe o peso para calcular.';
+        return;
+      }
+
+      const kg = peso / 1000;
+      const dose200 = (kg * 200).toFixed(1);
+      const dose100 = (kg * 100).toFixed(1);
+
+      el.textContent =
+`Peso: ${peso.toFixed(0)} g (${kg.toFixed(3)} kg)
+
+Poractant alfa 200 mg/kg: ${dose200} mg
+Poractant alfa 100 mg/kg: ${dose100} mg
+
+Sugestão principal da diretriz: usar dose inicial de 200 mg/kg quando poractant alfa estiver disponível.`;
+    }
+
+    function suporteLabel(val) {
+      const m = { cpap: 'CPAP', nippv: 'NIPPV / ventilação nasal', hfnc: 'HFNC', vm: 'Ventilação mecânica', ar: 'Ar ambiente / sem suporte' };
+      return m[val] || val;
+    }
+
+    function especialHemodinamica() {
+      return v('especial') === 'dbp_hp' || c('hipertPulm');
+    }
+
+    function indicacaoSurfactanteForm() {
+      const f2 = num('fio2');
+      const m = num('map');
+      const esf = c('retracoes') || c('gemencia') || c('apneia') || c('bradicardia');
+      return (f2 !== null && f2 >= 0.30) || (m !== null && m >= 6) || c('lus') || esf;
+    }
+
+    /** Mesmo conteúdo exibido em #out_parto (texto plano, uma linha por item). */
+    function linhasParametrosSalaPorIg(ig) {
+      if (ig === null || !Number.isFinite(ig)) return ['(Informar idade gestacional.)'];
+      const fio2Ini = ig < 29 ? '0,60' : (ig <= 31 ? '0,30' : '0,21');
+      const L = [
+        'FiO₂ inicial sugerida: ' + fio2Ini + '.',
+        'CPAP: iniciar ≥ 6 cmH₂O se respirando espontaneamente.',
+        'VPP: iniciar se apneia ou respiração ineficaz por 30–60 s.',
+        'Meta aos 5 min: SpO₂ > 80% e FC > 100 bpm.'
+      ];
+      if (ig <= 23) L.push('Nota: considerar intubação e surfactante ultra-precoce.');
+      return L;
+    }
+
+    function listaAchadosMarcados() {
+      const itens = [];
+      if (c('retracoes')) itens.push('Retrações / aumento do trabalho respiratório');
+      if (c('gemencia')) itens.push('Gemência / desconforto respiratório significativo');
+      if (c('apneia')) itens.push('Apneia recorrente');
+      if (c('bradicardia')) itens.push('Bradicardia / instabilidade');
+      if (c('lus')) itens.push('Ultrassom pulmonar com padrão associado a SDR na literatura de referência (consultivo)');
+      if (c('intubSala')) itens.push('Intubado para estabilização (registro informado)');
+      if (c('hipertPulm')) itens.push('Contexto de hipertensão pulmonar assinalado (metas informativas ajustadas na ferramenta)');
+      return itens;
+    }
+
+    function listaSalaChecklist() {
+      const itens = [];
+      if (c('sala_clamp')) itens.push('Clampeamento ≥ 60 s');
+      if (c('sala_saco')) itens.push('Saco / gases aquecidos');
+      if (c('sala_preductal')) itens.push('Monitorar SpO₂ pré-ductal');
+      if (c('sala_tpiece')) itens.push('T-piece (PIP ~ 25)');
+      return itens;
+    }
+
+    function listaAntenatalChecklist() {
+      const itens = [];
+      if (c('ancs_curso_unico')) itens.push('ANCS: curso único documentado (risco de PTB até 34s; ideal ≥24 h antes do parto)');
+      if (c('ancs_repeticao')) itens.push('ANCS: curso de repetição documentado (antes de 32s; 1º curso há >1–2 semanas)');
+      if (c('ancs_nao')) itens.push('ANCS: não recebido ou não documentado neste episódio');
+      if (c('mgso4_neuro')) itens.push('MgSO₄: neuroproteção fetal documentada (parto iminente antes de 32s)');
+      if (c('mgso4_nao')) itens.push('MgSO₄: não recebido, não aplicável ou não documentado');
+      return itens;
+    }
+
+    function escHtml(s) {
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function preencherResumoResultadoAnalise(passosDiretos) {
+      const el = document.getElementById('resumoAntenatal');
+      if (!el) return;
+      const ant = listaAntenatalChecklist();
+      const sala = listaSalaChecklist();
+      const surf = indicacaoSurfactanteForm();
+      el.classList.remove('resumo-vazio');
+      let html = '<div class="resumo-analise-titulo">Síntese educacional — dados e literatura</div>';
+      if (passosDiretos && passosDiretos.length) {
+        html += '<div class="resumo-bloco"><h4>Conteúdo informativo (ordem didática)</h4><ol style="margin:0;padding-left:1.25rem;line-height:1.55;">';
+        html += passosDiretos.map(function (t) { return '<li style="margin:6px 0;">' + escHtml(t) + '</li>'; }).join('');
+        html += '</ol></div>';
+      }
+      html += '<div class="resumo-bloco"><h4>Surfactante — comparação com critérios desta ferramenta</h4><p style="margin:0;font-weight:700;color:' + (surf ? 'var(--warn)' : 'var(--ok)') + ';">' + (surf ? 'Os critérios numéricos deste módulo coincidem com o cenário em que a diretriz discute surfactante — confira dose no texto abaixo e valide clinicamente.' : 'Os critérios numéricos deste módulo não estão preenchidos neste instante — isso não exclui necessidade assistencial.') + '</p></div>';
+      html += '<div class="resumo-bloco"><h4>Antenatal + sala de parto</h4>';
+      html += '<p style="margin:0 0 8px;color:var(--muted);font-size:0.88rem;">Antenatal: ' + escHtml(ant.length ? ant.join(' · ') : 'não assinalado') + '</p>';
+      html += '<p style="margin:0;color:var(--muted);font-size:0.88rem;">Sala: ' + escHtml(sala.length ? sala.join(' · ') : 'nenhum item') + '</p></div>';
+      html += '<p class="small" style="margin:10px 0 0;">Abaixo: texto corrido para cópia — linguagem informativa; interpretação e conduta são do profissional assistente.</p>';
+      el.innerHTML = html;
+    }
+
+    function limparResumoResultadoAnalise() {
+      const el = document.getElementById('resumoAntenatal');
+      if (!el) return;
+      el.classList.add('resumo-vazio');
+      el.innerHTML = 'Gere o <strong>resumo informativo</strong> para ver aqui a síntese educacional, a comparação com critérios da diretriz (surfactante) e o resumo antenatal/sala.';
+    }
+
+    function suporteGuidelineParaLus(vl) {
+      var m = {
+        ar: 'Ar ambiente',
+        cpap: 'CPAP',
+        nippv: 'NIPPV',
+        hfnc: 'Cateter / O₂',
+        vm: 'Ventilação invasiva'
+      };
+      return m[vl] || 'CPAP';
+    }
+
+    function montarUrlLusComDados() {
+      var p = new URLSearchParams();
+      var paciente = v('paciente').trim();
+      var ig = v('ig').trim();
+      var pesoG = v('peso').trim();
+      var idadeHoras = v('idadeHoras').trim();
+      var fio2 = v('fio2').trim();
+      var suporte = suporteGuidelineParaLus(v('suporte'));
+      var obs = v('obs').trim();
+      if (paciente) p.set('paciente', paciente);
+      if (ig) p.set('ig', ig + ' semanas');
+      if (pesoG) p.set('peso', pesoG + ' g');
+      if (idadeHoras) p.set('datahora', 'Idade de vida: ' + idadeHoras + ' h');
+      if (fio2) p.set('fio2', fio2);
+      p.set('suporte', suporte);
+      if (obs) p.set('obs', obs);
+      return 'LUS_Score_Neonatal_modal.html?' + p.toString();
+    }
+
+    function abrirModalLus() {
+      var modal = document.getElementById('lusModal');
+      var frame = document.getElementById('lusModalFrame');
+      if (!modal || !frame) return;
+      frame.setAttribute('src', montarUrlLusComDados());
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function fecharModalLus() {
+      var modal = document.getElementById('lusModal');
+      if (!modal) return;
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function atualizarRetornoLusNaTela(data) {
+      var info = document.getElementById('lusRetornoInfo');
+      if (!info || !data) return;
+      var txt = 'LUS: ' + data.score + '/18';
+      if (data.gravidade) txt += ' | ' + data.gravidade;
+      if (data.faixa) txt += ' | faixa ' + data.faixa;
+      txt += ' | sugestão USG: ' + (data.sugere_usg ? 'positiva' : 'não sugestiva');
+      info.textContent = txt;
+    }
+
+    function normalizarTextoRelatorio(texto) {
+      if (!texto) return '';
+      return String(texto)
+        .replace(/[▶⚠•]/g, '-')
+        .replace(/[≤]/g, '<=')
+        .replace(/[≥]/g, '>=')
+        .replace(/[≈]/g, '~')
+        .replace(/[₂]/g, '2')
+        .replace(/[₄]/g, '4')
+        .replace(/[ª]/g, 'a')
+        .replace(/[º]/g, 'o')
+        .replace(/[–—]/g, '-')
+        .replace(/[“”]/g, '"')
+        .replace(/[‘’]/g, "'")
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^\x09\x0A\x0D\x20-\x7E]/g, '')
+        .replace(/[ \t]+\n/g, '\n')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+    }
+
+    function upsertObsComLus(data) {
+      var obsEl = document.getElementById('obs');
+      if (!obsEl || !data || !data.sugestao_texto) return;
+      var base = (obsEl.value || '').replace(/\n?\[LUS\][\s\S]*?\[\/LUS\]\n?/g, '\n').trim();
+      var bloco = '[LUS]\n' +
+        'Score: ' + data.score + '/18' +
+        (data.gravidade ? ' | Gravidade: ' + data.gravidade : '') +
+        (data.faixa ? ' | Faixa: ' + data.faixa : '') + '\n' +
+        'Interpretação: ' + data.sugestao_texto + '\n' +
+        '[/LUS]';
+      obsEl.value = (base ? base + '\n\n' : '') + bloco;
+    }
+
+    /** Interpretação qualitativa; não duplica a linha numérica do bloco 2. */
+    function linhasInterpretacaoVigilancia(idadeHoras, spo2, fc, ig, hpContext) {
+      const out = [];
+      if (idadeHoras !== null) {
+        const h = idadeHoras.toFixed(0);
+        if (idadeHoras <= 1) {
+          let t = 'Idade de vida ≤ 1 h: fase de transição — vigilância contínua.';
+          if (ig !== null && ig < 28) t += ' Com IG < 28 sem, a diretriz discute surfactante seletivo precoce em cenários com sinais de SDR — correlacionar clinicamente.';
+          out.push(t);
+        } else if (idadeHoras <= 24) {
+          out.push('Idade de vida ' + h + ' h: quadro evolutivo; na prática costuma-se rever critérios e resposta ao suporte — frequência assistencial.');
+        } else {
+          out.push('Idade de vida ' + h + ' h: integrar evolução recente (oxigênio, esforço, exames complementares).');
+        }
+      }
+      if (spo2 !== null) {
+        let interp;
+        if (hpContext) {
+          if (spo2 < 93) interp = 'abaixo do alvo sugerido nesta ferramenta para contexto com hipertensão pulmonar (94–97%).';
+          else if (spo2 <= 97) interp = 'dentro da faixa sugerida para HP (94–97%).';
+          else if (spo2 <= 98) interp = 'próximo ao limite superior (alarme máx. sugerido 98%).';
+          else interp = 'acima do limite de alarme sugerido nesta ferramenta (98%) — correlacionar oxigenoterapia e alvo com a equipe assistencial.';
+        } else {
+          if (spo2 < 90) interp = 'abaixo do alvo habitual sugerido (90–94%).';
+          else if (spo2 <= 94) interp = 'dentro do alvo habitual (90–94%).';
+          else if (spo2 <= 95) interp = 'no limite alto em relação ao alvo; alarmes sugeridos nesta ferramenta até 95% — titulação de FiO₂ conforme avaliação clínica.';
+          else interp = 'acima do limite superior de alarme sugerido nesta ferramenta (95%) — correlacionar com risco de hiperóxia e titulação de oxigênio conforme julgamento clínico.';
+        }
+        out.push('SpO₂ ' + spo2.toFixed(0) + '%: ' + interp);
+      }
+      if (fc !== null) {
+        if (fc < 100) {
+          out.push('FC ' + fc.toFixed(0) + ' bpm: bradicardia relativa no RN — correlacionar com ventilação, perfusão e causas extra-respiratórias (avaliação clínica).');
+        } else if (fc < 120) {
+          out.push('FC ' + fc.toFixed(0) + ' bpm: frequentemente compatível com estabilidade; manter correlação clínica.');
+        } else {
+          out.push('FC ' + fc.toFixed(0) + ' bpm: sem critério isolado na calculadora; correlacionar com esforço respiratório, dor e sedação.');
+        }
+      }
+      return out;
+    }
+
+    function calcularConduta() {
+      const paciente = v('paciente') || 'Paciente sem identificação';
+      const ig = num('ig');
+      const peso = num('peso');
+      const idadeHoras = num('idadeHoras');
+      const suporte = v('suporte');
+      const map = num('map');
+      const fio2 = num('fio2');
+      const spo2 = num('spo2');
+      const fc = num('fc');
+      const obs = v('obs').trim();
+      const lusImportMatch = obs.match(/\[LUS\]([\s\S]*?)\[\/LUS\]/);
+      const lusImport = lusImportMatch ? lusImportMatch[1].trim() : '';
+      const obsSemLus = obs.replace(/\n?\[LUS\][\s\S]*?\[\/LUS\]\n?/g, '\n').trim();
+
+      const sinaisClinicos = c('retracoes') || c('gemencia') || c('apneia') || c('bradicardia');
+      const lus = c('lus');
+      const intubSala = c('intubSala');
+      const hpContext = especialHemodinamica();
+
+      const badges = [];
+      const linhas = [];
+
+      if (!ig || !peso || fio2 === null) {
+        document.getElementById('resultado').textContent = 'Preencha pelo menos idade gestacional, peso e FiO2.';
+        document.getElementById('badges').innerHTML = '';
+        limparResumoResultadoAnalise();
+        calcularDose();
+        atualizarProtocoloOperacional();
+        return;
+      }
+
+      let satAlvo = '90–94%';
+      let alarmes = '89–95%';
+      if (hpContext) {
+        satAlvo = '94–97%';
+        alarmes = 'mín. 93% / máx. 98%';
+      }
+
+      if (ig < 28) badges.push(badge('Extremamente prematuro', 'danger'));
+      else if (ig < 32) badges.push(badge('Prematuro <32 semanas', 'warn'));
+      else badges.push(badge('≥32 semanas', 'ok'));
+
+      if (fio2 >= 0.30) badges.push(badge('FiO2 elevada', 'warn'));
+      if ((map ?? 0) >= 6) badges.push(badge('MAP/CPAP no intervalo usado pela lógica educativa desta ferramenta', 'warn'));
+      if (lus) badges.push(badge('Ultrassom sugestivo', 'warn'));
+      if (intubSala) badges.push(badge('Intubado na estabilização', 'danger'));
+      if (suporte === 'vm') badges.push(badge('Em ventilação mecânica', 'danger'));
+
+      if (c('ancs_curso_unico')) badges.push(badge('ANCS curso único', 'ok'));
+      if (c('ancs_repeticao')) badges.push(badge('ANCS repetição', 'ok'));
+      if (c('ancs_nao')) badges.push(badge('ANCS não documentado', 'warn'));
+      if (c('mgso4_neuro')) badges.push(badge('MgSO₄ neuroproteção', 'ok'));
+      if (c('mgso4_nao')) badges.push(badge('MgSO₄ não doc. / N/A', 'warn'));
+
+      const criterioSurfactante = indicacaoSurfactanteForm();
+      const doseMg200 = ((peso / 1000) * 200).toFixed(1);
+      const volMl80 = (parseFloat(doseMg200) / 80).toFixed(1);
+
+      let espLinha = 'Nenhuma';
+      if (v('especial') === 'dbp_hp') espLinha = 'DBP com hipertensão pulmonar (campo condição especial)';
+      if (c('hipertPulm') && v('especial') !== 'dbp_hp') espLinha = 'Hipertensão pulmonar assinalada nos achados da UTI neonatal';
+      if (v('especial') === 'dbp_hp' && c('hipertPulm')) espLinha = 'DBP com HP (condição especial) e hipertensão pulmonar nos achados da UTI neonatal';
+
+      const planoItens = [];
+      if (!criterioSurfactante && suporte !== 'vm') {
+        planoItens.push('Contexto informado: suporte não invasivo; correlacionar esforço, FiO₂, USG e eventual mudança de modalidade com protocolo institucional.');
+      }
+      if (suporte === 'cpap') planoItens.push('Nota educativa (CPAP): a diretriz discute interface, vazamento e pressão — aplicar conforme prescrição e unidade.');
+      if (suporte === 'nippv') planoItens.push('Nota educativa (NIPPV): indicações e ajustes constam em protocolos locais e na literatura — não prescritas por esta ferramenta.');
+      if (suporte === 'hfnc') planoItens.push('Nota educativa (HFNC): a literatura correlaciona piora com discussão de CPAP/NIPPV em determinados cenários.');
+      if (suporte === 'vm') planoItens.push('Nota educativa (VM): diretriz enfatiza estratégia protetora e metas — implementação depende de avaliação clínica.');
+
+      const alertas = [];
+      if (spo2 !== null) {
+        if (spo2 < 90) alertas.push('SpO₂ abaixo da faixa usualmente citada na diretriz — correlacionar com oxigenoterapia, interface e gravidade do quadro.');
+        if (!hpContext && spo2 > 95) alertas.push('SpO₂ acima da meta usual na diretriz para contexto sem HP selecionada — correlacionar risco de hiperóxia.');
+        if (hpContext && spo2 > 98) alertas.push('SpO₂ muito elevada no contexto de HP assinalado — metas devem ser individualizadas pela equipe.');
+      }
+      if (fc !== null && fc < 100) alertas.push('FC baixa para o contexto — correlacionar com ventilação, perfusão e causas não respiratórias.');
+      if (c('apneia') && suporte !== 'vm') alertas.push('Apneias assinaladas — na literatura discute-se correlação com falha de suporte não invasivo; decisão assistencial.');
+      if (ig < 28 && idadeHoras !== null && idadeHoras <= 1 && sinaisClinicos) alertas.push('Prematuro extremo na 1ª hora com sinais assinalados: a diretriz discute surfactante seletivo precoce em cenários semelhantes — não é determinação automatizada.');
+
+      const passosDiretos = [];
+      passosDiretos.push('Dados informados para conferência: ' + paciente + ' | IG ' + ig.toFixed(1) + ' sem | ' + peso.toFixed(0) + ' g | ' + suporteLabel(suporte) + (map !== null ? ' | MAP/CPAP ' + map.toFixed(1) + ' cmH₂O' : '') + ' | FiO₂ ' + fio2.toFixed(2) + (spo2 !== null ? ' | SpO₂ ' + spo2.toFixed(0) + '%' : '') + (fc !== null ? ' | FC ' + fc.toFixed(0) : ''));
+      alertas.forEach(function (a) { passosDiretos.push('⚠ Ponto a correlacionar clinicamente: ' + a); });
+      if (ig < 32 && intubSala) {
+        passosDiretos.push('Comparação com diretriz: RN <32s intubado na estabilização — literatura enfatiza discussão precoce de surfactante. Dose frequentemente citada: 200 mg/kg = ' + doseMg200 + ' mg (≈ ' + volMl80 + ' mL se preparação 80 mg/mL — conferir produto). Decisão e via: assistencial.');
+      } else if (criterioSurfactante) {
+        passosDiretos.push('Critérios numéricos desta ferramenta coincidem com cenário em que a diretriz discute surfactante. Dose usualmente citada: 200 mg/kg = ' + doseMg200 + ' mg (≈ ' + volMl80 + ' mL se 80 mg/mL). Via/técnica (incl. LISA/MIST): protocolo e juízo clínico.');
+      } else if (ig < 28) {
+        passosDiretos.push('Critérios numéricos não preenchidos neste instante; a diretriz discute vigilância na 1ª hora e disponibilidade de surfactante se piora — planejamento institucional.');
+      } else {
+        passosDiretos.push('Critérios numéricos não preenchidos; na diretriz discute-se surfactante com FiO₂ elevada ou piora clínica — acompanhamento assistencial.');
+      }
+      passosDiretos.push('Metas de SpO₂ citadas na diretriz (apoio informativo): ' + satAlvo + ' | faixa de alarmes sugerida nesta ferramenta: ' + alarmes + ' — ajustar ao paciente e à unidade.');
+      planoItens.forEach(function (p) { passosDiretos.push(p); });
+      passosDiretos.push('Reavaliação clínica periódica: trabalho respiratório, FiO₂, interface, USG/gasometria quando disponíveis.');
+
+      linhas.push('══════════════════════════════════════════════════════');
+      linhas.push('SDR — RESUMO INFORMATIVO (EDUCACIONAL)');
+      linhas.push('══════════════════════════════════════════════════════');
+      linhas.push('');
+      if (lusImport) {
+        linhas.push('▶ USG PULMONAR (texto importado do LUS Score — referência consultiva)');
+        lusImport.split('\n').forEach(function (ln) {
+          var t = ln.trim();
+          if (t) linhas.push('• ' + t);
+        });
+        linhas.push('');
+      }
+      linhas.push('▶ SÍNTESE CORRELACIONADA À DIRETRIZ (não prescreve nem substitui julgamento clínico)');
+      passosDiretos.forEach(function (p, idx) {
+        linhas.push((idx + 1) + '. ' + p);
+      });
+      linhas.push('');
+      linhas.push('▶ SURFACTANTE — CRITÉRIOS NUMÉRICOS DESTA FERRAMENTA');
+      linhas.push('Critérios reproduzidos pelo módulo preenchidos agora: ' + (criterioSurfactante ? 'sim (cenário frequentemente discutido na diretriz)' : 'não') + '  |  FiO₂≥0,30: ' + (fio2 >= 0.30 ? 'sim' : 'não') + '  |  MAP≥6: ' + ((map !== null && map >= 6) ? 'sim' : 'não') + '  |  USG+: ' + (lus ? 'sim' : 'não') + '  |  Esforço/apneia/BC: ' + (sinaisClinicos ? 'sim' : 'não'));
+      linhas.push('Produto frequentemente citado na diretriz de referência: poractant alfa (conferir protocolo e apresentação locais).');
+      linhas.push('Oxigenação / condição especial assinalada: ' + espLinha);
+      linhas.push('');
+      linhas.push('▶ CONTEXTO (antecedentes e UTI) — resumo informativo');
+      const antItems = listaAntenatalChecklist();
+      linhas.push('Antenatal: ' + (antItems.length ? antItems.join(' · ') : 'não assinalado — completar se aplicável.'));
+      const salaItens = listaSalaChecklist();
+      linhas.push('Sala de parto (checklist): ' + (salaItens.length ? salaItens.join(' · ') : 'nenhum item'));
+      linhas.push('IG → parâmetros iniciais descritos na diretriz (educativo): ' + linhasParametrosSalaPorIg(ig).join(' '));
+      const achados = listaAchadosMarcados();
+      linhas.push('UTI — achados assinalados: ' + (achados.length ? achados.join(' · ') : 'nenhum'));
+      const vigLinhas = linhasInterpretacaoVigilancia(idadeHoras, spo2, fc, ig, hpContext);
+      if (vigLinhas.length) {
+        linhas.push('Parâmetros idade/SpO₂/FC (interpretação consultiva): ' + vigLinhas.join(' '));
+      }
+      linhas.push('');
+      linhas.push('▶ TRECHOS MENCIONADOS NA DIRETRIZ (leitura — não substituem protocolo)');
+      linhas.push('• Hipotensão: diretriz discute evitar bolus salino de rotina.');
+      linhas.push('• Antibióticos: diretriz discute suspensão com culturas negativas em 36–48 h.');
+      linhas.push('• Nutrição: diretriz menciona NPT + enteral mínima em contextos descritos no texto-fonte.');
+      linhas.push('• PDA: diretriz favorece conduta conservadora; intervenção se sintomático (assistencial).');
+      linhas.push('');
+      linhas.push('Ref.: Sweet DG et al. European Consensus RDS 2025. Neonatology 2026. DOI 10.1159/000551062.');
+      linhas.push('(Texto ampliado ANCS/MgSO₄ permanece no bloco «Medicação antenatal materna» — finalidade educativa.)');
+
+      if (obsSemLus) {
+        linhas.push('');
+        linhas.push('▶ OBSERVAÇÕES (UTI)');
+        linhas.push(obsSemLus);
+      }
+
+      document.getElementById('resultado').textContent = normalizarTextoRelatorio(linhas.join('\n'));
+      document.getElementById('badges').innerHTML = badges.join(' ');
+      preencherResumoResultadoAnalise(passosDiretos);
+      calcularDose();
+      atualizarProtocoloOperacional();
+    }
+
+    function atualizarProtocoloOperacional() {
+      const ig = num('ig');
+      const peso = num('peso');
+      const especialHP = v('especial') === 'dbp_hp' || c('hipertPulm');
+      const indicacaoSurf = indicacaoSurfactanteForm();
+      const elParto = document.getElementById('out_parto');
+      const elSurf = document.getElementById('out_surf');
+      const elUti = document.getElementById('out_uti');
+      if (!elParto || !elSurf || !elUti) return;
+
+      if (ig !== null) {
+        const partoLinhas = linhasParametrosSalaPorIg(ig);
+        let resParto = '';
+        partoLinhas.forEach(function (texto, i) {
+          let lin;
+          if (texto.indexOf('Nota:') === 0) {
+            lin = '<span class="highlight-proto">Nota:</span>' + texto.slice(5);
+          } else {
+            lin = texto.replace(/^([^:]+:)(.*)$/, '<b>$1</b>$2');
+            if (texto.indexOf('30–60 s') !== -1) {
+              lin = lin.replace('30–60 s', '<span class="highlight-proto">30–60 s</span>');
+            }
+          }
+          resParto += (i ? '<br>' : '') + lin;
+        });
+        elParto.innerHTML = resParto;
+      } else {
+        elParto.textContent = 'Informe a IG para exibir parâmetros iniciais descritos na diretriz (finalidade educativa).';
+      }
+
+      if (peso !== null && peso > 0) {
+        const doseMg = peso * 0.2;
+        const volMl = doseMg / 80;
+        if (indicacaoSurf) {
+          elSurf.innerHTML = '<b>Critérios numéricos da ferramenta coincidem com cenário em que a diretriz discute surfactante</b> (técnicas como LISA/MIST são citadas quando há suporte não invasivo adequado).<br>' +
+            '<b>Cálculo educativo (200 mg/kg):</b> ' + doseMg.toFixed(0) + ' mg (<span class="highlight-proto">≈ ' + volMl.toFixed(1) + ' ml</span> de poractant alfa a 80 mg/ml — conferir apresentação local).<br>' +
+            '<b>Redoses:</b> na diretriz há discussão de novas doses se persistirem achados compatíveis com SDR e FiO₂ elevada — decisão clínica.';
+        } else if (ig !== null && ig < 28) {
+          elSurf.innerHTML = '<b>Extremo prematuro:</b> a diretriz discute abordagem seletiva na 1ª hora na presença de sinais precoces — correlacionar com o caso real.';
+        } else {
+          elSurf.innerHTML = 'Critérios numéricos atuais não reproduzem o cenário automatizado de surfactante; manter acompanhamento conforme protocolo e parâmetros clínicos/FiO₂ descritos na literatura.';
+        }
+      } else {
+        elSurf.textContent = 'Informe o peso (g); FiO₂, MAP/CPAP e achados alimentam a comparação educativa com a diretriz.';
+      }
+
+      if (ig !== null) {
+        const spo2 = especialHP ? '94–97%' : '90–94%';
+        const alarme = especialHP ? 'mín. 93% / máx. 98%' : 'mín. 89% / máx. 95%';
+        elUti.innerHTML = '<b>Metas de SpO₂ usualmente citadas na diretriz (informativas):</b> ' + spo2 + ' (faixas de alarme sugeridas nesta ferramenta: ' + alarme + ').<br>' +
+          '<b>VM:</b> a diretriz discute ventilação protetora com <span class="highlight-proto">volume garantido (VG)</span> / volume-targeted ventilation quando clinicamente indicada.<br>' +
+          '<b>Pós-extubação:</b> a literatura compara modalidades (ex.: NIPPV vs CPAP) conforme cenário — aplicabilidade local e decisão assistencial.';
+      } else {
+        elUti.textContent = 'Informe a IG para exibir metas de oxigenação citadas na diretriz (finalidade educativa).';
+      }
+    }
+
+    function copiarRelatorio() {
+      let texto = normalizarTextoRelatorio(document.getElementById('resultado').textContent);
+      if (typeof window.neopedLegalReportFooter === 'function') {
+        texto += window.neopedLegalReportFooter();
+      }
+      navigator.clipboard.writeText(texto)
+        .then(() => { if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.'); })
+        .catch(() => { if (typeof window.neopedCopyFail === 'function') window.neopedCopyFail(); else alert('Nao foi possivel copiar automaticamente. Revise o texto e copie manualmente para uso informativo.'); });
+    }
+
+    function limparTudo() {
+      document.querySelectorAll('input, textarea').forEach(el => {
+        if (el.type === 'checkbox') el.checked = false;
+        else el.value = '';
+      });
+
+      document.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+      document.getElementById('resultado').textContent = 'Preencha os dados e clique em “Gerar resumo informativo”.';
+      document.getElementById('badges').innerHTML = '';
+      limparResumoResultadoAnalise();
+      document.getElementById('doseSurfactante').textContent = 'Informe o peso para calcular.';
+      var op = document.getElementById('out_parto');
+      var os = document.getElementById('out_surf');
+      var ou = document.getElementById('out_uti');
+      var li = document.getElementById('lusRetornoInfo');
+      if (op) op.textContent = 'Informe a IG para parâmetros educativos da diretriz.';
+      if (os) os.textContent = 'Informe o peso (g); FiO₂, MAP e achados alimentam a comparação com a diretriz.';
+      if (ou) ou.textContent = 'Informe a IG para metas informativas citadas na diretriz.';
+      if (li) li.textContent = 'LUS sem retorno ainda.';
+    }
+
+    function carregarExemplo() {
+      document.getElementById('paciente').value = 'RN exemplo / Leito 2';
+      document.getElementById('ig').value = '27.6';
+      document.getElementById('peso').value = '920';
+      document.getElementById('idadeHoras').value = '2';
+      document.getElementById('suporte').value = 'cpap';
+      document.getElementById('map').value = '6';
+      document.getElementById('fio2').value = '0.34';
+      document.getElementById('spo2').value = '90';
+      document.getElementById('fc').value = '146';
+      document.getElementById('ancs_curso_unico').checked = true;
+      document.getElementById('mgso4_neuro').checked = true;
+      document.getElementById('retracoes').checked = true;
+      document.getElementById('gemencia').checked = true;
+      document.getElementById('lus').checked = true;
+      document.getElementById('obs').value = 'Piora progressiva da FiO2 desde a admissão. RX inicial compatível com SDR.';
+      calcularConduta();
+      atualizarProtocoloOperacional();
+    }
+
+    function bindProtoUpdates() {
+      var ids = ['paciente', 'ig', 'peso', 'idadeHoras', 'fio2', 'map', 'spo2', 'fc', 'obs', 'suporte', 'especial', 'retracoes', 'gemencia', 'apneia', 'bradicardia', 'lus', 'intubSala', 'hipertPulm'];
+      ids.forEach(function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var fn = function () { atualizarTudoAutomatico(); };
+        el.addEventListener('input', fn);
+        el.addEventListener('change', fn);
+      });
+    }
+
+    (function () {
+      var pe = document.getElementById('peso');
+      if (!pe) return;
+      function onPeso() {
+        atualizarTudoAutomatico();
+      }
+      pe.addEventListener('input', onPeso);
+      pe.addEventListener('change', onPeso);
+    })();
+    function podeGerarCondutaCompleta() {
+      var ig = num('ig');
+      var peso = num('peso');
+      var f2 = num('fio2');
+      return !!(ig && peso && f2 !== null);
+    }
+
+    function atualizarTudoAutomatico() {
+      if (podeGerarCondutaCompleta()) {
+        calcularConduta();
+      } else {
+        calcularDose();
+        atualizarProtocoloOperacional();
+      }
+    }
+
+    function bindSalaChecklistAtualizaRelatorio() {
+      ['sala_clamp', 'sala_saco', 'sala_preductal', 'sala_tpiece'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('change', function () {
+          atualizarTudoAutomatico();
+        });
+      });
+    }
+
+    function bindAntenatalAtualizaRelatorio() {
+      ['ancs_curso_unico', 'ancs_repeticao', 'ancs_nao', 'mgso4_neuro', 'mgso4_nao'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('change', function () {
+          atualizarTudoAutomatico();
+        });
+      });
+    }
+
+    function bindModalLus() {
+      var modal = document.getElementById('lusModal');
+      if (!modal) return;
+      modal.addEventListener('click', function (ev) {
+        if (ev.target === modal) fecharModalLus();
+      });
+      document.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Escape' && modal.classList.contains('open')) {
+          fecharModalLus();
+        }
+      });
+      window.addEventListener('message', function (ev) {
+        var d = ev.data;
+        var frame = document.getElementById('lusModalFrame');
+        if (!d || d.type !== 'lus_update') return;
+        if (frame && ev.source !== frame.contentWindow) return;
+        if (typeof d.score !== 'number') return;
+        atualizarRetornoLusNaTela(d);
+        upsertObsComLus(d);
+        var lusEl = document.getElementById('lus');
+        if (lusEl && typeof d.sugere_usg === 'boolean') {
+          lusEl.checked = d.sugere_usg;
+        }
+        if (podeGerarCondutaCompleta()) calcularConduta();
+        else atualizarProtocoloOperacional();
+      });
+    }
+
+    calcularDose();
+    bindProtoUpdates();
+    bindSalaChecklistAtualizaRelatorio();
+    bindAntenatalAtualizaRelatorio();
+    bindModalLus();
+    atualizarProtocoloOperacional();
+  </script>
+  <script src="../js/neoped-nav.js"></script>
+</body>
+</html>

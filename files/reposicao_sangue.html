@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — Volume de CH (simulação educativa)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .form-container {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #111827;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .result-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .result-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 5px;
+        }
+
+        .result-description {
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: none;
+        }
+
+        .info strong {
+            color: #1976d2;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #d1d5db;
+        }
+
+        .warning strong {
+            color: #856404;
+        }
+
+        .reference-table {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        .reference-table table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .reference-table th,
+        .reference-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .reference-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .reference-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                margin: 10px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 5px; }
+            .header h1 { font-size: 18px; }
+            .header p { font-size: 11px; }
+            .content { padding: 15px; }
+            .section { padding: 12px; }
+            input, select { padding: 10px; font-size: 14px; }
+            button { padding: 10px; font-size: 14px; }
+            .results { padding: 12px; }
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-info:hover {
+            background: white;
+            color: #2c3e50;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #2c3e50;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+
+            .modal-body {
+                padding: 20px;
+                max-height: 75vh;
+            }
+
+            .modal-header {
+                padding: 15px 20px;
+            }
+
+            .modal-header h2 {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 98%;
+                margin: 5% auto;
+            }
+
+            .modal-body {
+                padding: 15px;
+                max-height: 80vh;
+            }
+
+            .modal-header h2 {
+                font-size: 16px;
+            }
+
+            .modal-body h3 {
+                font-size: 16px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Cálculo de Reposição de Sangue</h1>
+            <p>NeoPedCalc - Cálculo de Volume de Concentrado de Hemácias</p>
+            <div class="header-actions">
+                <button class="btn-info" onclick="abrirModal()">
+                    Como usar
+                </button>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <form id="reposicaoForm">
+                <div class="form-group">
+                    <label for="nome">Nome do Paciente:</label>
+                    <input type="text" id="nome" placeholder="Ex: João Silva">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="peso">Peso (kg):</label>
+                        <input type="number" id="peso" step="0.001" min="0.1" max="200" placeholder="Ex: 3.500" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="idade">Idade:</label>
+                        <select id="idade" required>
+                            <option value="">Selecione a idade</option>
+                            <option value="prematuro">RN Prematuro</option>
+                            <option value="termo">RN a termo</option>
+                            <option value="lactente">Lactente (3m a 1 ano)</option>
+                            <option value="crianca">Criança (> 1 ano)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="hematocritoMedido">Hematócrito Medido (%):</label>
+                        <input type="number" id="hematocritoMedido" step="0.1" min="0" max="100" placeholder="Ex: 25.0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="hematocritoDesejado">Hematócrito Desejado (%):</label>
+                        <input type="number" id="hematocritoDesejado" step="0.1" min="0" max="100" placeholder="Ex: 35.0" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn">Calcular estimativa numérica</button>
+            </form>
+
+            <div id="results" class="results">
+                <div class="result-card">
+                    <h3>Volume Sanguíneo Estimado</h3>
+                    <div class="result-value" id="volumeSanguineo">0.0</div>
+                    <div class="result-description">ml/kg</div>
+                </div>
+
+                <div class="result-card">
+                    <h3>Volume Total de Sangue</h3>
+                    <div class="result-value" id="volumeTotalSangue">0.0</div>
+                    <div class="result-description">ml</div>
+                </div>
+
+                <div class="result-card">
+                    <h3>Volume de CH (estimativa didática)</h3>
+                    <div class="result-value" id="volumeConcentrado">0.0</div>
+                    <div class="result-description">ml — Ht do lote assumido 60%</div>
+                </div>
+
+                <div class="result-card">
+                    <h3>Volume por Peso</h3>
+                    <div class="result-value" id="volumePorPeso">0.0</div>
+                    <div class="result-description">ml/kg</div>
+                </div>
+
+                <div class="result-card">
+                    <h3>Hematócrito final (modelo idealizado)</h3>
+                    <div class="result-value" id="hematocritoFinal">0.0</div>
+                    <div class="result-description">% — não substitui laboratório pós-transfusão</div>
+                </div>
+
+                <button type="button" id="gerarRelatorio" class="btn" style="margin-top: 20px; background: #28a745;">
+                    📋 Copiar texto informativo
+                </button>
+            </div>
+
+            <div class="reference-table">
+                <h3>Referência - Volume Sanguíneo Estimado</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Idade</th>
+                            <th>Volume Sanguíneo (ml/kg)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>RN Prematuro</td>
+                            <td>90 a 100</td>
+                        </tr>
+                        <tr>
+                            <td>RN a termo</td>
+                            <td>80 a 90</td>
+                        </tr>
+                        <tr>
+                            <td>Lactente (3m a 1 ano)</td>
+                            <td>70 a 80</td>
+                        </tr>
+                        <tr>
+                            <td>Criança (> 1 ano)</td>
+                            <td>70</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="warning">
+                <strong>Atenção:</strong> Uso exclusivamente <strong>educacional e informativo</strong>. O hematócrito do concentrado está <strong>fixo em 60% só para o exercício numérico</strong> (valor real varia por unidade). Decisão de transfundir, meta de Ht, tipo de componente e segurança transfusional são <strong>assistenciais</strong> — siga protocolo institucional e prescrição médica.
+            </div>
+
+            <div class="info">
+                <strong>Referência:</strong> Ronald SL. Pediatric Anesthesia - The Requisites in Anesthesiology. 
+                Fluid and blood Administration, 2004, 115-121.
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar (informação)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta tela aplica uma <strong>fórmula didática de diluição</strong> para estimar quanto volume de concentrado de hemácias seria necessário para aproximar um <strong>hematócrito alvo hipotético</strong>, usando volume sanguíneo estimado por faixa etária. <strong>Não prescreve transfusão</strong>, não calcula unidades de banco de sangue reais e <strong>não substitui</strong> conferência de identidade, compatibilidade, prescrição ou protocolo transfusional.</p>
+                
+                <h3>Fórmulas (implementação desta página)</h3>
+                <div class="formula-box">
+                    <strong>1) Volume sanguíneo total (VST):</strong> peso (kg) × ml/kg conforme a idade selecionada (médias da tabela exibida na página: prematuro 95, termo 85, lactente 75, criança 70 ml/kg).<br><br>
+                    <strong>2) Volume de CH (modelo simplificado):</strong><br>
+                    V<sub>CH</sub> = (Ht<sub>desejado</sub> − Ht<sub>medido</sub>) × VST / Ht<sub>CH assumido</sub><br>
+                    com <strong>Ht do concentrado fixado em 60%</strong> apenas para o exercício.<br><br>
+                    <strong>3) Ht final estimado:</strong> calculado pela mesma massa de hemácias adicionada ao VST — valor aproximado, sem perdas operacionais, hemólise, sequestro esplênico etc.
+                </div>
+
+                <h3>Campos que existem neste formulário</h3>
+                <ul>
+                    <li>Nome (opcional, para texto copiado)</li>
+                    <li>Peso, faixa etária (define ml/kg)</li>
+                    <li>Hematócrito medido e hematócrito desejado (simulação)</li>
+                </ul>
+                <p style="font-size:14px;line-height:1.5;margin-top:8px;"><strong>Não há nesta tela:</strong> tipo sanguíneo, peso da bolsa, Ht real do lote, perdas, ritmo de infusão ou indicação clínica — isso pertence ao serviço de saúde.</p>
+
+                <h3>Como usar</h3>
+                <ol>
+                    <li>Preencha peso, idade e hematócritos</li>
+                    <li>Clique em calcular e confira os números como <strong>estimativa matemática</strong></li>
+                    <li>Use <strong>Copiar texto informativo</strong> para estudo ou discussão, com ressalvas explícitas</li>
+                </ol>
+
+                <h3>Medicina transfusional na prática</h3>
+                <p style="font-size:14px;line-height:1.5;">Critérios de indicação, limiares de hemoglobina/hematócrito, escolha de componente, irradiar, filtrar, velocidade e monitoramento são definidos por <strong>diretrizes e protocolos institucionais</strong> (ex.: referências AABB, sociedades de hematologia e pediatria). Consulte sempre a fonte atualizada e a equipe assistencial — não use esta calculadora como única base para transfundir.</p>
+
+                <h3>Limitações</h3>
+                <ul>
+                    <li>Ht do concentrado varia; 60% é suposição didática</li>
+                    <li>VST individual difere; faixas etárias são aproximações</li>
+                    <li>Não modela sangramento contínuo, reposição volêmica simultânea nem troca</li>
+                    <li>Resultados negativos ou zero têm sentido só como artefato matemático (ex.: alvo menor que o medido)</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referência citada na página:</strong> Ronald SL. Pediatric Anesthesia - The Requisites in Anesthesiology. Fluid and blood Administration, 2004, 115-121.<br><br>
+                    <strong>Leitura adicional (não incorporada ao cálculo):</strong> AABB; diretrizes de transfusão em pediatria (Josephson et al., Transfusion 2007); revisões clínicas atualizadas conforme sua biblioteca institucional.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Volumes sanguíneos estimados por idade (ml/kg)
+        const volumesSanguineos = {
+            prematuro: 95,    // média entre 90-100
+            termo: 85,        // média entre 80-90
+            lactente: 75,     // média entre 70-80
+            crianca: 70       // valor fixo
+        };
+
+        // Função para calcular reposição de sangue
+        function calcularReposicao() {
+            const peso = parseFloat(document.getElementById('peso').value);
+            const idade = document.getElementById('idade').value;
+            const hematocritoMedido = parseFloat(document.getElementById('hematocritoMedido').value);
+            const hematocritoDesejado = parseFloat(document.getElementById('hematocritoDesejado').value);
+
+            if (!peso || !idade || !hematocritoMedido || !hematocritoDesejado) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                return;
+            }
+
+            // Volume sanguíneo estimado por kg
+            const volumeSanguineoPorKg = volumesSanguineos[idade];
+            
+            // Volume total de sangue
+            const volumeTotalSangue = peso * volumeSanguineoPorKg;
+            
+            // Cálculo do volume de concentrado de hemácias
+            // Fórmula: V = (Ht desejado - Ht atual) × Volume sanguíneo / Ht do concentrado
+            // Assumindo hematócrito do concentrado de hemácias = 60%
+            const hematocritoConcentrado = 60;
+            const volumeConcentrado = ((hematocritoDesejado - hematocritoMedido) * volumeTotalSangue) / hematocritoConcentrado;
+            
+            // Volume por peso
+            const volumePorPeso = volumeConcentrado / peso;
+            
+            // Hematócrito final estimado
+            const hematocritoFinal = hematocritoMedido + ((volumeConcentrado * hematocritoConcentrado) / volumeTotalSangue);
+
+            // Exibir resultados
+            document.getElementById('volumeSanguineo').textContent = volumeSanguineoPorKg.toFixed(1);
+            document.getElementById('volumeTotalSangue').textContent = volumeTotalSangue.toFixed(1);
+            document.getElementById('volumeConcentrado').textContent = Math.max(0, volumeConcentrado).toFixed(1);
+            document.getElementById('volumePorPeso').textContent = Math.max(0, volumePorPeso).toFixed(2);
+            document.getElementById('hematocritoFinal').textContent = Math.min(100, Math.max(0, hematocritoFinal)).toFixed(1);
+
+            // Mostrar resultados
+            document.getElementById('results').style.display = 'block';
+        }
+
+        // Função para gerar relatório
+        function gerarRelatorio() {
+            const nome = document.getElementById('nome').value;
+            const peso = parseFloat(document.getElementById('peso').value);
+            const idade = document.getElementById('idade').value;
+            const hematocritoMedido = parseFloat(document.getElementById('hematocritoMedido').value);
+            const hematocritoDesejado = parseFloat(document.getElementById('hematocritoDesejado').value);
+
+            if (!peso || !idade || !hematocritoMedido || !hematocritoDesejado) {
+                alert('Erro: Campos obrigatórios não encontrados. Execute o cálculo primeiro.');
+                return;
+            }
+
+            // Recalcular valores
+            const volumeSanguineoPorKg = volumesSanguineos[idade];
+            const volumeTotalSangue = peso * volumeSanguineoPorKg;
+            const hematocritoConcentrado = 60;
+            const volumeConcentrado = ((hematocritoDesejado - hematocritoMedido) * volumeTotalSangue) / hematocritoConcentrado;
+            const volumePorPeso = volumeConcentrado / peso;
+            const hematocritoFinal = hematocritoMedido + ((volumeConcentrado * hematocritoConcentrado) / volumeTotalSangue);
+
+            var legalFoot = (typeof window.neopedLegalReportFooter === 'function') ? window.neopedLegalReportFooter() : '';
+
+            const relatorio = `RESUMO INFORMATIVO — SIMULACAO DE VOLUME DE CH (EDUCATIVO)
+==================================================
+
+NOTA: Apenas exercicio numerico. Nao prescreve transfusao, nao substitui banco de sangue, prescrição ou protocolo institucional.
+
+IDENTIFICACAO (opcional)
+------------------------
+- Nome: ${nome || 'Nao informado'}
+- Peso: ${peso} kg
+- Idade (categoria da tela): ${getDescricaoIdade(idade)}
+- Hematocrito medido (entrada): ${hematocritoMedido}%
+- Hematocrito desejado (hipotese de simulacao): ${hematocritoDesejado}%
+
+PARAMETROS DO MODELO NESTA PAGINA
+---------------------------------
+- Volume sanguineo estimado: ${volumeSanguineoPorKg} ml/kg (valor fixo por faixa etaria neste codigo)
+- Volume total de sangue (VST): ${volumeTotalSangue.toFixed(1)} ml
+- Hematocrito do concentrado ASSUMIDO: ${hematocritoConcentrado}% (didatico; lote real difere)
+
+RESULTADOS CALCULADOS
+---------------------
+- Volume de concentrado estimado pela formula da tela: ${Math.max(0, volumeConcentrado).toFixed(1)} ml
+- Volume por peso: ${Math.max(0, volumePorPeso).toFixed(2)} ml/kg
+- Hematocrito final ESTIMADO apos mistura ideal: ${Math.min(100, Math.max(0, hematocritoFinal)).toFixed(1)}%
+
+RESSALVAS
+---------
+- Indicacao clinica, meta de Ht/Hb, identificacao e compatibilidade sao responsabilidade assistencial.
+- Nao ha nesta ferramenta validacao de tipo sanguineo, crossmatch nem conversao para numero de bolsas.
+
+REFERENCIA
+----------
+Ronald SL. Pediatric Anesthesia - The Requisites in Anesthesiology. Fluid and blood Administration, 2004, 115-121.
+
+Gerado em: ${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR')}` + legalFoot;
+
+            navigator.clipboard.writeText(relatorio).then(() => {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(() => {
+                const textArea = document.createElement('textarea');
+                textArea.value = relatorio;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+
+        // Função para obter descrição da idade
+        function getDescricaoIdade(idade) {
+            const descricoes = {
+                prematuro: 'RN Prematuro',
+                termo: 'RN a termo',
+                lactente: 'Lactente (3m a 1 ano)',
+                crianca: 'Crianca (> 1 ano)'
+            };
+            return descricoes[idade] || 'Nao informado';
+        }
+
+        // Event listener para o formulário
+        document.getElementById('reposicaoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            calcularReposicao();
+        });
+
+        // Event listener para o botão de relatório - usando delegação de eventos
+        document.addEventListener('click', function(e) {
+            if (e.target && e.target.id === 'gerarRelatorio') {
+                gerarRelatorio();
+            }
+        });
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

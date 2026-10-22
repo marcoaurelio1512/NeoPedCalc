@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — Score de Alvarado (educativo)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .patient-info {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #d1d5db;
+        }
+
+        .patient-info h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #d1d5db;
+        }
+
+        .criteria-section {
+            margin-bottom: 30px;
+        }
+
+        .criteria-section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #d1d5db;
+            padding-bottom: 10px;
+        }
+
+        .criteria-item {
+            background: #f8f9fa;
+            margin-bottom: 15px;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #d1d5db;
+            transition: all 0.3s;
+        }
+
+        .criteria-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .criteria-item label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 16px;
+            color: #2c3e50;
+        }
+
+        .criteria-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            accent-color: #ff6b6b;
+        }
+
+        .points {
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-left: auto;
+        }
+
+        .calculate-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 20px 0;
+            width: 100%;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .results {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 30px;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .score-display {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .score-number {
+            font-size: 4em;
+            font-weight: bold;
+            color: #ff6b6b;
+            margin-bottom: 10px;
+        }
+
+        .interpretation {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #d1d5db;
+            margin-bottom: 20px;
+        }
+
+        .interpretation h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .interpretation p {
+            color: #374151;
+            line-height: 1.6;
+        }
+
+        .criteria-selected {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .criteria-selected h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .criteria-list {
+            list-style: none;
+        }
+
+        .criteria-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .criteria-list li:last-child {
+            border-bottom: none;
+        }
+
+        .generate-report-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .generate-report-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(40, 167, 69, 0.3);
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .footer p {
+            margin-bottom: 5px;
+        }
+
+        .footer a {
+            color: #ff6b6b;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .score-number {
+                font-size: 3em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 5px; }
+            .header h1 { font-size: 1.4em; }
+            .header p { font-size: 0.9em; }
+            .content { padding: 15px; }
+            .section { padding: 12px; }
+            .section h3 { font-size: 1.1em; }
+            select { padding: 10px; font-size: 14px; }
+            button { padding: 10px; font-size: 14px; }
+            .results { padding: 12px; }
+            .score-display { font-size: 2.5em; }
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-info:hover {
+            background: white;
+            color: #2c3e50;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #2c3e50;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+
+            .modal-body {
+                padding: 20px;
+                max-height: 75vh;
+            }
+
+            .modal-header {
+                padding: 15px 20px;
+            }
+
+            .modal-header h2 {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 98%;
+                margin: 5% auto;
+            }
+
+            .modal-body {
+                padding: 15px;
+                max-height: 80vh;
+            }
+
+            .modal-header h2 {
+                font-size: 16px;
+            }
+
+            .modal-body h3 {
+                font-size: 16px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Score de Alvarado</h1>
+            <p>Calculadora para Diagnóstico de Apendicite Aguda</p>
+            <div class="header-actions">
+                <button type="button" class="btn-info" onclick="abrirModal()">
+                    Como usar
+                </button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="patient-info">
+                <h3>Dados do Paciente</h3>
+                <div class="form-group">
+                    <label for="nome">Nome do Paciente:</label>
+                    <input type="text" id="nome" placeholder="Digite o nome do paciente">
+                </div>
+                <div class="form-group">
+                    <label for="idade">Idade:</label>
+                    <input type="number" id="idade" placeholder="Idade em anos" min="0" max="120">
+                </div>
+                <div class="form-group">
+                    <label for="data">Data/Hora:</label>
+                    <input type="datetime-local" id="data">
+                </div>
+            </div>
+
+            <div class="criteria-section">
+                <h3>Sintomas</h3>
+                
+                <div class="criteria-item">
+                    <label>
+                        <input type="checkbox" name="criteria" value="1" data-name="Migração da dor para o quadrante inferior direito">
+                        Migração da dor para o quadrante inferior direito
+                        <span class="points">1 ponto</span>
+                    </label>
+                </div>
+
+                <div class="criteria-item">
+                    <label>
+                        <input type="checkbox" name="criteria" value="1" data-name="Anorexia">
+                        Anorexia (perda de apetite)
+                        <span class="points">1 ponto</span>
+                    </label>
+                </div>
+
+                <div class="criteria-item">
+                    <label>
+                        <input type="checkbox" name="criteria" value="1" data-name="Náusea ou vômito">
+                        Náusea ou vômito
+                        <span class="points">1 ponto</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="criteria-section">
+                <h3>Sinais Físicos</h3>
+                
+                <div class="criteria-item">
+                    <label>
+                        <input type="checkbox" name="criteria" value="2" data-name="Sensibilidade no quadrante inferior direito">
+                        Sensibilidade no quadrante inferior direito
+                        <span class="points">2 pontos</span>
+                    </label>
+                </div>
+
+                <div class="criteria-item">
+                    <label>
+                        <input type="checkbox" name="criteria" value="1" data-name="Sensibilidade de rebote">
+                        Sensibilidade de rebote (rebound)
+                        <span class="points">1 ponto</span>
+                    </label>
+                </div>
+
+                <div class="criteria-item">
+                    <label>
+                        <input type="checkbox" name="criteria" value="1" data-name="Temperatura elevada">
+                        Temperatura elevada (>37,3°C)
+                        <span class="points">1 ponto</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="criteria-section">
+                <h3>Achados Laboratoriais</h3>
+                
+                <div class="criteria-item">
+                    <label>
+                        <input type="checkbox" name="criteria" value="2" data-name="Leucocitose">
+                        Leucocitose (>10.000 leucócitos/mm³)
+                        <span class="points">2 pontos</span>
+                    </label>
+                </div>
+
+                <div class="criteria-item">
+                    <label>
+                        <input type="checkbox" name="criteria" value="1" data-name="Desvio à esquerda">
+                        Desvio à esquerda na contagem de leucócitos
+                        <span class="points">1 ponto</span>
+                    </label>
+                </div>
+            </div>
+
+            <button class="calculate-btn" onclick="calcularScore()">Calcular Score de Alvarado</button>
+
+            <div class="results" id="results">
+                <div class="score-display">
+                    <div class="score-number" id="scoreNumber">0</div>
+                    <h3>Pontos</h3>
+                </div>
+
+                <div class="interpretation" id="interpretation">
+                    <h4>Interpretação</h4>
+                    <p id="interpretationText">Selecione os critérios para calcular o score.</p>
+                </div>
+
+                <div class="criteria-selected" id="criteriaSelected">
+                    <h4>Critérios Selecionados</h4>
+                    <ul class="criteria-list" id="criteriaList">
+                        <li>Nenhum critério selecionado</li>
+                    </ul>
+                </div>
+
+                <button type="button" class="generate-report-btn" onclick="gerarRelatorio()">Copiar texto informativo</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Score de Alvarado</strong> - Ferramenta auxiliar para diagnóstico de apendicite aguda</p>
+            <p>Desenvolvido para uso clínico | <a href="#" onclick="window.open('https://www.ncbi.nlm.nih.gov/pubmed/7455428', '_blank')">Referência Original</a></p>
+            <p><strong>Importante:</strong> Este score é uma ferramenta auxiliar e não substitui a avaliação clínica completa.</p>
+        </div>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — Score de Alvarado (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>O Score de Alvarado é uma ferramenta clínica utilizada para auxiliar no diagnóstico de apendicite aguda, combinando sintomas, sinais físicos e dados laboratoriais para determinar a probabilidade de apendicite e orientar a conduta médica.</p>
+                
+                <h3>Fórmula do Score de Alvarado</h3>
+                <div class="formula-box">
+                    <strong>Score de Alvarado = Sintomas + Sinais + Laboratório</strong><br><br>
+                    <strong>Sintomas:</strong><br>
+                    • Migração da dor: 1 ponto<br>
+                    • Anorexia: 1 ponto<br>
+                    • Náusea/vômito: 1 ponto<br><br>
+                    <strong>Sinais:</strong><br>
+                    • Dor em fossa ilíaca direita: 2 pontos<br>
+                    • Dor à descompressão: 1 ponto<br>
+                    • Febre >37.5°C: 1 ponto<br><br>
+                    <strong>Laboratório:</strong><br>
+                    • Leucocitose >10.000/mm³: 2 pontos<br>
+                    • Desvio à esquerda: 1 ponto<br><br>
+                    <strong>Escala Total:</strong> 0-10 pontos
+                </div>
+
+                <h3>Critérios de Avaliação</h3>
+                <ul>
+                    <li><strong>Migração da dor:</strong> Dor que inicia no epigástrio e migra para fossa ilíaca direita</li>
+                    <li><strong>Anorexia:</strong> Perda de apetite</li>
+                    <li><strong>Náusea/vômito:</strong> Sintomas gastrointestinais</li>
+                    <li><strong>Dor em FID:</strong> Dor localizada na fossa ilíaca direita</li>
+                    <li><strong>Dor à descompressão:</strong> Dor à palpação profunda com liberação súbita</li>
+                    <li><strong>Febre:</strong> Temperatura >37.5°C</li>
+                    <li><strong>Leucocitose:</strong> Leucócitos >10.000/mm³</li>
+                    <li><strong>Desvio à esquerda:</strong> Aumento de neutrófilos jovens</li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Sintomas:</strong> Marque os sintomas presentes</li>
+                    <li><strong>Sinais Físicos:</strong> Avalie os sinais no exame físico</li>
+                    <li><strong>Laboratório:</strong> Informe os valores do hemograma</li>
+                    <li>Clique em <strong>"Calcular Score"</strong> para obter o resultado</li>
+                </ol>
+
+                <h3>Interpretação dos Resultados</h3>
+                <ul>
+                    <li><strong>0-4 pontos:</strong> Baixa probabilidade de apendicite (5-15%)</li>
+                    <li><strong>5-6 pontos:</strong> Probabilidade intermediária (20-40%)</li>
+                    <li><strong>7-8 pontos:</strong> Alta probabilidade de apendicite (60-85%)</li>
+                    <li><strong>9-10 pontos:</strong> Muito alta probabilidade (>85%)</li>
+                </ul>
+
+                <h3>Condutas por Escore</h3>
+                <ul>
+                    <li><strong>0-4 pontos:</strong> Observação, exames complementares ou alta</li>
+                    <li><strong>5-6 pontos:</strong> Observação clínica, reavaliação</li>
+                    <li><strong>7-8 pontos:</strong> Considerar cirurgia</li>
+                    <li><strong>9-10 pontos:</strong> Cirurgia imediata</li>
+                </ul>
+
+                <h3>Considerações Importantes</h3>
+                <ul>
+                    <li>Complementar à avaliação clínica, não substituto</li>
+                    <li>Mais útil em adultos jovens</li>
+                    <li>Menos confiável em idosos, gestantes e crianças</li>
+                    <li>Considerar diagnósticos diferenciais</li>
+                    <li>Reavaliar conforme evolução clínica</li>
+                    <li>Usar em conjunto com exames de imagem quando necessário</li>
+                    <li>Documentar o escore no prontuário</li>
+                </ul>
+
+                <h3>Aplicações Clínicas</h3>
+                <ul>
+                    <li><strong>Triagem:</strong> Identificar pacientes de alto risco</li>
+                    <li><strong>Tomada de Decisão:</strong> Orientar conduta cirúrgica</li>
+                    <li><strong>Comunicação:</strong> Padronizar avaliação entre equipes</li>
+                    <li><strong>Educação:</strong> Ensino de diagnóstico clínico</li>
+                    <li><strong>Pesquisa:</strong> Estudos de acurácia diagnóstica</li>
+                </ul>
+
+                <h3>Limitações</h3>
+                <ul>
+                    <li>Não considera características demográficas específicas</li>
+                    <li>Menos preciso em populações atípicas</li>
+                    <li>Pode haver variação na interpretação dos sinais</li>
+                    <li>Não substitui o julgamento clínico</li>
+                    <li>Pode não capturar apresentações atípicas</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Alvarado A. A practical score for the early diagnosis of acute appendicitis. Ann Emerg Med. 1986;15(5):557-64.<br>
+                    - Kalan M, Talbot D, Cunliffe WJ, Rich AJ. Evaluation of the modified Alvarado score in the diagnosis of acute appendicitis: a prospective study. Ann R Coll Surg Engl. 1994;76(6):418-9.<br>
+                    - Ohle R, O'Reilly F, O'Brien KK, Fahey T, Dimitrov BD. The Alvarado score for predicting acute appendicitis: a systematic review. BMC Med. 2011;9:139.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Definir data atual
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const dateTimeString = now.toISOString().slice(0, 16);
+            document.getElementById('data').value = dateTimeString;
+        });
+
+        function calcularScore() {
+            const checkboxes = document.querySelectorAll('input[name="criteria"]:checked');
+            let score = 0;
+            let selectedCriteria = [];
+
+            checkboxes.forEach((checkbox) => {
+                score += parseInt(checkbox.value);
+                selectedCriteria.push({
+                    name: checkbox.getAttribute('data-name'),
+                    points: parseInt(checkbox.value)
+                });
+            });
+
+            // Exibir resultados
+            document.getElementById('scoreNumber').textContent = score;
+            document.getElementById('results').classList.add('show');
+
+            // Interpretação do score
+            let interpretation = '';
+            let interpretationClass = '';
+
+            if (score >= 9) {
+                interpretation = 'Muito alta probabilidade de apendicite. Intervenção cirúrgica geralmente indicada. Considerar laparoscopia exploratória.';
+                interpretationClass = 'high-risk';
+            } else if (score >= 7) {
+                interpretation = 'Alta probabilidade de apendicite. Considerar avaliação cirúrgica. Pode ser indicada laparoscopia exploratória.';
+                interpretationClass = 'high-risk';
+            } else if (score >= 5) {
+                interpretation = 'Probabilidade intermediária de apendicite. Recomenda-se observação, reavaliação clínica e exames adicionais (ultrassom, tomografia).';
+                interpretationClass = 'intermediate';
+            } else {
+                interpretation = 'Baixa probabilidade de apendicite. Considerar diagnósticos diferenciais. Pode ser dispensada observação hospitalar.';
+                interpretationClass = 'low-risk';
+            }
+
+            document.getElementById('interpretationText').textContent = interpretation;
+
+            // Aplicar classe de cor baseada no risco
+            const interpretationDiv = document.getElementById('interpretation');
+            interpretationDiv.className = 'interpretation ' + interpretationClass;
+
+            // Listar critérios selecionados
+            const criteriaList = document.getElementById('criteriaList');
+            criteriaList.innerHTML = '';
+
+            if (selectedCriteria.length === 0) {
+                criteriaList.innerHTML = '<li>Nenhum critério selecionado</li>';
+            } else {
+                selectedCriteria.forEach(criteria => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `${criteria.name} <span class="points">${criteria.points} ponto${criteria.points > 1 ? 's' : ''}</span>`;
+                    criteriaList.appendChild(li);
+                });
+            }
+
+            // Salvar dados para relatório
+            window.currentScore = {
+                score: score,
+                interpretation: interpretation,
+                selectedCriteria: selectedCriteria,
+                patientName: document.getElementById('nome').value,
+                age: document.getElementById('idade').value,
+                date: document.getElementById('data').value
+            };
+        }
+
+        function gerarRelatorio() {
+            if (!window.currentScore) {
+                alert('Por favor, calcule o score primeiro.');
+                return;
+            }
+
+            const data = new Date(window.currentScore.date);
+            const dataFormatada = data.toLocaleString('pt-BR');
+
+            let relatorio = `RESUMO INFORMATIVO — SCORE DE ALVARADO (EDUCATIVO)
+=====================================
+
+DADOS DO PACIENTE
+-----------------
+Data/Hora: ${dataFormatada}
+Nome: ${window.currentScore.patientName || 'Não informado'}
+Idade: ${window.currentScore.age || 'Não informada'} anos
+
+SCORE CALCULADO
+---------------
+Score de Alvarado: ${window.currentScore.score} pontos
+
+INTERPRETAÇÃO
+-------------
+${window.currentScore.interpretation}
+
+CRITÉRIOS SELECIONADOS
+---------------------
+`;
+
+            if (window.currentScore.selectedCriteria.length === 0) {
+                relatorio += 'Nenhum critério selecionado\n';
+            } else {
+                window.currentScore.selectedCriteria.forEach(criteria => {
+                    relatorio += `• ${criteria.name} (${criteria.points} ponto${criteria.points > 1 ? 's' : ''})\n`;
+                });
+            }
+
+            relatorio += `
+DETALHES TÉCNICOS
+-----------------
+Total de Critérios: ${window.currentScore.selectedCriteria.length}
+Score Máximo Possível: 10 pontos
+Data de Geração: ${new Date().toLocaleString('pt-BR')}
+
+OBSERVAÇÕES IMPORTANTES
+-----------------------
+- O Score de Alvarado é uma ferramenta auxiliar para diagnóstico
+- Não substitui a avaliação clínica completa
+- Sempre considerar o contexto clínico individual
+- Em casos duvidosos, considerar exames de imagem
+- A decisão cirúrgica deve ser baseada em múltiplos fatores
+
+REFERÊNCIA
+----------
+Alvarado A. A practical score for the early diagnosis of acute appendicitis.
+Ann Emerg Med. 1986;15(5):557-564.
+`;
+
+            relatorio = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorio;
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorio += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                relatorio += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            // Copiar para área de transferência
+            navigator.clipboard.writeText(relatorio).then(function() {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(function() {
+                // Fallback para navegadores mais antigos
+                const textArea = document.createElement('textarea');
+                textArea.value = relatorio;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+
+        // Adicionar estilos para diferentes níveis de risco
+        const style = document.createElement('style');
+        style.textContent = `
+            .interpretation.high-risk {
+                border-left-color: #d1d5db;
+                background-color: #f8d7da;
+            }
+            .interpretation.intermediate {
+                border-left-color: #d1d5db;
+                background-color: #fff3cd;
+            }
+            .interpretation.low-risk {
+                border-left-color: #d1d5db;
+                background-color: #d4edda;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

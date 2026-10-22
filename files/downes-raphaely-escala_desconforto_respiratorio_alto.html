@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>NeoPedCalc — Downes-Raphaely (educativo)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #6b7280;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --background-color: #ecf0f1;
+            --card-background: #ffffff;
+            --text-color: #2c3e50;
+            --text-muted: #374151;
+            --border-color: #bdc3c7;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        html, body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            touch-action: pan-y;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--background-color) 0%, #d5dbdb 100%);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .app-viewport {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+        .app-shell {
+            width: 100%;
+            max-width: 1200px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: var(--card-background);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .form-section {
+            background: var(--card-background);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-section:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+
+        .subsection-title {
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+            margin: 20px 0 15px 0;
+            font-weight: 600;
+            padding-left: 10px;
+            border-left: none;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+        input[type="number"],
+        input[type="number"][readonly] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #d1d5db;
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.06);
+            background: white;
+        }
+
+        .unit {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: #4b5563;
+            color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--text-muted) 0%, #6c757d 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .copy-btn:hover {
+            background: linear-gradient(135deg, #229954 0%, #27ae60 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        .copy-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(39, 174, 96, 0.3);
+        }
+
+        .results-section {
+            background: var(--card-background);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: none;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .result-value {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        .risk-indicator {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .risk-none {
+            background: rgba(0, 0, 0, 0.1);
+            color: var(--accent-color);
+            border: 2px solid rgba(0, 0, 0, 0.3);
+        }
+
+        .risk-low {
+            background: rgba(39, 174, 96, 0.1);
+            color: var(--success-color);
+            border: 2px solid rgba(39, 174, 96, 0.3);
+        }
+
+        .risk-medium {
+            background: rgba(243, 156, 18, 0.1);
+            color: var(--warning-color);
+            border: 2px solid rgba(243, 156, 18, 0.3);
+        }
+
+        .risk-high {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+            border: 2px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .report-section {
+            background: var(--card-background);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .breakdown-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .breakdown-table th,
+        .breakdown-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .breakdown-table th {
+            background: #f3f4f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        .breakdown-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .result-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #374151;
+        }
+
+        .info-box h4 {
+            margin-bottom: 10px;
+            color: #374151;
+        }
+
+        @media (max-width: 768px) {
+            .container { border-radius: 10px; }
+            .header h1 { font-size: 1.8em; }
+            .content { padding: 20px; }
+            .section { padding: 15px; }
+            button { padding: 12px; font-size: 15px; }
+        }
+
+        @media (max-width: 640px) {
+            .app-viewport { padding: 12px; }
+            .form-grid { grid-template-columns: 1fr; gap: 12px; }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 { font-size: 1.4em; }
+            .header p { font-size: 0.9em; }
+            .content { padding: 15px; }
+            .section { padding: 12px; }
+            .section h3 { font-size: 1.1em; }
+            select { padding: 10px; font-size: 14px; }
+            button { padding: 10px; font-size: 14px; }
+            .results { padding: 12px; }
+            .score-display { font-size: 2.5em; }
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-info {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-info:hover {
+            background: white;
+            color: #2c3e50;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
+            box-sizing: border-box;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 720px;
+            max-height: 86vh;
+            overflow: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #2c3e50;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .modal-header {
+                padding: 15px 20px;
+            }
+
+            .modal-header h2 {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 98%;
+            }
+
+            .modal-body {
+                padding: 15px;
+            }
+
+            .modal-header h2 {
+                font-size: 16px;
+            }
+
+            .modal-body h3 {
+                font-size: 16px;
+            }
+        }
+        .result-indicator {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .card, .panel, .box {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        label {
+            display: block;
+        }
+
+        input, select, textarea, button {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        input, select, textarea {
+            width: 100%;
+        }
+
+        .table-wrap {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        th, td {
+            word-wrap: break-word;
+            overflow-wrap: anywhere;
+        }
+
+        body {
+            overscroll-behavior-x: none;
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <div class="app-viewport">
+        <div class="app-shell">
+            <div class="container">
+                <div class="header">
+                    <h1>Downes-Raphaely - Avaliação de Desconforto Respiratório Alto</h1>
+                    <p>Apoio educativo para estimativa de gravidade do desconforto respiratório em pediatria</p>
+                    <div class="header-actions">
+                        <button type="button" class="btn-info" onclick="abrirModal()">
+                            Como usar                        </button>
+                    </div>
+                </div>
+
+        <div class="form-section">
+            <h2 class="section-title">Dados do Paciente</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="nome">Nome do Paciente</label>
+                    <input type="text" id="nome" placeholder="Nome completo">
+                </div>
+                <div class="form-group">
+                    <label for="data_nascimento">Data de Nascimento</label>
+                    <input type="date" id="data_nascimento">
+                </div>
+                <div class="form-group">
+                    <label for="data_avaliacao">Data da Avaliação</label>
+                    <input type="date" id="data_avaliacao">
+                </div>
+                <div class="form-group">
+                    <label for="hora_avaliacao">Hora da Avaliação</label>
+                    <input type="time" id="hora_avaliacao">
+                </div>
+                <div class="form-group">
+                    <label for="idade_completa">Idade (Calculada)</label>
+                    <input type="text" id="idade_completa" readonly>
+                    <span class="unit">anos, meses e dias</span>
+                </div>
+                <div class="form-group">
+                    <label for="peso">Peso</label>
+                    <input type="number" id="peso" step="0.001" placeholder="Ex.: 3.200">
+                    <span class="unit">kg</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2 class="section-title">Avaliação Downes-Raphaely - Desconforto Respiratório Alto</h2>
+            
+            <div class="info-box">
+                <h4>Informações Importantes</h4>
+                <p>A escala Downes-Raphaely avalia o desconforto respiratório através de 5 domínios clínicos. Cada domínio recebe pontuação de 0-2, totalizando 0-10 pontos. Use esta avaliação para determinar a necessidade de suporte respiratório.</p>
+            </div>
+
+            <h3 class="subsection-title">Domínios da Avaliação</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="sons">Sons Inspiratórios</label>
+                    <select id="sons">
+                        <option value="Normais">Normais (0 pontos)</option>
+                        <option value="Roncos">Roncos (1 ponto)</option>
+                        <option value="Lentificado">Lentificado (2 pontos)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="estridor">Estridor</label>
+                    <select id="estridor">
+                        <option value="Ausente">Ausente (0 pontos)</option>
+                        <option value="Inspiratório">Inspiratório (1 ponto)</option>
+                        <option value="Ins e expiratório">Inspiratório e expiratório (2 pontos)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tosse">Tosse</label>
+                    <select id="tosse">
+                        <option value="Ausente">Ausente (0 pontos)</option>
+                        <option value="Choro rouco">Choro rouco (1 ponto)</option>
+                        <option value="Ladrante">Ladrante (2 pontos)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="retracoes">Retrações e BAN</label>
+                    <select id="retracoes">
+                        <option value="Ausente">Ausente (0 pontos)</option>
+                        <option value="BAN e retração supraesternal">BAN e retração supraesternal (1 ponto)</option>
+                        <option value="BAN e retr. supraesternal, subcostal e intercostal">BAN e retrações supraesternal, subcostal e intercostal (2 pontos)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="cianose">Cianose</label>
+                    <select id="cianose">
+                        <option value="Ausente">Ausente (0 pontos)</option>
+                        <option value="Em ar ambiente">Em ar ambiente (1 ponto)</option>
+                        <option value="Em FiO2 > 40%">Em FiO₂ > 40% (2 pontos)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="obs">Observações</label>
+                <input type="text" id="obs" placeholder="Uso de O₂, frequência respiratória, SpO₂, etc.">
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="calcularDownesRaphaely()">Calcular Downes-Raphaely - Desconforto Respiratório Alto</button>
+                <button class="btn btn-secondary" onclick="limparDados()">Limpar Dados</button>
+            </div>
+        </div>
+
+        <div class="results-section">
+            <h2 class="section-title">Resultados</h2>
+            <div id="resultados" class="result-item">
+                <span class="result-label">Downes-Raphaely - Desconforto Respiratório Alto - Escore Total:</span>
+                <span class="result-value" id="escore_total">-</span>
+            </div>
+            <div id="indicador_risco" class="result-indicator"></div>
+            <div id="breakdown_table" class="table-wrap"></div>
+        </div>
+
+        <div class="report-section">
+            <h2 class="section-title">Texto informativo para prontuário eletrônico (revisar)</h2>
+            <button type="button" class="copy-btn" onclick="gerarECopiarRelatorio()">Gerar e copiar texto informativo</button>
+        </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — Escala Downes-Raphaely (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>A Escala Downes-Raphaely organiza sinais clínicos para estimativa educativa da gravidade do desconforto respiratório em pediatria. O conteúdo não substitui avaliação clínica, protocolos institucionais ou prescrição.</p>
+                
+                <h3>Fórmula da Escala Downes-Raphaely</h3>
+                <div class="formula-box">
+                    <strong>Score Downes-Raphaely = Somatório de pontos dos parâmetros respiratórios</strong><br><br>
+                    <strong>Parâmetros Avaliados:</strong><br>
+                    • <strong>Frequência Respiratória:</strong> 0-2 pontos<br>
+                    • <strong>Cianose:</strong> 0-2 pontos<br>
+                    • <strong>Retrações:</strong> 0-2 pontos<br>
+                    • <strong>Grunhido:</strong> 0-2 pontos<br>
+                    • <strong>Expansão Torácica:</strong> 0-2 pontos<br><br>
+                    <strong>Pontuação por Parâmetro:</strong><br>
+                    • <strong>0 pontos:</strong> Normal ou ausente<br>
+                    • <strong>1 ponto:</strong> Leve ou moderado<br>
+                    • <strong>2 pontos:</strong> Grave ou presente<br><br>
+                    <strong>Escala Total:</strong> 0-10 pontos
+                </div>
+
+                <h3>Critérios de Avaliação</h3>
+                <ul>
+                    <li><strong>Frequência Respiratória:</strong>
+                        <ul>
+                            <li>0: Normal para idade</li>
+                            <li>1: Aumentada para idade</li>
+                            <li>2: Muito aumentada ou irregular</li>
+                        </ul>
+                    </li>
+                    <li><strong>Cianose:</strong>
+                        <ul>
+                            <li>0: Ausente</li>
+                            <li>1: Cianose periférica</li>
+                            <li>2: Cianose central</li>
+                        </ul>
+                    </li>
+                    <li><strong>Retrações:</strong>
+                        <ul>
+                            <li>0: Ausentes</li>
+                            <li>1: Leves a moderadas</li>
+                            <li>2: Graves</li>
+                        </ul>
+                    </li>
+                    <li><strong>Grunhido:</strong>
+                        <ul>
+                            <li>0: Ausente</li>
+                            <li>1: Leve</li>
+                            <li>2: Intenso</li>
+                        </ul>
+                    </li>
+                    <li><strong>Expansão Torácica:</strong>
+                        <ul>
+                            <li>0: Normal</li>
+                            <li>1: Diminuída</li>
+                            <li>2: Muito diminuída ou assimétrica</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Observe o Paciente:</strong> Avalie por 2-5 minutos</li>
+                    <li><strong>Selecione cada Parâmetro:</strong> Escolha o valor mais apropriado</li>
+                    <li><strong>Some os Pontos:</strong> Totalize a pontuação</li>
+                    <li>Clique em <strong>"Calcular Score"</strong> para obter o resultado</li>
+                    <li><strong>Interprete o Resultado:</strong> Use os valores de referência</li>
+                </ol>
+
+                <h3>Interpretação dos Resultados</h3>
+                <ul>
+                    <li><strong>0-2 pontos:</strong> Desconforto respiratório leve</li>
+                    <li><strong>3-5 pontos:</strong> Desconforto respiratório moderado</li>
+                    <li><strong>6-8 pontos:</strong> Desconforto respiratório grave</li>
+                    <li><strong>9-10 pontos:</strong> Insuficiência respiratória crítica</li>
+                    <li><strong>Score ≥6:</strong> Considerar suporte ventilatório</li>
+                    <li><strong>Score ≥8:</strong> Ventilação mecânica pode ser necessária</li>
+                </ul>
+
+                <h3>Condutas por Escore</h3>
+                <ul>
+                    <li><strong>0-2 pontos:</strong> Observação, oxigênio se necessário</li>
+                    <li><strong>3-5 pontos:</strong> Oxigênio, monitoramento rigoroso</li>
+                    <li><strong>6-8 pontos:</strong> CPAP/BiPAP, consideração de intubação</li>
+                    <li><strong>9-10 pontos:</strong> Ventilação mecânica imediata</li>
+                    <li><strong>Monitoramento:</strong> Reavaliar a cada 15-30 minutos</li>
+                </ul>
+
+                <h3>Considerações Importantes</h3>
+                <ul>
+                    <li>Avalie em repouso e durante atividade</li>
+                    <li>Considere a idade do paciente</li>
+                    <li>Documente o score e horário da avaliação</li>
+                    <li>Correlacione com sinais vitais</li>
+                    <li>Reavalie após intervenções</li>
+                    <li>Comunique mudanças significativas</li>
+                    <li>Use em conjunto com outros parâmetros</li>
+                    <li>Considere diagnóstico diferencial</li>
+                </ul>
+
+                <h3>Aplicações Clínicas</h3>
+                <ul>
+                    <li><strong>Triagem:</strong> Identificar pacientes em risco</li>
+                    <li><strong>Classificação:</strong> Determinar gravidade respiratória</li>
+                    <li><strong>Tratamento:</strong> Orientar necessidade de suporte</li>
+                    <li><strong>Monitoramento:</strong> Acompanhar evolução</li>
+                    <li><strong>Pesquisa:</strong> Estudos de outcomes respiratórios</li>
+                </ul>
+
+                <h3>Diagnósticos Associados</h3>
+                <ul>
+                    <li><strong>Asma:</strong> Broncoespasmo, sibilância</li>
+                    <li><strong>Bronquiolite:</strong> Infecção viral, atelectasia</li>
+                    <li><strong>Pneumonia:</strong> Infecção, consolidação</li>
+                    <li><strong>Edema Pulmonar:</strong> Insuficiência cardíaca</li>
+                    <li><strong>Síndrome do Desconforto Respiratório:</strong> Prematuridade</li>
+                </ul>
+
+                <h3>Limitações</h3>
+                <ul>
+                    <li>Subjetividade na avaliação de alguns parâmetros</li>
+                    <li>Pode variar entre avaliadores</li>
+                    <li>Não considera todos os aspectos respiratórios</li>
+                    <li>Pode ser influenciado por medicações</li>
+                    <li>Não substitui avaliação clínica completa</li>
+                    <li>Requer treinamento adequado</li>
+                    <li>Pode não ser adequado para todas as idades</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Downes JJ, Raphaely RC. Pediatric intensive care. Anesthesiology. 1975;43(2):238-50.<br>
+                    - Raphaely RC, Downes JJ Jr. Congenital diaphragmatic hernia: prediction of survival. J Pediatr Surg. 1973;8(6):815-23.<br>
+                    - Wood DW, Downes JJ, Lecks HI. A clinical scoring system for the diagnosis of respiratory failure. Am J Dis Child. 1972;123(3):227-8.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Mapeamento de pontuação baseado na escala Downes-Raphaely
+        const DOWNES_RAPHAELY_MAP = {
+            sons: { 'Normais': 0, 'Roncos': 1, 'Lentificado': 2 },
+            estridor: { 'Ausente': 0, 'Inspiratório': 1, 'Ins e expiratório': 2 },
+            tosse: { 'Ausente': 0, 'Choro rouco': 1, 'Ladrante': 2 },
+            retracoes: {
+                'Ausente': 0,
+                'BAN e retração supraesternal': 1,
+                'BAN e retr. supraesternal, subcostal e intercostal': 2
+            },
+            cianose: { 'Ausente': 0, 'Em ar ambiente': 1, 'Em FiO2 > 40%': 2 }
+        };
+
+        // Função para calcular idade em anos, meses e dias
+        function calcularIdade() {
+            const dataNascimento = document.getElementById('data_nascimento').value;
+            const dataAvaliacao = document.getElementById('data_avaliacao').value;
+
+            if (dataNascimento && dataAvaliacao) {
+                const nascimento = new Date(dataNascimento);
+                const avaliacao = new Date(dataAvaliacao);
+                
+                let anos = avaliacao.getFullYear() - nascimento.getFullYear();
+                let meses = avaliacao.getMonth() - nascimento.getMonth();
+                let dias = avaliacao.getDate() - nascimento.getDate();
+                
+                if (dias < 0) {
+                    meses--;
+                    const ultimoMes = new Date(avaliacao.getFullYear(), avaliacao.getMonth(), 0);
+                    dias += ultimoMes.getDate();
+                }
+                
+                if (meses < 0) {
+                    anos--;
+                    meses += 12;
+                }
+                
+                let idadeTexto = '';
+                if (anos > 0) {
+                    idadeTexto += `${anos} ano${anos > 1 ? 's' : ''}`;
+                }
+                if (meses > 0) {
+                    if (idadeTexto) idadeTexto += ', ';
+                    idadeTexto += `${meses} mês${meses > 1 ? 'es' : ''}`;
+                }
+                if (dias > 0 || (!anos && !meses)) {
+                    if (idadeTexto) idadeTexto += ', ';
+                    idadeTexto += `${dias} dia${dias > 1 ? 's' : ''}`;
+                }
+                
+                document.getElementById('idade_completa').value = idadeTexto || '0 dias';
+            }
+        }
+
+        // Preencher data e hora atuais
+        function preencherDataAtual() {
+            const hoje = new Date();
+            const dataAtual = hoje.toISOString().split('T')[0];
+            const horaAtual = hoje.toTimeString().slice(0, 5);
+            
+            if (!document.getElementById('data_avaliacao').value) {
+                document.getElementById('data_avaliacao').value = dataAtual;
+            }
+            if (!document.getElementById('hora_avaliacao').value) {
+                document.getElementById('hora_avaliacao').value = horaAtual;
+            }
+        }
+
+        // Função para interpretar o escore
+        function interpretarEscore(total) {
+            if (total < 1) {
+                return { texto: 'Sem Desconforto', textoPlain: 'Sem desconforto', classe: 'risk-none' };
+            } else if (total <= 3) {
+                return { texto: 'Desconforto Leve', textoPlain: 'Desconforto leve', classe: 'risk-low' };
+            } else if (total >= 4 && total <= 6) {
+                return {
+                    texto: 'Falência Respiratória Iminente - Desconforto Moderado',
+                    textoPlain: 'Falencia respiratoria iminente - desconforto moderado',
+                    classe: 'risk-medium'
+                };
+            } else {
+                return {
+                    texto: 'Falência Respiratória Estabelecida - Desconforto Severo',
+                    textoPlain: 'Falencia respiratoria estabelecida - desconforto severo',
+                    classe: 'risk-high'
+                };
+            }
+        }
+
+        // Função para calcular Downes-Raphaely
+        function calcularDownesRaphaely() {
+            // Obter valores dos campos
+            const sons = document.getElementById('sons').value;
+            const estridor = document.getElementById('estridor').value;
+            const tosse = document.getElementById('tosse').value;
+            const retracoes = document.getElementById('retracoes').value;
+            const cianose = document.getElementById('cianose').value;
+
+            // Calcular pontuação
+            const pontos = {
+                sons: DOWNES_RAPHAELY_MAP.sons[sons],
+                estridor: DOWNES_RAPHAELY_MAP.estridor[estridor],
+                tosse: DOWNES_RAPHAELY_MAP.tosse[tosse],
+                retracoes: DOWNES_RAPHAELY_MAP.retracoes[retracoes],
+                cianose: DOWNES_RAPHAELY_MAP.cianose[cianose]
+            };
+
+            const total = Object.values(pontos).reduce((a, b) => a + b, 0);
+
+            // Exibir resultado
+            document.getElementById('escore_total').textContent = `${Number(total).toFixed(1)} pontos`;
+
+            // Determinar interpretação
+            const interpretacao = interpretarEscore(total);
+            document.getElementById('indicador_risco').innerHTML = 
+                `<span class="risk-indicator ${interpretacao.classe}">${interpretacao.texto}</span>`;
+
+            // Criar tabela de breakdown
+            let tableHTML = '<table class="breakdown-table">';
+            tableHTML += '<thead><tr><th>Domínio</th><th>Valor Selecionado</th><th>Pontos</th></tr></thead>';
+            tableHTML += '<tbody>';
+            tableHTML += `<tr><td>Sons Inspiratórios</td><td>${sons}</td><td><strong>${pontos.sons}</strong></td></tr>`;
+            tableHTML += `<tr><td>Estridor</td><td>${estridor}</td><td><strong>${pontos.estridor}</strong></td></tr>`;
+            tableHTML += `<tr><td>Tosse</td><td>${tosse}</td><td><strong>${pontos.tosse}</strong></td></tr>`;
+            tableHTML += `<tr><td>Retrações/BAN</td><td>${retracoes}</td><td><strong>${pontos.retracoes}</strong></td></tr>`;
+            tableHTML += `<tr><td>Cianose</td><td>${cianose}</td><td><strong>${pontos.cianose}</strong></td></tr>`;
+            tableHTML += '</tbody></table>';
+            
+            document.getElementById('breakdown_table').innerHTML = tableHTML;
+        }
+
+        // Função para gerar e copiar relatório
+        function gerarECopiarRelatorio() {
+            const nome = document.getElementById('nome').value;
+            const dataNascimento = document.getElementById('data_nascimento').value;
+            const dataAvaliacao = document.getElementById('data_avaliacao').value;
+            const horaAvaliacao = document.getElementById('hora_avaliacao').value;
+            const idadeCompleta = document.getElementById('idade_completa').value;
+            const peso = document.getElementById('peso').value;
+            const obs = document.getElementById('obs').value;
+
+            // Obter resultados calculados
+            const escoreTotal = document.getElementById('escore_total').textContent;
+            const indicador = document.getElementById('indicador_risco').textContent;
+
+            const pesoFormatado = peso && !Number.isNaN(Number(peso)) ? Number(peso).toFixed(1) : '';
+            const idadeCompletaPlain = idadeCompleta
+                ? idadeCompleta.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                : '';
+            const interpretacao = interpretarEscore(Object.values({
+                sons: DOWNES_RAPHAELY_MAP.sons[document.getElementById('sons').value],
+                estridor: DOWNES_RAPHAELY_MAP.estridor[document.getElementById('estridor').value],
+                tosse: DOWNES_RAPHAELY_MAP.tosse[document.getElementById('tosse').value],
+                retracoes: DOWNES_RAPHAELY_MAP.retracoes[document.getElementById('retracoes').value],
+                cianose: DOWNES_RAPHAELY_MAP.cianose[document.getElementById('cianose').value]
+            }).reduce((a, b) => a + b, 0));
+
+            let relatorioTexto = `RESUMO INFORMATIVO — DOWNES-RAPHAELY (EDUCATIVO)
+${nome ? `Paciente: ${nome}` : ''}
+${dataAvaliacao ? `Data da avaliacao: ${dataAvaliacao}` : ''}${horaAvaliacao ? ` - Hora: ${horaAvaliacao}` : ''}
+
+DADOS DO PACIENTE:
+${dataNascimento ? `- Data de nascimento: ${dataNascimento}` : ''}
+${idadeCompletaPlain ? `- Idade: ${idadeCompletaPlain}` : ''}
+${pesoFormatado ? `- Peso: ${pesoFormatado} kg` : ''}
+
+AVALIACAO DOWNES-RAPHAELY - DESCONFORTO RESPIRATORIO ALTO:
+- Sons Inspiratorios: ${document.getElementById('sons').value}
+- Estridor: ${document.getElementById('estridor').value}
+- Tosse: ${document.getElementById('tosse').value}
+- Retracoes e BAN: ${document.getElementById('retracoes').value}
+- Cianose: ${document.getElementById('cianose').value}
+${obs ? `- Observacoes: ${obs}` : ''}
+
+RESULTADOS:
+- Downes-Raphaely - Desconforto respiratorio alto - Escore total: ${escoreTotal}
+- Interpretacao: ${interpretacao.textoPlain}
+
+INTERPRETACAO:
+A escala Downes-Raphaely avalia o desconforto respiratorio alto em pacientes pediatricos atraves de 5 dominios clinicos. Cada dominio recebe pontuacao de 0-2 pontos, totalizando 0-10 pontos. Esta avaliacao e util para determinar a necessidade de suporte respiratorio e acompanhar a evolucao do quadro respiratorio.
+
+CRITERIOS DE PONTUACAO:
+- Sons Inspiratorios: Normais=0pts, Roncos=1pt, Lentificado=2pts
+- Estridor: Ausente=0pts, Inspiratorio=1pt, Inspiratorio e expiratorio=2pts
+- Tosse: Ausente=0pts, Choro rouco=1pt, Ladrante=2pts
+- Retracoes e BAN: Ausente=0pts, BAN e retracao supraesternal=1pt, BAN e retracoes multiplas=2pts
+- Cianose: Ausente=0pts, Em ar ambiente=1pt, Em FiO2>40%=2pts
+
+INTERPRETACAO DOS VALORES:
+- 0 pontos: Sem desconforto
+- 1-3 pontos: Desconforto leve
+- 4-6 pontos: Falencia respiratoria iminente - desconforto moderado
+- 7-10 pontos: Falencia respiratoria estabelecida - desconforto severo
+
+Referencia: Downes JJ, Raphaely RC. Pediatric intensive care. Anesthesiology 1975; 43: 238-250.`;
+
+            relatorioTexto = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorioTexto;
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorioTexto += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                relatorioTexto += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            copiarTexto(relatorioTexto);
+        }
+
+        // Função para copiar texto
+        function copiarTexto(texto) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(texto).then(() => {
+                    if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                }).catch(err => {
+                    copiarTextoFallback(texto);
+                });
+            } else {
+                copiarTextoFallback(texto);
+            }
+        }
+
+        function copiarTextoFallback(texto) {
+            const textArea = document.createElement('textarea');
+            textArea.value = texto;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            } catch (err) {
+                if (typeof window.neopedCopyFail === 'function') window.neopedCopyFail(); else alert('Nao foi possivel copiar automaticamente. Revise o texto e copie manualmente para uso informativo.');
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // Função para limpar dados
+        function limparDados() {
+            const campos = [
+                'nome', 'data_nascimento', 'data_avaliacao', 'hora_avaliacao', 'idade_completa', 'peso',
+                'sons', 'estridor', 'tosse', 'retracoes', 'cianose', 'obs'
+            ];
+
+            campos.forEach(campo => {
+                const elemento = document.getElementById(campo);
+                if (elemento.type === 'select-one') {
+                    elemento.selectedIndex = 0;
+                } else {
+                    elemento.value = '';
+                }
+            });
+
+            document.getElementById('escore_total').textContent = '-';
+            document.getElementById('indicador_risco').innerHTML = '';
+            document.getElementById('breakdown_table').innerHTML = '';
+        }
+
+        // Event listeners
+        document.getElementById('data_nascimento').addEventListener('change', calcularIdade);
+        document.getElementById('data_avaliacao').addEventListener('change', calcularIdade);
+
+        // Preencher data atual ao carregar
+        window.addEventListener('load', preencherDataAtual);
+
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

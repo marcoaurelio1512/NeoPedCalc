@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>NeoPedCalc — PIPP / dor no prematuro (educativo)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            touch-action: pan-y;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .app-viewport {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+        .app-shell {
+            width: 100%;
+            max-width: 980px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 980px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        input[type="text"], input[type="date"], input[type="time"], input[type="number"] {
+            width: 100%;
+            max-width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="date"]:focus, input[type="time"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #111827;
+        }
+
+        .radio-group {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .radio-option:hover {
+            border-color: #111827;
+            background: #e8f2ff;
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        .radio-option.selected {
+            border-color: #111827;
+            background: #e8f2ff;
+        }
+
+        .pipp-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .pipp-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .pipp-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e1e5e9;
+        }
+
+        .pipp-item label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .pipp-options {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .pipp-option {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            border: 1px solid #e1e5e9;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .pipp-option:hover {
+            border-color: #111827;
+            background: #e8f2ff;
+        }
+
+        .pipp-option input[type="radio"] {
+            margin-right: 8px;
+        }
+
+        .pipp-option.selected {
+            border-color: #111827;
+            background: #e8f2ff;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .result-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .result-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 5px;
+        }
+
+        .result-description {
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .classification {
+            background: #fff3cd;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .classification h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .classification-text {
+            font-size: 18px;
+            font-weight: bold;
+            color: #856404;
+            text-align: center;
+            padding: 15px;
+            background: #fff;
+            border-radius: 8px;
+        }
+
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: none;
+        }
+
+        .info strong {
+            color: #1976d2;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #d1d5db;
+        }
+
+        .warning strong {
+            color: #856404;
+        }
+
+        @media (max-width: 768px) {
+            .form-row, .radio-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .pipp-options {
+                grid-template-columns: 1fr;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+            
+            .btn {
+                font-size: 14px;
+                padding: 12px 20px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .app-viewport {
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.4em;
+            }
+
+            .header p {
+                font-size: 0.9em;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .section {
+                padding: 12px;
+            }
+
+            .section h3 {
+                font-size: 1.1em;
+            }
+
+            button {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+
+            .results {
+                padding: 12px;
+            }
+
+            .score-display {
+                font-size: 2.5em;
+            }
+
+            .pain-level {
+                font-size: 13px;
+            }
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-info {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-info:hover {
+            background: white;
+            color: #2c3e50;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
+            box-sizing: border-box;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 720px;
+            max-height: 86vh;
+            overflow: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #2c3e50;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .modal-header {
+                padding: 15px 20px;
+            }
+
+            .modal-header h2 {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 98%;
+            }
+
+            .modal-body {
+                padding: 15px;
+            }
+
+            .modal-header h2 {
+                font-size: 16px;
+            }
+
+            .modal-body h3 {
+                font-size: 16px;
+            }
+        }
+
+        .btn-report {
+            margin-top: 20px;
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .pipp-hint {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #374151;
+        }
+
+        .card, .panel, .box {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        label {
+            display: block;
+        }
+
+        input, select, textarea, button {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        input, select, textarea {
+            width: 100%;
+        }
+
+        .table-wrap {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        th, td {
+            word-wrap: break-word;
+            overflow-wrap: anywhere;
+        }
+
+        body {
+            overscroll-behavior-x: none;
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <div class="app-viewport">
+        <div class="app-shell">
+            <div class="container">
+                <div class="header">
+                    <h1>PIPP — dor no prematuro</h1>
+                    <p>Ferramenta educativa (Premature Infant Pain Profile). <strong>Não prescreve</strong> analgesia; o escore apoia registro e estudo — a conduta é da equipe e do protocolo local.</p>
+                    <div class="header-actions">
+                        <button type="button" class="btn-info" onclick="abrirModal()">Como usar</button>
+                    </div>
+                </div>
+
+                <div class="form-container">
+                    <form id="dorForm">
+                        <div class="form-group">
+                            <label for="nome">Nome do Paciente:</label>
+                            <input type="text" id="nome" placeholder="Ex: Joao Silva">
+                        </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dataAvaliacao">Data da Avaliação:</label>
+                        <input type="date" id="dataAvaliacao" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="horaAvaliacao">Horário da Avaliação:</label>
+                        <input type="time" id="horaAvaliacao" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Você mesmo avaliou o RN?</label>
+                    <div class="radio-group">
+                        <div class="radio-option" data-value="sim">
+                            <input type="radio" name="avaliador" value="sim" id="avaliador_sim">
+                            <label for="avaliador_sim">Sim</label>
+                        </div>
+                        <div class="radio-option" data-value="nao">
+                            <input type="radio" name="avaliador" value="nao" id="avaliador_nao">
+                            <label for="avaliador_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="idadeGestacional">Idade Gestacional (semanas):</label>
+                        <input type="number" id="idadeGestacional" step="0.1" min="22" max="42" placeholder="Ex: 28.5" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fcBasal">FC Basal (bpm):</label>
+                        <input type="number" id="fcBasal" min="80" max="200" placeholder="Ex: 120" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fcDoloroso">FC durante o evento doloroso (bpm):</label>
+                        <input type="number" id="fcDoloroso" min="80" max="200" placeholder="Ex: 140" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="satBasal">Sat O2 Basal (%):</label>
+                        <input type="number" id="satBasal" min="70" max="100" placeholder="Ex: 95" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="satDoloroso">Sat O2 durante o evento doloroso (%):</label>
+                    <input type="number" id="satDoloroso" min="70" max="100" placeholder="Ex: 90" required>
+                </div>
+
+                <div class="pipp-section">
+                    <h3>Premature Infant Pain Profile (PIPP)</h3>
+                    <p class="pipp-hint">
+                        Avalie cada item observando o comportamento do prematuro
+                    </p>
+                    
+                    <div class="pipp-item">
+                        <label>Estado geral antes do evento doloroso:</label>
+                        <div class="pipp-options">
+                            <div class="pipp-option" data-value="0">
+                                <input type="radio" name="estadoGeral" value="0" id="estadoGeral_0">
+                                <label for="estadoGeral_0">Acordado, ativo, olhos abertos, movimentos faciais</label>
+                            </div>
+                            <div class="pipp-option" data-value="1">
+                                <input type="radio" name="estadoGeral" value="1" id="estadoGeral_1">
+                                <label for="estadoGeral_1">Acordado, quieto, olhos abertos, sem movimentos faciais</label>
+                            </div>
+                            <div class="pipp-option" data-value="2">
+                                <input type="radio" name="estadoGeral" value="2" id="estadoGeral_2">
+                                <label for="estadoGeral_2">Sonolento, ativo, olhos fechados, movimentos faciais</label>
+                            </div>
+                            <div class="pipp-option" data-value="3">
+                                <input type="radio" name="estadoGeral" value="3" id="estadoGeral_3">
+                                <label for="estadoGeral_3">Sonolento, quieto, olhos fechados, sem movimentos faciais</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pipp-item">
+                        <label>Franzir da testa durante o procedimento doloroso:</label>
+                        <div class="pipp-options">
+                            <div class="pipp-option" data-value="0">
+                                <input type="radio" name="franzirTesta" value="0" id="franzirTesta_0">
+                                <label for="franzirTesta_0">Ausente</label>
+                            </div>
+                            <div class="pipp-option" data-value="1">
+                                <input type="radio" name="franzirTesta" value="1" id="franzirTesta_1">
+                                <label for="franzirTesta_1">Mínimo</label>
+                            </div>
+                            <div class="pipp-option" data-value="2">
+                                <input type="radio" name="franzirTesta" value="2" id="franzirTesta_2">
+                                <label for="franzirTesta_2">Moderado</label>
+                            </div>
+                            <div class="pipp-option" data-value="3">
+                                <input type="radio" name="franzirTesta" value="3" id="franzirTesta_3">
+                                <label for="franzirTesta_3">Máximo</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pipp-item">
+                        <label>Lágrimas nos olhos durante o procedimento doloroso:</label>
+                        <div class="pipp-options">
+                            <div class="pipp-option" data-value="0">
+                                <input type="radio" name="lagrimas" value="0" id="lagrimas_0">
+                                <label for="lagrimas_0">Ausente</label>
+                            </div>
+                            <div class="pipp-option" data-value="1">
+                                <input type="radio" name="lagrimas" value="1" id="lagrimas_1">
+                                <label for="lagrimas_1">Mínimo</label>
+                            </div>
+                            <div class="pipp-option" data-value="2">
+                                <input type="radio" name="lagrimas" value="2" id="lagrimas_2">
+                                <label for="lagrimas_2">Moderado</label>
+                            </div>
+                            <div class="pipp-option" data-value="3">
+                                <input type="radio" name="lagrimas" value="3" id="lagrimas_3">
+                                <label for="lagrimas_3">Máximo</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pipp-item">
+                        <label>Aperto do nariz nos lábios durante o procedimento doloroso:</label>
+                        <div class="pipp-options">
+                            <div class="pipp-option" data-value="0">
+                                <input type="radio" name="apertoNariz" value="0" id="apertoNariz_0">
+                                <label for="apertoNariz_0">Ausente</label>
+                            </div>
+                            <div class="pipp-option" data-value="1">
+                                <input type="radio" name="apertoNariz" value="1" id="apertoNariz_1">
+                                <label for="apertoNariz_1">Mínimo</label>
+                            </div>
+                            <div class="pipp-option" data-value="2">
+                                <input type="radio" name="apertoNariz" value="2" id="apertoNariz_2">
+                                <label for="apertoNariz_2">Moderado</label>
+                            </div>
+                            <div class="pipp-option" data-value="3">
+                                <input type="radio" name="apertoNariz" value="3" id="apertoNariz_3">
+                                <label for="apertoNariz_3">Máximo</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="submit" class="btn">Calcular Score PIPP</button>
+                    <button type="button" id="limparDados" class="btn btn-secondary">Limpar Dados</button>
+                </div>
+            </form>
+
+            <div id="results" class="results">
+                <div class="result-card">
+                    <h3>Score PIPP</h3>
+                    <div class="result-value" id="scorePIPP">0.0</div>
+                    <div class="result-description">pontos (maximo 21)</div>
+                </div>
+
+                <div class="classification" id="classification">
+                    <h3>Resumo do escore (educativo)</h3>
+                    <div class="classification-text" id="classificationText"></div>
+                </div>
+
+                <button type="button" id="gerarRelatorio" class="btn btn-report">
+                    Copiar texto informativo
+                </button>
+            </div>
+
+                    <div class="info">
+                        <strong>Premature Infant Pain Profile (PIPP) — uso educativo:</strong><br>
+                        • Escala para prematuros (Stevens et al.); pontuação máxima 21<br>
+                        • Combina IG, estado antes do procedimento, FC/SpO₂ e sinais faciais durante o estímulo<br>
+                        • Faixas altas na literatura associam-se a maior probabilidade de desconforto — <strong>não substituem</strong> julgamento clínico nem protocolo de analgesia da UTI<br>
+                        • Use <strong>Copiar texto informativo</strong> só após revisar itens e contexto do procedimento
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — PIPP (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Registrar e <strong>somar pontos</strong> do PIPP conforme os campos preenchidos. Serve para <strong>treino, padronização de registro e revisão</strong> — <strong>não define</strong> analgesia nem substitui avaliação clínica da equipe.</p>
+
+                <h3>O que entra no PIPP (esta página)</h3>
+                <div class="formula-box">
+                    Idade gestacional (peso na fórmula), estado antes do evento, variação de FC e SpO₂ entre basal e evento, e três sinais faciais durante o procedimento.<br><br>
+                    <strong>Total 0–21.</strong> Outras escalas (ex.: NIPS) não são calculadas aqui — consulte literatura e protocolo local se precisar delas.
+                </div>
+
+                <h3>Como usar</h3>
+                <ol>
+                    <li>Preencha data/hora, IG, FC e SpO₂ basal e durante o estímulo doloroso.</li>
+                    <li>Marque os quatro blocos comportamentais conforme observação.</li>
+                    <li>Clique em <strong>Calcular Score PIPP</strong> e leia o resumo na tela.</li>
+                    <li><strong>Copiar texto informativo</strong> gera um texto para colar — revise antes de arquivar.</li>
+                </ol>
+
+                <h3>Faixas de interpretação (referência geral)</h3>
+                <p>Valores mais altos costumam ser associados a maior desconforto na população estudada; cortes exatos e conduta variam entre serviços e publicações. Correlacione com o exame físico, sedação concomitante e tipo de procedimento.</p>
+
+                <h3>Limitações</h3>
+                <ul>
+                    <li>Depende de observador treinado e de condições estáveis de monitorização.</li>
+                    <li>Medicamentos e doença de base alteram FC/SpO₂ independentemente da dor.</li>
+                    <li>Este app não implementa outras escalas nem sugere doses.</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Stevens B, et al. Premature Infant Pain Profile: development and initial validation. Clin J Pain. 1996;12(1):13-22.<br>
+                    - Lawrence J, et al. The development of a tool to assess neonatal pain. Neonatal Netw. 1993;12(6):59-66.<br>
+                    - Anand KJ, et al. Pain and its effects in the human neonate and fetus. N Engl J Med. 1987;317(21):1321-1329.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Função para calcular o score PIPP
+        function calcularScorePIPP() {
+            const idadeGestacional = parseFloat(document.getElementById('idadeGestacional').value);
+            const fcBasal = parseFloat(document.getElementById('fcBasal').value);
+            const fcDoloroso = parseFloat(document.getElementById('fcDoloroso').value);
+            const satBasal = parseFloat(document.getElementById('satBasal').value);
+            const satDoloroso = parseFloat(document.getElementById('satDoloroso').value);
+            
+            const estadoGeral = parseInt(document.querySelector('input[name="estadoGeral"]:checked')?.value || 0);
+            const franzirTesta = parseInt(document.querySelector('input[name="franzirTesta"]:checked')?.value || 0);
+            const lagrimas = parseInt(document.querySelector('input[name="lagrimas"]:checked')?.value || 0);
+            const apertoNariz = parseInt(document.querySelector('input[name="apertoNariz"]:checked')?.value || 0);
+            
+            // Cálculo do score PIPP
+            let score = 0;
+            
+            // Estado comportamental (0-3 pontos)
+            score += estadoGeral;
+            
+            // Expressões faciais (0-9 pontos)
+            score += franzirTesta + lagrimas + apertoNariz;
+            
+            // Frequência cardíaca (0-3 pontos)
+            const variacaoFC = fcDoloroso - fcBasal;
+            if (variacaoFC <= 0) score += 0;
+            else if (variacaoFC <= 5) score += 1;
+            else if (variacaoFC <= 15) score += 2;
+            else score += 3;
+            
+            // Saturação de oxigênio (0-3 pontos)
+            const variacaoSat = satBasal - satDoloroso;
+            if (variacaoSat <= 0) score += 0;
+            else if (variacaoSat <= 2.5) score += 1;
+            else if (variacaoSat <= 5) score += 2;
+            else score += 3;
+            
+            // Ajuste para idade gestacional (0-3 pontos)
+            if (idadeGestacional >= 36) score += 0;
+            else if (idadeGestacional >= 32) score += 1;
+            else if (idadeGestacional >= 28) score += 2;
+            else score += 3;
+            
+            return score;
+        }
+
+        // Função para interpretar o score
+        function interpretarScore(score) {
+            if (score <= 6) {
+                return {
+                    classificacao: 'Dor minima',
+                    classificacaoPlain: 'Dor minima',
+                    descricao: 'Poucos sinais de dor observados',
+                    descricaoPlain: 'Poucos sinais de dor observados',
+                    cor: '#28a745'
+                };
+            } else if (score <= 11) {
+                return {
+                    classificacao: 'Dor moderada',
+                    classificacaoPlain: 'Dor moderada',
+                    descricao: 'Sinais moderados de dor observados',
+                    descricaoPlain: 'Sinais moderados de dor observados',
+                    cor: '#ffc107'
+                };
+            } else {
+                return {
+                    classificacao: 'Dor intensa',
+                    classificacaoPlain: 'Dor intensa',
+                    descricao: 'Multiplos sinais de dor observados',
+                    descricaoPlain: 'Multiplos sinais de dor observados',
+                    cor: '#dc3545'
+                };
+            }
+        }
+
+        // Função para avaliar dor
+        function avaliarDor() {
+            console.log('Iniciando avaliação de dor...');
+            
+            const nome = document.getElementById('nome').value;
+            const dataAvaliacao = new Date(document.getElementById('dataAvaliacao').value);
+            const horaAvaliacao = document.getElementById('horaAvaliacao').value;
+            const avaliador = document.querySelector('input[name="avaliador"]:checked')?.value;
+            const idadeGestacional = parseFloat(document.getElementById('idadeGestacional').value);
+            const fcBasal = parseFloat(document.getElementById('fcBasal').value);
+            const fcDoloroso = parseFloat(document.getElementById('fcDoloroso').value);
+            const satBasal = parseFloat(document.getElementById('satBasal').value);
+            const satDoloroso = parseFloat(document.getElementById('satDoloroso').value);
+
+            console.log('Dados coletados:', {
+                nome, dataAvaliacao, horaAvaliacao, avaliador, idadeGestacional,
+                fcBasal, fcDoloroso, satBasal, satDoloroso
+            });
+
+            if (!dataAvaliacao || !horaAvaliacao || !avaliador || !idadeGestacional || 
+                !fcBasal || !fcDoloroso || !satBasal || !satDoloroso) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                console.log('Campos obrigatórios não preenchidos');
+                return;
+            }
+
+            // Verificar se todos os itens PIPP foram avaliados
+            const itens = ['estadoGeral', 'franzirTesta', 'lagrimas', 'apertoNariz'];
+            
+            let itensNaoAvaliados = [];
+            itens.forEach(item => {
+                const valor = document.querySelector(`input[name="${item}"]:checked`)?.value;
+                if (!valor) {
+                    itensNaoAvaliados.push(item);
+                }
+            });
+
+            if (itensNaoAvaliados.length > 0) {
+                alert('Por favor, avalie todos os itens do PIPP.');
+                console.log('Itens não avaliados:', itensNaoAvaliados);
+                return;
+            }
+
+            // Calcular score
+            const score = calcularScorePIPP();
+            const interpretacao = interpretarScore(score);
+
+            console.log('Score calculado:', score);
+            console.log('Interpretação:', interpretacao);
+
+            // Exibir resultados
+            document.getElementById('scorePIPP').textContent = Number(score).toFixed(1);
+            document.getElementById('classificationText').textContent = interpretacao.classificacao;
+            document.getElementById('classificationText').style.color = interpretacao.cor;
+            document.getElementById('classification').style.borderColor = interpretacao.cor;
+
+            // Mostrar resultados
+            document.getElementById('results').style.display = 'block';
+            
+            console.log('Resultados exibidos com sucesso');
+        }
+
+        // Função para limpar todos os dados
+        function limparDados() {
+            console.log('Limpando todos os dados...');
+            
+            // Limpar campos de texto
+            document.getElementById('nome').value = '';
+            document.getElementById('idadeGestacional').value = '';
+            document.getElementById('fcBasal').value = '';
+            document.getElementById('fcDoloroso').value = '';
+            document.getElementById('satBasal').value = '';
+            document.getElementById('satDoloroso').value = '';
+            
+            // Limpar radio buttons
+            const radioGroups = ['avaliador', 'estadoGeral', 'franzirTesta', 'lagrimas', 'apertoNariz'];
+            
+            radioGroups.forEach(group => {
+                const radios = document.querySelectorAll(`input[name="${group}"]`);
+                radios.forEach(radio => {
+                    radio.checked = false;
+                });
+                // Remover classe selected das opções
+                const options = document.querySelectorAll(`input[name="${group}"]`);
+                options.forEach(option => {
+                    option.closest('.radio-option')?.classList.remove('selected');
+                    option.closest('.pipp-option')?.classList.remove('selected');
+                });
+            });
+            
+            // Ocultar resultados
+            document.getElementById('results').style.display = 'none';
+            
+            // Resetar data e hora para agora
+            const agora = new Date();
+            const hoje = agora.toISOString().split('T')[0];
+            const horaAtual = agora.toTimeString().slice(0, 5);
+            document.getElementById('dataAvaliacao').value = hoje;
+            document.getElementById('horaAvaliacao').value = horaAtual;
+            
+            console.log('Dados limpos com sucesso');
+            alert('Dados limpos! Pronto para nova avaliação.');
+        }
+
+        // Função para gerar relatório
+        function gerarRelatorio() {
+            console.log('Iniciando geração de relatório...');
+            
+            const nome = document.getElementById('nome').value;
+            const dataAvaliacao = new Date(document.getElementById('dataAvaliacao').value);
+            const horaAvaliacao = document.getElementById('horaAvaliacao').value;
+            const avaliador = document.querySelector('input[name="avaliador"]:checked')?.value;
+            const idadeGestacional = parseFloat(document.getElementById('idadeGestacional').value);
+            const fcBasal = parseFloat(document.getElementById('fcBasal').value);
+            const fcDoloroso = parseFloat(document.getElementById('fcDoloroso').value);
+            const satBasal = parseFloat(document.getElementById('satBasal').value);
+            const satDoloroso = parseFloat(document.getElementById('satDoloroso').value);
+
+            console.log('Dados para relatório:', {
+                nome, dataAvaliacao, horaAvaliacao, avaliador, idadeGestacional,
+                fcBasal, fcDoloroso, satBasal, satDoloroso
+            });
+
+            if (!dataAvaliacao || !horaAvaliacao || !avaliador || !idadeGestacional || 
+                !fcBasal || !fcDoloroso || !satBasal || !satDoloroso) {
+                alert('Erro: Campos obrigatórios não encontrados. Execute a avaliação primeiro.');
+                console.log('Campos obrigatórios não preenchidos para relatório');
+                return;
+            }
+
+            // Verificar se todos os itens PIPP foram avaliados
+            const itens = ['estadoGeral', 'franzirTesta', 'lagrimas', 'apertoNariz'];
+            
+            let itensNaoAvaliados = [];
+            itens.forEach(item => {
+                const valor = document.querySelector(`input[name="${item}"]:checked`)?.value;
+                if (!valor) {
+                    itensNaoAvaliados.push(item);
+                }
+            });
+
+            if (itensNaoAvaliados.length > 0) {
+                alert('Preencha todos os itens do PIPP antes de copiar o texto informativo.');
+                return;
+            }
+
+            // Recalcular valores
+            const score = calcularScorePIPP();
+            const interpretacao = interpretarScore(score);
+
+            console.log('Dados calculados para relatório:', {score, interpretacao});
+
+            const foot = (typeof window.neopedLegalReportFooter === 'function')
+                ? window.neopedLegalReportFooter()
+                : '';
+
+            const relatorio = `RESUMO INFORMATIVO — PIPP / dor no prematuro (NeoPedCalc, uso educativo)
+=========================================
+
+NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Nao e conduta de analgesia; revise com contexto clinico e protocolo institucional.
+
+IDENTIFICACAO:
+- Nome: ${nome || 'Nao informado'}
+- Data da avaliacao: ${dataAvaliacao.toLocaleDateString('pt-BR')}
+- Horario: ${horaAvaliacao}
+
+DADOS INFORMADOS:
+- Avaliador (campo): ${avaliador === 'sim' ? 'Proprio avaliador' : 'Outro profissional'}
+- Idade gestacional: ${Number(idadeGestacional).toFixed(1)} semanas
+- FC basal: ${Number(fcBasal).toFixed(1)} bpm
+- FC durante evento: ${Number(fcDoloroso).toFixed(1)} bpm
+- Sat O2 basal: ${Number(satBasal).toFixed(1)}%
+- Sat O2 durante evento: ${Number(satDoloroso).toFixed(1)}%
+
+ITENS PIPP (descricao dos pontos marcados):
+- Estado geral antes do evento: ${getDescricaoEstadoGeral(document.querySelector('input[name="estadoGeral"]:checked')?.value)}
+- Franzir da testa: ${getDescricaoIntensidade(document.querySelector('input[name="franzirTesta"]:checked')?.value)}
+- Lagrimas: ${getDescricaoIntensidade(document.querySelector('input[name="lagrimas"]:checked')?.value)}
+- Aperto nariz-labios: ${getDescricaoIntensidade(document.querySelector('input[name="apertoNariz"]:checked')?.value)}
+
+RESULTADO (aritmetico no app):
+- Score PIPP: ${Number(score).toFixed(1)} / 21
+- Rotulo automatico: ${interpretacao.classificacaoPlain || interpretacao.classificacao}
+- Texto do app: ${interpretacao.descricaoPlain || interpretacao.descricao}
+
+LEMBRETE EDUCATIVO:
+- Stevens et al., Clin J Pain 1996 — validacao original do PIPP.
+- Cortes para intervencao variam; decisao terapeutica: equipe assistencial.
+
+---
+NOTA EDUCATIVA: Revise todos os valores. A NeoPedCalc nao substitui julgamento clinico nem protocolos institucionais.
+
+${foot ? foot.trim() : ''}`;
+
+            console.log('Relatório gerado:', relatorio);
+
+            const msgCopia = 'Texto copiado. Revise numeros e contexto antes de usar em registro clinico ou mensagem.';
+
+            navigator.clipboard.writeText(relatorio).then(() => {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                console.log('Relatório copiado com sucesso');
+            }).catch((err) => {
+                console.error('Erro ao copiar relatório:', err);
+                const textArea = document.createElement('textarea');
+                textArea.value = relatorio;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+
+        // Funções auxiliares para descrições
+        function getDescricaoEstadoGeral(valor) {
+            const descricoes = {
+                '0': 'Acordado, ativo, olhos abertos, movimentos faciais',
+                '1': 'Acordado, quieto, olhos abertos, sem movimentos faciais',
+                '2': 'Sonolento, ativo, olhos fechados, movimentos faciais',
+                '3': 'Sonolento, quieto, olhos fechados, sem movimentos faciais'
+            };
+            return descricoes[valor] || 'Nao avaliado';
+        }
+
+        function getDescricaoIntensidade(valor) {
+            const descricoes = {
+                '0': 'Ausente',
+                '1': 'Minimo',
+                '2': 'Moderado',
+                '3': 'Maximo'
+            };
+            return descricoes[valor] || 'Nao avaliado';
+        }
+
+        // Event listener para o formulário
+        document.addEventListener('DOMContentLoaded', function() {
+            // Definir data e hora atuais como padrão
+            const agora = new Date();
+            const hoje = agora.toISOString().split('T')[0];
+            const horaAtual = agora.toTimeString().slice(0, 5);
+            document.getElementById('dataAvaliacao').value = hoje;
+            document.getElementById('horaAvaliacao').value = horaAtual;
+
+            // Event listener para o formulário
+            const form = document.getElementById('dorForm');
+            if (form) {
+                console.log('Formulário encontrado, adicionando event listener');
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    console.log('Formulário submetido');
+                    avaliarDor();
+                });
+            } else {
+                console.log('Formulário não encontrado');
+            }
+
+            // Event listener para o botão de relatório
+            const botaoRelatorio = document.getElementById('gerarRelatorio');
+            if (botaoRelatorio) {
+                console.log('Botão de relatório encontrado, adicionando event listener');
+                botaoRelatorio.addEventListener('click', function() {
+                    console.log('Botão de relatório clicado');
+                    gerarRelatorio();
+                });
+            } else {
+                console.log('Botão de relatório não encontrado');
+            }
+
+            // Event listener para o botão de limpar dados
+            const botaoLimpar = document.getElementById('limparDados');
+            if (botaoLimpar) {
+                console.log('Botão de limpar dados encontrado, adicionando event listener');
+                botaoLimpar.addEventListener('click', function() {
+                    console.log('Botão de limpar dados clicado');
+                    limparDados();
+                });
+            } else {
+                console.log('Botão de limpar dados não encontrado');
+            }
+        });
+
+        // Event listener para radio buttons - tornar toda a área clicável
+        document.addEventListener('change', function(e) {
+            if (e.target.type === 'radio') {
+                console.log('Radio button clicado:', e.target.name, e.target.value);
+                const radioGroup = e.target.name;
+                const allOptions = document.querySelectorAll(`input[name="${radioGroup}"]`);
+                allOptions.forEach(option => {
+                    option.closest('.radio-option')?.classList.remove('selected');
+                    option.closest('.pipp-option')?.classList.remove('selected');
+                });
+                e.target.closest('.radio-option')?.classList.add('selected');
+                e.target.closest('.pipp-option')?.classList.add('selected');
+            }
+        });
+
+        // Event listener para cliques nas opções de radio
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.radio-option') || e.target.closest('.pipp-option')) {
+                const radioOption = e.target.closest('.radio-option') || e.target.closest('.pipp-option');
+                const radioInput = radioOption.querySelector('input[type="radio"]');
+                if (radioInput) {
+                    radioInput.checked = true;
+                    radioInput.dispatchEvent(new Event('change'));
+                }
+            }
+        });
+
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

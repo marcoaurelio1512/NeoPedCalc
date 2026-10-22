@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>NeoPedCalc — Escala de Apgar (educativo)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .apgar-section {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+        }
+
+        .apgar-section h3 {
+            font-size: 16px;
+            margin-top: 0;
+            margin-bottom: 16px;
+            color: #111;
+            border-bottom: 1px solid #e7e7ee;
+            padding-bottom: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .radio-group {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border: 1px solid #d9d9e6;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .radio-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%; height: 100%; left: 0; top: 0; cursor: pointer;
+        }
+
+        .radio-option label {
+            margin-bottom: 0;
+            padding-left: 0;
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .radio-option.selected {
+            background: #111;
+            border-color: #111;
+        }
+
+        .radio-option.selected label {
+            color: #fff;
+        }
+
+        .results-container {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .result-card {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: 900;
+            color: #111;
+        }
+
+        .score-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .comparison-card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .comparison-value {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .trend-indicator {
+            font-size: 14px;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        .trend-improvement { color: #28a745; }
+        .trend-worsening { color: #dc3545; }
+        .trend-stable { color: #666; }
+
+        .btn {
+            background: #111;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #374151;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        /* Modal Styles */
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(17, 17, 17, 0.1);
+            color: #111;
+            border: 2px solid #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-info:hover {
+            background: #111;
+            color: #fff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 { margin: 0; font-size: 22px; }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover { transform: rotate(90deg); }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child { margin-top: 0; }
+        .modal-body p { line-height: 1.6; margin-bottom: 15px; color: #34495e; }
+        .modal-body ul, .modal-body ol { margin: 10px 0; padding-left: 25px; }
+        .modal-body li { margin-bottom: 8px; line-height: 1.5; }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong { color: #2c3e50; }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong { color: #27ae60; }
+
+        @media (max-width: 768px) {
+            .modal { padding: 10px; }
+            .modal-content { width: 95%; max-height: 95vh; }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <header>
+        <h1>Escala de Apgar</h1>
+        <p>NeoPedCalc - Avaliação do Recém-Nascido no 1º e 5º Minuto</p>
+        <div class="header-actions">
+            <button type="button" class="btn-info" onclick="abrirModal()">
+                Como usar            </button>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="card">
+            <div class="form-container">
+                <form id="apgarForm">
+                        <div class="form-row">
+                            <!-- 1º Minuto -->
+                            <div class="apgar-section">
+                                <h3>Apgar Score - 1º Minuto</h3>
+                                
+                                <div class="form-group">
+                                    <label for="freqCardiaca1">Frequência Cardíaca (bat/min):</label>
+                                    <input type="number" id="freqCardiaca1" min="0" max="200" placeholder="Ex: 120" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Cor:</label>
+                                    <div class="radio-group">
+                                        <div class="radio-option" data-value="0">
+                                            <input type="radio" name="cor1" value="0" id="cor1_0" required>
+                                            <label for="cor1_0">Cianótico pálido</label>
+                                        </div>
+                                        <div class="radio-option" data-value="1">
+                                            <input type="radio" name="cor1" value="1" id="cor1_1">
+                                            <label for="cor1_1">Corpo rosa, extremidades cianóticas</label>
+                                        </div>
+                                        <div class="radio-option" data-value="2">
+                                            <input type="radio" name="cor1" value="2" id="cor1_2">
+                                            <label for="cor1_2">Todo rosa</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Respiração:</label>
+                                    <div class="radio-group">
+                                        <div class="radio-option" data-value="0">
+                                            <input type="radio" name="resp1" value="0" id="resp1_0" required>
+                                            <label for="resp1_0">Ausente</label>
+                                        </div>
+                                        <div class="radio-option" data-value="1">
+                                            <input type="radio" name="resp1" value="1" id="resp1_1">
+                                            <label for="resp1_1">Irregular</label>
+                                        </div>
+                                        <div class="radio-option" data-value="2">
+                                            <input type="radio" name="resp1" value="2" id="resp1_2">
+                                            <label for="resp1_2">Choro forte</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Resposta a Estímulo:</label>
+                                    <div class="radio-group">
+                                        <div class="radio-option" data-value="0">
+                                            <input type="radio" name="est1" value="0" id="est1_0" required>
+                                            <label for="est1_0">Ausente</label>
+                                        </div>
+                                        <div class="radio-option" data-value="1">
+                                            <input type="radio" name="est1" value="1" id="est1_1">
+                                            <label for="est1_1">Algum movimento</label>
+                                        </div>
+                                        <div class="radio-option" data-value="2">
+                                            <input type="radio" name="est1" value="2" id="est1_2">
+                                            <label for="est1_2">Choro, movimento</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Tônus Muscular:</label>
+                                    <div class="radio-group">
+                                        <div class="radio-option" data-value="0">
+                                            <input type="radio" name="tonus1" value="0" id="tonus1_0" required>
+                                            <label for="tonus1_0">Flácido</label>
+                                        </div>
+                                        <div class="radio-option" data-value="1">
+                                            <input type="radio" name="tonus1" value="1" id="tonus1_1">
+                                            <label for="tonus1_1">Alguma flexão</label>
+                                        </div>
+                                        <div class="radio-option" data-value="2">
+                                            <input type="radio" name="tonus1" value="2" id="tonus1_2">
+                                            <label for="tonus1_2">Boa flexão</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="score-display">
+                                    <div>Score 1º Minuto:</div>
+                                    <div class="score-value" id="score1">0</div>
+                                </div>
+                            </div>
+
+                            <!-- 5º Minuto -->
+                            <div class="apgar-section">
+                                <h3>Apgar Score - 5º Minuto</h3>
+                                
+                                <div class="form-group">
+                                    <label for="freqCardiaca5">Frequência Cardíaca (bat/min):</label>
+                                    <input type="number" id="freqCardiaca5" min="0" max="200" placeholder="Ex: 140" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Cor:</label>
+                                    <div class="radio-group">
+                                        <div class="radio-option" data-value="0">
+                                            <input type="radio" name="cor5" value="0" id="cor5_0" required>
+                                            <label for="cor5_0">Cianótico pálido</label>
+                                        </div>
+                                        <div class="radio-option" data-value="1">
+                                            <input type="radio" name="cor5" value="1" id="cor5_1">
+                                            <label for="cor5_1">Corpo rosa, extremidades cianóticas</label>
+                                        </div>
+                                        <div class="radio-option" data-value="2">
+                                            <input type="radio" name="cor5" value="2" id="cor5_2">
+                                            <label for="cor5_2">Todo rosa</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Respiração:</label>
+                                    <div class="radio-group">
+                                        <div class="radio-option" data-value="0">
+                                            <input type="radio" name="resp5" value="0" id="resp5_0" required>
+                                            <label for="resp5_0">Ausente</label>
+                                        </div>
+                                        <div class="radio-option" data-value="1">
+                                            <input type="radio" name="resp5" value="1" id="resp5_1">
+                                            <label for="resp5_1">Irregular</label>
+                                        </div>
+                                        <div class="radio-option" data-value="2">
+                                            <input type="radio" name="resp5" value="2" id="resp5_2">
+                                            <label for="resp5_2">Choro forte</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Resposta a Estímulo:</label>
+                                    <div class="radio-group">
+                                        <div class="radio-option" data-value="0">
+                                            <input type="radio" name="est5" value="0" id="est5_0" required>
+                                            <label for="est5_0">Ausente</label>
+                                        </div>
+                                        <div class="radio-option" data-value="1">
+                                            <input type="radio" name="est5" value="1" id="est5_1">
+                                            <label for="est5_1">Algum movimento</label>
+                                        </div>
+                                        <div class="radio-option" data-value="2">
+                                            <input type="radio" name="est5" value="2" id="est5_2">
+                                            <label for="est5_2">Choro, movimento</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Tônus Muscular:</label>
+                                    <div class="radio-group">
+                                        <div class="radio-option" data-value="0">
+                                            <input type="radio" name="tonus5" value="0" id="tonus5_0" required>
+                                            <label for="tonus5_0">Flácido</label>
+                                        </div>
+                                        <div class="radio-option" data-value="1">
+                                            <input type="radio" name="tonus5" value="1" id="tonus5_1">
+                                            <label for="tonus5_1">Alguma flexão</label>
+                                        </div>
+                                        <div class="radio-option" data-value="2">
+                                            <input type="radio" name="tonus5" value="2" id="tonus5_2">
+                                            <label for="tonus5_2">Boa flexão</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="score-display">
+                                    <div>Score 5º Minuto:</div>
+                                    <div class="score-value" id="score5">0</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn">Calcular Escore de Apgar</button>
+                    </form>
+
+                    <div id="results" class="results-container">
+                        <div class="result-card">
+                            <h3>Resultados da Avaliação</h3>
+                            <div class="score-comparison">
+                                <div class="comparison-card">
+                                    <h4>1º Minuto</h4>
+                                    <div class="comparison-value" id="finalScore1">0</div>
+                                    <div class="result-description" id="interpretation1">-</div>
+                                </div>
+                                <div class="comparison-card">
+                                    <h4>5º Minuto</h4>
+                                    <div class="comparison-value" id="finalScore5">0</div>
+                                    <div class="result-description" id="interpretation5">-</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="result-card">
+                            <h3>Evolução do Escore</h3>
+                            <div class="result-value" id="scoreDifference">0</div>
+                            <div class="result-description" id="trendDescription">-</div>
+                            <div class="trend-indicator" id="trendIndicator">-</div>
+                        </div>
+
+                        <div class="interpretation" id="clinicalInterpretation">
+                            <strong>Interpretação Clínica:</strong>
+                            <div id="interpretationText"></div>
+                        </div>
+                        <button type="button" id="gerarRelatorio" class="btn" style="margin-top: 20px; background: #28a745;">
+                            Copiar texto informativo
+                        </button>
+                    </div>
+
+                    <div class="warning">
+                        <strong>Atenção:</strong> Esta calculadora é apenas para fins educacionais. 
+                        Sempre consulte as diretrizes clínicas atuais e um neonatologista para avaliações clínicas.
+                    </div>
+
+                    <div class="info">
+                        <strong>Critérios de Avaliação do Escore de Apgar:</strong><br>
+                        • <strong>Frequência Cardíaca:</strong> 0 = ausente, 1 = <100 bpm, 2 = >100 bpm<br>
+                        • <strong>Cor:</strong> 0 = cianótico/pálido, 1 = corpo rosa/extremidades cianóticas, 2 = todo rosa<br>
+                        • <strong>Respiração:</strong> 0 = ausente, 1 = irregular, 2 = choro forte<br>
+                        • <strong>Resposta a Estímulo:</strong> 0 = ausente, 1 = algum movimento, 2 = choro/movimento<br>
+                        • <strong>Tônus Muscular:</strong> 0 = flácido, 1 = alguma flexão, 2 = boa flexão<br><br>
+                        <strong>Interpretação:</strong> 7-10 = normal, 4-6 = depressão leve, 0-3 = depressão moderada/grave
+                    </div>
+                </div> <!-- End form-container -->
+            </div> <!-- End card -->
+
+            <div class="footer">
+                NeoPedCalc &copy; <span data-neoped-year></span> - Escala de Apgar
+            </div>
+        </div> <!-- End wrap -->
+
+            <!-- Modal de Informações -->
+            <div id="modalInfo" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Como usar — Escala de Apgar (educativo)</h2>
+                        <span class="close" onclick="fecharModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <h3>Objetivo (educativo)</h3>
+                        <p>A Escala de Apgar é uma ferramenta de avaliação padronizada do recém-nascido utilizada para determinar rapidamente o estado geral de saúde do bebê ao nascer, auxiliando na identificação de recém-nascidos que necessitam de cuidados especiais ou ressuscitação.</p>
+                        
+                        <h3>Fórmula da Escala de Apgar</h3>
+                        <div class="formula-box">
+                            <strong>Apgar = Aparência + Pulso + Gesticulação + Atividade + Respiração</strong><br><br>
+                            <strong>Aparência (Cor):</strong><br>
+                            • 2 pontos: Corpo e extremidades rosados<br>
+                            • 1 ponto: Corpo rosado, extremidades azuladas<br>
+                            • 0 pontos: Corpo e extremidades azuladas/pálidas<br><br>
+                            <strong>Pulso (Frequência Cardíaca):</strong><br>
+                            • 2 pontos: >100 bpm<br>
+                            • 1 ponto: <100 bpm<br>
+                            • 0 pontos: Ausente<br><br>
+                            <strong>Gesticulação (Reflexos):</strong><br>
+                            • 2 pontos: Resposta vigorosa à estimulação<br>
+                            • 1 ponto: Resposta fraca/grimace<br>
+                            • 0 pontos: Sem resposta<br><br>
+                            <strong>Atividade (Tônus Muscular):</strong><br>
+                            • 2 pontos: Movimentos ativos<br>
+                            • 1 ponto: Poucos movimentos<br>
+                            • 0 pontos: Flácido<br><br>
+                            <strong>Respiração:</strong><br>
+                            • 2 pontos: Choro vigoroso<br>
+                            • 1 ponto: Respiração irregular/fraca<br>
+                            • 0 pontos: Ausente<br><br>
+                            <strong>Escala Total:</strong> 0-10 pontos
+                        </div>
+
+                        <h3>Critérios de Avaliação</h3>
+                        <ul>
+                            <li><strong>Aparência (A):</strong> Cor da pele e mucosas</li>
+                            <li><strong>Pulso (P):</strong> Frequência cardíaca</li>
+                            <li><strong>Gesticulação (G):</strong> Reflexos e resposta a estímulos</li>
+                            <li><strong>Atividade (A):</strong> Tônus muscular</li>
+                            <li><strong>Respiração (R):</strong> Esforço respiratório</li>
+                        </ul>
+
+                        <h3>Instruções de Uso</h3>
+                        <ol>
+                            <li><strong>Avalie a Aparência:</strong> Observe a cor da pele e mucosas</li>
+                            <li><strong>Verifique o Pulso:</strong> Palpe ou ausculte a frequência cardíaca</li>
+                            <li><strong>Teste os Reflexos:</strong> Observe resposta à estimulação</li>
+                            <li><strong>Avalie a Atividade:</strong> Observe movimentos e tônus muscular</li>
+                            <li><strong>Verifique a Respiração:</strong> Observe esforço respiratório</li>
+                            <li>Clique em <strong>"Calcular Apgar"</strong> para obter o resultado</li>
+                        </ol>
+
+                        <h3>Interpretação dos Resultados</h3>
+                        <ul>
+                            <li><strong>7-10 pontos:</strong> Recém-nascido em boas condições</li>
+                            <li><strong>4-6 pontos:</strong> Recém-nascido com asfixia moderada</li>
+                            <li><strong>0-3 pontos:</strong> Recém-nascido com asfixia grave</li>
+                            <li><strong>Apgar 1º minuto:</strong> Avaliação inicial, necessidade de intervenção</li>
+                            <li><strong>Apgar 5º minuto:</strong> Resposta à ressuscitação</li>
+                        </ul>
+
+                        <h3>Condutas por Escore</h3>
+                        <ul>
+                            <li><strong>7-10 pontos:</strong> Cuidados rotineiros, observação</li>
+                            <li><strong>4-6 pontos:</strong> Estimulação, oxigênio, monitoramento</li>
+                            <li><strong>0-3 pontos:</strong> Ressuscitação imediata, suporte avançado</li>
+                            <li><strong>Apgar <7 aos 5 min:</strong> Continuar ressuscitação, considerar intubação</li>
+                        </ul>
+
+                        <h3>Considerações Importantes</h3>
+                        <ul>
+                            <li>Avalie no 1º e 5º minuto de vida</li>
+                            <li>Use estímulos consistentes para avaliação</li>
+                            <li>Documente ambos os escores no prontuário</li>
+                            <li>Considere fatores maternos que podem influenciar</li>
+                            <li>Reavalie se necessário após intervenções</li>
+                            <li>Comunique escores baixos imediatamente</li>
+                            <li>Use em conjunto com outros parâmetros clínicos</li>
+                        </ul>
+
+                        <h3>Aplicações Clínicas</h3>
+                        <ul>
+                            <li><strong>Avaliação Inicial:</strong> Estado do recém-nascido ao nascer</li>
+                            <li><strong>Ressuscitação:</strong> Orientar necessidade de intervenção</li>
+                            <li><strong>Prognóstico:</strong> Indicador de morbimortalidade</li>
+                            <li><strong>Comunicação:</strong> Padronização entre equipes</li>
+                            <li><strong>Pesquisa:</strong> Estudos de outcomes neonatais</li>
+                        </ul>
+
+                        <h3>Limitações</h3>
+                        <ul>
+                            <li>Não prediz outcomes neurológicos a longo prazo</li>
+                            <li>Pode ser influenciado por medicações maternas</li>
+                            <li>Subjetividade na avaliação de alguns parâmetros</li>
+                            <li>Não considera idade gestacional</li>
+                            <li>Pode variar entre avaliadores</li>
+                            <li>Não substitui avaliação clínica completa</li>
+                        </ul>
+
+                        <div class="reference-box">
+                            <strong>Referências:</strong><br>
+                            - Apgar V. A proposal for a new method of evaluation of the newborn infant. Curr Res Anesth Analg. 1953;32(4):260-7.<br>
+                            - Casey BM, McIntire DD, Leveno KJ. The continuing value of the Apgar score for the assessment of newborn infants. N Engl J Med. 2001;344(7):467-71.<br>
+                            - American Academy of Pediatrics Committee on Fetus and Newborn. Use and abuse of the Apgar score. Pediatrics. 1996;98(1):141-2.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Função para calcular score de frequência cardíaca
+        function calcularScoreFreqCardiaca(freq) {
+            if (freq === 0) return 0;
+            if (freq < 100) return 1;
+            return 2;
+        }
+
+        // Função para calcular score total do Apgar
+        function calcularScore(freqCardiaca, cor, resp, est, tonus) {
+            const scoreFreq = calcularScoreFreqCardiaca(parseInt(freqCardiaca));
+            const scoreCor = parseInt(cor) || 0;
+            const scoreResp = parseInt(resp) || 0;
+            const scoreEst = parseInt(est) || 0;
+            const scoreTonus = parseInt(tonus) || 0;
+            
+            return scoreFreq + scoreCor + scoreResp + scoreEst + scoreTonus;
+        }
+
+        // Função para interpretar score total
+        function interpretarScore(score) {
+            if (score >= 7) return "Normal";
+            if (score >= 4) return "Depressão leve";
+            return "Depressão moderada/grave";
+        }
+
+        // Função para interpretar tendência
+        function interpretarTendencia(diferenca) {
+            if (diferenca >= 3) return { texto: "Boa recuperação", classe: "trend-improvement" };
+            if (diferenca >= 2) return { texto: "Moderada recuperação", classe: "trend-improvement" };
+            if (diferenca >= 1) return { texto: "Pequena recuperação", classe: "trend-improvement" };
+            if (diferenca === 0) return { texto: "Sem mudanças", classe: "trend-stable" };
+            if (diferenca >= -1) return { texto: "Piora leve", classe: "trend-worsening" };
+            if (diferenca >= -2) return { texto: "Piora", classe: "trend-worsening" };
+            return { texto: "Grande piora", classe: "trend-worsening" };
+        }
+
+        // Função para atualizar score em tempo real
+        function atualizarScore(minuto) {
+            const freqCardiaca = parseFloat(document.getElementById(`freqCardiaca${minuto}`).value) || 0;
+            const cor = parseInt(document.querySelector(`input[name="cor${minuto}"]:checked`)?.value) || 0;
+            const resp = parseInt(document.querySelector(`input[name="resp${minuto}"]:checked`)?.value) || 0;
+            const est = parseInt(document.querySelector(`input[name="est${minuto}"]:checked`)?.value) || 0;
+            const tonus = parseInt(document.querySelector(`input[name="tonus${minuto}"]:checked`)?.value) || 0;
+
+            const scoreFreq = calcularScoreFreqCardiaca(freqCardiaca);
+            const scoreTotal = scoreFreq + cor + resp + est + tonus;
+
+            document.getElementById(`score${minuto}`).textContent = scoreTotal;
+        }
+
+        // Event listeners para radio buttons
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const minuto = this.name.slice(-1);
+                atualizarScore(minuto);
+                
+                // Atualizar visual do radio group
+                const radioGroup = this.closest('.radio-group');
+                radioGroup.querySelectorAll('.radio-option').forEach(option => {
+                    option.classList.remove('selected');
+                });
+                this.closest('.radio-option').classList.add('selected');
+            });
+        });
+
+        // Event listeners para frequência cardíaca
+        document.getElementById('freqCardiaca1').addEventListener('input', () => atualizarScore(1));
+        document.getElementById('freqCardiaca5').addEventListener('input', () => atualizarScore(5));
+
+        // Event listener para o formulário
+        document.getElementById('apgarForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const score1 = parseInt(document.getElementById('score1').textContent);
+            const score5 = parseInt(document.getElementById('score5').textContent);
+            const diferenca = score5 - score1;
+            
+            // Exibir resultados
+            document.getElementById('finalScore1').textContent = score1;
+            document.getElementById('finalScore5').textContent = score5;
+            document.getElementById('scoreDifference').textContent = diferenca;
+            
+            // Interpretações
+            document.getElementById('interpretation1').textContent = interpretarScore(score1);
+            document.getElementById('interpretation5').textContent = interpretarScore(score5);
+            
+            // Tendência
+            const tendencia = interpretarTendencia(diferenca);
+            document.getElementById('trendDescription').textContent = tendencia.texto;
+            document.getElementById('trendIndicator').textContent = diferenca > 0 ? '↗' : diferenca < 0 ? '↘' : '→';
+            document.getElementById('trendIndicator').className = `trend-indicator ${tendencia.classe}`;
+            
+            // Interpretação clínica
+            let interpretacaoClinica = '';
+            if (score1 >= 7 && score5 >= 7) {
+                interpretacaoClinica = 'Recém-nascido em boas condições. Não requer intervenção especial.';
+            } else if (score1 < 7 && score5 >= 7) {
+                interpretacaoClinica = 'Recém-nascido com boa recuperação. Monitorar evolução.';
+            } else if (score1 >= 7 && score5 < 7) {
+                interpretacaoClinica = 'Recém-nascido com piora clínica. Avaliar necessidade de intervenção.';
+            } else if (score1 < 7 && score5 < 7) {
+                interpretacaoClinica = 'Recém-nascido com comprometimento clínico. Requer intervenção imediata.';
+            }
+            
+            document.getElementById('interpretationText').textContent = interpretacaoClinica;
+            
+            // Mostrar resultados
+            document.getElementById('results').style.display = 'block';
+        });
+
+        // Função para gerar relatório
+        function gerarRelatorio() {
+            if (!document.getElementById('apgarForm').reportValidity()) return;
+            // Obter dados dos formulários
+            const freqCardiaca1 = parseInt(document.getElementById('freqCardiaca1').value);
+            const freqCardiaca5 = parseInt(document.getElementById('freqCardiaca5').value);
+            
+            // Obter valores dos radio buttons
+            const cor1 = document.querySelector('input[name="cor1"]:checked')?.value || '0';
+            const resp1 = document.querySelector('input[name="resp1"]:checked')?.value || '0';
+            const est1 = document.querySelector('input[name="est1"]:checked')?.value || '0';
+            const tonus1 = document.querySelector('input[name="tonus1"]:checked')?.value || '0';
+            
+            const cor5 = document.querySelector('input[name="cor5"]:checked')?.value || '0';
+            const resp5 = document.querySelector('input[name="resp5"]:checked')?.value || '0';
+            const est5 = document.querySelector('input[name="est5"]:checked')?.value || '0';
+            const tonus5 = document.querySelector('input[name="tonus5"]:checked')?.value || '0';
+            
+            // Calcular escores
+            const score1 = calcularScore(freqCardiaca1, cor1, resp1, est1, tonus1);
+            const score5 = calcularScore(freqCardiaca5, cor5, resp5, est5, tonus5);
+            const diferenca = score5 - score1;
+            
+            // Interpretações
+            const interpretacao1 = interpretarScore(score1);
+            const interpretacao5 = interpretarScore(score5);
+            const tendencia = interpretarTendencia(diferenca);
+            
+            // Interpretação clínica
+            let interpretacaoClinica = '';
+            if (score1 >= 7 && score5 >= 7) {
+                interpretacaoClinica = 'Recem-nascido em boas condicoes. Nao requer intervencao especial.';
+            } else if (score1 < 7 && score5 >= 7) {
+                interpretacaoClinica = 'Recem-nascido com boa recuperacao. Monitorar evolucao.';
+            } else if (score1 >= 7 && score5 < 7) {
+                interpretacaoClinica = 'Recem-nascido com piora clinica. Avaliar necessidade de intervencao.';
+            } else if (score1 < 7 && score5 < 7) {
+                interpretacaoClinica = 'Recem-nascido com comprometimento clinico. Requer intervencao imediata.';
+            }
+
+            // Gerar relatório em texto simples
+            let relatorio = `RESUMO INFORMATIVO — ESCALA DE APGAR (EDUCATIVO)
+==============================
+
+avaliacao 1o minuto:
+- frequencia cardiaca: ${freqCardiaca1} bpm
+- cor: ${getDescricaoCor(cor1)}
+- respiracao: ${getDescricaoResp(resp1)}
+- resposta a estimulo: ${getDescricaoEst(est1)}
+- tono muscular: ${getDescricaoTonus(tonus1)}
+- escore apgar: ${score1}/10
+- interpretacao: ${interpretacao1}
+
+avaliacao 5o minuto:
+- frequencia cardiaca: ${freqCardiaca5} bpm
+- cor: ${getDescricaoCor(cor5)}
+- respiracao: ${getDescricaoResp(resp5)}
+- resposta a estimulo: ${getDescricaoEst(est5)}
+- tono muscular: ${getDescricaoTonus(tonus5)}
+- escore apgar: ${score5}/10
+- interpretacao: ${interpretacao5}
+
+evolucao:
+- diferenca entre 5o e 1o minuto: ${diferenca > 0 ? '+' : ''}${diferenca}
+- tendencia: ${tendencia.texto}
+
+interpretacao clinica:
+${interpretacaoClinica}
+
+observacoes:
+- escala de apgar avaliada em 1o e 5o minutos de vida
+- criterios: frequencia cardiaca, cor, respiracao, resposta a estimulo, tono muscular
+- escore maximo: 10 pontos
+- escore normal: 7-10 pontos
+- escore baixo: 0-6 pontos
+
+data do relatorio: ${new Date().toLocaleDateString('pt-BR')}
+hora do relatorio: ${new Date().toLocaleTimeString('pt-BR')}`;
+
+            relatorio = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorio;
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorio += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                relatorio += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            // Copiar para área de transferência (com fallback)
+            navigator.clipboard.writeText(relatorio).then(() => {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(() => {
+                try {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = relatorio;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                } catch (e) {
+                    if (typeof window.neopedCopyFail === 'function') window.neopedCopyFail(); else alert('Nao foi possivel copiar automaticamente. Revise o texto e copie manualmente para uso informativo.');
+                }
+            });
+        }
+
+        function getDescricaoCor(valor) {
+            const descricoes = {
+                '0': 'Cianotico palido',
+                '1': 'Corpo rosa, extremidades cianoticas',
+                '2': 'Todo rosa'
+            };
+            return descricoes[valor] || 'Nao avaliado';
+        }
+
+        function getDescricaoResp(valor) {
+            const descricoes = {
+                '0': 'Ausente',
+                '1': 'Irregular',
+                '2': 'Choro forte'
+            };
+            return descricoes[valor] || 'Nao avaliado';
+        }
+
+        function getDescricaoEst(valor) {
+            const descricoes = {
+                '0': 'Ausente',
+                '1': 'Algum movimento',
+                '2': 'Choro, movimento'
+            };
+            return descricoes[valor] || 'Nao avaliado';
+        }
+
+        function getDescricaoTonus(valor) {
+            const descricoes = {
+                '0': 'Flacido',
+                '1': 'Alguma flexao',
+                '2': 'Movimento ativo'
+            };
+            return descricoes[valor] || 'Nao avaliado';
+        }
+
+        // Event listener para o botão de relatório - usando delegação de eventos
+        document.addEventListener('click', function(e) {
+            if (e.target && e.target.id === 'gerarRelatorio') {
+                gerarRelatorio();
+            }
+        });
+
+        // Event listener para radio buttons - tornar toda a área clicável
+        document.addEventListener('change', function(e) {
+            if (e.target.type === 'radio') {
+                // Remover classe 'selected' de todos os radio-option do mesmo grupo
+                const radioGroup = e.target.name;
+                const allOptions = document.querySelectorAll(`input[name="${radioGroup}"]`);
+                allOptions.forEach(option => {
+                    option.closest('.radio-option').classList.remove('selected');
+                });
+                
+                // Adicionar classe 'selected' à opção selecionada
+                e.target.closest('.radio-option').classList.add('selected');
+            }
+        });
+    </script>
+    <script>
+
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

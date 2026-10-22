@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — Silverman-Anderson (educativo)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #6b7280;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --background-color: #ecf0f1;
+            --card-background: #ffffff;
+            --text-color: #2c3e50;
+            --text-muted: #374151;
+            --border-color: #bdc3c7;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--background-color) 0%, #d5dbdb 100%);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: var(--card-background);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .form-section {
+            background: var(--card-background);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-section:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+
+        .subsection-title {
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+            margin: 20px 0 15px 0;
+            font-weight: 600;
+            padding-left: 10px;
+            border-left: none;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #d1d5db;
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.06);
+            background: white;
+        }
+
+        .unit {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: #4b5563;
+            color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+
+        .btn-primary:hover {
+            background: #374151;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--text-muted) 0%, #6c757d 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .copy-btn:hover {
+            background: linear-gradient(135deg, #229954 0%, #27ae60 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        .copy-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(39, 174, 96, 0.3);
+        }
+
+        .results-section {
+            background: var(--card-background);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: none;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .result-value {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        .risk-indicator {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .risk-none {
+            background: rgba(39, 174, 96, 0.1);
+            color: var(--success-color);
+            border: 2px solid rgba(39, 174, 96, 0.3);
+        }
+
+        .risk-moderate {
+            background: rgba(243, 156, 18, 0.1);
+            color: var(--warning-color);
+            border: 2px solid rgba(243, 156, 18, 0.3);
+        }
+
+        .risk-severe {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+            border: 2px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .report-section {
+            background: var(--card-background);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .breakdown-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .breakdown-table th,
+        .breakdown-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .breakdown-table th {
+            background: #f3f4f6;
+            color: #374151;
+            font-weight: 600;
+        }
+
+        .breakdown-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .result-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #374151;
+        }
+
+        .info-box h4 {
+            margin-bottom: 10px;
+            color: #374151;
+        }
+
+        .image-section {
+            background: var(--card-background);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .image-section img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin: 15px 0;
+        }
+
+        .image-caption {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .container { border-radius: 10px; }
+            .header h1 { font-size: 1.8em; }
+            .content { padding: 20px; }
+            .section { padding: 15px; }
+            button { padding: 12px; font-size: 15px; }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 5px; }
+            .header h1 { font-size: 1.4em; }
+            .header p { font-size: 0.9em; }
+            .content { padding: 15px; }
+            .section { padding: 12px; }
+            .section h3 { font-size: 1.1em; }
+            select { padding: 10px; font-size: 14px; }
+            button { padding: 10px; font-size: 14px; }
+            .results { padding: 12px; }
+            .score-display { font-size: 2.5em; }
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+        }
+        .header-actions .btn-info {
+            width: auto;
+            max-width: 100%;
+        }
+        #modalInfo {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            inset: 0;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
+            box-sizing: border-box;
+            background: rgba(15, 23, 42, 0.5);
+            overflow: auto;
+        }
+        #modalInfo .modal-content {
+            background: #fff;
+            border-radius: 14px;
+            width: 100%;
+            max-height: 86vh;
+            overflow: auto;
+            padding: 0;
+        }
+        #modalInfo .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: #f8fafc;
+            border-radius: 14px 14px 0 0;
+        }
+        #modalInfo .modal-header h2 {
+            margin: 0;
+            font-size: 1.15rem;
+            color: #1e293b;
+        }
+        #modalInfo .modal-body {
+            padding: 18px 20px 22px;
+            line-height: 1.55;
+            color: #334155;
+        }
+        #modalInfo .modal-body h3 {
+            margin: 1.1em 0 0.5em;
+            font-size: 1rem;
+            color: #0f172a;
+        }
+        #modalInfo .modal-body h3:first-child { margin-top: 0; }
+        #modalInfo .modal-body ul, #modalInfo .modal-body ol { margin: 0.4em 0 0.8em 1.2em; padding: 0; }
+        #modalInfo .modal-body li { margin-bottom: 0.35em; }
+        #modalInfo .close {
+            cursor: pointer;
+            font-size: 1.5rem;
+            line-height: 1;
+            color: #64748b;
+            border: none;
+            background: none;
+            padding: 4px 8px;
+        }
+        #modalInfo .close:hover { color: #0f172a; }
+    </style>
+    <link rel="stylesheet" href="../../css/neoped-responsive.css">
+<link rel="stylesheet" href="../../css/neoped-modern.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Silverman-Anderson — dispneia no RN</h1>
+            <p>Ferramenta educativa para somar o escore (0–10) e registrar achados; <strong>não diagnostica</strong> nem define oxigenoterapia ou ventilação</p>
+            <div class="header-actions">
+                <button type="button" class="btn-info" onclick="abrirModalComoUsar()">Como usar</button>
+            </div>
+        </div>
+
+        <div class="image-section">
+            <h2 class="section-title">Escala Visual Silverman-Anderson</h2>
+            <img src="BSA.png" alt="Escala Visual Silverman-Anderson - Boletim de Dispneia do Recém-Nascido" onerror="this.style.display='none'; var s=this.nextElementSibling; if(s) s.style.display='block';" />
+            <span class="neoped-img-fallback" style="display:none; padding:1rem; background:var(--card-bg, #f8f9fa); border-radius:8px; color:#666; font-size:0.9rem;">Escala Silverman-Anderson não disponível neste dispositivo.</span>
+            <p class="image-caption">Escala visual para avaliação dos 5 domínios do Silverman-Anderson</p>
+        </div>
+
+        <div class="form-section">
+            <h2 class="section-title">Dados do Paciente</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="nome">Nome do Paciente</label>
+                    <input type="text" id="nome" placeholder="Nome completo">
+                </div>
+                <div class="form-group">
+                    <label for="data_nascimento">Data de Nascimento</label>
+                    <input type="date" id="data_nascimento">
+                </div>
+                <div class="form-group">
+                    <label for="data_avaliacao">Data da Avaliação</label>
+                    <input type="date" id="data_avaliacao">
+                </div>
+                <div class="form-group">
+                    <label for="hora_avaliacao">Hora da Avaliação</label>
+                    <input type="time" id="hora_avaliacao">
+                </div>
+                <div class="form-group">
+                    <label for="idade_completa">Idade (Calculada)</label>
+                    <input type="text" id="idade_completa" readonly>
+                    <span class="unit">anos, meses e dias</span>
+                </div>
+                <div class="form-group">
+                    <label for="peso">Peso</label>
+                    <input type="number" id="peso" step="0.001" placeholder="Ex.: 2.800">
+                    <span class="unit">kg</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2 class="section-title">Avaliação Silverman-Anderson</h2>
+            
+            <div class="info-box">
+                <h4>Informações Importantes</h4>
+                <p>O escore Silverman-Anderson quantifica achados de dispneia em recém-nascidos em 5 domínios (0–2 cada; total 0–10), com base na publicação de referência. Serve para registro e comparação educativa; decisões terapêuticas cabem ao profissional assistente e ao protocolo local.</p>
+            </div>
+
+            <h3 class="subsection-title">Domínios da Avaliação (0-2 pontos cada)</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="torax_sup">Tórax Superior</label>
+                    <select id="torax_sup">
+                        <option value="Sincronizado">Sincronizado (0 pontos)</option>
+                        <option value="Afundamento inspiratório">Afundamento inspiratório (1 ponto)</option>
+                        <option value="Paradoxal abdominal">Paradoxal abdominal (2 pontos)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="torax_inf">Tórax Inferior</label>
+                    <select id="torax_inf">
+                        <option value="Sem retração">Sem retração (0 pontos)</option>
+                        <option value="Apenas visível">Apenas visível (1 ponto)</option>
+                        <option value="Marcado">Marcado (2 pontos)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="xifoide">Retrações Xifóides</label>
+                    <select id="xifoide">
+                        <option value="Sem retração">Sem retração (0 pontos)</option>
+                        <option value="Apenas visível">Apenas visível (1 ponto)</option>
+                        <option value="Marcado">Marcado (2 pontos)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ban">Batimento de Asa Nasal (BAN)</label>
+                    <select id="ban">
+                        <option value="Sem retração">Sem retração (0 pontos)</option>
+                        <option value="Mínimo">Mínimo (1 ponto)</option>
+                        <option value="Marcado">Marcado (2 pontos)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="gemido">Gemido Expiratório</label>
+                    <select id="gemido">
+                        <option value="Não audível">Não audível (0 pontos)</option>
+                        <option value="Audível com esteto">Audível com estetoscópio (1 ponto)</option>
+                        <option value="Audível sem esteto">Audível sem estetoscópio (2 pontos)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="obs">Observações</label>
+                <input type="text" id="obs" placeholder="Frequência respiratória, SpO₂, O₂ suplementar, etc.">
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="btn btn-primary" onclick="calcularSilvermanAnderson()">Calcular Silverman-Anderson</button>
+                <button type="button" class="btn btn-secondary" onclick="limparDados()">Limpar dados</button>
+            </div>
+        </div>
+
+        <div class="results-section">
+            <h2 class="section-title">Resultados</h2>
+            <div id="resultados" class="result-item">
+                <span class="result-label">Silverman-Anderson - Escore Total:</span>
+                <span class="result-value" id="escore_total">-</span>
+            </div>
+            <div id="indicador_risco" style="text-align: center; margin-top: 15px;"></div>
+            <div id="breakdown_table"></div>
+        </div>
+
+        <div class="report-section">
+            <h2 class="section-title">Texto informativo para prontuário eletrônico (revisar)</h2>
+            <button type="button" class="copy-btn" onclick="gerarECopiarRelatorio()">Gerar e copiar texto informativo</button>
+        </div>
+
+        <div class="form-section" style="text-align:center;font-size:0.95rem;color:var(--text-muted);">
+            <p>Uso educacional. O total é um marcador comportamental/fisiológico na escala; interpretação e conduta são assistenciais.</p>
+        </div>
+    </div>
+
+    <script>
+        // Mapeamento de pontuação baseado na escala Silverman-Anderson
+        const SILVERMAN_ANDERSON_MAP = {
+            torax_sup: { 'Sincronizado': 0, 'Afundamento inspiratório': 1, 'Paradoxal abdominal': 2 },
+            torax_inf: { 'Sem retração': 0, 'Apenas visível': 1, 'Marcado': 2 },
+            xifoide: { 'Sem retração': 0, 'Apenas visível': 1, 'Marcado': 2 },
+            ban: { 'Sem retração': 0, 'Mínimo': 1, 'Marcado': 2 },
+            gemido: { 'Não audível': 0, 'Audível com esteto': 1, 'Audível sem esteto': 2 }
+        };
+
+        // Função para calcular idade em anos, meses e dias
+        function calcularIdade() {
+            const dataNascimento = document.getElementById('data_nascimento').value;
+            const dataAvaliacao = document.getElementById('data_avaliacao').value;
+
+            if (dataNascimento && dataAvaliacao) {
+                const nascimento = new Date(dataNascimento);
+                const avaliacao = new Date(dataAvaliacao);
+                
+                let anos = avaliacao.getFullYear() - nascimento.getFullYear();
+                let meses = avaliacao.getMonth() - nascimento.getMonth();
+                let dias = avaliacao.getDate() - nascimento.getDate();
+                
+                if (dias < 0) {
+                    meses--;
+                    const ultimoMes = new Date(avaliacao.getFullYear(), avaliacao.getMonth(), 0);
+                    dias += ultimoMes.getDate();
+                }
+                
+                if (meses < 0) {
+                    anos--;
+                    meses += 12;
+                }
+                
+                let idadeTexto = '';
+                if (anos > 0) {
+                    idadeTexto += `${anos} ano${anos > 1 ? 's' : ''}`;
+                }
+                if (meses > 0) {
+                    if (idadeTexto) idadeTexto += ', ';
+                    idadeTexto += `${meses} mês${meses > 1 ? 'es' : ''}`;
+                }
+                if (dias > 0 || (!anos && !meses)) {
+                    if (idadeTexto) idadeTexto += ', ';
+                    idadeTexto += `${dias} dia${dias > 1 ? 's' : ''}`;
+                }
+                
+                document.getElementById('idade_completa').value = idadeTexto || '0 dias';
+            }
+        }
+
+        // Preencher data e hora atuais
+        function preencherDataAtual() {
+            const hoje = new Date();
+            const dataAtual = hoje.toISOString().split('T')[0];
+            const horaAtual = hoje.toTimeString().slice(0, 5);
+            
+            if (!document.getElementById('data_avaliacao').value) {
+                document.getElementById('data_avaliacao').value = dataAtual;
+            }
+            if (!document.getElementById('hora_avaliacao').value) {
+                document.getElementById('hora_avaliacao').value = horaAtual;
+            }
+        }
+
+        // Função para interpretar Silverman-Anderson
+        function interpretarSilvermanAnderson(total) {
+            if (total <= 0) {
+                return { texto: 'Total 0 — ponto mais baixo da soma; na literatura costuma correlacionar com menor trabalho respiratório nesta escala. Não exclui doença nem substitui exame completo.', classe: 'risk-none' };
+            } else if (total >= 1 && total < 5) {
+                return { texto: 'Total ' + total + ' — faixa 1–4 nesta ferramenta; na referência clássica, padrão descrito como esforço moderado — integrar com SpO₂, FR e clínica.', classe: 'risk-moderate' };
+            } else {
+                return { texto: 'Total ' + total + ' — faixa 5–10 na escala; associada na publicação a maior pontuação de trabalho respiratório — conduta e suporte são do serviço.', classe: 'risk-severe' };
+            }
+        }
+
+        // Função para calcular Silverman-Anderson
+        function calcularSilvermanAnderson() {
+            // Obter valores dos campos
+            const toraxSup = document.getElementById('torax_sup').value;
+            const toraxInf = document.getElementById('torax_inf').value;
+            const xifoide = document.getElementById('xifoide').value;
+            const ban = document.getElementById('ban').value;
+            const gemido = document.getElementById('gemido').value;
+
+            // Calcular pontuação
+            const pontos = {
+                torax_sup: SILVERMAN_ANDERSON_MAP.torax_sup[toraxSup],
+                torax_inf: SILVERMAN_ANDERSON_MAP.torax_inf[toraxInf],
+                xifoide: SILVERMAN_ANDERSON_MAP.xifoide[xifoide],
+                ban: SILVERMAN_ANDERSON_MAP.ban[ban],
+                gemido: SILVERMAN_ANDERSON_MAP.gemido[gemido]
+            };
+
+            const total = Object.values(pontos).reduce((a, b) => a + b, 0);
+
+            // Exibir resultado
+            document.getElementById('escore_total').textContent = `${total} pontos`;
+
+            // Determinar interpretação
+            const interpretacao = interpretarSilvermanAnderson(total);
+            document.getElementById('indicador_risco').innerHTML = 
+                `<span class="risk-indicator ${interpretacao.classe}">${interpretacao.texto}</span>`;
+
+            // Criar tabela de breakdown
+            let tableHTML = '<table class="breakdown-table">';
+            tableHTML += '<thead><tr><th>Domínio</th><th>Valor Selecionado</th><th>Pontos</th></tr></thead>';
+            tableHTML += '<tbody>';
+            tableHTML += `<tr><td>Tórax Superior</td><td>${toraxSup}</td><td><strong>${pontos.torax_sup}</strong></td></tr>`;
+            tableHTML += `<tr><td>Tórax Inferior</td><td>${toraxInf}</td><td><strong>${pontos.torax_inf}</strong></td></tr>`;
+            tableHTML += `<tr><td>Retrações Xifóides</td><td>${xifoide}</td><td><strong>${pontos.xifoide}</strong></td></tr>`;
+            tableHTML += `<tr><td>Batimento de Asa Nasal</td><td>${ban}</td><td><strong>${pontos.ban}</strong></td></tr>`;
+            tableHTML += `<tr><td>Gemido Expiratório</td><td>${gemido}</td><td><strong>${pontos.gemido}</strong></td></tr>`;
+            tableHTML += '</tbody></table>';
+            
+            document.getElementById('breakdown_table').innerHTML = tableHTML;
+        }
+
+        // Função para gerar e copiar relatório
+        function gerarECopiarRelatorio() {
+            const nome = document.getElementById('nome').value;
+            const dataNascimento = document.getElementById('data_nascimento').value;
+            const dataAvaliacao = document.getElementById('data_avaliacao').value;
+            const horaAvaliacao = document.getElementById('hora_avaliacao').value;
+            const idadeCompleta = document.getElementById('idade_completa').value;
+            const peso = document.getElementById('peso').value;
+            const obs = document.getElementById('obs').value;
+
+            // Obter resultados calculados
+            const escoreTotal = document.getElementById('escore_total').textContent;
+            const indicador = document.getElementById('indicador_risco').textContent;
+
+            var legalFoot = (typeof window.neopedLegalReportFooter === 'function') ? window.neopedLegalReportFooter() : '';
+
+            let relatorioTexto = `RESUMO INFORMATIVO — SILVERMAN-ANDERSON (EDUCATIVO)
+==================================================
+
+NOTA: Texto gerado para apoio informativo. Nao constitui laudo nem prescricao. Revisar antes de arquivar.
+
+${nome ? `Identificacao: ${nome}` : 'Identificacao: (nao informada)'}
+${dataAvaliacao ? `Data da avaliacao: ${dataAvaliacao}` : ''}${horaAvaliacao ? ` — Hora: ${horaAvaliacao}` : ''}
+
+DADOS (opcional)
+----------------
+${dataNascimento ? `Data de nascimento: ${dataNascimento}` : ''}
+${idadeCompleta ? `Idade na data da avaliacao: ${idadeCompleta}` : ''}
+${peso ? `Peso: ${peso} kg` : ''}
+
+DOMINIOS PONTUADOS
+------------------
+- Torax superior: ${document.getElementById('torax_sup').value}
+- Torax inferior: ${document.getElementById('torax_inf').value}
+- Retracoes xifoides: ${document.getElementById('xifoide').value}
+- BAN: ${document.getElementById('ban').value}
+- Gemido expiratorio: ${document.getElementById('gemido').value}
+${obs ? `Observacoes: ${obs}` : ''}
+
+RESULTADO NESTA SESSAO
+----------------------
+- Total informado: ${escoreTotal}
+- Descricao na tela: ${indicador}
+
+CONTEXTO EDUCATIVO (FAIXAS USADAS NESTA PAGINA)
+-----------------------------------------------
+- 0: menor pontuacao na soma; na literatura classica, correlacao com menor trabalho respiratorio na escala
+- 1-4: faixa intermediaria; descricao usual de esforco moderado na referencia — integrar com clinica
+- 5-10: faixa superior; maior pontuacao na escala original — suporte e conduta: protocolo local
+
+CRITERIOS DE PONTUACAO (ESTA IMPLEMENTACAO)
+-------------------------------------------
+- Torax superior: Sincronizado=0, Afundamento inspiratorio=1, Paradoxal abdominal=2
+- Torax inferior / xifoide / BAN: 0 / 1 / 2 conforme opcoes da lista
+- Gemido: Nao audivel=0, Com esteto=1, Sem esteto=2
+
+Referencia: Silverman WA, Anderson DH. A controlled clinical trial of effects of water mist on obstructive respiratory signs, death rate and necropsy findings among premature infants. Pediatrics. 1956;17(1):1-10.
+
+Gerado em: ${new Date().toLocaleString('pt-BR')}`;
+
+            copiarTexto(relatorioTexto + legalFoot);
+        }
+
+        // Função para copiar texto
+        function copiarTexto(texto) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(texto).then(() => {
+                    if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                }).catch(err => {
+                    copiarTextoFallback(texto);
+                });
+            } else {
+                copiarTextoFallback(texto);
+            }
+        }
+
+        function copiarTextoFallback(texto) {
+            const textArea = document.createElement('textarea');
+            textArea.value = texto;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            } catch (err) {
+                if (typeof window.neopedCopyFail === 'function') window.neopedCopyFail(); else alert('Nao foi possivel copiar automaticamente. Revise o texto e copie manualmente para uso informativo.');
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // Função para limpar dados
+        function limparDados() {
+            const campos = [
+                'nome', 'data_nascimento', 'data_avaliacao', 'hora_avaliacao', 'idade_completa', 'peso',
+                'torax_sup', 'torax_inf', 'xifoide', 'ban', 'gemido', 'obs'
+            ];
+
+            campos.forEach(campo => {
+                const elemento = document.getElementById(campo);
+                if (elemento.type === 'select-one') {
+                    elemento.selectedIndex = 0;
+                } else {
+                    elemento.value = '';
+                }
+            });
+
+            document.getElementById('escore_total').textContent = '-';
+            document.getElementById('indicador_risco').innerHTML = '';
+            document.getElementById('breakdown_table').innerHTML = '';
+        }
+
+        // Event listeners
+        var dataNasc = document.getElementById('data_nascimento');
+        var dataAval = document.getElementById('data_avaliacao');
+        if (dataNasc) dataNasc.addEventListener('change', calcularIdade);
+        if (dataAval) dataAval.addEventListener('change', calcularIdade);
+
+        // Preencher data atual ao carregar
+        window.addEventListener('load', preencherDataAtual);
+
+        function abrirModalComoUsar() {
+            document.getElementById('modalInfo').style.display = 'flex';
+        }
+        function fecharModalComoUsar() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+    </script>
+    <div id="modalInfo" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalComoUsarTitulo" onclick="if(event.target===this)fecharModalComoUsar()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 id="modalComoUsarTitulo">Como usar — Silverman-Anderson</h2>
+                <button type="button" class="close" onclick="fecharModalComoUsar()" aria-label="Fechar">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Calcular a soma de Silverman-Anderson (0 a 10) para registro educativo do trabalho respiratório no RN, com identificação opcional e texto para copiar após revisão.</p>
+                <h3>Passos</h3>
+                <ol>
+                    <li>Preencha nome, datas de nascimento e de avaliação e horário; a idade é calculada automaticamente.</li>
+                    <li>Informe o peso em kg.</li>
+                    <li>Em cada domínio (tórax superior e inferior, ângulo xifoide, batimento de asa do nariz, gemido expiratório), escolha de 0 a 2 pontos conforme a escala ilustrada acima.</li>
+                    <li>Use <strong>Calcular Silverman-Anderson</strong> para total, faixas descritas na literatura (0; 1–4; 5–10) e tabela de pontos — linguagem informativa, não diagnóstica.</li>
+                    <li><strong>Copiar texto informativo</strong> envia o bloco para a área de transferência — confira antes de usar em prontuário ou mensagem clínica.</li>
+                    <li><strong>Limpar dados</strong> zera o formulário.</li>
+                </ol>
+                <h3>Observações</h3>
+                <ul>
+                    <li>Ferramenta educacional e informativa; não prescreve nem automatiza conduta.</li>
+                    <li>Em RN muito prematuro ou com comorbidades, correlacione o escore ao quadro clínico completo.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script src="../../js/neoped-datetime-fix.js"></script>
+    <script src="../../js/neoped-nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>NeoPedCalc — Alcoolemia (educativo)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .alert-box {
+            background: #fff3cd;
+            border: 1px solid #e5e7eb;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .results {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: 900;
+            color: #111;
+            margin-bottom: 10px;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #e5e7eb;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        .info {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .action-btn, .btn {
+            background: #111;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #374151;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        /* Modal Styles */
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(17, 17, 17, 0.1);
+            color: #111;
+            border: 2px solid #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-info:hover {
+            background: #111;
+            color: #fff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 { margin: 0; font-size: 22px; }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover { transform: rotate(90deg); }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child { margin-top: 0; }
+        .modal-body p { line-height: 1.6; margin-bottom: 15px; color: #34495e; }
+        .modal-body ul, .modal-body ol { margin: 10px 0; padding-left: 25px; }
+        .modal-body li { margin-bottom: 8px; line-height: 1.5; }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong { color: #2c3e50; }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong { color: #27ae60; }
+
+        @media (max-width: 768px) {
+            .modal { padding: 10px; }
+            .modal-content { width: 95%; max-height: 95vh; }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <header>
+        <h1>Calculadora de Alcoolemia</h1>
+        <p>NeoPedCalc — estimativa educativa de alcoolemia pela fórmula de Widmark</p>
+        <div class="header-actions">
+            <button type="button" class="btn-info" onclick="abrirModal()">
+                Como usar            </button>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="card">
+            <div class="form-container">
+                <form id="alcoolemiaForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="peso">Peso (kg):</label>
+                            <input type="number" id="peso" step="0.001" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sexo">Sexo:</label>
+                            <select id="sexo" required>
+                                <option value="">Selecione o sexo</option>
+                                <option value="masculino">Masculino</option>
+                                <option value="feminino">Feminino</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="bebidas">Quantidade de bebidas alcoólicas:</label>
+                            <input type="number" id="bebidas" min="0" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="teor">Teor alcoólico da bebida (%):</label>
+                            <input type="number" id="teor" min="0" max="100" step="0.1" value="5" required>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="volume">Volume por bebida (ml):</label>
+                            <input type="number" id="volume" min="0" step="1" value="350" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tempo">Tempo desde o consumo (horas):</label>
+                            <input type="number" id="tempo" min="0" step="0.1" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">Calcular Alcoolemia</button>
+                </form>
+
+                <div id="resultado" class="results" style="display: none;">
+                    <h3>Resultado:</h3>
+                    <div id="resultadoTexto" class="result-value"></div>
+                    <button type="button" id="gerarRelatorio" class="btn" style="background: #28a745;">
+                        Copiar texto informativo
+                    </button>
+                </div>
+
+
+                    <div class="warning">
+                        <strong>Atenção:</strong> Esta calculadora é apenas para fins educacionais e de estimativa. 
+                        Os valores podem variar dependendo de diversos fatores individuais.
+                    </div>
+
+                    <div class="info">
+                        <strong>Informações:</strong><br>
+                        • Fator de distribuição: Masculino = 0.68, Feminino = 0.55<br>
+                        • Taxa de eliminação: aproximadamente 0.15 g/L por hora<br>
+                        • Densidade do álcool: 0.789 g/ml
+                    </div>
+                </div> <!-- End form-container -->
+            </div> <!-- End card -->
+
+            <div class="footer">
+                NeoPedCalc &copy; <span data-neoped-year></span> - Calculadora de Alcoolemia
+            </div>
+        </div> <!-- End wrap -->
+
+            <!-- Modal de Informações -->
+            <div id="modalInfo" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Como usar — Calculadora de alcoolemia (educativo)</h2>
+                        <span class="close" onclick="fecharModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <h3>Objetivo (educativo)</h3>
+                        <p>Esta calculadora estima a concentração de álcool no sangue (alcoolemia) com base na fórmula de Widmark para fins informativos/educacionais. O resultado não substitui avaliação clínica, pericial, legal ou protocolos institucionais.</p>
+                        
+                        <h3>Fórmula de Widmark</h3>
+                        <div class="formula-box">
+                            <strong>Fórmula de Widmark:</strong><br>
+                            BAC = (A × 0.789) / (P × r) - (β × t)<br><br>
+                            <strong>Onde:</strong><br>
+                            • <strong>A:</strong> Quantidade de álcool puro (g)<br>
+                            • <strong>P:</strong> Peso corporal (kg)<br>
+                            • <strong>r:</strong> Fator de distribuição (0.68 homens, 0.55 mulheres)<br>
+                            • <strong>β:</strong> Taxa de eliminação (0.015 g/L/h)<br>
+                            • <strong>t:</strong> Tempo decorrido (horas)<br>
+                            • <strong>0.789:</strong> Densidade do álcool (g/mL)<br><br>
+                            <strong>Conversão de Bebidas:</strong><br>
+                            • <strong>Cerveja:</strong> 5% álcool<br>
+                            • <strong>Vinho:</strong> 12% álcool<br>
+                            • <strong>Destilado:</strong> 40% álcool
+                        </div>
+
+                        <h3>Parâmetros de Cálculo</h3>
+                        <ul>
+                            <li><strong>Peso Corporal:</strong> Em kg</li>
+                            <li><strong>Sexo:</strong> Homem ou mulher</li>
+                            <li><strong>Quantidade de Bebida:</strong> Em mL</li>
+                            <li><strong>Teor Alcoólico:</strong> Porcentagem</li>
+                            <li><strong>Tempo:</strong> Horas desde o consumo</li>
+                            <li><strong>Alcoolemia:</strong> g/L ou mg/dL</li>
+                            <li><strong>Estado:</strong> Sóbrio, leve, moderado, grave</li>
+                            <li><strong>Eliminação:</strong> Taxa de metabolização</li>
+                        </ul>
+
+                        <h3>Instruções de Uso</h3>
+                        <ol>
+                            <li><strong>Insira o Peso:</strong> Em kg</li>
+                            <li><strong>Selecione o Sexo:</strong> Homem ou mulher</li>
+                            <li><strong>Informe a Bebida:</strong> Tipo e quantidade</li>
+                            <li><strong>Insira o Tempo:</strong> Horas desde o consumo</li>
+                            <li><strong>Calcule:</strong> Sistema calcula automaticamente</li>
+                            <li><strong>Interprete:</strong> Nível de intoxicação</li>
+                        </ol>
+
+                        <h3>Classificação da Alcoolemia</h3>
+                        <ul>
+                            <li><strong>0.0-0.2 g/L:</strong> Sóbrio</li>
+                            <li><strong>0.2-0.5 g/L:</strong> Leve intoxicação</li>
+                            <li><strong>0.5-1.0 g/L:</strong> Intoxicação moderada</li>
+                            <li><strong>1.0-2.0 g/L:</strong> Intoxicação grave</li>
+                            <li><strong>2.0-3.0 g/L:</strong> Intoxicação muito grave</li>
+                            <li><strong>> 3.0 g/L:</strong> Risco de coma alcoólico</li>
+                            <li><strong>Lei Seca:</strong> 0.0 g/L (Brasil)</li>
+                            <li><strong>Limite Legal:</strong> Varia por país</li>
+                        </ul>
+
+                        <h3>Efeitos por Nível</h3>
+                        <ul>
+                            <li><strong>0.2-0.5 g/L:</strong> Relaxamento, euforia</li>
+                            <li><strong>0.5-1.0 g/L:</strong> Coordenação prejudicada</li>
+                            <li><strong>1.0-2.0 g/L:</strong> Fala arrastada, desequilíbrio</li>
+                            <li><strong>2.0-3.0 g/L:</strong> Confusão, sonolência</li>
+                            <li><strong>> 3.0 g/L:</strong> Coma, risco de morte</li>
+                            <li><strong>Eliminação:</strong> ~0.015 g/L/hora</li>
+                            <li><strong>Fatores:</strong> Metabolismo, alimentação</li>
+                            <li><strong>Variações:</strong> Individuais</li>
+                        </ul>
+
+                        <h3>Fatores que Influenciam</h3>
+                        <ul>
+                            <li><strong>Peso Corporal:</strong> Pessoas mais pesadas</li>
+                            <li><strong>Sexo:</strong> Mulheres têm menor tolerância</li>
+                            <li><strong>Idade:</strong> Metabolismo mais lento</li>
+                            <li><strong>Alimentação:</strong> Estômago vazio acelera absorção</li>
+                            <li><strong>Medicações:</strong> Interações medicamentosas</li>
+                            <li><strong>Saúde:</strong> Condições médicas</li>
+                            <li><strong>Genética:</strong> Tolerância individual</li>
+                            <li><strong>Hidratação:</strong> Desidratação aumenta efeitos</li>
+                        </ul>
+
+                        <h3>Limitações e Considerações</h3>
+                        <ul>
+                            <li>Estimativa aproximada</li>
+                            <li>Não substitui teste de alcoolemia</li>
+                            <li>Variações individuais</li>
+                            <li>Fatores não considerados</li>
+                            <li>Uso apenas educacional</li>
+                            <li>Não para uso legal</li>
+                            <li>Consulte médico se necessário</li>
+                            <li>Responsabilidade individual</li>
+                        </ul>
+
+                        <div class="reference-box">
+                            <strong>Referências:</strong><br>
+                            - Widmark EMP. Die theoretischen Grundlagen und die praktische Verwendbarkeit der gerichtlich-medizinischen Alkoholbestimmung. Berlin: Urban & Schwarzenberg; 1932.<br>
+                            - Jones AW. Evidence-based survey of the elimination rates of ethanol from blood with applications in forensic casework. Forensic Sci Int. 2010;200(1-3):1-20.<br>
+                            - Dubowski KM. Human pharmacokinetics of ethanol. I. Peak blood concentrations and elimination in male and female subjects. Alcohol Clin Exp Res. 1976;1(1):9-14.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        document.getElementById('alcoolemiaForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const peso = parseFloat(document.getElementById('peso').value);
+            const sexo = document.getElementById('sexo').value;
+            const bebidas = parseFloat(document.getElementById('bebidas').value);
+            const teor = parseFloat(document.getElementById('teor').value);
+            const volume = parseFloat(document.getElementById('volume').value);
+            const tempo = parseFloat(document.getElementById('tempo').value);
+
+            // Fator de distribuição do álcool
+            const fatorDistribuicao = sexo === 'masculino' ? 0.68 : 0.55;
+            
+            // Cálculo da alcoolemia
+            // Volume total de álcool em ml
+            const volumeAlcool = (bebidas * volume * teor) / 100;
+            
+            // Massa de álcool em gramas
+            const massaAlcool = volumeAlcool * 0.789;
+            
+            // Alcoolemia inicial (g/L)
+            const alcoolemiaInicial = massaAlcool / (peso * fatorDistribuicao);
+            
+            // Taxa de eliminação (g/L por hora)
+            const taxaEliminacao = 0.15;
+            
+            // Alcoolemia atual considerando o tempo
+            const alcoolemiaAtual = Math.max(0, alcoolemiaInicial - (taxaEliminacao * tempo));
+            
+            // Exibir resultado
+            const resultadoDiv = document.getElementById('resultado');
+            const resultadoTexto = document.getElementById('resultadoTexto');
+            
+            resultadoTexto.innerHTML = `
+                <strong>Alcoolemia estimada: ${alcoolemiaAtual.toFixed(2)} g/L</strong><br>
+                <small>Alcoolemia inicial: ${alcoolemiaInicial.toFixed(2)} g/L</small>
+            `;
+            
+            resultadoDiv.style.display = 'block';
+        });
+
+        // Função para remover acentos e caracteres especiais
+        function removerAcentos(texto) {
+            return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^\w\s]/g, '')
+                .replace(/\s+/g, ' ');
+        }
+
+        // Função para gerar relatório
+        function gerarRelatorio() {
+            const peso = parseFloat(document.getElementById('peso').value);
+            const sexo = document.getElementById('sexo').value;
+            const bebidas = parseFloat(document.getElementById('bebidas').value);
+            const teor = parseFloat(document.getElementById('teor').value);
+            const volume = parseFloat(document.getElementById('volume').value);
+            const tempo = parseFloat(document.getElementById('tempo').value);
+
+            // Recalcular valores
+            const fatorDistribuicao = sexo === 'masculino' ? 0.68 : 0.55;
+            const volumeAlcool = (bebidas * volume * teor) / 100;
+            const massaAlcool = volumeAlcool * 0.789;
+            const alcoolemiaInicial = massaAlcool / (peso * fatorDistribuicao);
+            const taxaEliminacao = 0.15;
+            const alcoolemiaAtual = Math.max(0, alcoolemiaInicial - (taxaEliminacao * tempo));
+
+            // Gerar relatório em texto simples
+            let relatorio = `RESUMO INFORMATIVO — ESTIMATIVA DE ALCOOLEMIA (EDUCATIVO)
+========================
+
+DADOS DO PACIENTE:
+- Peso: ${peso} kg
+- Sexo: ${sexo}
+
+DADOS DO CONSUMO:
+- Quantidade de bebidas: ${bebidas}
+- Teor alcoolico: ${teor}%
+- Volume por bebida: ${volume} ml
+- Tempo desde o consumo: ${tempo} horas
+
+CALCULOS REALIZADOS:
+- Volume total de alcool: ${volumeAlcool.toFixed(1)} ml
+- Massa de alcool: ${massaAlcool.toFixed(1)} g
+- Fator de distribuicao: ${fatorDistribuicao}
+- Taxa de eliminacao: ${taxaEliminacao} g/L/hora
+
+RESULTADOS:
+- Alcoolemia inicial: ${alcoolemiaInicial.toFixed(2)} g/L
+- Alcoolemia atual estimada: ${alcoolemiaAtual.toFixed(2)} g/L
+
+OBSERVACOES:
+- Calculo baseado em formula de Widmark
+- Valores sao estimativas e podem variar
+- Considerar fatores individuais na interpretacao
+- Taxa de eliminacao padrao: 0.15 g/L/hora
+
+Data: ${new Date().toLocaleDateString('pt-BR')}
+Hora: ${new Date().toLocaleTimeString('pt-BR')}`;
+
+            relatorio = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorio;
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorio += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                relatorio += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            // Copiar para área de transferência
+            navigator.clipboard.writeText(relatorio).then(() => {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(() => {
+                // Fallback para navegadores mais antigos
+                const textArea = document.createElement('textarea');
+                textArea.value = relatorio;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+
+        // Event listener para o botão de relatório
+        document.addEventListener('DOMContentLoaded', function() {
+            const botaoRelatorio = document.getElementById('gerarRelatorio');
+            if (botaoRelatorio) {
+                botaoRelatorio.addEventListener('click', gerarRelatorio);
+                console.log('Event listener do relatório adicionado com sucesso');
+            } else {
+                console.log('Botão de relatório não encontrado');
+            }
+        });
+    </script>
+    <script>
+
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

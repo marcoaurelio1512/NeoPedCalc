@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — PRISM III pediátrico (educativo)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #6b7280;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --background-color: #ecf0f1;
+            --card-background: #ffffff;
+            --text-color: #2c3e50;
+            --text-muted: #374151;
+            --border-color: #bdc3c7;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--background-color) 0%, #d5dbdb 100%);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: var(--card-background);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .form-section {
+            background: var(--card-background);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-section:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+
+        .subsection-title {
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+            margin: 20px 0 15px 0;
+            font-weight: 600;
+            padding-left: 10px;
+            border-left: none;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #d1d5db;
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.06);
+            background: white;
+        }
+
+        .form-group input[readonly] {
+            background-color: #e9ecef;
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .unit {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: #4b5563;
+            color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--text-muted) 0%, #6c757d 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .copy-btn:hover {
+            background: linear-gradient(135deg, #229954 0%, #27ae60 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        .copy-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(39, 174, 96, 0.3);
+        }
+
+        .results-section {
+            background: var(--card-background);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: none;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .result-value {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        .risk-indicator {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .risk-low {
+            background: rgba(39, 174, 96, 0.1);
+            color: var(--success-color);
+            border: 2px solid rgba(39, 174, 96, 0.3);
+        }
+
+        .risk-medium {
+            background: rgba(243, 156, 18, 0.1);
+            color: var(--warning-color);
+            border: 2px solid rgba(243, 156, 18, 0.3);
+        }
+
+        .risk-high {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+            border: 2px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .report-section {
+            background: var(--card-background);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .breakdown-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .breakdown-table th,
+        .breakdown-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .breakdown-table th {
+            background: #f3f4f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        .breakdown-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .result-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #374151;
+        }
+
+        .info-box h4 {
+            margin-bottom: 10px;
+            color: #374151;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .container { border-radius: 10px; }
+            .header h1 { font-size: 1.8em; }
+            .content { padding: 20px; }
+            .section { padding: 15px; }
+            button { padding: 12px; font-size: 15px; }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 5px; }
+            .header h1 { font-size: 1.4em; }
+            .header p { font-size: 0.9em; }
+            .content { padding: 15px; }
+            .section { padding: 12px; }
+            .section h3 { font-size: 1.1em; }
+            input, select { padding: 10px; font-size: 14px; }
+            button { padding: 10px; font-size: 14px; }
+            .results { padding: 12px; }
+            .score-display { font-size: 2.5em; }
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(52, 73, 94, 0.2);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-info:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #2c3e50;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+
+            .modal-body {
+                padding: 20px;
+                max-height: 75vh;
+            }
+
+            .modal-header {
+                padding: 15px 20px;
+            }
+
+            .modal-header h2 {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 98%;
+                margin: 5% auto;
+            }
+
+            .modal-body {
+                padding: 15px;
+                max-height: 80vh;
+            }
+
+            .modal-header h2 {
+                font-size: 16px;
+            }
+
+            .modal-body h3 {
+                font-size: 16px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>PRISM III - Pediatric Risk of Mortality</h1>
+            <p>Apoio educativo para estimativa de gravidade/risco em UTI pediátrica nas primeiras 12 horas</p>
+            <div class="header-actions">
+                <button type="button" class="btn-info" onclick="abrirModal()">
+                    Como usar
+                </button>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2 class="section-title">Dados do Paciente</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="nome">Nome do Paciente</label>
+                    <input type="text" id="nome" placeholder="Nome completo">
+                </div>
+                <div class="form-group">
+                    <label for="data_nascimento">Data de Nascimento</label>
+                    <input type="date" id="data_nascimento">
+                </div>
+                <div class="form-group">
+                    <label for="data_avaliacao">Data da Avaliação</label>
+                    <input type="date" id="data_avaliacao">
+                </div>
+                <div class="form-group">
+                    <label for="hora_avaliacao">Hora da Avaliação</label>
+                    <input type="time" id="hora_avaliacao">
+                </div>
+                <div class="form-group">
+                    <label for="idade_completa">Idade (Calculada)</label>
+                    <input type="text" id="idade_completa" readonly>
+                    <span class="unit">anos, meses e dias</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2 class="section-title">Dados PRISM III (Piores Valores nas Primeiras 12h)</h2>
+            
+            <div class="info-box">
+                <h4>Informações Importantes</h4>
+                <p>O PRISM III deve ser calculado com base nos <strong>piores valores</strong> observados nas primeiras 12 horas de internação na UTI pediátrica. Para cada variável, use o valor que representa a maior gravidade neste período.</p>
+            </div>
+
+            <h3 class="subsection-title">Hemodinâmica</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="sbp_min">Pressão Arterial Sistólica Mínima</label>
+                    <input type="number" id="sbp_min" step="1" placeholder="Ex.: 65">
+                    <span class="unit">mmHg</span>
+                </div>
+                <div class="form-group">
+                    <label for="temp_min">Temperatura Mínima</label>
+                    <input type="number" id="temp_min" step="0.1" placeholder="Ex.: 35.2">
+                    <span class="unit">°C</span>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Neurológico</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="pupils">Pupilas Fixas</label>
+                    <select id="pupils">
+                        <option value="0">Não</option>
+                        <option value="1">Sim</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="coma">Coma Profundo</label>
+                    <select id="coma">
+                        <option value="0">Não</option>
+                        <option value="1">Sim</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="seizure">Convulsões</label>
+                    <select id="seizure">
+                        <option value="0">Não</option>
+                        <option value="1">Sim</option>
+                    </select>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Respiratório</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="pao2">PaO₂</label>
+                    <input type="number" id="pao2" step="0.1" placeholder="Ex.: 80">
+                    <span class="unit">mmHg</span>
+                </div>
+                <div class="form-group">
+                    <label for="fio2">FiO₂</label>
+                    <input type="number" id="fio2" min="0.21" max="1" step="0.01" placeholder="Ex.: 0.5">
+                    <span class="unit">fração (0.21-1.0)</span>
+                </div>
+                <div class="form-group">
+                    <label for="paco2">PaCO₂</label>
+                    <input type="number" id="paco2" step="0.1" placeholder="Ex.: 55">
+                    <span class="unit">mmHg</span>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Metabólico</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="ph">pH</label>
+                    <input type="number" id="ph" step="0.01" placeholder="Ex.: 7.18">
+                </div>
+                <div class="form-group">
+                    <label for="hco3">HCO₃⁻</label>
+                    <input type="number" id="hco3" step="0.1" placeholder="Ex.: 15">
+                    <span class="unit">mmol/L</span>
+                </div>
+                <div class="form-group">
+                    <label for="glucose">Glicose</label>
+                    <input type="number" id="glucose" step="1" placeholder="Ex.: 220">
+                    <span class="unit">mg/dL</span>
+                </div>
+                <div class="form-group">
+                    <label for="k">Potássio</label>
+                    <input type="number" id="k" step="0.1" placeholder="Ex.: 5.6">
+                    <span class="unit">mmol/L</span>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Renal / Hematológico / Hepático</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="creatinine">Creatinina</label>
+                    <input type="number" id="creatinine" step="0.01" placeholder="Ex.: 0.8">
+                    <span class="unit">mg/dL</span>
+                </div>
+                <div class="form-group">
+                    <label for="wbc">Leucócitos</label>
+                    <input type="number" id="wbc" step="0.1" placeholder="Ex.: 22">
+                    <span class="unit">10³/µL</span>
+                </div>
+                <div class="form-group">
+                    <label for="platelets">Plaquetas</label>
+                    <input type="number" id="platelets" step="1" placeholder="Ex.: 90">
+                    <span class="unit">10³/µL</span>
+                </div>
+                <div class="form-group">
+                    <label for="bilirubin">Bilirrubina Total</label>
+                    <input type="number" id="bilirubin" step="0.1" placeholder="Ex.: 1.8">
+                    <span class="unit">mg/dL</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="obs">Observações</label>
+                <input type="text" id="obs" placeholder="Contexto clínico, medicações, etc.">
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="calcularPRISM3()">Calcular PRISM III</button>
+                <button class="btn btn-secondary" onclick="limparDados()">Limpar Dados</button>
+            </div>
+        </div>
+
+        <div class="results-section">
+            <h2 class="section-title">Resultados</h2>
+            <div id="resultados" class="result-item">
+                <span class="result-label">PRISM III - Escore Total:</span>
+                <span class="result-value" id="escore_total">-</span>
+            </div>
+            <div id="resultados_prob" class="result-item">
+                <span class="result-label">Probabilidade de Mortalidade:</span>
+                <span class="result-value" id="probabilidade_mortalidade">-</span>
+            </div>
+            <div id="indicador_risco" style="text-align: center; margin-top: 15px;"></div>
+            <div id="breakdown_table"></div>
+        </div>
+
+        <div class="report-section">
+            <h2 class="section-title">Texto informativo para prontuário eletrônico (revisar)</h2>
+            <button type="button" class="copy-btn" onclick="gerarECopiarRelatorio()">Gerar e copiar texto informativo</button>
+        </div>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — PRISM-III (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>O PRISM-III é um escore para organizar variáveis fisiológicas/laboratoriais e apoiar discussão de gravidade/risco em UTI pediátrica. O uso nesta página é informativo e não substitui avaliação clínica, protocolos institucionais nem prescrição.</p>
+                
+                <h3>Fórmula do PRISM-III</h3>
+                <div class="formula-box">
+                    <strong>PRISM-III = Soma de pontos baseados nos piores valores fisiológicos nas primeiras 24 horas</strong><br><br>
+                    Variáveis avaliadas:<br>
+                    • Pressão Arterial Sistólica e Diastólica<br>
+                    • Temperatura corporal<br>
+                    • Frequência cardíaca<br>
+                    • Frequência respiratória<br>
+                    • PaO2/FiO2<br>
+                    • pH arterial<br>
+                    • PCO2<br>
+                    • HCO3<br>
+                    • Glicose<br>
+                    • Potássio<br>
+                    • Creatinina<br>
+                    • Bilirrubina<br>
+                    • Leucócitos<br>
+                    • Plaquetas<br>
+                    • Escala de Glasgow<br><br>
+                    <strong>Escala Total:</strong> 0-74 pontos (quanto maior, maior o risco de mortalidade)
+                </div>
+
+                <h3>Variáveis Avaliadas</h3>
+                <ul>
+                    <li><strong>Cardiovasculares:</strong> Pressão arterial, frequência cardíaca</li>
+                    <li><strong>Respiratórias:</strong> Frequência respiratória, PaO2/FiO2, PCO2, pH</li>
+                    <li><strong>Metabólicas:</strong> HCO3, glicose, potássio</li>
+                    <li><strong>Renais:</strong> Creatinina</li>
+                    <li><strong>Hepáticas:</strong> Bilirrubina</li>
+                    <li><strong>Hematológicas:</strong> Leucócitos, plaquetas</li>
+                    <li><strong>Neurológicas:</strong> Escala de Glasgow</li>
+                    <li><strong>Sistêmicas:</strong> Temperatura corporal</li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Dados Fisiológicos:</strong> Informe os piores valores obtidos nas primeiras 24 horas</li>
+                    <li><strong>Pressão Arterial:</strong> Sistólica e diastólica em mmHg</li>
+                    <li><strong>Temperatura:</strong> Em °C (mais alta ou mais baixa)</li>
+                    <li><strong>Frequências:</strong> Cardíaca e respiratória por minuto</li>
+                    <li><strong>Gasometria:</strong> PaO2, PCO2, pH, HCO3</li>
+                    <li><strong>Laboratório:</strong> Glicose, potássio, creatinina, bilirrubina</li>
+                    <li><strong>Hematologia:</strong> Leucócitos, plaquetas</li>
+                    <li><strong>Neurológico:</strong> Escala de Glasgow Pediátrica</li>
+                    <li>Clique em <strong>"Calcular PRISM-III"</strong> para obter o escore</li>
+                </ol>
+
+                <h3>Interpretação dos Resultados</h3>
+                <ul>
+                    <li><strong>0-10 pontos:</strong> Baixo risco de mortalidade (<5%)</li>
+                    <li><strong>11-20 pontos:</strong> Risco moderado de mortalidade (5-15%)</li>
+                    <li><strong>21-30 pontos:</strong> Alto risco de mortalidade (15-30%)</li>
+                    <li><strong>31+ pontos:</strong> Muito alto risco de mortalidade (>30%)</li>
+                    <li><strong>Mudança no escore:</strong> Indica evolução da gravidade</li>
+                </ul>
+
+                <h3>Considerações Importantes</h3>
+                <ul>
+                    <li>Use sempre os piores valores das primeiras 24 horas</li>
+                    <li>Útil para prognóstico e alocação de recursos</li>
+                    <li>Complementar à avaliação clínica, não substituto</li>
+                    <li>Aplicável a crianças admitidas em UTIP</li>
+                    <li>Considerar fatores não incluídos no escore</li>
+                    <li>Valores laboratoriais devem ser recentes</li>
+                    <li>Reavaliar conforme evolução clínica</li>
+                </ul>
+
+                <h3>Aplicações Clínicas</h3>
+                <ul>
+                    <li><strong>Prognóstico:</strong> Estimativa de mortalidade</li>
+                    <li><strong>Comparação entre UTIPs:</strong> Ajuste de risco</li>
+                    <li><strong>Pesquisa:</strong> Classificação de gravidade</li>
+                    <li><strong>Qualidade:</strong> Monitoramento de outcomes</li>
+                    <li><strong>Alocação de Recursos:</strong> Planejamento de cuidados</li>
+                </ul>
+
+                <h3>Limitações</h3>
+                <ul>
+                    <li>Baseado em população de países desenvolvidos</li>
+                    <li>Pode superestimar risco em centros com alta mortalidade</li>
+                    <li>Não considera qualidade dos cuidados</li>
+                    <li>Depende da disponibilidade de exames laboratoriais</li>
+                    <li>Pode não capturar todas as nuances clínicas</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Pollack MM, et al. The Pediatric Risk of Mortality (PRISM) score. Crit Care Med. 1988;16(11):1110-6.<br>
+                    - Pollack MM, et al. PRISM III: an updated Pediatric Risk of Mortality score. Crit Care Med. 1996;24(5):743-52.<br>
+                    - Pollack MM, et al. Pediatric Risk of Mortality III score: update and refinement for estimating the risk of mortality in pediatric intensive care units. Crit Care Med. 2001;29(3):667-70.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Configuração PRISM III baseada na literatura
+        const PRISM3_CONFIG = {
+            logistic: { alpha: -3.5, beta: 0.08 },
+            hemo: {
+                sbp_min: [
+                    { max: 50, pts: 4 },
+                    { max: 70, pts: 2 },
+                    { max: Infinity, pts: 0 }
+                ],
+                temp_min: [
+                    { max: 34.9, pts: 2 },
+                    { max: 35.9, pts: 1 },
+                    { max: Infinity, pts: 0 }
+                ]
+            },
+            neuro: {
+                pupils_fixed: 4,
+                coma: 3,
+                seizure: 2
+            },
+            resp: {
+                pf_ratio: [
+                    { max: 100, pts: 4 },
+                    { max: 200, pts: 3 },
+                    { max: 300, pts: 2 },
+                    { max: 400, pts: 1 },
+                    { max: Infinity, pts: 0 }
+                ],
+                paco2: [
+                    { min: 51, max: 70, pts: 1 },
+                    { min: 71, max: 90, pts: 2 },
+                    { min: 91, max: Infinity, pts: 3 }
+                ]
+            },
+            metab: {
+                ph: [
+                    { max: 7.10, pts: 4 },
+                    { max: 7.24, pts: 2 },
+                    { max: Infinity, pts: 0 }
+                ],
+                hco3: [
+                    { max: 10, pts: 4 },
+                    { max: 15, pts: 2 },
+                    { max: Infinity, pts: 0 }
+                ],
+                glucose: [
+                    { max: 40, pts: 3 },
+                    { min: 200, max: 299, pts: 1 },
+                    { min: 300, max: Infinity, pts: 2 }
+                ],
+                k: [
+                    { max: 2.5, pts: 2 },
+                    { min: 6.0, max: 6.9, pts: 2 },
+                    { min: 7.0, max: Infinity, pts: 4 }
+                ]
+            },
+            organ: {
+                creatinine: [
+                    { min: 1.5, max: 1.9, pts: 1 },
+                    { min: 2.0, max: Infinity, pts: 2 }
+                ],
+                wbc: [
+                    { max: 3, pts: 2 },
+                    { min: 25, max: Infinity, pts: 1 }
+                ],
+                platelets: [
+                    { max: 50, pts: 4 },
+                    { max: 100, pts: 2 },
+                    { max: Infinity, pts: 0 }
+                ],
+                bilirubin: [
+                    { min: 2.0, max: 4.9, pts: 1 },
+                    { min: 5.0, max: Infinity, pts: 2 }
+                ]
+            }
+        };
+
+        // Função para calcular idade em anos, meses e dias
+        function calcularIdade() {
+            const dataNascimento = document.getElementById('data_nascimento').value;
+            const dataAvaliacao = document.getElementById('data_avaliacao').value;
+
+            if (dataNascimento && dataAvaliacao) {
+                const nascimento = new Date(dataNascimento);
+                const avaliacao = new Date(dataAvaliacao);
+                
+                let anos = avaliacao.getFullYear() - nascimento.getFullYear();
+                let meses = avaliacao.getMonth() - nascimento.getMonth();
+                let dias = avaliacao.getDate() - nascimento.getDate();
+                
+                if (dias < 0) {
+                    meses--;
+                    const ultimoMes = new Date(avaliacao.getFullYear(), avaliacao.getMonth(), 0);
+                    dias += ultimoMes.getDate();
+                }
+                
+                if (meses < 0) {
+                    anos--;
+                    meses += 12;
+                }
+                
+                let idadeTexto = '';
+                if (anos > 0) {
+                    idadeTexto += `${anos} ano${anos > 1 ? 's' : ''}`;
+                }
+                if (meses > 0) {
+                    if (idadeTexto) idadeTexto += ', ';
+                    idadeTexto += `${meses} mês${meses > 1 ? 'es' : ''}`;
+                }
+                if (dias > 0 || (!anos && !meses)) {
+                    if (idadeTexto) idadeTexto += ', ';
+                    idadeTexto += `${dias} dia${dias > 1 ? 's' : ''}`;
+                }
+                
+                document.getElementById('idade_completa').value = idadeTexto || '0 dias';
+            }
+        }
+
+        // Preencher data e hora atuais
+        function preencherDataAtual() {
+            const hoje = new Date();
+            const dataAtual = hoje.toISOString().split('T')[0];
+            const horaAtual = hoje.toTimeString().slice(0, 5);
+            
+            if (!document.getElementById('data_avaliacao').value) {
+                document.getElementById('data_avaliacao').value = dataAtual;
+            }
+            if (!document.getElementById('hora_avaliacao').value) {
+                document.getElementById('hora_avaliacao').value = horaAtual;
+            }
+        }
+
+        // Função auxiliar para calcular pontos por faixas
+        function pontosPorFaixa(valor, faixas) {
+            if (valor == null || Number.isNaN(valor)) return 0;
+            for (const faixa of faixas) {
+                const min = faixa.min != null ? faixa.min : -Infinity;
+                const max = faixa.max != null ? faixa.max : Infinity;
+                if (valor >= min && valor <= max) return faixa.pts;
+            }
+            return 0;
+        }
+
+        // Função para calcular PaO2/FiO2
+        function calcularPF(pao2, fio2) {
+            if (!fio2 || fio2 <= 0) return Infinity;
+            return pao2 / fio2;
+        }
+
+        // Função para calcular PRISM III
+        function calcularPRISM3() {
+            // Obter valores dos campos
+            const sbp_min = parseFloat(document.getElementById('sbp_min').value);
+            const temp_min = parseFloat(document.getElementById('temp_min').value);
+            const pupils = document.getElementById('pupils').value === '1';
+            const coma = document.getElementById('coma').value === '1';
+            const seizure = document.getElementById('seizure').value === '1';
+            const pao2 = parseFloat(document.getElementById('pao2').value);
+            const fio2 = parseFloat(document.getElementById('fio2').value);
+            const paco2 = parseFloat(document.getElementById('paco2').value);
+            const ph = parseFloat(document.getElementById('ph').value);
+            const hco3 = parseFloat(document.getElementById('hco3').value);
+            const glucose = parseFloat(document.getElementById('glucose').value);
+            const k = parseFloat(document.getElementById('k').value);
+            const creatinine = parseFloat(document.getElementById('creatinine').value);
+            const wbc = parseFloat(document.getElementById('wbc').value);
+            const platelets = parseFloat(document.getElementById('platelets').value);
+            const bilirubin = parseFloat(document.getElementById('bilirubin').value);
+
+            let score = 0;
+            const breakdown = [];
+
+            // Hemodinâmica
+            const sbp_pts = pontosPorFaixa(sbp_min, PRISM3_CONFIG.hemo.sbp_min);
+            score += sbp_pts;
+            if (sbp_min && !Number.isNaN(sbp_min)) {
+                breakdown.push(['PAS Mínima', `${sbp_min} mmHg`, sbp_pts]);
+            }
+
+            const temp_pts = pontosPorFaixa(temp_min, PRISM3_CONFIG.hemo.temp_min);
+            score += temp_pts;
+            if (temp_min && !Number.isNaN(temp_min)) {
+                breakdown.push(['Temperatura Mínima', `${temp_min}°C`, temp_pts]);
+            }
+
+            // Neurológico
+            const pupils_pts = pupils ? PRISM3_CONFIG.neuro.pupils_fixed : 0;
+            score += pupils_pts;
+            breakdown.push(['Pupilas Fixas', pupils ? 'Sim' : 'Não', pupils_pts]);
+
+            const coma_pts = coma ? PRISM3_CONFIG.neuro.coma : 0;
+            score += coma_pts;
+            breakdown.push(['Coma Profundo', coma ? 'Sim' : 'Não', coma_pts]);
+
+            const seizure_pts = seizure ? PRISM3_CONFIG.neuro.seizure : 0;
+            score += seizure_pts;
+            breakdown.push(['Convulsões', seizure ? 'Sim' : 'Não', seizure_pts]);
+
+            // Respiratório
+            if (pao2 && fio2 && !Number.isNaN(pao2) && !Number.isNaN(fio2)) {
+                const pf = calcularPF(pao2, fio2);
+                const pf_pts = pontosPorFaixa(pf, PRISM3_CONFIG.resp.pf_ratio);
+                score += pf_pts;
+                breakdown.push(['PaO₂/FiO₂', isFinite(pf) ? pf.toFixed(0) : '∞', pf_pts]);
+            }
+
+            const paco2_pts = pontosPorFaixa(paco2, PRISM3_CONFIG.resp.paco2);
+            score += paco2_pts;
+            if (paco2 && !Number.isNaN(paco2)) {
+                breakdown.push(['PaCO₂', `${paco2} mmHg`, paco2_pts]);
+            }
+
+            // Metabólico
+            const ph_pts = pontosPorFaixa(ph, PRISM3_CONFIG.metab.ph);
+            score += ph_pts;
+            if (ph && !Number.isNaN(ph)) {
+                breakdown.push(['pH', ph.toFixed(2), ph_pts]);
+            }
+
+            const hco3_pts = pontosPorFaixa(hco3, PRISM3_CONFIG.metab.hco3);
+            score += hco3_pts;
+            if (hco3 && !Number.isNaN(hco3)) {
+                breakdown.push(['HCO₃⁻', `${hco3} mmol/L`, hco3_pts]);
+            }
+
+            const glucose_pts = pontosPorFaixa(glucose, PRISM3_CONFIG.metab.glucose);
+            score += glucose_pts;
+            if (glucose && !Number.isNaN(glucose)) {
+                breakdown.push(['Glicose', `${glucose} mg/dL`, glucose_pts]);
+            }
+
+            const k_pts = pontosPorFaixa(k, PRISM3_CONFIG.metab.k);
+            score += k_pts;
+            if (k && !Number.isNaN(k)) {
+                breakdown.push(['Potássio', `${k} mmol/L`, k_pts]);
+            }
+
+            // Órgãos
+            const creatinine_pts = pontosPorFaixa(creatinine, PRISM3_CONFIG.organ.creatinine);
+            score += creatinine_pts;
+            if (creatinine && !Number.isNaN(creatinine)) {
+                breakdown.push(['Creatinina', `${creatinine} mg/dL`, creatinine_pts]);
+            }
+
+            const wbc_pts = pontosPorFaixa(wbc, PRISM3_CONFIG.organ.wbc);
+            score += wbc_pts;
+            if (wbc && !Number.isNaN(wbc)) {
+                breakdown.push(['Leucócitos', `${wbc} 10³/µL`, wbc_pts]);
+            }
+
+            const platelets_pts = pontosPorFaixa(platelets, PRISM3_CONFIG.organ.platelets);
+            score += platelets_pts;
+            if (platelets && !Number.isNaN(platelets)) {
+                breakdown.push(['Plaquetas', `${platelets} 10³/µL`, platelets_pts]);
+            }
+
+            const bilirubin_pts = pontosPorFaixa(bilirubin, PRISM3_CONFIG.organ.bilirubin);
+            score += bilirubin_pts;
+            if (bilirubin && !Number.isNaN(bilirubin)) {
+                breakdown.push(['Bilirrubina Total', `${bilirubin} mg/dL`, bilirubin_pts]);
+            }
+
+            // Calcular probabilidade
+            const logit = PRISM3_CONFIG.logistic.alpha + PRISM3_CONFIG.logistic.beta * score;
+            const probability = 1 / (1 + Math.exp(-logit));
+
+            // Exibir resultados
+            document.getElementById('escore_total').textContent = `${score} pontos`;
+            document.getElementById('probabilidade_mortalidade').textContent = `${(probability * 100).toFixed(1)}%`;
+
+            // Determinar nível de risco
+            let riskLevel, riskClass;
+            if (probability < 0.05) {
+                riskLevel = 'Baixo Risco';
+                riskClass = 'risk-low';
+            } else if (probability < 0.20) {
+                riskLevel = 'Risco Intermediário';
+                riskClass = 'risk-medium';
+            } else {
+                riskLevel = 'Alto Risco';
+                riskClass = 'risk-high';
+            }
+
+            document.getElementById('indicador_risco').innerHTML = 
+                `<span class="risk-indicator ${riskClass}">${riskLevel}</span>`;
+
+            // Criar tabela de breakdown
+            let tableHTML = '<table class="breakdown-table">';
+            tableHTML += '<thead><tr><th>Variável</th><th>Valor</th><th>Pontos</th></tr></thead>';
+            tableHTML += '<tbody>';
+            breakdown.forEach(([variavel, valor, pontos]) => {
+                tableHTML += `<tr><td>${variavel}</td><td>${valor}</td><td><strong>${pontos}</strong></td></tr>`;
+            });
+            tableHTML += '</tbody></table>';
+            
+            document.getElementById('breakdown_table').innerHTML = tableHTML;
+        }
+
+        // Função para gerar e copiar relatório
+        function gerarECopiarRelatorio() {
+            const nome = document.getElementById('nome').value;
+            const dataNascimento = document.getElementById('data_nascimento').value;
+            const dataAvaliacao = document.getElementById('data_avaliacao').value;
+            const horaAvaliacao = document.getElementById('hora_avaliacao').value;
+            const idadeCompleta = document.getElementById('idade_completa').value;
+            const obs = document.getElementById('obs').value;
+
+            // Obter resultados calculados
+            const escoreTotal = document.getElementById('escore_total').textContent;
+            const probabilidade = document.getElementById('probabilidade_mortalidade').textContent;
+            const indicador = document.getElementById('indicador_risco').textContent;
+
+            let relatorioTexto = `RESUMO INFORMATIVO — PRISM III (EDUCATIVO)
+${nome ? `Paciente: ${nome}` : ''}
+${dataAvaliacao ? `Data da Avaliacao: ${dataAvaliacao}` : ''}${horaAvaliacao ? ` - Hora: ${horaAvaliacao}` : ''}
+
+DADOS DO PACIENTE:
+${dataNascimento ? `- Data de Nascimento: ${dataNascimento}` : ''}
+${idadeCompleta ? `- Idade: ${idadeCompleta}` : ''}
+
+DADOS PRISM III (PIORES VALORES PRIMEIRAS 12H):
+- PAS Minima: ${document.getElementById('sbp_min').value || '-'} mmHg
+- Temperatura Minima: ${document.getElementById('temp_min').value || '-'}°C
+- Pupilas Fixas: ${document.getElementById('pupils').value === '1' ? 'Sim' : 'Nao'}
+- Coma Profundo: ${document.getElementById('coma').value === '1' ? 'Sim' : 'Nao'}
+- Convulsoes: ${document.getElementById('seizure').value === '1' ? 'Sim' : 'Nao'}
+- PaO2: ${document.getElementById('pao2').value || '-'} mmHg
+- FiO2: ${document.getElementById('fio2').value || '-'}
+- PaCO2: ${document.getElementById('paco2').value || '-'} mmHg
+- pH: ${document.getElementById('ph').value || '-'}
+- HCO3: ${document.getElementById('hco3').value || '-'} mmol/L
+- Glicose: ${document.getElementById('glucose').value || '-'} mg/dL
+- Potassio: ${document.getElementById('k').value || '-'} mmol/L
+- Creatinina: ${document.getElementById('creatinine').value || '-'} mg/dL
+- Leucocitos: ${document.getElementById('wbc').value || '-'} 10³/µL
+- Plaquetas: ${document.getElementById('platelets').value || '-'} 10³/µL
+- Bilirrubina Total: ${document.getElementById('bilirubin').value || '-'} mg/dL
+${obs ? `- Observacoes: ${obs}` : ''}
+
+RESULTADOS:
+- PRISM III - Escore Total: ${escoreTotal}
+- Probabilidade de Mortalidade: ${probabilidade}
+- Nivel de Risco: ${indicador}
+
+INTERPRETACAO:
+O PRISM III e um indice de gravidade pediatica desenvolvido para predizer mortalidade hospitalar em criancas admitidas em UTIs pediatricas. O calculo e baseado nos piores valores observados nas primeiras 12 horas de admissao. Valores mais altos indicam maior risco de mortalidade.
+
+CRITERIOS DE PONTUACAO PRISM III:
+- PAS Minima: <50mmHg=4pts, 50-70mmHg=2pts, >70mmHg=0pts
+- Temperatura Minima: <35°C=2pts, 35-36°C=1pt, >36°C=0pts
+- Pupilas Fixas: Sim=4pts, Nao=0pts
+- Coma Profundo: Sim=3pts, Nao=0pts
+- Convulsoes: Sim=2pts, Nao=0pts
+- PaO2/FiO2: <100=4pts, 100-200=3pts, 200-300=2pts, 300-400=1pt, >400=0pts
+- PaCO2: 51-70mmHg=1pt, 71-90mmHg=2pts, >90mmHg=3pts
+- pH: <7.10=4pts, 7.10-7.24=2pts, >7.24=0pts
+- HCO3: <10mmol/L=4pts, 10-15mmol/L=2pts, >15mmol/L=0pts
+- Glicose: <40mg/dL=3pts, 200-299mg/dL=1pt, >300mg/dL=2pts
+- Potassio: <2.5mmol/L=2pts, 6.0-6.9mmol/L=2pts, >7.0mmol/L=4pts
+- Creatinina: 1.5-1.9mg/dL=1pt, >2.0mg/dL=2pts
+- Leucocitos: <3x10³/µL=2pts, >25x10³/µL=1pt
+- Plaquetas: <50x10³/µL=4pts, 50-100x10³/µL=2pts, >100x10³/µL=0pts
+- Bilirrubina: 2.0-4.9mg/dL=1pt, >5.0mg/dL=2pts
+
+Referencia: Pollack MM, et al. PRISM III: an updated Pediatric Risk of Mortality score. Crit Care Med 1996; 24(5): 743-752.`;
+
+            relatorioTexto = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorioTexto;
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorioTexto += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                relatorioTexto += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            copiarTexto(relatorioTexto);
+        }
+
+        // Função para copiar texto
+        function copiarTexto(texto) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(texto).then(() => {
+                    if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                }).catch(err => {
+                    copiarTextoFallback(texto);
+                });
+            } else {
+                copiarTextoFallback(texto);
+            }
+        }
+
+        function copiarTextoFallback(texto) {
+            const textArea = document.createElement('textarea');
+            textArea.value = texto;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            } catch (err) {
+                if (typeof window.neopedCopyFail === 'function') window.neopedCopyFail(); else alert('Nao foi possivel copiar automaticamente. Revise o texto e copie manualmente para uso informativo.');
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // Função para limpar dados
+        function limparDados() {
+            const campos = [
+                'nome', 'data_nascimento', 'data_avaliacao', 
+                'hora_avaliacao', 'idade_completa', 'sbp_min', 'temp_min',
+                'pupils', 'coma', 'seizure', 'pao2', 'fio2', 'paco2',
+                'ph', 'hco3', 'glucose', 'k', 'creatinine', 'wbc',
+                'platelets', 'bilirubin', 'obs'
+            ];
+
+            campos.forEach(campo => {
+                const elemento = document.getElementById(campo);
+                if (elemento.type === 'select-one') {
+                    elemento.selectedIndex = 0;
+                } else {
+                    elemento.value = '';
+                }
+            });
+
+            document.getElementById('escore_total').textContent = '-';
+            document.getElementById('probabilidade_mortalidade').textContent = '-';
+            document.getElementById('indicador_risco').innerHTML = '';
+            document.getElementById('breakdown_table').innerHTML = '';
+        }
+
+        // Event listeners
+        document.getElementById('data_nascimento').addEventListener('change', calcularIdade);
+        document.getElementById('data_avaliacao').addEventListener('change', calcularIdade);
+
+        // Preencher data atual ao carregar
+        window.addEventListener('load', preencherDataAtual);
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

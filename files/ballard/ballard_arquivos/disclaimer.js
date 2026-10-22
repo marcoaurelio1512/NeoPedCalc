@@ -1,0 +1,3 @@
+document.writeln("<font face=\"Arial, Helvetica, sans-serif\" size=\"-2\">" +
+		"ADVERTÊNCIA: Todos os cálculos devem ser confirmados antes de uso. O autor não se responsabiliza pela precisão da informação contida nesta; e este score sugerido não é um substituto para a avaliação  clínica." + 
+		"O programa calculadoraneonatal.com nem qualquer outra publicação do mesmo autor se envolveram na preparação ou publicação deste score, e não estarão sujeitos a qualquer dano especial, conseqüente, ou exemplar que resulte da utilização deste por qualquer usuário ou na confiabilidade neste material. </font><br>");

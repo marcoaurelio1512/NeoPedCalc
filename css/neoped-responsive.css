@@ -1,0 +1,1608 @@
+@import url("neoped-datetime-mobile.css");
+
+/**
+ * NeoPedCalc - Layout responsivo global (referência: Infecções Congênitas)
+ * Correção definitiva para mobile, com foco em iPhone/Safari.
+ * Garante: sem overflow horizontal, cards contidos, inputs/select/date contidos,
+ * sem vazamento de faixas laterais para fora do card.
+ * NÃO usa 100vw (causa scroll horizontal no Safari iOS).
+ */
+
+/* ========== 1. RESET GLOBAL SEGURO ========== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* ========== 2. BLOQUEIO DE OVERFLOW HORIZONTAL ========== */
+html {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    overflow-wrap: break-word;
+}
+
+/* Containers principais – nunca exceder viewport */
+main,
+.wrap,
+.app-viewport,
+.app-shell,
+.container,
+.form-container,
+.content {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.wrap {
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+/* ========== 3. PADRÃO GLOBAL DE CARDS E SECTIONS ========== */
+.card,
+.form-section,
+.panel,
+.box,
+.config-section,
+.results-section,
+.results,
+.reference-table,
+.loops-section {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+    overflow-y: visible;
+    box-sizing: border-box;
+}
+
+/* Cabeçalho de seção – sem margin negativa */
+.section-header {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 14px !important;
+    padding: 12px 14px !important;
+    border-radius: 10px 10px 0 0;
+}
+
+/* Remover pseudo-elementos decorativos que saem do card */
+.form-section::before,
+.subsection-title::after {
+    display: none !important;
+}
+
+/* ========== 4. PADRÃO GLOBAL DE FORMULÁRIOS ========== */
+label {
+    display: block;
+}
+
+/* NutriPedWebapp: modais e botões em linha (ex.: fórmulas comerciais) — não forçar largura total */
+html:not(.nutriped-app) select,
+html:not(.nutriped-app) input,
+html:not(.nutriped-app) textarea,
+html:not(.nutriped-app) button {
+    max-width: 100%;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* Checkboxes e radios: largura automática (width:100% quebra layout em flex e some o controle) */
+input[type="checkbox"],
+input[type="radio"] {
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0;
+    flex-shrink: 0;
+}
+
+html:not(.nutriped-app) input[type="number"],
+html:not(.nutriped-app) input[type="text"],
+html:not(.nutriped-app) input[type="email"] {
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+html:not(.nutriped-app) button {
+    max-width: 100%;
+}
+
+/* Botões em grupos horizontais / barras de ação — não forçar largura total */
+.button-group button,
+.btn-group button,
+.top-actions button,
+.modal-footer button {
+    width: auto !important;
+    max-width: 100%;
+}
+
+/* Botões e links interativos – base para área de toque */
+button,
+.btn,
+.btn-info,
+.cta-button {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.form-group {
+    min-width: 0;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.form-group input[type="checkbox"],
+.form-group input[type="radio"] {
+    width: auto !important;
+    max-width: none !important;
+}
+
+/* ========== 5. FLEX E GRID SEGUROS ========== */
+.form-row,
+.form-grid,
+.result-grid,
+.loop-grid,
+.content-grid,
+.calculators-grid {
+    min-width: 0;
+}
+
+.form-row > *,
+.form-grid > *,
+.result-grid > *,
+.loop-grid > *,
+.content-grid > *,
+.calculators-grid > * {
+    min-width: 0;
+}
+
+/* Cards de listagem (páginas iniciais) */
+.calculator-card,
+.calc-item {
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* ========== 6. TABELAS – WRAPPER COM SCROLL ========== */
+.table-responsive,
+.table-wrap,
+.reference-table,
+[class*="table-wrapper"] {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive table,
+.table-wrap table,
+.reference-table table {
+    width: 100%;
+    min-width: 0;
+}
+
+/* Tabelas sem wrapper: o pai precisa rolar no eixo X (hidden corta conteúdo largo) */
+.table-scroll,
+.table-container,
+[data-table-scroll] {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    box-sizing: border-box;
+}
+
+@supports selector(:has(*)) {
+    .form-section:has(table),
+    .results-section:has(table),
+    .config-section:has(table),
+    .results:has(table),
+    .panel:has(table),
+    .box:has(table),
+    .card:has(table),
+    .report-section:has(table),
+    .report-card:has(table),
+    main:has(table),
+    .content:has(table),
+    .wrap:has(table),
+    html:not(.nutriped-app) .container:has(table),
+    .app-viewport:has(table),
+    .app-shell:has(table),
+    html:not(.nutriped-app) .modal-body:has(table),
+    html:not(.nutriped-app) .modal-content:has(table),
+    .reference-table:has(table) {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        max-width: 100%;
+        min-width: 0;
+    }
+}
+
+/* Blocos de resultado */
+.result,
+.result-display,
+.total-score,
+.result-value,
+.result-card,
+[class*="result"]:not([class*="results"]) {
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+/* Imagens e mídia */
+img,
+.ritmo-img {
+    max-width: 100%;
+    height: auto;
+}
+
+figure,
+picture {
+    max-width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+video,
+embed,
+object {
+    max-width: 100%;
+    height: auto;
+    box-sizing: border-box;
+}
+
+iframe {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* SVG / canvas – gráficos e diagramas (altura: auto pode distorcer canvas; max-width contém) */
+svg {
+    max-width: 100%;
+    height: auto;
+}
+
+canvas {
+    max-width: 100% !important;
+    box-sizing: border-box;
+}
+
+td img,
+th img,
+td svg,
+th svg,
+td canvas {
+    max-width: 100%;
+    height: auto;
+    vertical-align: middle;
+    box-sizing: border-box;
+}
+
+/* Imagens em seções (figuras, diagramas, escalas) – responsivas e contidas */
+.image-section img,
+.diagram-container img,
+.diagram-image,
+.brand-logo {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Fallback quando imagem não carrega – evita ícone quebrado grande */
+img[alt]:not([src=""]) {
+    min-height: 0;
+}
+
+/* Gráficos Plotly (ex.: icterícia neonatal NICE) */
+#grafico,
+[id*="grafico"],
+[id*="Grafico"],
+[id*="chart"],
+[id*="Chart"],
+.plotly-graph-div,
+.js-plotly-plot,
+.plotly-container,
+[class*="plotly"],
+.highcharts-container,
+.highcharts-root {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.plotly-graph-div .svg-container {
+    max-width: 100%;
+}
+
+/* Gráficos Chart.js (ex.: NutriPedWebapp) */
+.charts-section {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+}
+
+.chart-container {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.chart-container canvas {
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+/* Wrappers genéricos de gráfico */
+[class*="chart-container"],
+[class*="graph-container"],
+[class*="grafico-"] {
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* ========== ALERTAS E AVISOS CLÍNICOS – sempre visíveis e legíveis ========== */
+.warning,
+.info-box,
+.legal-notice,
+.warning-content,
+.age-warning,
+.prematuro-warning,
+.triage-box,
+[class*="warning"],
+[class*="aviso"] {
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    box-sizing: border-box;
+}
+
+.warning p,
+.info-box p,
+.legal-notice p,
+.age-warning-text {
+    margin: 0.5em 0;
+    line-height: 1.5;
+}
+
+/* Cabeçalhos de módulo – evitar overflow e texto quebrando layout */
+.header {
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+.header h1,
+.header h2,
+.main-title,
+.subtitle {
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+/* Botões e CTAs – não ultrapassar container */
+.cta-buttons,
+.nav-list {
+    flex-wrap: wrap;
+    max-width: 100%;
+}
+
+.cta-button,
+.nav-list a {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Modais – contidos no viewport (evitar 100vw no Safari). NutriPedWebapp define larguras próprias. */
+html:not(.nutriped-app) .modal-content,
+html:not(.nutriped-app) .modal-body {
+    max-width: min(700px, calc(100% - 24px));
+    box-sizing: border-box;
+}
+
+/* Garantir acesso aos botões no fim do modal, sem ficar atrás da barra inferior (exceto NutriPed: modais próprios) */
+html:not(.nutriped-app) .modal-body {
+    padding-bottom: max(20px, env(safe-area-inset-bottom)) !important;
+}
+
+html:not(.nutriped-app) body.neoped-has-nav .modal-body {
+    padding-bottom: calc(var(--neoped-nav-inset, 72px) + 20px) !important;
+}
+
+html:not(.nutriped-app) .modal-footer,
+html:not(.nutriped-app) .modal-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+    background: inherit;
+}
+
+.progress-fill {
+    overflow: hidden;
+}
+
+/* ========== MEDIA QUERIES – MOBILE FIRST ========== */
+@media (max-width: 900px) {
+    .wrap {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .header {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+}
+
+/* Telas muito estreitas: grid de listagem em 1 coluna para evitar overflow */
+@media (max-width: 420px) {
+    .content-grid,
+    .calculators-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .wrap,
+    main,
+    .app-viewport {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .card,
+    .form-section,
+    .config-section,
+    .form-container,
+    .content {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .header {
+        padding: 20px 14px;
+    }
+
+    .header h1,
+    .main-title {
+        font-size: 1.35rem;
+    }
+
+    html:not(.nutriped-app) .modal-content,
+    html:not(.nutriped-app) .modal-body {
+        max-width: calc(100% - 16px) !important;
+        width: 100% !important;
+        margin-left: 8px;
+        margin-right: 8px;
+    }
+
+    .table-responsive table,
+    .reference-table table {
+        min-width: 280px;
+    }
+
+    .form-section table,
+    .results-section table {
+        min-width: 0;
+    }
+
+    .ritmo-img {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .ritmo-card {
+        min-width: 0 !important;
+        flex: 1 1 100% !important;
+    }
+
+    #grafico {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    /* Override min-width em tabelas (exceto NutriPed: tabelas largas no modal com scroll horizontal) */
+    html:not(.nutriped-app) table {
+        min-width: 0;
+    }
+
+    html:not(.nutriped-app) .modal-body table,
+    .form-section table,
+    .results-section table {
+        min-width: 0;
+    }
+
+    /* Células: URLs e números longos (exceto NutriPed — evita colunas “espremidas”/sobrepostas no modal de fórmulas) */
+    html:not(.nutriped-app) table th,
+    html:not(.nutriped-app) table td {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        hyphens: auto;
+    }
+
+    /* Mídia e gráficos – reforço em telas estreitas */
+    img,
+    svg,
+    canvas,
+    video,
+    iframe {
+        max-width: 100% !important;
+    }
+
+    .chart-container,
+    [class*="chart-container"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    select {
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+
+    /* ========== ETAPA 2: USABILIDADE MOBILE ========== */
+    /* Área de toque mínima ~44px (recomendação Apple/Google) */
+    button,
+    .btn,
+    .btn-info,
+    .btn-primary,
+    .btn-secondary,
+    .ghost,
+    .primary {
+        min-height: 44px;
+        padding: 12px 16px;
+    }
+
+    /* Links de calculadoras na listagem – toque confortável */
+    .calc-item a,
+    .calculator-card a {
+        display: block;
+        min-height: 44px;
+        padding: 12px 10px;
+        line-height: 1.4;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Inputs e selects – toque e evitar zoom no iOS (font-size ≥ 16px) */
+    input,
+    select,
+    textarea {
+        min-height: 44px;
+        font-size: 16px;
+        padding: 12px 10px;
+    }
+
+    textarea {
+        min-height: 80px;
+    }
+
+    /* Modais – rolagem interna e altura máxima (exceto NutriPedWebapp) */
+    html:not(.nutriped-app) .modal-body {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        max-height: calc(100vh - 120px);
+    }
+
+    html:not(.nutriped-app) .modal-content {
+        max-height: 90vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    html:not(.nutriped-app) .modal-content .modal-body {
+        flex: 1;
+        min-height: 0;
+    }
+
+    /* Tabelas em mobile – fonte legível, célula com padding */
+    .table-responsive th,
+    .table-responsive td,
+    .reference-table th,
+    .reference-table td {
+        padding: 10px 8px;
+        font-size: 0.9rem;
+    }
+
+    /* Blocos de resultado – hierarquia e legibilidade */
+    .result-number,
+    .total-score input,
+    .result-value {
+        font-size: 1.5rem;
+    }
+
+    .result-label,
+    .result-interpretation {
+        font-size: 0.9rem;
+    }
+
+    /* Espaçamento vertical consistente entre seções */
+    .card + .card,
+    .form-section + .form-section,
+    .config-section + .config-section {
+        margin-top: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .wrap,
+    main,
+    .app-viewport {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .card,
+    .form-section,
+    .config-section,
+    .form-container,
+    .content {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .header {
+        padding: 16px 12px;
+    }
+
+    .header h1,
+    .main-title {
+        font-size: 1.2rem;
+    }
+
+    .cta-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .cta-button {
+        width: 100%;
+        text-align: center;
+    }
+
+    html:not(.nutriped-app) .modal-content,
+    html:not(.nutriped-app) .modal-body {
+        max-width: calc(100% - 8px) !important;
+        width: 100% !important;
+        margin-left: 4px;
+        margin-right: 4px;
+    }
+
+    #grafico {
+        min-width: 0 !important;
+    }
+
+    [id*="grafico"],
+    [id*="Grafico"],
+    .plotly-graph-div,
+    .js-plotly-plot,
+    .plotly-container {
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .result-grid,
+    .form-row,
+    .form-grid,
+    .loop-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Tabelas em telas muito estreitas */
+    .table-responsive th,
+    .table-responsive td,
+    .reference-table th,
+    .reference-table td {
+        padding: 8px 6px;
+        font-size: 0.85rem;
+    }
+
+    .result-number,
+    .total-score input {
+        font-size: 1.35rem;
+    }
+
+    /* .btnrow em módulos – botões em coluna para toque fácil */
+    .btnrow {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 430px) {
+    .ritmo-card {
+        min-width: 0 !important;
+    }
+}
+
+/* ========== NAVEGAÇÃO INFERIOR (MOBILE / PWA – modo escuro, centralizada) ========== */
+.neoped-nav.neoped-nav-bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    min-height: 56px;
+    padding: 8px 16px;
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+    background: #0f1419;
+    border-top: none;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+/* Evitar que regras globais (ex.: button { width: 100% }) estiquem os ícones – manter centralizados */
+.neoped-nav.neoped-nav-bottom .neoped-nav-btn,
+.neoped-nav.neoped-nav-bottom > button,
+.neoped-nav.neoped-nav-bottom > a {
+    width: auto;
+    min-width: 48px;
+    max-width: none;
+    flex: 0 0 auto;
+}
+
+.neoped-nav-btn {
+    min-width: 48px;
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    color: #e8eefc;
+    background: transparent;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    text-decoration: none;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+.neoped-nav-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.15);
+}
+.neoped-nav-btn:hover,
+.neoped-nav-btn:active {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+.neoped-nav-icon {
+    width: 24px;
+    height: 24px;
+    pointer-events: none;
+    stroke: currentColor;
+}
+
+/*
+ * Conteúdo não deve ficar atrás da barra inferior.
+ * --neoped-nav-inset é definido por js/neoped-nav.js (altura real medida + ResizeObserver).
+ * Fallback 72px: barra costuma ser >56px (padding 8+8 + botões ~48px + safe-area).
+ */
+:root {
+    --neoped-nav-inset: 72px;
+}
+
+html.neoped-has-nav {
+    scroll-padding-bottom: var(--neoped-nav-inset, 72px);
+}
+
+/* !important no bottom: vence atalhos tipo padding:0 em folhas de calculadora */
+body.neoped-has-nav {
+    padding-bottom: var(--neoped-nav-inset, 72px) !important;
+    box-sizing: border-box;
+}
+
+@media (min-width: 769px) {
+    .neoped-nav.neoped-nav-bottom {
+        min-height: 52px;
+        padding-bottom: max(10px, env(safe-area-inset-bottom));
+    }
+    :root {
+        --neoped-nav-inset: 68px;
+    }
+}
+
+/* Landscape em mobile – aproveitar largura sem exagerar padding */
+@media (max-width: 900px) and (orientation: landscape) {
+    .wrap,
+    main,
+    .app-viewport {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    html:not(.nutriped-app) .modal-body {
+        max-height: calc(100vh - 100px);
+    }
+}
+
+/* =============================================================================
+   TEMA VISUAL UNIFICADO NEOEDCALC (calculadoras — só CSS, sem alterar lógica)
+   Aplica-se a páginas que carregam este arquivo. Exceções: tema escuro
+   (data-neoped-theme="dark") e NutriPedWebapp (html.nutriped-app).
+   ============================================================================= */
+
+:root {
+    --neoped-font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --neoped-page-bg: linear-gradient(160deg, #f1f5f9 0%, #e8eef5 45%, #f1f5f9 100%);
+    --neoped-text: #111827;
+    --neoped-text-muted: #374151;
+    --neoped-accent-start: #4b5563;
+    --neoped-accent-end: #6b7280;
+    --neoped-radius: 12px;
+    --neoped-radius-lg: 16px;
+    --neoped-card-shadow: 0 4px 18px rgba(15, 23, 42, 0.07);
+    /* Botões — mesma paleta em todas as calculadoras (1º…4º repetem a cada 4) */
+    --neoped-btn-1-a: #4f46e5;
+    --neoped-btn-1-b: #7c3aed;
+    --neoped-btn-2-a: #0d9488;
+    --neoped-btn-2-b: #059669;
+    --neoped-btn-3-a: #ea580c;
+    --neoped-btn-3-b: #c2410c;
+    --neoped-btn-4-a: #64748b;
+    --neoped-btn-4-b: #475569;
+    --neoped-btn-info-a: #0284c7;
+    --neoped-btn-info-b: #0369a1;
+    --neoped-btn-danger-a: #dc2626;
+    --neoped-btn-danger-b: #991b1b;
+    --neoped-btn-shadow: 0 4px 14px rgba(15, 23, 42, 0.2);
+    --neoped-btn-shadow-hover: 0 6px 18px rgba(15, 23, 42, 0.26);
+}
+
+html {
+    font-family: var(--neoped-font);
+}
+
+/* Harmonizar tipografia em todos os modos */
+html[data-neoped-theme="dark"] body,
+html[data-neoped-theme="dark"] {
+    font-family: var(--neoped-font);
+}
+
+/* Modo claro (padrão): fundo de página e texto */
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) body {
+    font-family: var(--neoped-font);
+    background: var(--neoped-page-bg) !important;
+    color: var(--neoped-text);
+}
+
+/* Legibilidade: campos e placeholders em cinza escuro (não cinza claro) */
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="hidden"]),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) textarea,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) select {
+    color: var(--neoped-text) !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) input::placeholder,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) textarea::placeholder {
+    color: #4b5563 !important;
+    opacity: 1;
+}
+
+/* Cabeçalhos superiores comuns em calculadoras claras (exceto marca com logo branco — ver .neoped-brand-header) */
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) header:not(.neoped-brand-header),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header:not(#neoped-app-nav):not(.neoped-nav):not(.neoped-brand-header) {
+    background: linear-gradient(135deg, var(--neoped-accent-start) 0%, var(--neoped-accent-end) 100%) !important;
+    /* Não definir color aqui: herança deixava texto claro sobre .title-card branco (ex.: anemia.html). */
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    border-radius: 0 0 var(--neoped-radius-lg) var(--neoped-radius-lg) !important;
+    box-shadow: 0 8px 24px rgba(75, 85, 99, 0.22) !important;
+}
+
+/* Título no fundo do gradiente — só quando o cabeçalho NÃO é só um card claro interno nem marca (.neoped-brand-header) */
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) header:not(:has(.title-card)):not(:has(.header-card)):not(.neoped-brand-header) h1,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) header:not(:has(.title-card)):not(:has(.header-card)):not(.neoped-brand-header) h2,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header:not(:has(.title-card)):not(:has(.header-card)):not(#neoped-app-nav):not(.neoped-nav):not(.neoped-brand-header) h1,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header:not(:has(.title-card)):not(:has(.header-card)):not(#neoped-app-nav):not(.neoped-nav):not(.neoped-brand-header) h2,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header:not(:has(.title-card)):not(:has(.header-card)):not(.neoped-brand-header) .title h1 {
+    color: #f8fafc !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) header:not(:has(.title-card)):not(:has(.header-card)):not(.neoped-brand-header) p,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header:not(:has(.title-card)):not(:has(.header-card)):not(#neoped-app-nav):not(.neoped-nav):not(.neoped-brand-header) p,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header:not(:has(.title-card)):not(:has(.header-card)):not(.neoped-brand-header) .subtitle {
+    color: rgba(248, 250, 252, 0.88) !important;
+}
+
+/* Páginas iniciais com logo NeoPedCalc (PNG com fundo branco): cabeçalho branco, sem cinza; texto na paleta */
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) header.neoped-brand-header {
+    background: #ffffff !important;
+    background-image: none !important;
+    box-shadow: 0 2px 14px rgba(15, 23, 42, 0.08) !important;
+    border-color: #e2e8f0 !important;
+    border-radius: 0 !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) header.neoped-brand-header h1,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) header.neoped-brand-header h2 {
+    color: var(--neoped-text) !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) header.neoped-brand-header p,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) header.neoped-brand-header .subtitle {
+    color: var(--neoped-text-muted) !important;
+}
+
+/* Card claro dentro do topo (ex.: NeoPedCalc - Anemia): texto escuro legível */
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header .title-card,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header .header-card {
+    color: var(--neoped-text) !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header .title-card h1,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header .title-card h2,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header .header-card h1,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header .header-card h2 {
+    color: var(--neoped-text) !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header .title-card p,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header .header-card p {
+    color: var(--neoped-text-muted) !important;
+}
+
+/* Cards e painéis — raio e sombra coerentes */
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .card,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .panel,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .form-section,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .config-section,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .results-section,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .info-box {
+    border-radius: var(--neoped-radius) !important;
+    box-shadow: var(--neoped-card-shadow) !important;
+}
+
+/* Títulos de seção */
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .section-title,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) h2.section-title {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--neoped-text);
+}
+
+/* Rodapé típico */
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .footer {
+    background: #f8fafc !important;
+    color: var(--neoped-text-muted) !important;
+    border-top: 1px solid #e2e8f0 !important;
+    border-radius: var(--neoped-radius) var(--neoped-radius) 0 0 !important;
+}
+
+/* Botões coloridos — ver final do arquivo (.btn-primary, ordem nth-child, .cta-button) */
+
+/* ---------- Páginas da raiz (index, seleção, listagens, advertências, bibliografia) ---------- */
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .warning-banner {
+    background: linear-gradient(135deg, var(--neoped-btn-1-a), var(--neoped-btn-1-b)) !important;
+    color: #f8fafc !important;
+    border: none !important;
+    border-radius: var(--neoped-radius) !important;
+    box-shadow: var(--neoped-btn-shadow) !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .warning-banner a {
+    color: #fff !important;
+    text-decoration: underline !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .legal-notice {
+    background: #fff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: var(--neoped-radius-lg) !important;
+    box-shadow: var(--neoped-card-shadow) !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .cta-button.primary {
+    background: linear-gradient(135deg, var(--neoped-btn-1-a), var(--neoped-btn-1-b)) !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 10px !important;
+    box-shadow: var(--neoped-btn-shadow) !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .cta-button.secondary {
+    background: linear-gradient(135deg, var(--neoped-btn-2-a), var(--neoped-btn-2-b)) !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 10px !important;
+    box-shadow: var(--neoped-btn-shadow) !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .calculator-card {
+    border-radius: var(--neoped-radius) !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: var(--neoped-card-shadow) !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .favorites-section {
+    background: #fffbeb !important;
+    border: 1px solid #fde68a !important;
+    border-left-width: 4px !important;
+    border-left-color: #f59e0b !important;
+    border-radius: var(--neoped-radius) !important;
+    box-shadow: var(--neoped-card-shadow) !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) footer.footer a {
+    color: #1e293b !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) footer.footer a:hover {
+    color: var(--neoped-accent-start) !important;
+}
+
+/* Modais: casca externa sem borda/sombra — mesma especificidade que html:not(...) [class*="modal"] */
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal.show,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal.hidden,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal-backdrop,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal-overlay,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal-content,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal-dialog,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal-inner,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal-window,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) [class*="modal"]:not(.neoped-nav):not(.neoped-nav *):not(.lus-modal-close),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .lus-modal,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .lus-modal-dialog,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .lus-modal-head,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .lus-modal-frame,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal-header,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal-body,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal-footer,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal-title,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) [role="dialog"][aria-modal="true"],
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) dialog {
+    border: none !important;
+    border-width: 0 !important;
+    border-style: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* =============================================================================
+   BOTÕES — paleta única NeoPedCalc (gradientes + ordem 1…4 em linhas de ação)
+   Exclui NutriPed (html.nutriped-app) e barra .neoped-nav. Classes utilitárias:
+   .neoped-btn-1 … .neoped-btn-4 para uso manual.
+   ============================================================================= */
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .neoped-btn-1,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) button.btn-primary,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn-primary {
+    background: linear-gradient(135deg, var(--neoped-btn-1-a), var(--neoped-btn-1-b)) !important;
+    background-image: linear-gradient(135deg, var(--neoped-btn-1-a), var(--neoped-btn-1-b)) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: var(--neoped-btn-shadow) !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .neoped-btn-2,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) button.btn-secondary,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn-secondary {
+    background: linear-gradient(135deg, var(--neoped-btn-2-a), var(--neoped-btn-2-b)) !important;
+    background-image: linear-gradient(135deg, var(--neoped-btn-2-a), var(--neoped-btn-2-b)) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: var(--neoped-btn-shadow) !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .neoped-btn-3 {
+    background: linear-gradient(135deg, var(--neoped-btn-3-a), var(--neoped-btn-3-b)) !important;
+    background-image: linear-gradient(135deg, var(--neoped-btn-3-a), var(--neoped-btn-3-b)) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: var(--neoped-btn-shadow) !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .neoped-btn-4 {
+    background: linear-gradient(135deg, var(--neoped-btn-4-a), var(--neoped-btn-4-b)) !important;
+    background-image: linear-gradient(135deg, var(--neoped-btn-4-a), var(--neoped-btn-4-b)) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: var(--neoped-btn-shadow) !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) button.btn-info,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn-info,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) button.btn.info,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn.info,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .mini-btn {
+    background: linear-gradient(135deg, var(--neoped-btn-info-a), var(--neoped-btn-info-b)) !important;
+    background-image: linear-gradient(135deg, var(--neoped-btn-info-a), var(--neoped-btn-info-b)) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: var(--neoped-btn-shadow) !important;
+}
+
+/* RCP e outras: .btn.secondary (duas classes), .btn.success, .btn.danger, .btn.warning */
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) button.btn.secondary,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn.secondary {
+    background: linear-gradient(135deg, var(--neoped-btn-2-a), var(--neoped-btn-2-b)) !important;
+    background-image: linear-gradient(135deg, var(--neoped-btn-2-a), var(--neoped-btn-2-b)) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: var(--neoped-btn-shadow) !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) button.btn.success,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn.success,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn-ok {
+    background: linear-gradient(135deg, var(--neoped-btn-2-a), var(--neoped-btn-2-b)) !important;
+    background-image: linear-gradient(135deg, var(--neoped-btn-2-a), var(--neoped-btn-2-b)) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: var(--neoped-btn-shadow) !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) button.btn.danger,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn.danger,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn-danger {
+    background: linear-gradient(135deg, var(--neoped-btn-danger-a), var(--neoped-btn-danger-b)) !important;
+    background-image: linear-gradient(135deg, var(--neoped-btn-danger-a), var(--neoped-btn-danger-b)) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: var(--neoped-btn-shadow) !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) button.btn.warning,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn.warning,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn-warn {
+    background: linear-gradient(135deg, var(--neoped-btn-3-a), var(--neoped-btn-3-b)) !important;
+    background-image: linear-gradient(135deg, var(--neoped-btn-3-a), var(--neoped-btn-3-b)) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: var(--neoped-btn-shadow) !important;
+}
+
+/* Destaque principal (Guideline / Emergência) */
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn-conduta,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn.btn-conduta {
+    background: linear-gradient(135deg, var(--neoped-btn-1-a), var(--neoped-btn-1-b)) !important;
+    background-image: linear-gradient(135deg, var(--neoped-btn-1-a), var(--neoped-btn-1-b)) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: var(--neoped-btn-shadow) !important;
+}
+
+/* Ordem na mesma linha / grupo: 1º índigo, 2º verde-água, 3º laranja, 4º cinza (repete) */
+/* body + .footer-actions-inner aumenta especificidade para vencer .btn-primary/.btn-secondary nos filhos */
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) body .footer-actions-inner > button:nth-child(4n+1),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) body .footer-actions-inner > a:nth-child(4n+1),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .footer-actions-inner > button:nth-child(4n+1),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .footer-actions-inner > a:nth-child(4n+1),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .top-actions > button:nth-child(4n+1),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header-actions > button:nth-child(4n+1),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .button-group > button:nth-child(4n+1),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn-group > button:nth-child(4n+1),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btnrow > button:nth-child(4n+1),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .row-single > button:nth-child(4n+1),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header .row > button:nth-child(4n+1),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal-footer > button:nth-child(4n+1),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal-actions > button:nth-child(4n+1) {
+    background: linear-gradient(135deg, var(--neoped-btn-1-a), var(--neoped-btn-1-b)) !important;
+    background-image: linear-gradient(135deg, var(--neoped-btn-1-a), var(--neoped-btn-1-b)) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: var(--neoped-btn-shadow) !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) body .footer-actions-inner > button:nth-child(4n+2),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) body .footer-actions-inner > a:nth-child(4n+2),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .footer-actions-inner > button:nth-child(4n+2),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .footer-actions-inner > a:nth-child(4n+2),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .top-actions > button:nth-child(4n+2),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header-actions > button:nth-child(4n+2),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .button-group > button:nth-child(4n+2),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn-group > button:nth-child(4n+2),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btnrow > button:nth-child(4n+2),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .row-single > button:nth-child(4n+2),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header .row > button:nth-child(4n+2),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal-footer > button:nth-child(4n+2),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal-actions > button:nth-child(4n+2) {
+    background: linear-gradient(135deg, var(--neoped-btn-2-a), var(--neoped-btn-2-b)) !important;
+    background-image: linear-gradient(135deg, var(--neoped-btn-2-a), var(--neoped-btn-2-b)) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: var(--neoped-btn-shadow) !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) body .footer-actions-inner > button:nth-child(4n+3),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) body .footer-actions-inner > a:nth-child(4n+3),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .footer-actions-inner > button:nth-child(4n+3),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .footer-actions-inner > a:nth-child(4n+3),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .top-actions > button:nth-child(4n+3),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header-actions > button:nth-child(4n+3),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .button-group > button:nth-child(4n+3),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn-group > button:nth-child(4n+3),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btnrow > button:nth-child(4n+3),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .row-single > button:nth-child(4n+3),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header .row > button:nth-child(4n+3),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal-footer > button:nth-child(4n+3),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal-actions > button:nth-child(4n+3) {
+    background: linear-gradient(135deg, var(--neoped-btn-3-a), var(--neoped-btn-3-b)) !important;
+    background-image: linear-gradient(135deg, var(--neoped-btn-3-a), var(--neoped-btn-3-b)) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: var(--neoped-btn-shadow) !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) body .footer-actions-inner > button:nth-child(4n+4),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) body .footer-actions-inner > a:nth-child(4n+4),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .footer-actions-inner > button:nth-child(4n+4),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .footer-actions-inner > a:nth-child(4n+4),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .top-actions > button:nth-child(4n+4),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header-actions > button:nth-child(4n+4),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .button-group > button:nth-child(4n+4),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn-group > button:nth-child(4n+4),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btnrow > button:nth-child(4n+4),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .row-single > button:nth-child(4n+4),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header .row > button:nth-child(4n+4),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal-footer > button:nth-child(4n+4),
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal-actions > button:nth-child(4n+4) {
+    background: linear-gradient(135deg, var(--neoped-btn-4-a), var(--neoped-btn-4-b)) !important;
+    background-image: linear-gradient(135deg, var(--neoped-btn-4-a), var(--neoped-btn-4-b)) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: var(--neoped-btn-shadow) !important;
+}
+
+/* Hover: leve brilho + sombra (sobrescreve *:hover que zera sombra) */
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn-primary:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn-secondary:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn-info:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn.secondary:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn.success:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn.danger:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn.warning:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn.info:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn-ok:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn-conduta:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .mini-btn:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .neoped-btn-1:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .neoped-btn-2:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .neoped-btn-3:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .neoped-btn-4:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) body .footer-actions-inner > button:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .footer-actions-inner > button:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .top-actions > button:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header-actions > button:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .button-group > button:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btn-group > button:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .btnrow > button:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header .row > button:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal-footer > button:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal-actions > button:hover {
+    filter: brightness(1.06) !important;
+    box-shadow: var(--neoped-btn-shadow-hover) !important;
+}
+
+/* Cabeçalho — botão "Como usar" (.btn-info): centralizado, tipografia e estilo info únicos (vence ciclo nth-child em .header-actions) */
+html:not(.nutriped-app) .header-actions {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    margin-top: 1rem;
+    gap: 0.5rem;
+}
+
+html:not(.nutriped-app) .header-actions .btn-info,
+html:not(.nutriped-app) .header-actions button.btn-info {
+    font-family: var(--neoped-font, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif) !important;
+    font-size: 0.9375rem !important;
+    font-weight: 600 !important;
+    line-height: 1.35 !important;
+    letter-spacing: 0.01em !important;
+    padding: 0.5rem 1.25rem !important;
+    min-height: 2.75rem;
+    box-sizing: border-box;
+    width: auto !important;
+    max-width: 100%;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header-actions > button.btn-info {
+    background: linear-gradient(135deg, var(--neoped-btn-info-a), var(--neoped-btn-info-b)) !important;
+    background-image: linear-gradient(135deg, var(--neoped-btn-info-a), var(--neoped-btn-info-b)) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: var(--neoped-btn-shadow) !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .header-actions > button.btn-info:hover {
+    filter: brightness(1.06) !important;
+    box-shadow: var(--neoped-btn-shadow-hover) !important;
+    color: #fff !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .cta-button.primary:hover,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .cta-button.secondary:hover {
+    filter: brightness(1.06) !important;
+    box-shadow: var(--neoped-btn-shadow-hover) !important;
+}
+
+/* Botões discretos: não forçar gradiente */
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal-close,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .close-btn,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .neoped-nav button,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .neoped-nav a {
+    background: transparent !important;
+    background-image: none !important;
+    filter: none !important;
+    box-shadow: none !important;
+}
+
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .close-btn,
+html:not([data-neoped-theme="dark"]):not(.nutriped-app) .modal-close {
+    color: var(--neoped-text) !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+/* Fechar de modais/popups: X preto em círculo vermelho cheio */
+.close,
+.modal-close,
+.close-btn,
+.modal .close,
+.modal-header .close,
+.modal .modal-close,
+.modal .close-btn,
+[role="dialog"] .close,
+[role="dialog"] .modal-close,
+[role="dialog"] .close-btn,
+.lus-modal-close {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+    padding: 0 !important;
+    border-radius: 999px !important;
+    border: none !important;
+    background: #d40000 !important;
+    color: #000 !important;
+    font-size: 24px !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+    cursor: pointer !important;
+    margin-left: 8px !important;
+    flex-shrink: 0 !important;
+}
+
+/* Posicionamento consistente no canto superior direito dos modais */
+.modal-header,
+[role="dialog"] .modal-header {
+    position: relative !important;
+    padding-right: 52px !important;
+}
+
+.modal-header .close,
+.modal-header .modal-close,
+.modal-header .close-btn,
+[role="dialog"] .modal-header .close,
+[role="dialog"] .modal-header .modal-close,
+[role="dialog"] .modal-header .close-btn,
+.lus-modal-head .lus-modal-close {
+    position: absolute !important;
+    top: 8px !important;
+    right: 8px !important;
+    margin-left: 0 !important;
+}
+
+.lus-modal-head {
+    position: relative !important;
+    padding-right: 52px !important;
+}
+
+/* ========== AVISO LEGAL GLOBAL (SaMD / uso educacional-informativo) ========== */
+.neoped-legal-banner {
+    position: fixed;
+    left: 0;
+    right: 0;
+    z-index: 9998;
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    color: #e2e8f0;
+    font-size: 0.78rem;
+    line-height: 1.35;
+    border-top: 1px solid rgba(148, 163, 184, 0.35);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
+    padding: 8px max(12px, env(safe-area-inset-left)) 8px max(12px, env(safe-area-inset-right));
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+}
+
+.neoped-legal-banner-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px 12px;
+    text-align: center;
+}
+
+.neoped-legal-banner-text {
+    flex: 1 1 200px;
+    min-width: 0;
+}
+
+.neoped-legal-banner-btn {
+    flex: 0 0 auto;
+    width: auto !important;
+    max-width: 100%;
+    margin: 0;
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.5);
+    background: rgba(255, 255, 255, 0.08);
+    color: #f8fafc;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.neoped-legal-banner-btn:hover,
+.neoped-legal-banner-btn:focus {
+    background: rgba(255, 255, 255, 0.14);
+    outline: none;
+}
+
+.neoped-legal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    align-items: center;
+    justify-content: center;
+    padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+    box-sizing: border-box;
+    background: rgba(15, 23, 42, 0.55);
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.neoped-legal-dialog {
+    width: 100%;
+    max-width: 520px;
+    max-height: min(88vh, 640px);
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    color: #1e293b;
+    border-radius: 14px;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.neoped-legal-title {
+    margin: 0;
+    padding: 16px 18px 10px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.neoped-legal-scroll {
+    padding: 12px 18px;
+    overflow-y: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.neoped-legal-p {
+    margin: 0 0 12px;
+    font-size: 0.9rem;
+    line-height: 1.55;
+}
+
+.neoped-legal-muted {
+    color: #64748b;
+    font-size: 0.82rem !important;
+}
+
+.neoped-legal-check-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 0 18px 12px;
+    font-size: 0.86rem;
+    line-height: 1.45;
+    cursor: pointer;
+}
+
+.neoped-legal-check-row input {
+    width: auto !important;
+    max-width: none !important;
+    margin-top: 3px;
+    flex-shrink: 0;
+}
+
+.neoped-legal-primary {
+    margin: 0 18px 16px;
+    width: calc(100% - 36px) !important;
+    max-width: none;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #0284c7, #0369a1);
+    color: #fff;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.neoped-legal-primary:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+    .neoped-legal-dialog {
+        max-height: 92vh;
+    }
+    .neoped-legal-title {
+        font-size: 1rem;
+    }
+}

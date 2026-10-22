@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — Murray Score (educativo)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            margin: 0 0 15px 0;
+            color: #111;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .subsection-title {
+            font-size: 13px;
+            margin: 15px 0 10px 0;
+            color: #333;
+            font-weight: 700;
+        }
+
+        .results-section {
+            background: #f0f4ff;
+            border: 1px solid #b4cfff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .result-item {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .result-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 700;
+        }
+
+        .result-value {
+            font-size: 18px;
+            font-weight: 900;
+            color: #111;
+        }
+
+        .btn {
+            background: #111;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .btn-secondary {
+            background: #eee;
+            color: #111;
+        }
+
+        .copy-btn {
+            background: #27ae60;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #374151;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        /* Modal Styles */
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(17, 17, 17, 0.1);
+            color: #111;
+            border: 2px solid #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-info:hover {
+            background: #111;
+            color: #fff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 { margin: 0; font-size: 22px; }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover { transform: rotate(90deg); }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child { margin-top: 0; }
+        .modal-body p { line-height: 1.6; margin-bottom: 15px; color: #34495e; }
+        .modal-body ul, .modal-body ol { margin: 10px 0; padding-left: 25px; }
+        .modal-body li { margin-bottom: 8px; line-height: 1.5; }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong { color: #2c3e50; }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong { color: #27ae60; }
+
+        @media (max-width: 768px) {
+            .modal { padding: 10px; }
+            .modal-content { width: 95%; max-height: 95vh; }
+            .form-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <header>
+        <h1>🧪 Murray Score - Score de Lesão Pulmonar</h1>
+        <p>Calculadora para avaliação de lesão pulmonar aguda em pacientes pediátricos</p>
+        <div class="header-actions">
+            <button class="btn-info" onclick="abrirModal()">
+                Como usar
+            </button>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="card">
+
+        <div class="form-section">
+            <h2 class="section-title">Dados do Paciente</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="nome">Nome do Paciente</label>
+                    <input type="text" id="nome" placeholder="Nome completo">
+                </div>
+                <div class="form-group">
+                    <label for="data_nascimento">Data de Nascimento</label>
+                    <input type="date" id="data_nascimento">
+                </div>
+                <div class="form-group">
+                    <label for="data_avaliacao">Data da Avaliação</label>
+                    <input type="date" id="data_avaliacao">
+                </div>
+                <div class="form-group">
+                    <label for="hora_avaliacao">Hora da Avaliação</label>
+                    <input type="time" id="hora_avaliacao">
+                </div>
+                <div class="form-group">
+                    <label for="idade_completa">Idade (Calculada)</label>
+                    <input type="text" id="idade_completa" readonly>
+                    <span class="unit">anos, meses e dias</span>
+                </div>
+                <div class="form-group">
+                    <label for="peso">Peso</label>
+                    <input type="number" id="peso" step="0.001" placeholder="Ex.: 12.500">
+                    <span class="unit">kg</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2 class="section-title">Avaliação Murray Score</h2>
+            
+            <div class="info-box">
+                <h4>Informações Importantes</h4>
+                <p>O Murray Score avalia a gravidade da lesão pulmonar aguda através de 4 componentes. O escore final é a <strong>média</strong> dos componentes utilizados (0-4 pontos cada). Use esta avaliação para determinar a gravidade da lesão pulmonar e orientar o tratamento.</p>
+            </div>
+
+            <h3 class="subsection-title">1. Radiografia de Tórax (Consolidação Alveolar)</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="cxr_quadrantes">Quadrantes Comprometidos</label>
+                    <select id="cxr_quadrantes">
+                        <option value="0">0 quadrantes (0 pontos)</option>
+                        <option value="1">1 quadrante (1 ponto)</option>
+                        <option value="2">2 quadrantes (2 pontos)</option>
+                        <option value="3">3 quadrantes (3 pontos)</option>
+                        <option value="4">4 quadrantes (4 pontos)</option>
+                    </select>
+                    <div class="component-toggle">
+                        <input type="checkbox" id="use_cxr" checked>
+                        <label for="use_cxr">Incluir este componente no cálculo</label>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">2. Hipoxemia (PaO₂/FiO₂)</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="pao2">PaO₂</label>
+                    <input type="number" id="pao2" step="0.1" placeholder="Ex.: 80">
+                    <span class="unit">mmHg</span>
+                </div>
+                <div class="form-group">
+                    <label for="fio2">FiO₂</label>
+                    <input type="number" id="fio2" min="0" max="1" step="0.01" placeholder="Ex.: 0.6">
+                    <span class="unit">fração (0-1)</span>
+                </div>
+                <div class="form-group">
+                    <label for="pf_ratio">PaO₂/FiO₂ (Calculado)</label>
+                    <input type="number" id="pf_ratio" readonly class="no-border">
+                    <span class="unit">mmHg</span>
+                    <div class="component-toggle">
+                        <input type="checkbox" id="use_pf" checked>
+                        <label for="use_pf">Incluir este componente no cálculo</label>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">3. PEEP</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="peep">PEEP</label>
+                    <input type="number" id="peep" step="1" placeholder="Ex.: 8">
+                    <span class="unit">cmH₂O</span>
+                    <div class="component-toggle">
+                        <input type="checkbox" id="use_peep" checked>
+                        <label for="use_peep">Incluir este componente no cálculo</label>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">4. Complacência Estática Específica</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="vt_kg">Volume Corrente</label>
+                    <input type="number" id="vt_kg" step="0.1" placeholder="Ex.: 6">
+                    <span class="unit">mL/kg</span>
+                </div>
+                <div class="form-group">
+                    <label for="pplat">Pressão de Platô</label>
+                    <input type="number" id="pplat" step="1" placeholder="Ex.: 20">
+                    <span class="unit">cmH₂O</span>
+                </div>
+                <div class="form-group">
+                    <label for="peep_comp">PEEP</label>
+                    <input type="number" id="peep_comp" step="1" placeholder="Ex.: 8">
+                    <span class="unit">cmH₂O</span>
+                </div>
+                <div class="form-group">
+                    <label for="compliance">Complacência Específica (Calculada)</label>
+                    <input type="number" id="compliance" readonly class="no-border">
+                    <span class="unit">mL/cmH₂O/kg</span>
+                    <div class="component-toggle">
+                        <input type="checkbox" id="use_compliance" checked>
+                        <label for="use_compliance">Incluir este componente no cálculo</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="obs">Observações</label>
+                <input type="text" id="obs" placeholder="Contexto clínico, ventilação mecânica, etc.">
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="calcularMurrayScore()">Calcular Murray Score</button>
+                <button class="btn btn-secondary" onclick="limparDados()">Limpar Dados</button>
+            </div>
+        </div>
+
+        <div class="results-section">
+            <h2 class="section-title">Resultados</h2>
+            <div id="resultados" class="result-item">
+                <span class="result-label">Murray Score (Média dos Componentes):</span>
+                <span class="result-value" id="murray_score">-</span>
+            </div>
+            <div id="componentes_usados" class="result-item">
+                <span class="result-label">Componentes Utilizados:</span>
+                <span class="result-value" id="num_componentes">-</span>
+            </div>
+            <div id="indicador_risco" style="text-align: center; margin-top: 15px;"></div>
+            <div id="breakdown_table"></div>
+        </div>
+
+        <div class="report-section">
+            <h2 class="section-title">Texto informativo para prontuário eletrônico (revisar)</h2>
+            <button type="button" class="copy-btn" onclick="gerarECopiarRelatorio()">Gerar e copiar texto informativo</button>
+        </div>
+    </div>
+</div>
+
+    <div class="footer">
+        <p>NeoPedCalc — Murray Score (educativo)</p>
+        <p><strong>Referências:</strong> Protocolos de Terapia Intensiva Pediátrica e Neonatal.</p>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — Murray Score (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta página organiza dados e fornece uma <strong>interpretação educativa</strong> do Murray Score (estudo/discussão). O texto não substitui avaliação clínica nem protocolos locais.</p>
+                
+                <h3>Fórmula Murray Score</h3>
+                <div class="formula-box">
+                    <strong>Murray Score = (A + B + C + D) ÷ 4</strong><br><br>
+                    <strong>Componentes:</strong><br>
+                    <strong>A - PaO₂/FiO₂:</strong><br>
+                    • ≥ 300: 0 pontos<br>
+                    • 225-299: 1 ponto<br>
+                    • 175-224: 2 pontos<br>
+                    • 100-174: 3 pontos<br>
+                    • < 100: 4 pontos<br><br>
+                    <strong>B - Pressão Positiva Final de Expiração (PEEP):</strong><br>
+                    • ≤ 5 cmH₂O: 0 pontos<br>
+                    • 6-8 cmH₂O: 1 ponto<br>
+                    • 9-11 cmH₂O: 2 pontos<br>
+                    • 12-14 cmH₂O: 3 pontos<br>
+                    • ≥ 15 cmH₂O: 4 pontos<br><br>
+                    <strong>C - Compliance do Sistema Respiratório:</strong><br>
+                    • ≥ 80 mL/cmH₂O: 0 pontos<br>
+                    • 60-79 mL/cmH₂O: 1 ponto<br>
+                    • 40-59 mL/cmH₂O: 2 pontos<br>
+                    • 20-39 mL/cmH₂O: 3 pontos<br>
+                    • ≤ 19 mL/cmH₂O: 4 pontos<br><br>
+                    <strong>D - Radiografia de Tórax:</strong><br>
+                    • Normal: 0 pontos<br>
+                    • 1 quadrante: 1 ponto<br>
+                    • 2 quadrantes: 2 pontos<br>
+                    • 3 quadrantes: 3 pontos<br>
+                    • 4 quadrantes: 4 pontos
+                </div>
+
+                <h3>Parâmetros Avaliados</h3>
+                <ul>
+                    <li><strong>PaO₂/FiO₂:</strong> Relação oxigenação</li>
+                    <li><strong>PEEP:</strong> cmH₂O</li>
+                    <li><strong>Compliance:</strong> mL/cmH₂O</li>
+                    <li><strong>Radiografia:</strong> Quadrantes afetados</li>
+                    <li><strong>Score Total:</strong> 0-4</li>
+                    <li><strong>Gravidade:</strong> Leve, moderada, grave</li>
+                    <li><strong>Interpretação:</strong> associada ao score (educativo)</li>
+                    <li><strong>Apoio para discussão:</strong> não prescritivo (revisar no contexto clínico)</li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Insira PaO₂/FiO₂:</strong> Relação de oxigenação</li>
+                    <li><strong>Informe PEEP:</strong> cmH₂O</li>
+                    <li><strong>Insira Compliance:</strong> mL/cmH₂O</li>
+                    <li><strong>Selecione Radiografia:</strong> Quadrantes afetados</li>
+                    <li><strong>Calcule:</strong> Sistema calcula automaticamente</li>
+                    <li><strong>Interpretação:</strong> gravidade/associação educacional ao contexto clínico</li>
+                </ol>
+
+                <h3>Interpretação do Score</h3>
+                <ul>
+                    <li><strong>0:</strong> Sem lesão pulmonar</li>
+                    <li><strong>0.1-2.5:</strong> Lesão pulmonar leve a moderada</li>
+                    <li><strong>> 2.5:</strong> SDRA (Síndrome do Desconforto Respiratório Agudo)</li>
+                    <li><strong>0.1-1:</strong> Lesão pulmonar leve</li>
+                    <li><strong>1.1-2:</strong> Lesão pulmonar moderada</li>
+                    <li><strong>2.1-3:</strong> SDRA leve</li>
+                    <li><strong>3.1-4:</strong> SDRA moderada</li>
+                    <li><strong>> 4:</strong> SDRA grave</li>
+                </ul>
+
+                <h3>Classificação da SDRA</h3>
+                <ul>
+                    <li><strong>SDRA Leve:</strong> Murray > 2.5, PaO₂/FiO₂ 200-300</li>
+                    <li><strong>SDRA Moderada:</strong> Murray > 2.5, PaO₂/FiO₂ 100-200</li>
+                    <li><strong>SDRA Grave:</strong> Murray > 2.5, PaO₂/FiO₂ < 100</li>
+                    <li><strong>Berlin Definition:</strong> Padrão atual</li>
+                    <li><strong>Início:</strong> < 7 dias</li>
+                    <li><strong>Líquido:</strong> Não explicado por insuficiência cardíaca</li>
+                    <li><strong>Radiografia:</strong> Opacidades bilaterais</li>
+                    <li><strong>Origem:</strong> Pulmonar ou extrapulmonar</li>
+                </ul>
+
+                <h3>Causas da SDRA</h3>
+                <ul>
+                    <li><strong>Pneumonia:</strong> Bacteriana, viral</li>
+                    <li><strong>Aspiração:</strong> Conteúdo gástrico</li>
+                    <li><strong>Sepse:</strong> Bacteriana</li>
+                    <li><strong>Trauma:</strong> Contusão pulmonar</li>
+                    <li><strong>Pancreatite:</strong> Aguda</li>
+                    <li><strong>Transfusão:</strong> Reação</li>
+                    <li><strong>Queimaduras:</strong> Inalação</li>
+                    <li><strong>Medicamentos:</strong> Tóxicos</li>
+                </ul>
+
+                <h3>Fisiopatologia</h3>
+                <ul>
+                    <li><strong>Lesão:</strong> Endotélio e epitélio</li>
+                    <li><strong>Inflamação:</strong> Neutrófilos, citocinas</li>
+                    <li><strong>Permeabilidade:</strong> Aumentada</li>
+                    <li><strong>Edema:</strong> Intersticial e alveolar</li>
+                    <li><strong>Atelectasia:</strong> Compressão</li>
+                    <li><strong>Shunt:</strong> Intrapulmonar</li>
+                    <li><strong>Compliance:</strong> Diminuída</li>
+                    <li><strong>Pressão:</strong> Transpulmonar</li>
+                </ul>
+
+                <h3>Tratamento da SDRA</h3>
+                <ul>
+                    <li><strong>Ventilação:</strong> Protetora</li>
+                    <li><strong>PEEP:</strong> Adequada</li>
+                    <li><strong>Posição:</strong> Prona</li>
+                    <li><strong>Fluidoterapia:</strong> Restritiva</li>
+                    <li><strong>Sedativos:</strong> Profundos</li>
+                    <li><strong>Paralisia:</strong> Neuromuscular</li>
+                    <li><strong>ECMO:</strong> Oxigenação extracorpórea</li>
+                    <li><strong>Corticosteroides:</strong> Controverso</li>
+                </ul>
+
+                <h3>Ventilação Protetora</h3>
+                <ul>
+                    <li><strong>Volume Corrente:</strong> 6 mL/kg peso ideal</li>
+                    <li><strong>Pressão Platô:</strong> < 30 cmH₂O</li>
+                    <li><strong>PEEP:</strong> Titulada</li>
+                    <li><strong>FiO₂:</strong> Menor possível</li>
+                    <li><strong>Frequência:</strong> Adequada</li>
+                    <li><strong>I:E:</strong> 1:1 ou inverso</li>
+                    <li><strong>Alveolização:</strong> Recrutamento</li>
+                    <li><strong>Desmame:</strong> Precoce</li>
+                </ul>
+
+                <h3>Complicações</h3>
+                <ul>
+                    <li><strong>Pneumotórax:</strong> Barotrauma</li>
+                    <li><strong>Pneumomediastino:</strong> Ar extra-alveolar</li>
+                    <li><strong>Enfisema:</strong> Subcutâneo</li>
+                    <li><strong>Infecção:</strong> Pneumonia associada</li>
+                    <li><strong>Fibrose:</strong> Pulmonar</li>
+                    <li><strong>Hipertensão:</strong> Pulmonar</li>
+                    <li><strong>Insuficiência:</strong> Múltiplos órgãos</li>
+                    <li><strong>Morte:</strong> Alta mortalidade</li>
+                </ul>
+
+                <h3>Prognóstico</h3>
+                <ul>
+                    <li><strong>Mortalidade:</strong> 40-60%</li>
+                    <li><strong>Murray > 3:</strong> maior pontuação (educativo)</li>
+                    <li><strong>Idade:</strong> Fator importante</li>
+                    <li><strong>Comorbidades:</strong> Influenciam</li>
+                    <li><strong>Causa:</strong> Pulmonar vs extrapulmonar</li>
+                    <li><strong>Resposta:</strong> Ao tratamento</li>
+                    <li><strong>Duração:</strong> Ventilação</li>
+                    <li><strong>Complicações:</strong> Aumentam mortalidade</li>
+                </ul>
+
+                <h3>Monitoramento</h3>
+                <ul>
+                    <li><strong>Gasometria:</strong> Arterial</li>
+                    <li><strong>Radiografia:</strong> Tórax</li>
+                    <li><strong>Tomografia:</strong> Computadorizada</li>
+                    <li><strong>Pressões:</strong> Ventilatórias</li>
+                    <li><strong>Compliance:</strong> Dinâmica</li>
+                    <li><strong>Curvas:</strong> Pressão-volume</li>
+                    <li><strong>Ecocardiografia:</strong> Função cardíaca</li>
+                    <li><strong>Laboratório:</strong> Inflamação</li>
+                </ul>
+
+                <h3>Limitações e Considerações</h3>
+                <ul>
+                    <li>Score clínico apenas</li>
+                    <li>Variações individuais</li>
+                    <li>Fatores não incluídos</li>
+                    <li>Monitoramento clínico</li>
+                    <li>Interpretação experiente</li>
+                    <li>Ajuste individual</li>
+                    <li>Protocolos institucionais</li>
+                    <li>Correlação clínica</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Murray JF, et al. An expanded definition of the adult respiratory distress syndrome. Am Rev Respir Dis. 1988;138(3):720-723.<br>
+                    - ARDS Definition Task Force. Acute respiratory distress syndrome: the Berlin Definition. JAMA. 2012;307(23):2526-2533.<br>
+                    - Bernard GR, et al. The American-European Consensus Conference on ARDS. Definitions, mechanisms, relevant outcomes, and clinical trial coordination. Am J Respir Crit Care Med. 1994;149(3 Pt 1):818-824.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Função para calcular idade em anos, meses e dias
+        function calcularIdade() {
+            const dataNascimento = document.getElementById('data_nascimento').value;
+            const dataAvaliacao = document.getElementById('data_avaliacao').value;
+
+            if (dataNascimento && dataAvaliacao) {
+                const nascimento = new Date(dataNascimento);
+                const avaliacao = new Date(dataAvaliacao);
+                
+                let anos = avaliacao.getFullYear() - nascimento.getFullYear();
+                let meses = avaliacao.getMonth() - nascimento.getMonth();
+                let dias = avaliacao.getDate() - nascimento.getDate();
+                
+                if (dias < 0) {
+                    meses--;
+                    const ultimoMes = new Date(avaliacao.getFullYear(), avaliacao.getMonth(), 0);
+                    dias += ultimoMes.getDate();
+                }
+                
+                if (meses < 0) {
+                    anos--;
+                    meses += 12;
+                }
+                
+                let idadeTexto = '';
+                if (anos > 0) {
+                    idadeTexto += `${anos} ano${anos > 1 ? 's' : ''}`;
+                }
+                if (meses > 0) {
+                    if (idadeTexto) idadeTexto += ', ';
+                    idadeTexto += `${meses} mês${meses > 1 ? 'es' : ''}`;
+                }
+                if (dias > 0 || (!anos && !meses)) {
+                    if (idadeTexto) idadeTexto += ', ';
+                    idadeTexto += `${dias} dia${dias > 1 ? 's' : ''}`;
+                }
+                
+                document.getElementById('idade_completa').value = idadeTexto || '0 dias';
+            }
+        }
+
+        // Preencher data e hora atuais
+        function preencherDataAtual() {
+            const hoje = new Date();
+            const dataAtual = hoje.toISOString().split('T')[0];
+            const horaAtual = hoje.toTimeString().slice(0, 5);
+            
+            if (!document.getElementById('data_avaliacao').value) {
+                document.getElementById('data_avaliacao').value = dataAtual;
+            }
+            if (!document.getElementById('hora_avaliacao').value) {
+                document.getElementById('hora_avaliacao').value = horaAtual;
+            }
+        }
+
+        // Função para calcular PaO₂/FiO₂
+        function calcularPFRatio() {
+            const pao2 = parseFloat(document.getElementById('pao2').value);
+            const fio2 = parseFloat(document.getElementById('fio2').value);
+            
+            if (pao2 && fio2 && fio2 > 0) {
+                const pfRatio = pao2 / fio2;
+                document.getElementById('pf_ratio').value = pfRatio.toFixed(1);
+            } else {
+                document.getElementById('pf_ratio').value = '';
+            }
+        }
+
+        // Função para calcular complacência específica
+        function calcularCompliance() {
+            const vtKg = parseFloat(document.getElementById('vt_kg').value);
+            const pplat = parseFloat(document.getElementById('pplat').value);
+            const peepComp = parseFloat(document.getElementById('peep_comp').value);
+            
+            if (vtKg && pplat && peepComp !== undefined) {
+                const deltaP = pplat - peepComp;
+                if (deltaP > 0) {
+                    const compliance = vtKg / deltaP;
+                    document.getElementById('compliance').value = compliance.toFixed(2);
+                } else {
+                    document.getElementById('compliance').value = '';
+                }
+            } else {
+                document.getElementById('compliance').value = '';
+            }
+        }
+
+        // Função para calcular pontuação P/F
+        function pontosPF(pf) {
+            if (isNaN(pf)) return 0;
+            if (pf > 300) return 0;
+            if (pf >= 225) return 1;
+            if (pf >= 175) return 2;
+            if (pf >= 100) return 3;
+            return 4; // <100
+        }
+
+        // Função para calcular pontuação PEEP
+        function pontosPEEP(peep) {
+            if (isNaN(peep)) return 0;
+            if (peep < 5) return 0;
+            if (peep <= 6) return 1;
+            if (peep <= 8) return 2;
+            if (peep <= 11) return 3;
+            return 4; // >11
+        }
+
+        // Função para calcular pontuação complacência
+        function pontosCompliance(comp) {
+            if (isNaN(comp)) return 0;
+            if (comp > 0.85) return 0;
+            if (comp >= 0.75) return 1;
+            if (comp >= 0.55) return 2;
+            if (comp >= 0.30) return 3;
+            return 4; // <0.30
+        }
+
+        // Função para interpretar Murray Score
+        function interpretarMurrayScore(score) {
+            if (score < 0.1) {
+                return { texto: 'Sem Lesão Pulmonar', classe: 'risk-none' };
+            } else if (score <= 2.5) {
+                return { texto: 'Lesão Pulmonar Moderada', classe: 'risk-moderate' };
+            } else {
+                return { texto: 'Lesão Pulmonar Severa / SDRA', classe: 'risk-severe' };
+            }
+        }
+
+        // Função para calcular Murray Score
+        function calcularMurrayScore() {
+            // Calcular valores derivados
+            calcularPFRatio();
+            calcularCompliance();
+
+            // Obter valores dos componentes
+            const cxrQuadrantes = parseInt(document.getElementById('cxr_quadrantes').value);
+            const pfRatio = parseFloat(document.getElementById('pf_ratio').value);
+            const peep = parseFloat(document.getElementById('peep').value);
+            const compliance = parseFloat(document.getElementById('compliance').value);
+
+            // Verificar quais componentes usar
+            const useCXR = document.getElementById('use_cxr').checked;
+            const usePF = document.getElementById('use_pf').checked;
+            const usePEEP = document.getElementById('use_peep').checked;
+            const useCompliance = document.getElementById('use_compliance').checked;
+
+            // Calcular pontuações
+            const ptsCXR = useCXR ? cxrQuadrantes : 0;
+            const ptsPF = usePF ? pontosPF(pfRatio) : 0;
+            const ptsPEEP = usePEEP ? pontosPEEP(peep) : 0;
+            const ptsCompliance = useCompliance ? pontosCompliance(compliance) : 0;
+
+            // Contar componentes utilizados
+            const componentesUsados = [useCXR, usePF, usePEEP, useCompliance].filter(Boolean).length;
+            
+            // Calcular média
+            const soma = ptsCXR + ptsPF + ptsPEEP + ptsCompliance;
+            const murrayScore = componentesUsados > 0 ? soma / componentesUsados : 0;
+
+            // Exibir resultados
+            document.getElementById('murray_score').textContent = `${murrayScore.toFixed(2)} pontos`;
+            document.getElementById('num_componentes').textContent = `${componentesUsados} de 4`;
+
+            // Determinar interpretação
+            const interpretacao = interpretarMurrayScore(murrayScore);
+            document.getElementById('indicador_risco').innerHTML = 
+                `<span class="risk-indicator ${interpretacao.classe}">${interpretacao.texto}</span>`;
+
+            // Criar tabela de breakdown
+            let tableHTML = '<table class="breakdown-table">';
+            tableHTML += '<thead><tr><th>Componente</th><th>Valor</th><th>Pontos</th><th>Usado?</th></tr></thead>';
+            tableHTML += '<tbody>';
+            tableHTML += `<tr><td>RX Tórax (quadrantes)</td><td>${cxrQuadrantes}</td><td><strong>${ptsCXR}</strong></td><td>${useCXR ? 'Sim' : 'Não'}</td></tr>`;
+            tableHTML += `<tr><td>PaO₂/FiO₂</td><td>${isNaN(pfRatio) ? 'N/A' : pfRatio.toFixed(1)}</td><td><strong>${ptsPF}</strong></td><td>${usePF ? 'Sim' : 'Não'}</td></tr>`;
+            tableHTML += `<tr><td>PEEP</td><td>${isNaN(peep) ? 'N/A' : peep}</td><td><strong>${ptsPEEP}</strong></td><td>${usePEEP ? 'Sim' : 'Não'}</td></tr>`;
+            tableHTML += `<tr><td>Complacência Específica</td><td>${isNaN(compliance) ? 'N/A' : compliance.toFixed(2)}</td><td><strong>${ptsCompliance}</strong></td><td>${useCompliance ? 'Sim' : 'Não'}</td></tr>`;
+            tableHTML += '</tbody></table>';
+            
+            document.getElementById('breakdown_table').innerHTML = tableHTML;
+        }
+
+        // Função para gerar e copiar relatório
+        function gerarECopiarRelatorio() {
+            const nome = document.getElementById('nome').value;
+            const dataNascimento = document.getElementById('data_nascimento').value;
+            const dataAvaliacao = document.getElementById('data_avaliacao').value;
+            const horaAvaliacao = document.getElementById('hora_avaliacao').value;
+            const idadeCompleta = document.getElementById('idade_completa').value;
+            const peso = document.getElementById('peso').value;
+            const obs = document.getElementById('obs').value;
+
+            // Obter resultados calculados
+            const murrayScore = document.getElementById('murray_score').textContent;
+            const numComponentes = document.getElementById('num_componentes').textContent;
+            const indicador = document.getElementById('indicador_risco').textContent;
+
+            let relatorioTexto = `RESUMO INFORMATIVO — MURRAY SCORE (EDUCATIVO)
+${nome ? `Paciente: ${nome}` : ''}
+${dataAvaliacao ? `Data da Avaliacao: ${dataAvaliacao}` : ''}${horaAvaliacao ? ` - Hora: ${horaAvaliacao}` : ''}
+
+DADOS DO PACIENTE:
+${dataNascimento ? `- Data de Nascimento: ${dataNascimento}` : ''}
+${idadeCompleta ? `- Idade: ${idadeCompleta}` : ''}
+${peso ? `- Peso: ${peso} kg` : ''}
+
+AVALIACAO MURRAY SCORE:
+- RX Torax (quadrantes): ${document.getElementById('cxr_quadrantes').value}
+- PaO2: ${document.getElementById('pao2').value || 'N/A'} mmHg
+- FiO2: ${document.getElementById('fio2').value || 'N/A'}
+- PaO2/FiO2: ${document.getElementById('pf_ratio').value || 'N/A'}
+- PEEP: ${document.getElementById('peep').value || 'N/A'} cmH2O
+- Volume Corrente: ${document.getElementById('vt_kg').value || 'N/A'} mL/kg
+- Pressao de Platau: ${document.getElementById('pplat').value || 'N/A'} cmH2O
+- PEEP (compliance): ${document.getElementById('peep_comp').value || 'N/A'} cmH2O
+- Complacencia Especifica: ${document.getElementById('compliance').value || 'N/A'} mL/cmH2O/kg
+${obs ? `- Observacoes: ${obs}` : ''}
+
+RESULTADOS:
+- Murray Score: ${murrayScore}
+- Componentes Utilizados: ${numComponentes}
+- Interpretacao: ${indicador}
+
+INTERPRETACAO:
+O Murray Score avalia a gravidade/associacao educacional da lesao pulmonar aguda atraves de 4 componentes: radiografia de torax, hipoxemia (PaO2/FiO2), PEEP e complacencia estatica especifica. O escore final e a media dos componentes utilizados (0-4 pontos cada). Esta interpretacao e educativa e pode apoiar discussao sobre gravidade; nao substitui manejo clinico nem protocolos locais.
+
+CRITERIOS DE PONTUACAO:
+- RX Torax: 0 quadrantes=0pts, 1 quadrante=1pt, 2 quadrantes=2pts, 3 quadrantes=3pts, 4 quadrantes=4pts
+- PaO2/FiO2: >300=0pts, 225-300=1pt, 175-224=2pts, 100-174=3pts, <100=4pts
+- PEEP: <5=0pts, 5-6=1pt, 7-8=2pts, 9-11=3pts, >11=4pts
+- Complacencia Especifica: >0.85=0pts, 0.75-0.85=1pt, 0.55-0.74=2pts, 0.30-0.54=3pts, <0.30=4pts
+
+INTERPRETACAO DOS VALORES:
+- <0.1: Sem lesao pulmonar
+- 0.1-2.5: Lesao pulmonar moderada
+- >2.5: Lesao pulmonar severa / SDRA
+
+Referencia: Murray JF, et al. An expanded definition of the adult respiratory distress syndrome. Am Rev Respir Dis 1988; 138: 720-723.`;
+
+            relatorioTexto = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorioTexto;
+
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorioTexto += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                relatorioTexto += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            copiarTexto(relatorioTexto);
+        }
+
+        // Função para copiar texto
+        function copiarTexto(texto) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(texto).then(() => {
+                    if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                }).catch(err => {
+                    copiarTextoFallback(texto);
+                });
+            } else {
+                copiarTextoFallback(texto);
+            }
+        }
+
+        function copiarTextoFallback(texto) {
+            const textArea = document.createElement('textarea');
+            textArea.value = texto;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            } catch (err) {
+                if (typeof window.neopedCopyFail === 'function') window.neopedCopyFail(); else alert('Nao foi possivel copiar automaticamente. Revise o texto e copie manualmente para uso informativo.');
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // Função para limpar dados
+        function limparDados() {
+            const campos = [
+                'nome', 'data_nascimento', 'data_avaliacao', 'hora_avaliacao', 'idade_completa', 'peso',
+                'cxr_quadrantes', 'pao2', 'fio2', 'pf_ratio', 'peep', 'vt_kg', 'pplat', 'peep_comp', 'compliance', 'obs'
+            ];
+
+            campos.forEach(campo => {
+                const elemento = document.getElementById(campo);
+                if (elemento.type === 'select-one') {
+                    elemento.selectedIndex = 0;
+                } else if (elemento.type === 'checkbox') {
+                    elemento.checked = true; // Manter checkboxes marcados
+                } else {
+                    elemento.value = '';
+                }
+            });
+
+            document.getElementById('murray_score').textContent = '-';
+            document.getElementById('num_componentes').textContent = '-';
+            document.getElementById('indicador_risco').innerHTML = '';
+            document.getElementById('breakdown_table').innerHTML = '';
+        }
+
+        // Event listeners
+        document.getElementById('data_nascimento').addEventListener('change', calcularIdade);
+        document.getElementById('data_avaliacao').addEventListener('change', calcularIdade);
+        document.getElementById('pao2').addEventListener('input', calcularPFRatio);
+        document.getElementById('fio2').addEventListener('input', calcularPFRatio);
+        document.getElementById('vt_kg').addEventListener('input', calcularCompliance);
+        document.getElementById('pplat').addEventListener('input', calcularCompliance);
+        document.getElementById('peep_comp').addEventListener('input', calcularCompliance);
+
+        // Preencher data atual ao carregar
+        window.addEventListener('load', preencherDataAtual);
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — Score de Wood-Downes (educativo)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .alert-box {
+            background: #fffbe0;
+            border: 1px solid #f1e49a;
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+
+        .alert-box h3 {
+            font-weight: 800;
+            color: #856404;
+            margin: 0 0 6px 0;
+            font-size: 14px;
+        }
+
+        .alert-box ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .score-display {
+            background: #e8fff0;
+            border: 1px solid #b4ffcf;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .score-display h2 {
+            font-size: 14px;
+            margin: 0;
+            color: #27ae60;
+            font-weight: 800;
+        }
+
+        .score-value {
+            font-size: 48px;
+            font-weight: 900;
+            margin: 10px 0;
+            color: #111;
+        }
+
+        .score-interpretation {
+            font-weight: 800;
+            font-size: 16px;
+            color: #111;
+        }
+
+        .btn {
+            border: 0;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 800;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: opacity 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .primary {
+            background: #111;
+            color: #fff;
+        }
+
+        .secondary {
+            background: #fff;
+            border: 1px solid #d9d9e6;
+            color: #111;
+        }
+
+        .report-btn {
+            background: #111;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .report-btn:disabled {
+            background: #eee;
+            color: #374151;
+            cursor: not-allowed;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #374151;
+            margin-top: 20px;
+        }
+
+        /* Modal Styles */
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(17, 17, 17, 0.1);
+            color: #111;
+            border: 2px solid #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-info:hover {
+            background: #111;
+            color: #fff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #2c3e50;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .modal {
+                padding: 10px;
+            }
+            .modal-content {
+                width: 95%;
+                max-height: 95vh;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+<body>
+    <header>
+        <h1>🫁 Score de Wood-Downes</h1>
+        <p>Modificado por Ferrés para Bronquiolite</p>
+        <div class="header-actions">
+            <button class="btn-info" onclick="abrirModal()">
+                Como usar
+            </button>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="card">
+            <div class="content">
+            <!-- Alert Box -->
+            <div class="alert-box">
+                <h3>ℹ️ Classificação da Gravidade</h3>
+                <ul>
+                    <li><strong>Leve:</strong> 0-3 pontos</li>
+                    <li><strong>Moderada:</strong> 4-7 pontos</li>
+                    <li><strong>Grave:</strong> 8-14 pontos</li>
+                </ul>
+            </div>
+
+            <!-- Dados do Paciente -->
+            <div class="section">
+                <h2>👤 Dados do Paciente</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome">Nome do Paciente:</label>
+                        <input type="text" id="nome" placeholder="Digite o nome">
+                    </div>
+                    <div class="form-group">
+                        <label for="data">Data/Hora da Avaliação:</label>
+                        <input type="datetime-local" id="data">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Critérios de Avaliação -->
+            <div class="criteria-section">
+                <h3>📋 Critérios Clínicos</h3>
+                <div class="criteria-grid">
+                    <div class="form-group">
+                        <label for="sibilos">1. Sibilos:</label>
+                        <select id="sibilos" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Ausentes (0)</option>
+                            <option value="1">Expiratórios (1)</option>
+                            <option value="2">Expiratórios e inspiratórios (2)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tiragem">2. Tiragem:</label>
+                        <select id="tiragem" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Ausente (0)</option>
+                            <option value="1">Intercostal (1)</option>
+                            <option value="2">Intercostal e subcostal (2)</option>
+                            <option value="3">Generalizada (3)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="entradaAr">3. Murmúrio Vesicular / Entrada de Ar:</label>
+                        <select id="entradaAr" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Normal/Boa (0)</option>
+                            <option value="1">Levemente diminuída (1)</option>
+                            <option value="2">Moderadamente diminuída (2)</option>
+                            <option value="3">Severamente diminuída (3)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cianose">4. Cianose:</label>
+                        <select id="cianose" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Ausente (0)</option>
+                            <option value="1">Apenas durante o esforço (1)</option>
+                            <option value="2">Em repouso (2)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="consciencia">5. Nível de Consciência:</label>
+                        <select id="consciencia" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Normal (0)</option>
+                            <option value="1">Inquieto/Agitado (1)</option>
+                            <option value="2">Letárgico (2)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fr">6. Frequência Respiratória (rpm):</label>
+                        <select id="fr" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">< 30 (0)</option>
+                            <option value="1">30-45 (1)</option>
+                            <option value="2">46-60 (2)</option>
+                            <option value="3">> 60 (3)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resultado -->
+            <div class="score-display" id="scoreDisplay">
+                <h2>SCORE TOTAL</h2>
+                <div class="score-value" id="scoreValue">0</div>
+                <div class="score-interpretation" id="scoreInterpretation"></div>
+            </div>
+
+            <!-- Botão Gerar Relatório -->
+            <button type="button" class="report-btn" onclick="gerarRelatorio()" id="reportBtn" disabled>
+                📋 Copiar texto informativo
+            </button>
+
+        </div>
+    </div>
+</div>
+
+    <div class="footer">
+        <p>Calculadora baseada no Score de Wood-Downes modificado por Ferrés</p>
+        <p><strong>Referências:</strong> Ferres Mataro J, et al. An Esp Pediatr 1987;27:37-40.</p>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — Score de Wood-Downes (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta calculadora organiza critérios para estimativa educativa de gravidade respiratória no contexto de bronquiolite. O conteúdo é informativo e não substitui avaliação clínica, protocolo institucional ou prescrição.</p>
+                
+                <h3>Fórmula do Score de Wood-Downes</h3>
+                <div class="formula-box">
+                    <strong>Score de Wood-Downes = Cianose + Taquipneia + Sibilos + Retrações + Consciência</strong><br><br>
+                    <strong>Cianose:</strong><br>
+                    • Ausente: 0 pontos<br>
+                    • Ao choro/esforço: 1 ponto<br>
+                    • Em repouso: 2 pontos<br><br>
+                    <strong>Taquipneia:</strong><br>
+                    • <60 rpm: 0 pontos<br>
+                    • 60-80 rpm: 1 ponto<br>
+                    • >80 rpm: 2 pontos<br><br>
+                    <strong>Sibilos:</strong><br>
+                    • Ausentes: 0 pontos<br>
+                    • Finais da expiração: 1 ponto<br>
+                    • Toda expiração: 2 pontos<br>
+                    • Inspiração e expiração: 3 pontos<br><br>
+                    <strong>Retrações:</strong><br>
+                    • Ausentes: 0 pontos<br>
+                    • Leves: 1 ponto<br>
+                    • Moderadas: 2 pontos<br>
+                    • Severas: 3 pontos<br><br>
+                    <strong>Consciência:</strong><br>
+                    • Normal: 0 pontos<br>
+                    • Agitada: 1 ponto<br>
+                    • Sonolenta: 2 pontos<br><br>
+                    <strong>Escala Total:</strong> 0-12 pontos
+                </div>
+
+                <h3>Critérios de Avaliação</h3>
+                <ul>
+                    <li><strong>Cianose:</strong> Coloração azulada da pele ou mucosas</li>
+                    <li><strong>Taquipneia:</strong> Frequência respiratória aumentada para a idade</li>
+                    <li><strong>Sibilos:</strong> Sons respiratórios anormais característicos</li>
+                    <li><strong>Retrações:</strong> Movimento anormal da parede torácica</li>
+                    <li><strong>Consciência:</strong> Estado de alerta da criança</li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Avalie a Cianose:</strong> Observe a coloração da pele e mucosas</li>
+                    <li><strong>Conte a Frequência Respiratória:</strong> Observe por 1 minuto completo</li>
+                    <li><strong>Ausculta os Sibilos:</strong> Use o estetoscópio para identificar sons</li>
+                    <li><strong>Observe as Retrações:</strong> Avalie o esforço respiratório</li>
+                    <li><strong>Verifique a Consciência:</strong> Interaja com a criança</li>
+                    <li>Clique em <strong>"Calcular Score"</strong> para obter o resultado</li>
+                </ol>
+
+                <h3>Interpretação dos Resultados</h3>
+                <ul>
+                    <li><strong>0-3 pontos:</strong> Bronquiolite leve (tratamento ambulatorial)</li>
+                    <li><strong>4-7 pontos:</strong> Bronquiolite moderada (observação hospitalar)</li>
+                    <li><strong>8-10 pontos:</strong> Bronquiolite grave (UTI pediátrica)</li>
+                    <li><strong>11-12 pontos:</strong> Bronquiolite muito grave (risco de vida)</li>
+                </ul>
+
+                <h3>Condutas por Escore</h3>
+                <ul>
+                    <li><strong>0-3 pontos:</strong> Hidratação, higiene nasal, observação</li>
+                    <li><strong>4-7 pontos:</strong> Oxigênio se necessário, fisioterapia respiratória</li>
+                    <li><strong>8-10 pontos:</strong> Oxigênio, nebulização, corticoides</li>
+                    <li><strong>11-12 pontos:</strong> Ventilação mecânica, tratamento intensivo</li>
+                </ul>
+
+                <h3>Considerações Importantes</h3>
+                <ul>
+                    <li>Avalie a criança em repouso quando possível</li>
+                    <li>Reavalie após tratamento para monitorar resposta</li>
+                    <li>Considerar idade da criança (lactentes têm padrões diferentes)</li>
+                    <li>Monitorar saturação de oxigênio continuamente</li>
+                    <li>Complementar com exames complementares se necessário</li>
+                    <li>Documentar o escore no prontuário</li>
+                    <li>Comunicar mudanças significativas</li>
+                </ul>
+
+                <h3>Aplicações Clínicas</h3>
+                <ul>
+                    <li><strong>Triagem:</strong> Identificar gravidade da bronquiolite</li>
+                    <li><strong>Tomada de Decisão:</strong> Orientar local de tratamento</li>
+                    <li><strong>Monitoramento:</strong> Acompanhar evolução da doença</li>
+                    <li><strong>Comunicação:</strong> Padronizar avaliação entre equipes</li>
+                    <li><strong>Educação:</strong> Ensino de manejo de bronquiolite</li>
+                </ul>
+
+                <h3>Diferenças da Asma</h3>
+                <ul>
+                    <li>Bronquiolite é mais comum em lactentes</li>
+                    <li>Etiologia viral (principalmente VSR)</li>
+                    <li>Primeiro episódio de sibilos</li>
+                    <li>Pode haver febre e sintomas sistêmicos</li>
+                    <li>Tratamento mais conservador</li>
+                </ul>
+
+                <h3>Limitações</h3>
+                <ul>
+                    <li>Subjetividade na avaliação de alguns parâmetros</li>
+                    <li>Pode variar entre avaliadores</li>
+                    <li>Não considera comorbidades específicas</li>
+                    <li>Pode não capturar todos os aspectos da doença</li>
+                    <li>Não substitui avaliação clínica completa</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Wood DW, Downes JJ, Lecks HI. A clinical scoring system for the diagnosis of respiratory failure. Am J Dis Child. 1972;123(3):227-8.<br>
+                    - Ralston SL, et al. Clinical practice guideline: the diagnosis, management, and prevention of bronchiolitis. Pediatrics. 2014;134(5):e1474-e1502.<br>
+                    - Fernandes RM, et al. Glucocorticoids for acute viral bronchiolitis in infants and young children. Cochrane Database Syst Rev. 2013;(6):CD004878.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Inicializar data atual
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+                .toISOString()
+                .slice(0, 16);
+            document.getElementById('data').value = localDateTime;
+        });
+
+        function calcularScore() {
+            const criterios = ['sibilos', 'tiragem', 'entradaAr', 'cianose', 'consciencia', 'fr'];
+            
+            let scoreTotal = 0;
+            let criteriosPreenchidos = 0;
+
+            criterios.forEach(criterio => {
+                const elemento = document.getElementById(criterio);
+                if (elemento && elemento.value !== '') {
+                    scoreTotal += parseInt(elemento.value);
+                    criteriosPreenchidos++;
+                }
+            });
+
+            // Atualizar display do score
+            document.getElementById('scoreValue').textContent = scoreTotal;
+
+            // Interpretação
+            let interpretacao = '';
+            let recomendacao = '';
+            
+            if (scoreTotal <= 3) {
+                interpretacao = 'CRISE LEVE';
+                recomendacao = 'Manejo ambulatorial possível. Hidratação, aspiração de vias aéreas se necessário, oxigenioterapia se SatO2 < 92%.';
+            } else if (scoreTotal <= 7) {
+                interpretacao = 'CRISE MODERADA';
+                recomendacao = 'Considerar internação. Oxigenioterapia, broncodilatadores, hidratação venosa se necessário, monitorização contínua.';
+            } else {
+                interpretacao = 'CRISE GRAVE';
+                recomendacao = 'Internação obrigatória. Considerar UTI. Oxigenioterapia, suporte ventilatório se necessário, monitorização intensiva.';
+            }
+
+            document.getElementById('scoreInterpretation').innerHTML = `<strong>${interpretacao}</strong><br><br>${recomendacao}`;
+
+            // Mostrar resultado se todos os critérios foram preenchidos
+            if (criteriosPreenchidos === 6) {
+                document.getElementById('scoreDisplay').style.display = 'block';
+                document.getElementById('reportBtn').disabled = false;
+            } else if (criteriosPreenchidos > 0) {
+                document.getElementById('scoreDisplay').style.display = 'block';
+                document.getElementById('reportBtn').disabled = false;
+            } else {
+                document.getElementById('scoreDisplay').style.display = 'none';
+                document.getElementById('reportBtn').disabled = true;
+            }
+        }
+
+        function gerarRelatorio() {
+            const nome = document.getElementById('nome').value || 'Nao informado';
+            const data = document.getElementById('data').value || 'Nao informada';
+            
+            // Formatar data
+            let dataFormatada = 'Nao informada';
+            if (data) {
+                const dt = new Date(data);
+                dataFormatada = dt.toLocaleString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+
+            const scoreTotal = parseInt(document.getElementById('scoreValue').textContent);
+            const interpretacao = document.getElementById('scoreInterpretation').textContent;
+
+            // Coletar critérios selecionados
+            const criteriosNomes = {
+                'sibilos': 'Sibilos',
+                'tiragem': 'Tiragem',
+                'entradaAr': 'Murmúrio Vesicular/Entrada de Ar',
+                'cianose': 'Cianose',
+                'consciencia': 'Nível de Consciência',
+                'fr': 'Frequência Respiratória'
+            };
+
+            let detalhes = '';
+            Object.keys(criteriosNomes).forEach(key => {
+                const elemento = document.getElementById(key);
+                if (elemento && elemento.value !== '') {
+                    const texto = elemento.options[elemento.selectedIndex].text;
+                    detalhes += `${criteriosNomes[key]}: ${texto}\n`;
+                }
+            });
+
+            // Determinar gravidade e recomendações
+            let gravidade = '';
+            let recomendacoes = '';
+            
+            if (scoreTotal <= 3) {
+                gravidade = 'LEVE';
+                recomendacoes = `- Manejo ambulatorial possivel
+- Hidratacao adequada
+- Aspiracao de vias aereas se necessario
+- Oxigenioterapia se SatO2 < 92%
+- Orientacoes aos pais sobre sinais de alerta
+- Retorno em 24-48 horas para reavaliar`;
+            } else if (scoreTotal <= 7) {
+                gravidade = 'MODERADA';
+                recomendacoes = `- Considerar internacao hospitalar
+- Oxigenioterapia para manter SatO2 >= 92%
+- Broncodilatadores se beneficio clinico
+- Hidratacao venosa se necessario
+- Monitorizacao continua da SatO2 e frequencia respiratoria
+- Reavaliacoes frequentes (a cada 4-6 horas)`;
+            } else {
+                gravidade = 'GRAVE';
+                recomendacoes = `- INTERNACAO OBRIGATORIA
+- Considerar transferencia para UTI
+- Oxigenioterapia de alto fluxo
+- Considerar suporte ventilatorio (VNI ou VM)
+- Acesso venoso e hidratacao adequada
+- Monitorizacao intensiva continua
+- Gasometria arterial
+- Avaliar necessidade de antibioticoterapia`;
+            }
+
+            let relatorio = `RESUMO INFORMATIVO — SCORE DE WOOD-DOWNES (EDUCATIVO)
+=====================================================================
+
+DADOS DO PACIENTE
+-----------------
+Nome: ${nome}
+Data/Hora da Avaliacao: ${dataFormatada}
+
+CRITERIOS AVALIADOS
+-------------------
+${detalhes}
+
+RESULTADO
+---------
+SCORE TOTAL: ${scoreTotal}
+Classificacao: CRISE ${gravidade}
+
+INTERPRETACAO
+-------------
+${interpretacao.replace(/<br><br>/g, '\n').replace(/<strong>/g, '').replace(/<\/strong>/g, '')}
+
+RECOMENDACOES
+-------------
+${recomendacoes}
+
+CLASSIFICACAO GERAL
+-------------------
+- LEVE (0-3 pontos): Manejo ambulatorial
+- MODERADA (4-7 pontos): Considerar internacao
+- GRAVE (8-14 pontos): Internacao obrigatoria, considerar UTI
+
+REFERENCIAS
+-----------
+1. Ferres Mataro J, Mangues Bafalluy MA, Farre Riba R, Julia Brugues A, Bonal de Falgas J.
+   Subcutaneous adrenaline versus inhaled salbutamol in the treatment of childhood asthmatic crisis.
+   An Esp Pediatr 1987;27:37-40.
+
+2. Wood DW, Downes JJ, Lecks HI.
+   A clinical scoring system for the diagnosis of respiratory failure.
+   Am J Dis Child. 1972;123(3):227-8.
+
+Data de Geracao: ${new Date().toLocaleString('pt-BR')}
+`;
+
+            relatorio = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorio;
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorio += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                relatorio += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            // Copiar para a área de transferência
+            navigator.clipboard.writeText(relatorio).then(() => {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(() => {
+                const textArea = document.createElement('textarea');
+                textArea.value = relatorio;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,2646 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>NeoPedCalc — Exsanguíneo transfusão (educativo)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            touch-action: pan-y;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            background: #f6f7fb;
+            min-height: 100vh;
+        }
+
+        .app-viewport {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+        .app-shell {
+            width: 100%;
+            max-width: 1000px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e7e7ee;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .form-section {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .form-group input::placeholder {
+            color: #374151;
+            font-style: italic;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #111827;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 30px 0;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .results {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            margin-top: 20px;
+            border-left: none;
+            display: none;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+            font-weight: 600;
+            font-size: 1.2em;
+            color: #2c3e50;
+        }
+
+        .result-label {
+            color: #5a6c7d;
+            font-weight: 500;
+        }
+
+        .result-value {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .control-section {
+            margin-top: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .control-section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .control-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .control-table th,
+        .control-table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .control-table th {
+            background: #2c3e50;
+            color: white;
+            font-weight: 600;
+        }
+
+        .control-table input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .control-table input::placeholder {
+            color: #374151;
+            font-style: italic;
+            font-size: 0.9em;
+        }
+
+        .control-table .total-row {
+            background: #e8f4f8;
+            font-weight: 600;
+        }
+
+        .control-table .total-row input {
+            background: #d4edda;
+            font-weight: 600;
+        }
+
+        .control-input-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .control-input-row {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .control-input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .control-input-group label {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .control-input-group input {
+            padding: 10px;
+            border: 2px solid #e1e8ed;
+            border-radius: 6px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .control-input-group input:focus {
+            outline: none;
+            border-color: #111827;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .time-btn,
+        .save-btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 2px;
+        }
+
+        .time-btn {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .time-btn:hover {
+            background: #138496;
+            transform: translateY(-1px);
+        }
+
+        .save-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .save-btn:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
+        .saved-records {
+            margin-top: 20px;
+        }
+
+        .saved-records h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .records-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e1e8ed;
+            border-radius: 6px;
+            background: white;
+        }
+
+        .record-item {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+            padding: 12px 15px;
+            border-bottom: 1px solid #f1f3f4;
+            align-items: center;
+            font-size: 0.9em;
+        }
+
+        .record-item:last-child {
+            border-bottom: none;
+        }
+
+        .record-item:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .record-item .record-time {
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .record-item .record-value {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+
+        .totals-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: #e8f4f8;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .totals-row {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .total-item {
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #d1ecf1;
+        }
+
+        .total-label {
+            display: block;
+            font-size: 0.9em;
+            color: #374151;
+            margin-bottom: 5px;
+        }
+
+        .total-value {
+            display: block;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        @media (max-width: 768px) {
+            .control-input-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .totals-row {
+                grid-template-columns: 1fr;
+            }
+
+            .record-item {
+                grid-template-columns: 1fr;
+                gap: 5px;
+                text-align: center;
+            }
+        }
+
+        .alert {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #c3e6cb;
+            margin: 20px 0;
+            display: none;
+        }
+
+
+        .clear-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .clear-btn:hover {
+            background: #c0392b;
+            transform: translateY(-1px);
+        }
+
+        .report-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .report-btn:hover {
+            background: #219a52;
+            transform: translateY(-1px);
+        }
+
+        .orientations-btn {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .orientations-btn:hover {
+            background: #138496;
+            transform: translateY(-1px);
+        }
+
+        .save-patient-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .save-patient-btn:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
+        .load-patient-btn {
+            background: #6f42c1;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .load-patient-btn:hover {
+            background: #5a32a3;
+            transform: translateY(-1px);
+        }
+
+        .action-buttons {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            border: 1px solid #dee2e6;
+        }
+
+        .button-group {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .button-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .primary-actions {
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 20px;
+        }
+
+        .patient-actions {
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 20px;
+        }
+
+        .system-actions {
+            margin-top: 10px;
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+
+        .secondary-btn {
+            background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(23, 162, 184, 0.3);
+        }
+
+        .secondary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(23, 162, 184, 0.4);
+        }
+
+        .danger-btn {
+            background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .danger-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+        }
+
+        .finalize-section {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+        }
+
+        .finalize-btn {
+            background: #6f42c1;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
+        }
+
+        .finalize-btn:hover {
+            background: #5a32a3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(111, 66, 193, 0.4);
+        }
+
+        .final-summary {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            border-radius: 12px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .final-summary h4 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            font-weight: 600;
+        }
+
+        .summary-content {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .summary-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+        }
+
+        .summary-item.highlight {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        .summary-label {
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        .summary-value {
+            font-weight: 700;
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            .summary-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
+            box-sizing: border-box;
+            background-color: rgba(0, 0, 0, 0.5);
+            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            padding: 0;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 720px;
+            max-height: 86vh;
+            overflow: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
+        .close:hover {
+            opacity: 0.7;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .orientations-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: none;
+        }
+
+        .orientations-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        .orientations-section h4 {
+            color: #34495e;
+            margin: 15px 0 8px 0;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .orientations-section ol {
+            padding-left: 20px;
+        }
+
+        .orientations-section li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+            color: #2c3e50;
+        }
+
+        .orientations-section p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            color: #2c3e50;
+        }
+
+        .hemocomponent-type {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .exam-schedule {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #e1e8ed;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+            }
+
+            .modal-header {
+                padding: 15px 20px;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+        }
+
+        /* Alerta de Volume */
+        .volume-alert {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: alertFadeIn 0.3s ease-out;
+        }
+
+        @keyframes alertFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .alert-content {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: alertPulse 2s infinite;
+        }
+
+        @keyframes alertPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .alert-content h3 {
+            margin: 0 0 20px 0;
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+
+        .alert-content p {
+            margin: 10px 0;
+            font-size: 1.1em;
+            line-height: 1.4;
+        }
+
+        .alert-content .highlight {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        .alert-close {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .alert-close:hover {
+            background: white;
+            color: #ee5a24;
+            transform: translateY(-2px);
+        }
+
+        /* Barra de Progresso */
+        .volume-progress {
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 10px;
+            border: 2px solid #dee2e6;
+        }
+
+        .progress-header h4 {
+            margin: 0 0 15px 0;
+            color: #2c3e50;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .progress-bar-container {
+            position: relative;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 25px;
+            background: #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #dee2e6;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745 0%, #20c997 50%, #17a2b8 100%);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .progress-text span:first-child {
+            color: #495057;
+        }
+
+        .progress-text span:last-child {
+            color: #28a745;
+            font-size: 1.1em;
+        }
+
+        /* Estilos para Modal de Pacientes */
+        .patient-actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .save-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .save-btn:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
+        .new-btn {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .new-btn:hover {
+            background: #138496;
+            transform: translateY(-1px);
+        }
+
+        .saved-patients h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        .patients-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .patient-item {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .patient-item:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .patient-info h4 {
+            margin: 0 0 8px 0;
+            color: #2c3e50;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .patient-info p {
+            margin: 4px 0;
+            color: #374151;
+            font-size: 0.9em;
+        }
+
+        .patient-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .load-btn {
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .load-btn:hover {
+            background: #0056b3;
+            transform: translateY(-1px);
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+
+        .no-patients {
+            text-align: center;
+            color: #374151;
+            font-style: italic;
+            padding: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                padding: 15px;
+            }
+
+            .button-group {
+                margin-bottom: 15px;
+            }
+
+            .primary-btn,
+            .secondary-btn,
+            .danger-btn {
+                display: block;
+                width: 100%;
+                margin: 5px 0;
+                padding: 12px 20px;
+            }
+
+            .patient-actions .save-patient-btn,
+            .patient-actions .load-patient-btn {
+                display: inline-block;
+                width: calc(50% - 5px);
+                margin: 5px 2.5px;
+            }
+
+            .control-table {
+                font-size: 0.9em;
+            }
+
+            .control-table th,
+            .control-table td {
+                padding: 8px 4px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.4em;
+            }
+
+            .header p {
+                font-size: 0.9em;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .section {
+                padding: 12px;
+            }
+
+            .section h3 {
+                font-size: 1.1em;
+            }
+
+            input,
+            select {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            button {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .results {
+                padding: 12px;
+            }
+
+            .control-table {
+                font-size: 12px;
+            }
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-info {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-info:hover {
+            background: white;
+            color: #2c3e50;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
+            box-sizing: border-box;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 720px;
+            max-height: 86vh;
+            overflow: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+
+        .modal-body ul,
+        .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #2c3e50;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .modal-header {
+                padding: 15px 20px;
+            }
+
+            .modal-header h2 {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 98%;
+            }
+
+            .modal-body {
+                padding: 15px;
+            }
+
+            .modal-header h2 {
+                font-size: 16px;
+            }
+
+            .modal-body h3 {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .app-viewport {
+                padding: 12px;
+            }
+        }
+
+        .is-hidden {
+            display: none;
+        }
+
+        .records-empty {
+            text-align: center;
+            padding: 20px;
+            color: #374151;
+        }
+
+        .input-readonly {
+            background: #f8f9fa;
+            border-color: #d1d5db;
+        }
+
+        .card,
+        .panel,
+        .box {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        label {
+            display: block;
+        }
+
+        input,
+        select,
+        textarea,
+        button {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+        }
+
+        body {
+            overscroll-behavior-x: none;
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+
+<body>
+    <div class="app-viewport">
+        <div class="app-shell">
+            <div class="container">
+                <div class="header">
+                    <h1>Calculadora - NeoPedCalc</h1>
+                    <p>Controle e calculo de volumes para exsanguineo transfusao</p>
+                    <div class="header-actions">
+                        <button class="btn-info" onclick="abrirModal()">
+                            Como usar                        </button>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <form id="calculatorForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="nome">Nome do Paciente</label>
+                                <input type="text" id="nome" placeholder="Ex: João Silva Santos" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="dataHoje">Data Hoje</label>
+                                <input type="text" id="dataHoje" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="idadeGestacional">Idade Gestacional (semanas)</label>
+                                <input type="number" id="idadeGestacional" step="0.1" min="20" max="45"
+                                    placeholder="Ex: 38.5 semanas" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="dataNascimento">Data e Hora do Nascimento</label>
+                                <input type="datetime-local" id="dataNascimento" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="bilirrubinaTotal">Bilirrubina Total (mg/dl)</label>
+                                <input type="number" id="bilirrubinaTotal" step="0.1" min="0" max="50"
+                                    placeholder="Ex: 15.5 mg/dl" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="peso">Peso do Neonato (kg)</label>
+                                <input type="number" id="peso" step="0.001" min="0.1" max="10"
+                                    placeholder="Ex: 3.250 kg" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="hematocritoInicial">Hematócrito Inicial do Neonato (%)</label>
+                                <input type="number" id="hematocritoInicial" step="0.1" min="0" max="100"
+                                    placeholder="Ex: 45.0%" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="volumeSanguineo">Volume Sanguíneo para EST (mL/kg)</label>
+                                <select id="volumeSanguineo" required>
+                                    <option value="160">160</option>
+                                    <option value="180" selected>180</option>
+                                    <option value="200">200</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="calculate-btn">Calcular Volume de Exsanguíneo Transfusão</button>
+                    </form>
+
+                    <div id="alert" class="alert"></div>
+
+                    <div id="results" class="results">
+                        <div class="result-item">
+                            <span class="result-label">Nome do Paciente:</span>
+                            <span class="result-value" id="resultNome"></span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Peso do Neonato:</span>
+                            <span class="result-value" id="resultPeso"></span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Hematócrito Inicial:</span>
+                            <span class="result-value" id="resultHematocritoInicial"></span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Volume Sanguíneo para EST:</span>
+                            <span class="result-value" id="resultVolumeSanguineo"></span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Volume Total:</span>
+                            <span class="result-value" id="resultVolumeTotal"></span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Troca na EST em Alíquotas de:</span>
+                            <span class="result-value" id="resultAliquotas"></span>
+                        </div>
+                    </div>
+
+                    <div class="control-section">
+                        <h3>FICHA DE CONTROLE DA EST</h3>
+
+                        <div class="control-input-section">
+                            <div class="control-input-row">
+                                <div class="control-input-group">
+                                    <label for="entradaAtual">Volume de ENTRADA (ml)</label>
+                                    <input type="number" id="entradaAtual" step="0.1" min="0" placeholder="Ex: 10.5">
+                                </div>
+                                <div class="control-input-group">
+                                    <label for="saidaAtual">Volume de SAÍDA (ml)</label>
+                                    <input type="number" id="saidaAtual" step="0.1" min="0" placeholder="Ex: 10.5">
+                                </div>
+                                <div class="control-input-group">
+                                    <label for="horarioAtual">Horário</label>
+                                    <input type="text" id="horarioAtual" placeholder="Clique para horário atual"
+                                        readonly>
+                                </div>
+                                <div class="control-input-group">
+                                    <button type="button" id="btnHorarioAtual" class="time-btn">Horário Atual</button>
+                                    <button type="button" id="btnSalvar" class="save-btn">Salvar</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="saved-records">
+                            <h4>Registros Salvos</h4>
+                            <div id="savedRecordsList" class="records-list">
+                                <!-- Registros salvos aparecerão aqui -->
+                            </div>
+                        </div>
+
+                        <div class="totals-section">
+                            <div class="totals-row">
+                                <div class="total-item">
+                                    <span class="total-label">Total ENTRADA:</span>
+                                    <span class="total-value" id="totalEntradaDisplay">0.0 ml</span>
+                                </div>
+                                <div class="total-item">
+                                    <span class="total-label">Total SAÍDA:</span>
+                                    <span class="total-value" id="totalSaidaDisplay">0.0 ml</span>
+                                </div>
+                                <div class="total-item">
+                                    <span class="total-label">BALANÇO:</span>
+                                    <span class="total-value" id="balancoDisplay">0.0 ml</span>
+                                </div>
+                            </div>
+
+                            <!-- Progresso do Volume -->
+                            <div id="volumeProgress" class="volume-progress is-hidden">
+                                <div class="progress-header">
+                                    <h4>Progresso da EST</h4>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar">
+                                        <div id="progressFill" class="progress-fill"></div>
+                                    </div>
+                                    <div class="progress-text">
+                                        <span id="progressText">0.0 / 0.0 mL</span>
+                                        <span id="progressPercent">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="finalize-section">
+                                <button id="finalizeBtn" class="finalize-btn">Finalizar Ficha</button>
+                            </div>
+                        </div>
+
+                        <div id="finalSummary" class="final-summary is-hidden">
+                            <h4>Resumo Final da EST</h4>
+                            <div class="summary-content">
+                                <div class="summary-item">
+                                    <span class="summary-label">Volume de sangue que ENTROU no bebê:</span>
+                                    <span class="summary-value" id="finalEntrada">0.0 ml</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">Volume de sangue que SAIU do bebê:</span>
+                                    <span class="summary-value" id="finalSaida">0.0 ml</span>
+                                </div>
+                                <div class="summary-item highlight">
+                                    <span class="summary-label">BALANÇO FINAL:</span>
+                                    <span class="summary-value" id="finalBalanco">0.0 ml</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">Total de registros:</span>
+                                    <span class="summary-value" id="totalRegistros">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <div class="button-group primary-actions">
+                            <button id="generateReportBtn" class="report-btn primary-btn">Gerar Relatorio</button>
+                            <button id="orientationsBtn" class="orientations-btn secondary-btn">Orientacoes</button>
+                        </div>
+
+                        <div class="button-group patient-actions">
+                            <button id="savePatientBtn" class="save-patient-btn">Salvar Paciente</button>
+                            <button id="loadPatientBtn" class="load-patient-btn">Carregar Paciente</button>
+                        </div>
+
+                        <div class="button-group system-actions">
+                            <button id="clearBtn" class="clear-btn danger-btn">Nova Avaliacao</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Orientações Gerais -->
+    <div id="orientationsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Informações de estudo - Exsanguíneo Transfusão</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Conteúdo educativo para apoiar estudo. Não substitui protocolos institucionais, julgamento clínico nem prescrição.
+                    Revise sempre com a equipe assistente.
+                </p>
+                <div class="orientations-section">
+                    <h3>Informações de estudo</h3>
+                    <ol>
+                        <li>Alguns protocolos citam jejum antes do procedimento</li>
+                        <li>Alguns protocolos citam uso de componentes dentro de janela temporal de segurança</li>
+                        <li>Alguns protocolos citam aquecimento conforme prática assistencial</li>
+                        <li>Alguns protocolos citam verificação de compatibilidade (prova cruzada)</li>
+                        <li>Alguns protocolos citam critérios de composição do soro/soluções</li>
+                    </ol>
+                </div>
+
+                <div class="orientations-section">
+                    <h3>Tipo de Hemocomponentes a Serem Utilizados</h3>
+                    <div class="hemocomponent-type">
+                        <h4>Doença Hemolítica por Incompatibilidade RH (anticorpo D)</h4>
+                        <p>Usar o tipo sanguíneo do recém nascido, Rh NEGATIVO ou tipo O</p>
+                        <p>Rh NEGATIVO ou Du NEGATIVO</p>
+                    </div>
+
+                    <div class="hemocomponent-type">
+                        <h4>Doença Hemolítica por Incompatibilidade ABO</h4>
+                        <p>Usar concentrado de hemácias tipo O e plasma compatível com o tipo sanguíneo e Rh do
+                            recém-nascido</p>
+                    </div>
+
+                    <div class="hemocomponent-type">
+                        <h4>Doença Não Hemolítica</h4>
+                        <p>Usar concentrado de hemácias e plasma compatível com o tipo sanguíneo do recém-nascido</p>
+                    </div>
+                </div>
+
+                <div class="orientations-section">
+                    <h3>Coleta de Exames do Recém-Nascido</h3>
+                    <div class="exam-schedule">
+                        <h4>Antes do início da EST:</h4>
+                        <p>Gasometria arterial, Na, K, Ca iônico, glicemia, Hemograma, plaquetas</p>
+
+                        <h4>Duas (02) horas após o término da EST:</h4>
+                        <p>Gasometria arterial, Na, K, Ca iônico, glicemia, bilirrubinas totais e frações</p>
+
+                        <h4>Oito (08) horas após o término da EST:</h4>
+                        <p>Gasometria arterial, Na, K, Ca iônico, glicemia, bilirrubinas totais e frações, Hemograma,
+                            plaquetas</p>
+                    </div>
+                </div>
+
+                <div class="orientations-section">
+                    <h3>Outros</h3>
+                    <p>Após a EST, manter hidratação venosa com balanço hídrico para a idade e VIG (velocidade de
+                        infusão de glicose) de 4 a 6 mg/kg/hora sem adição de sódio ou potássio e com adição de
+                        Gluconato de Cálcio 10% - 2ml/kg/dia e Sulfato de magnésio 10% - 1 ml/kg/dia</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Gerenciamento de Pacientes -->
+    <div id="patientModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Gerenciar Pacientes</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="patient-actions">
+                    <button id="saveCurrentPatient" class="action-btn save-btn">Salvar Paciente Atual</button>
+                    <button id="newPatient" class="action-btn new-btn">Novo Paciente</button>
+                </div>
+
+                <div class="saved-patients">
+                    <h3>Pacientes Salvos</h3>
+                    <div id="patientsList" class="patients-list">
+                        <!-- Lista de pacientes aparecerá aqui -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — Transfusão exsanguínea (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta página organiza dados e fornece estimativas educativas de volume sanguíneo total e volume para exanguinotransfusão,
+                    com base em fórmulas do app. O conteúdo é para estudo e discussão e não substitui protocolos, decisão clínica nem prescrição.</p>
+
+                <h3>Fórmulas Principais</h3>
+                <div class="formula-box">
+                    <strong>Volume Sanguíneo Total (VST):</strong><br>
+                    • <strong>Neonatos:</strong> 85-90 mL/kg<br>
+                    • <strong>Crianças:</strong> 70-80 mL/kg<br>
+                    • <strong>Adultos:</strong> 65-70 mL/kg<br><br>
+                    <strong>Volume para Exanguinotransfusão:</strong><br>
+                    Volume = VST × 2 (dupla troca)<br><br>
+                    <strong>Volume por Ciclo:</strong><br>
+                    Volume = 5-10 mL/kg por ciclo<br><br>
+                    <strong>Número de Ciclos:</strong><br>
+                    Ciclos = Volume total / Volume por ciclo<br><br>
+                    <strong>Taxa de Infusão:</strong><br>
+                    Taxa = Volume por ciclo / 3-5 minutos
+                </div>
+
+                <h3>Parâmetros Avaliados</h3>
+                <ul>
+                    <li><strong>Peso:</strong> Em kg</li>
+                    <li><strong>Idade:</strong> Anos e meses</li>
+                    <li><strong>Tipo Sanguíneo:</strong> ABO e Rh</li>
+                    <li><strong>Volume Sanguíneo:</strong> Total estimado</li>
+                    <li><strong>Volume Transfusão:</strong> Para exanguinotransfusão</li>
+                    <li><strong>Volume por Ciclo:</strong> mL/kg</li>
+                    <li><strong>Número de Ciclos:</strong> Necessários</li>
+                    <li><strong>Duração:</strong> Tempo estimado</li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Insira o Peso:</strong> Em kg</li>
+                    <li><strong>Informe a Idade:</strong> Anos e meses</li>
+                    <li><strong>Selecione o Tipo Sanguíneo:</strong> ABO e Rh</li>
+                    <li><strong>Escolha o Volume por Ciclo:</strong> 5-10 mL/kg</li>
+                    <li><strong>Calcule:</strong> Sistema calcula automaticamente</li>
+                    <li><strong>Interprete:</strong> Volume e ciclos necessários</li>
+                </ol>
+
+                <h3>Indicações para Exanguinotransfusão</h3>
+                <ul>
+                    <li><strong>Icterícia Neonatal:</strong> Grave, refratária</li>
+                    <li><strong>Eritroblastose Fetal:</strong> Incompatibilidade Rh</li>
+                    <li><strong>Hiperbilirrubinemia:</strong> > 20 mg/dL</li>
+                    <li><strong>Anemia Hemolítica:</strong> Grave</li>
+                    <li><strong>Sepse:</strong> Refratária</li>
+                    <li><strong>Intoxicação:</strong> Medicamentosa</li>
+                    <li><strong>Policitemia:</strong> Grave</li>
+                    <li><strong>Distúrbios Metabólicos:</strong> Específicos</li>
+                </ul>
+
+                <h3>Tipos de Exanguinotransfusão</h3>
+                <ul>
+                    <li><strong>Simples:</strong> Uma troca (VST × 1)</li>
+                    <li><strong>Dupla:</strong> Duas trocas (VST × 2)</li>
+                    <li><strong>Tripla:</strong> Três trocas (VST × 3)</li>
+                    <li><strong>Isovolumétrica:</strong> Volume constante</li>
+                    <li><strong>Parcial:</strong> Volume reduzido</li>
+                    <li><strong>Completa:</strong> Volume total</li>
+                    <li><strong>Intermittente:</strong> Em ciclos</li>
+                    <li><strong>Contínua:</strong> Fluxo contínuo</li>
+                </ul>
+
+                <h3>Compatibilidade Sanguínea</h3>
+                <ul>
+                    <li><strong>Tipo O:</strong> Doador universal</li>
+                    <li><strong>Tipo A:</strong> Recebe A e O</li>
+                    <li><strong>Tipo B:</strong> Recebe B e O</li>
+                    <li><strong>Tipo AB:</strong> Recebe A, B, AB e O</li>
+                    <li><strong>Rh Positivo:</strong> Recebe Rh+ e Rh-</li>
+                    <li><strong>Rh Negativo:</strong> Recebe apenas Rh-</li>
+                    <li><strong>Crossmatch:</strong> Teste de compatibilidade</li>
+                    <li><strong>Coombs:</strong> Teste de antiglobulina</li>
+                </ul>
+
+                <h3>Preparação do Sangue</h3>
+                <ul>
+                    <li><strong>Concentrado de Hemácias:</strong> Fresco</li>
+                    <li><strong>Plasma Fresco:</strong> Congelado</li>
+                    <li><strong>Albumina:</strong> 5% ou 25%</li>
+                    <li><strong>Soro Fisiológico:</strong> Diluição</li>
+                    <li><strong>Hematócrito Final:</strong> 40-50%</li>
+                    <li><strong>Temperatura:</strong> 37°C</li>
+                    <li><strong>Filtro:</strong> Microagregados</li>
+                    <li><strong>Irradiação:</strong> Em imunossuprimidos</li>
+                </ul>
+
+                <h3>Monitoramento Durante o Procedimento</h3>
+                <ul>
+                    <li><strong>Vital Signs:</strong> PA, FC, FR, temperatura</li>
+                    <li><strong>Oximetria:</strong> Saturação de oxigênio</li>
+                    <li><strong>ECG:</strong> Ritmo cardíaco</li>
+                    <li><strong>Bilirrubina:</strong> Pré e pós procedimento</li>
+                    <li><strong>Hematócrito:</strong> Controle</li>
+                    <li><strong>Eletrólitos:</strong> Na, K, Ca</li>
+                    <li><strong>Glicemia:</strong> Hipoglicemia</li>
+                    <li><strong>Coagulação:</strong> TTPA, INR</li>
+                </ul>
+
+                <h3>Complicações da Exanguinotransfusão</h3>
+                <ul>
+                    <li><strong>Cardiovasculares:</strong> Arritmias, hipotensão</li>
+                    <li><strong>Respiratórias:</strong> Apneia, cianose</li>
+                    <li><strong>Hematológicas:</strong> Trombocitopenia</li>
+                    <li><strong>Metabólicas:</strong> Hipocalcemia, hipoglicemia</li>
+                    <li><strong>Infecciosas:</strong> Sepse, transmissão</li>
+                    <li><strong>Renais:</strong> Insuficiência renal</li>
+                    <li><strong>Neurológicas:</strong> Convulsões</li>
+                    <li><strong>Morte:</strong> Rara, mas possível</li>
+                </ul>
+
+                <h3>Cuidados Pós-Procedimento</h3>
+                <ul>
+                    <li><strong>Monitoramento:</strong> Intensivo por 24h</li>
+                    <li><strong>Bilirrubina:</strong> Controle seriado</li>
+                    <li><strong>Hematócrito:</strong> Verificação</li>
+                    <li><strong>Eletrólitos:</strong> Correção se necessário</li>
+                    <li><strong>Alimentação:</strong> Precoce</li>
+                    <li><strong>Fototerapia:</strong> Manutenção</li>
+                    <li><strong>Antibióticos:</strong> Profiláticos</li>
+                    <li><strong>Documentação:</strong> Registro completo</li>
+                </ul>
+
+                <h3>Limitações e Considerações</h3>
+                <ul>
+                    <li>Não substitui avaliação clínica</li>
+                    <li>Requer contexto clínico</li>
+                    <li>Variações individuais</li>
+                    <li>Fatores não incluídos</li>
+                    <li>Monitoramento contínuo</li>
+                    <li>Interpretação experiente</li>
+                    <li>Ajuste individual</li>
+                    <li>Protocolos institucionais</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - American Academy of Pediatrics. Management of hyperbilirubinemia in the newborn infant 35 or more
+                    weeks of gestation. Pediatrics. 2004;114(1):297-316.<br>
+                    - Maisels MJ, et al. Hyperbilirubinemia in the newborn infant ≥35 weeks' gestation: an update with
+                    clarifications. Pediatrics. 2009;124(4):1193-1198.<br>
+                    - Bhutani VK, et al. Phototherapy to prevent severe neonatal hyperbilirubinemia in the newborn
+                    infant 35 or more weeks of gestation. Pediatrics. 2011;128(4):e1046-e1052.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formatarNumero(valor) {
+            const numero = Number(valor);
+            if (Number.isNaN(numero)) {
+                return valor;
+            }
+            return numero.toFixed(1);
+        }
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function (event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Armazenamento local para manter dados
+        const STORAGE_KEY = 'exsanguineo_transfusao_data';
+        const CONTROL_RECORDS_KEY = 'exsanguineo_control_records';
+        const PATIENTS_DB_KEY = 'exsanguineo_patients_database';
+
+        // Array para armazenar registros de controle
+        let controlRecords = [];
+
+        // Banco de dados de pacientes
+        let patientsDatabase = [];
+
+        // Carregar dados salvos ao iniciar
+        document.addEventListener('DOMContentLoaded', function () {
+            loadSavedData();
+            updateCurrentDate();
+            loadControlRecords();
+            loadPatientsDatabase();
+            setupControlEvents();
+        });
+
+        // Atualizar data atual
+        function updateCurrentDate() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR');
+            document.getElementById('dataHoje').value = dateStr;
+        }
+
+        // Carregar registros de controle salvos
+        function loadControlRecords() {
+            const savedRecords = localStorage.getItem(CONTROL_RECORDS_KEY);
+            if (savedRecords) {
+                controlRecords = JSON.parse(savedRecords);
+                displayControlRecords();
+                updateTotals();
+            }
+        }
+
+        // Salvar registros de controle
+        function saveControlRecords() {
+            localStorage.setItem(CONTROL_RECORDS_KEY, JSON.stringify(controlRecords));
+        }
+
+        // Configurar eventos de controle
+        function setupControlEvents() {
+            document.getElementById('btnHorarioAtual').addEventListener('click', setCurrentTime);
+            document.getElementById('btnSalvar').addEventListener('click', saveRecord);
+            document.getElementById('finalizeBtn').addEventListener('click', finalizeControl);
+        }
+
+        // Definir horário atual
+        function setCurrentTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('horarioAtual').value = timeStr;
+        }
+
+        // Salvar registro
+        function saveRecord() {
+            const entrada = parseFloat(document.getElementById('entradaAtual').value) || 0;
+            const saida = parseFloat(document.getElementById('saidaAtual').value) || 0;
+            const horario = document.getElementById('horarioAtual').value;
+
+            if (entrada === 0 && saida === 0) {
+                showAlert('Por favor, preencha pelo menos um valor de entrada ou saída.', 'error');
+                return;
+            }
+
+            if (!horario) {
+                showAlert('Por favor, clique em "Horário Atual" ou preencha o horário.', 'error');
+                return;
+            }
+
+            const record = {
+                id: Date.now(),
+                entrada: entrada,
+                saida: saida,
+                horario: horario,
+                timestamp: new Date().toISOString()
+            };
+
+            controlRecords.push(record);
+            saveControlRecords();
+            displayControlRecords();
+            updateTotals();
+            clearCurrentInputs();
+            showAlert('Registro salvo com sucesso!', 'success');
+        }
+
+        // Limpar campos atuais
+        function clearCurrentInputs() {
+            document.getElementById('entradaAtual').value = '';
+            document.getElementById('saidaAtual').value = '';
+            document.getElementById('horarioAtual').value = '';
+        }
+
+        // Exibir registros salvos
+        function displayControlRecords() {
+            const recordsList = document.getElementById('savedRecordsList');
+            recordsList.innerHTML = '';
+
+            if (controlRecords.length === 0) {
+                recordsList.innerHTML = '<div class="records-empty">Nenhum registro salvo ainda</div>';
+                return;
+            }
+
+            controlRecords.forEach((record, index) => {
+                const recordDiv = document.createElement('div');
+                recordDiv.className = 'record-item';
+                recordDiv.innerHTML = `
+                    <div class="record-value">${record.entrada.toFixed(1)} ml</div>
+                    <div class="record-value">${record.saida.toFixed(1)} ml</div>
+                    <div class="record-time">${record.horario}</div>
+                    <button class="delete-btn" onclick="deleteRecord(${record.id})">Excluir</button>
+                `;
+                recordsList.appendChild(recordDiv);
+            });
+        }
+
+        // Excluir registro
+        function deleteRecord(id) {
+            if (confirm('Deseja excluir este registro?')) {
+                controlRecords = controlRecords.filter(record => record.id !== id);
+                saveControlRecords();
+                displayControlRecords();
+                updateTotals();
+                showAlert('Registro excluído!', 'success');
+            }
+        }
+
+        // Atualizar totais
+        function updateTotals() {
+            let totalEntrada = 0;
+            let totalSaida = 0;
+
+            controlRecords.forEach(record => {
+                totalEntrada += record.entrada;
+                totalSaida += record.saida;
+            });
+
+            const balanco = totalEntrada - totalSaida;
+
+            document.getElementById('totalEntradaDisplay').textContent = totalEntrada.toFixed(1) + ' ml';
+            document.getElementById('totalSaidaDisplay').textContent = totalSaida.toFixed(1) + ' ml';
+            document.getElementById('balancoDisplay').textContent = balanco.toFixed(1) + ' ml';
+
+            // Atualizar barra de progresso
+            updateProgressBar(totalEntrada);
+
+            // Verificar se atingiu o volume total calculado
+            checkVolumeLimit(totalEntrada);
+        }
+
+        // Atualizar barra de progresso
+        function updateProgressBar(totalInfundido) {
+            const volumeTotalElement = document.getElementById('resultVolumeTotal');
+            const progressSection = document.getElementById('volumeProgress');
+
+            if (volumeTotalElement && volumeTotalElement.textContent) {
+                const volumeTotal = parseFloat(volumeTotalElement.textContent.replace(' mL', ''));
+
+                if (volumeTotal > 0) {
+                    // Mostrar seção de progresso
+                    progressSection.style.display = 'block';
+
+                    // Calcular porcentagem
+                    const percentage = Math.min((totalInfundido / volumeTotal) * 100, 100);
+
+                    // Atualizar barra de progresso
+                    document.getElementById('progressFill').style.width = percentage + '%';
+                    document.getElementById('progressText').textContent = `${totalInfundido.toFixed(1)} / ${volumeTotal.toFixed(1)} mL`;
+                    document.getElementById('progressPercent').textContent = percentage.toFixed(1) + '%';
+
+                    // Mudar cor se próximo do limite
+                    const progressFill = document.getElementById('progressFill');
+                    if (percentage >= 90) {
+                        progressFill.style.background = 'linear-gradient(90deg, #ffc107 0%, #fd7e14 50%, #dc3545 100%)';
+                    } else if (percentage >= 75) {
+                        progressFill.style.background = 'linear-gradient(90deg, #ffc107 0%, #fd7e14 100%)';
+                    } else {
+                        progressFill.style.background = 'linear-gradient(90deg, #28a745 0%, #20c997 50%, #17a2b8 100%)';
+                    }
+                }
+            }
+        }
+
+        // Verificar limite de volume
+        function checkVolumeLimit(totalInfundido) {
+            const volumeTotalElement = document.getElementById('resultVolumeTotal');
+            if (volumeTotalElement && volumeTotalElement.textContent) {
+                const volumeTotal = parseFloat(volumeTotalElement.textContent.replace(' mL', ''));
+                if (volumeTotal && totalInfundido >= volumeTotal) {
+                    showVolumeAlert(volumeTotal, totalInfundido);
+                }
+            }
+        }
+
+        // Mostrar alerta de volume atingido
+        function showVolumeAlert(volumeTotal, totalInfundido) {
+            const alertMessage = `ALERTA: Volume total da EST atingido!\n\nVolume calculado: ${formatarNumero(volumeTotal)} mL\nVolume infundido: ${formatarNumero(totalInfundido)} mL\n\nConsidere finalizar a EST.`;
+
+            // Criar alerta visual mais chamativo
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'volume-alert';
+            alertDiv.innerHTML = `
+                <div class="alert-content">
+                    <h3>ALERTA DE VOLUME</h3>
+                    <p><strong>Volume total da EST atingido!</strong></p>
+                    <p>Volume calculado: <span class="highlight">${formatarNumero(volumeTotal)} mL</span></p>
+                    <p>Volume infundido: <span class="highlight">${formatarNumero(totalInfundido)} mL</span></p>
+                    <p><strong>Considere finalizar a EST.</strong></p>
+                    <button onclick="this.parentElement.parentElement.remove()" class="alert-close" aria-label="Fechar">&times;</button>
+                </div>
+            `;
+
+            document.body.appendChild(alertDiv);
+
+            // Auto-remover após 10 segundos
+            setTimeout(() => {
+                if (alertDiv.parentElement) {
+                    alertDiv.remove();
+                }
+            }, 10000);
+        }
+
+        // Finalizar ficha de controle
+        function finalizeControl() {
+            if (controlRecords.length === 0) {
+                showAlert('Nenhum registro de controle foi salvo ainda. Adicione pelo menos um registro antes de finalizar.', 'error');
+                return;
+            }
+
+            // Calcular totais finais
+            let totalEntrada = 0;
+            let totalSaida = 0;
+
+            controlRecords.forEach(record => {
+                totalEntrada += record.entrada;
+                totalSaida += record.saida;
+            });
+
+            const balanco = totalEntrada - totalSaida;
+
+            // Exibir resumo final
+            document.getElementById('finalEntrada').textContent = totalEntrada.toFixed(1) + ' ml';
+            document.getElementById('finalSaida').textContent = totalSaida.toFixed(1) + ' ml';
+            document.getElementById('finalBalanco').textContent = balanco.toFixed(1) + ' ml';
+            document.getElementById('totalRegistros').textContent = controlRecords.length;
+
+            // Mostrar resumo final
+            document.getElementById('finalSummary').style.display = 'block';
+
+            // Scroll para o resumo
+            document.getElementById('finalSummary').scrollIntoView({ behavior: 'smooth' });
+
+            showAlert('Ficha de controle finalizada! Resumo calculado com sucesso.', 'success');
+        }
+
+
+        // Salvar dados automaticamente
+        function saveData() {
+            const formData = {
+                nome: document.getElementById('nome').value,
+                idadeGestacional: document.getElementById('idadeGestacional').value,
+                dataNascimento: document.getElementById('dataNascimento').value,
+                bilirrubinaTotal: document.getElementById('bilirrubinaTotal').value,
+                peso: document.getElementById('peso').value,
+                hematocritoInicial: document.getElementById('hematocritoInicial').value,
+                volumeSanguineo: document.getElementById('volumeSanguineo').value
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+        }
+
+        // Carregar dados salvos
+        function loadSavedData() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                // Não carregar dados automaticamente - deixar campos em branco
+                // document.getElementById('nome').value = data.nome || '';
+                // document.getElementById('idadeGestacional').value = data.idadeGestacional || '';
+                // document.getElementById('dataNascimento').value = data.dataNascimento || '';
+                // document.getElementById('bilirrubinaTotal').value = data.bilirrubinaTotal || '';
+                // document.getElementById('peso').value = data.peso || '';
+                // document.getElementById('hematocritoInicial').value = data.hematocritoInicial || '';
+                document.getElementById('volumeSanguineo').value = '180'; // Manter apenas o valor padrão
+            }
+        }
+
+        // Mostrar alerta
+        function showAlert(message, type = 'info') {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.style.display = 'block';
+            alert.className = `alert ${type === 'success' ? 'alert-success' : 'alert-info'}`;
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
+        }
+
+        // Calcular exsanguíneo transfusão
+        function calculateExsanguineoTransfusion() {
+            const nome = document.getElementById('nome').value;
+            const peso = parseFloat(document.getElementById('peso').value);
+            const hematocritoInicial = parseFloat(document.getElementById('hematocritoInicial').value);
+            const volumeSanguineo = parseFloat(document.getElementById('volumeSanguineo').value);
+            const idadeGestacional = parseFloat(document.getElementById('idadeGestacional').value);
+            const bilirrubinaTotal = parseFloat(document.getElementById('bilirrubinaTotal').value);
+
+            if (!nome || !peso || !hematocritoInicial || !volumeSanguineo || !idadeGestacional || !bilirrubinaTotal) {
+                showAlert('Por favor, preencha todos os campos.', 'error');
+                return;
+            }
+
+            if (peso < 0.1 || peso > 20) {
+                if (!confirm(`Aviso Clínico: O peso inserido (${peso} kg) está fora do padrão habitual (0.1 a 20 kg) para Exsanguíneotransfusão. Deseja continuar?`)) {
+                    return;
+                }
+            }
+
+            // Cálculo do volume total (peso * volume sanguíneo por kg)
+            const volumeTotal = peso * volumeSanguineo;
+
+            // Cálculo das alíquotas baseado no peso
+            let aliquotasCalculadas = "";
+            if (peso < 2) {
+                aliquotasCalculadas = "10 mL";
+            } else if (peso < 2.5) {
+                aliquotasCalculadas = "15 mL";
+            } else if (peso <= 3.5) {
+                aliquotasCalculadas = "20 mL";
+            } else {
+                let min = Math.round(peso * 5);
+                let max = Math.round(peso * 10);
+                aliquotasCalculadas = `${min} a ${max} mL (5 a 10 mL/kg)`;
+            }
+
+            // Exibir resultados
+            document.getElementById('resultNome').textContent = nome;
+            document.getElementById('resultPeso').textContent = formatarNumero(peso) + ' kg';
+            document.getElementById('resultHematocritoInicial').textContent = hematocritoInicial.toFixed(1) + '%';
+            document.getElementById('resultVolumeSanguineo').textContent = volumeSanguineo + ' mL/kg';
+            document.getElementById('resultVolumeTotal').textContent = volumeTotal.toFixed(1) + ' mL';
+            document.getElementById('resultAliquotas').textContent = aliquotasCalculadas;
+
+            document.getElementById('results').style.display = 'block';
+
+
+            // Salvar dados
+            saveData();
+        }
+
+
+
+        // Gerar e copiar relatorio para prontuario
+        function generateAndCopyReport() {
+            console.log('Função generateAndCopyReport chamada');
+
+            // Verificar se ha dados para gerar relatorio
+            const nome = document.getElementById('nome').value;
+            const peso = parseFloat(document.getElementById('peso').value);
+            const hematocritoInicial = parseFloat(document.getElementById('hematocritoInicial').value);
+            const volumeSanguineo = parseFloat(document.getElementById('volumeSanguineo').value);
+            const idadeGestacional = parseFloat(document.getElementById('idadeGestacional').value);
+            const bilirrubinaTotal = parseFloat(document.getElementById('bilirrubinaTotal').value);
+            const dataHoje = document.getElementById('dataHoje').value;
+            const dataNascimento = document.getElementById('dataNascimento').value;
+
+            console.log('Dados coletados:', { nome, peso, hematocritoInicial, volumeSanguineo, idadeGestacional, bilirrubinaTotal });
+
+            if (!nome || !peso || !hematocritoInicial || !volumeSanguineo || !idadeGestacional || !bilirrubinaTotal) {
+                console.log('Dados incompletos, mostrando alert de erro');
+                showAlert('Por favor, preencha todos os dados do paciente antes de gerar o relatorio.', 'error');
+                return;
+            }
+
+            console.log('Todos os dados validos, gerando relatorio...');
+
+            // Calcular valores atuais
+            const volumeTotal = peso * volumeSanguineo;
+            let aliquotas;
+            if (peso < 2) {
+                aliquotas = 10;
+            } else if (peso < 2.5) {
+                aliquotas = 15;
+            } else {
+                aliquotas = 20;
+            }
+
+            // Calcular balanço dos registros atuais
+            let totalEntrada = 0;
+            let totalSaida = 0;
+            controlRecords.forEach(record => {
+                totalEntrada += record.entrada;
+                totalSaida += record.saida;
+            });
+            const balanco = totalEntrada - totalSaida;
+
+            const dataAtual = new Date().toLocaleString('pt-BR');
+
+            const relatorio = `RELATORIO DE EXSANGUINEO TRANSFUSAO (EST)
+NOTA: Texto gerado por calculadora; nao constitui prescricao nem documento oficial. Revise com o quadro clinico e protocolos locais.
+
+Data: ${dataAtual}
+
+DADOS DO PACIENTE:
+Nome: ${nome}
+Peso: ${formatarNumero(peso)} kg
+Idade Gestacional: ${formatarNumero(idadeGestacional)} semanas
+Bilirrubina Total: ${formatarNumero(bilirrubinaTotal)} mg/dl
+Hematocrito inicial: ${formatarNumero(hematocritoInicial)}%
+Data de Nascimento: ${dataNascimento || 'N/A'}
+Data do Relatorio: ${dataHoje || dataAtual}
+
+CALCULOS REALIZADOS:
+Volume sanguineo para EST: ${volumeSanguineo} mL/kg
+Volume total: ${formatarNumero(volumeTotal)} mL
+Troca na EST em aliquotas de: ${aliquotas} mL
+
+FICHA DE CONTROLE DA EST:
+${controlRecords.length > 0 ? `
+ENTRADA (mL)     SAIDA (mL)     HORARIO
+${'='.repeat(50)}
+${controlRecords.map(record => {
+                const entrada = formatarNumero(record.entrada);
+                const saida = formatarNumero(record.saida);
+                const horario = record.horario;
+                return `${entrada.padStart(12)}     ${saida.padStart(10)}     ${horario}`;
+            }).join('\n')}
+${'='.repeat(50)}
+TOTAIS:
+Total de entrada: ${formatarNumero(totalEntrada)} mL
+Total de saida: ${formatarNumero(totalSaida)} mL
+Balanco final: ${formatarNumero(balanco)} mL
+Total de registros: ${controlRecords.length}` : 'Nenhum registro de controle salvo'}
+
+INFORMACOES DE ESTUDO:
+1- Alguns protocolos citam jejum antes do procedimento
+2- Alguns protocolos citam uso de componentes dentro de janela temporal
+3- Alguns protocolos citam aquecimento conforme pratica assistencial
+4- Alguns protocolos citam verificacao de compatibilidade
+5- Alguns protocolos citam criterios de composicao de solucoes
+
+TIPO DE HEMOCOMPONENTES:
+- Doenca hemolitica por Incompatibilidade RH (anticorpo D) - usar o tipo sanguineo do recem nascido, Rh NEGATIVO ou tipo O
+- Doenca hemolitica por Incompatibilidade ABO - usar concentrado de hemacias tipo O e plasma compativel com o tipo sanguineo e Rh do recem-nascido
+- Doenca nao hemolitica - usar concentrado de hemacias e plasma compativel com o tipo sanguineo do recem-nascido
+
+REFERENCIAS:
+1- Ronald SL. Pediatric Anesthesia - The Requisites in Anestesiology. Fluid and blood Administration, 2004,115-121.
+2- American Academy of Pediatrics. Management of hyperbilirubinemia in the newborn infant 35 or more weeks of gestation. Pediatrics. 2004;114(1):297-316.
+3- Maisels MJ, et al. Hyperbilirubinemia in the newborn infant ≥35 weeks' gestation: an update with clarifications. Pediatrics. 2009;124(4):1193-1198.
+4- Bhutani VK, et al. Phototherapy to prevent severe neonatal hyperbilirubinemia in the newborn infant 35 or more weeks of gestation. Pediatrics. 2011;128(4):e1046-e1052.
+
+Data: ${new Date().toLocaleDateString('pt-BR')}`;
+
+            console.log('Relatorio gerado:', relatorio);
+
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorio += window.neopedLegalReportFooter();
+            } else {
+                relatorio += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            // Copiar relatorio para area de transferencia
+            navigator.clipboard.writeText(relatorio).then(() => {
+                console.log('Relatorio copiado para area de transferencia');
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(() => {
+                // Fallback para navegadores mais antigos
+                const textArea = document.createElement('textarea');
+                textArea.value = relatorio;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                console.log('Relatorio copiado via fallback');
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+
+        // Banco de dados de pacientes
+        function loadPatientsDatabase() {
+            const savedPatients = localStorage.getItem(PATIENTS_DB_KEY);
+            if (savedPatients) {
+                patientsDatabase = JSON.parse(savedPatients);
+            }
+        }
+
+        function savePatientsDatabase() {
+            localStorage.setItem(PATIENTS_DB_KEY, JSON.stringify(patientsDatabase));
+        }
+
+        function saveCurrentPatient() {
+            const nome = document.getElementById('nome').value;
+            if (!nome.trim()) {
+                showAlert('Por favor, preencha o nome do paciente antes de salvar.', 'error');
+                return;
+            }
+
+            const patientData = {
+                id: Date.now(),
+                nome: nome,
+                dataHoje: document.getElementById('dataHoje').value,
+                idadeGestacional: document.getElementById('idadeGestacional').value,
+                dataNascimento: document.getElementById('dataNascimento').value,
+                bilirrubinaTotal: document.getElementById('bilirrubinaTotal').value,
+                peso: document.getElementById('peso').value,
+                hematocritoInicial: document.getElementById('hematocritoInicial').value,
+                volumeSanguineo: document.getElementById('volumeSanguineo').value,
+                controlRecords: [...controlRecords],
+                savedAt: new Date().toISOString()
+            };
+
+            // Verificar se já existe paciente com mesmo nome
+            const existingIndex = patientsDatabase.findIndex(p => p.nome.toLowerCase() === nome.toLowerCase());
+            if (existingIndex !== -1) {
+                if (confirm(`Paciente "${nome}" já existe. Deseja atualizar os dados?`)) {
+                    patientsDatabase[existingIndex] = patientData;
+                } else {
+                    return;
+                }
+            } else {
+                patientsDatabase.push(patientData);
+            }
+
+            savePatientsDatabase();
+            showAlert('Paciente salvo com sucesso!', 'success');
+            displayPatientsList();
+        }
+
+        function loadPatient(patientId) {
+            const patient = patientsDatabase.find(p => p.id === patientId);
+            if (!patient) return;
+
+            // Carregar dados do paciente
+            document.getElementById('nome').value = patient.nome;
+            document.getElementById('dataHoje').value = patient.dataHoje;
+            document.getElementById('idadeGestacional').value = patient.idadeGestacional;
+            document.getElementById('dataNascimento').value = patient.dataNascimento;
+            document.getElementById('bilirrubinaTotal').value = patient.bilirrubinaTotal;
+            document.getElementById('peso').value = patient.peso;
+            document.getElementById('hematocritoInicial').value = patient.hematocritoInicial;
+            document.getElementById('volumeSanguineo').value = patient.volumeSanguineo;
+
+            // Carregar registros de controle
+            controlRecords = [...patient.controlRecords];
+            saveControlRecords();
+            displayControlRecords();
+            updateTotals();
+
+            // Recalcular se houver dados
+            if (patient.peso && patient.volumeSanguineo) {
+                calculateExsanguineoTransfusion();
+            }
+
+            closePatientModal();
+            showAlert(`Paciente "${patient.nome}" carregado com sucesso!`, 'success');
+        }
+
+        function deletePatient(patientId) {
+            const patient = patientsDatabase.find(p => p.id === patientId);
+            if (!patient) return;
+
+            if (confirm(`Deseja excluir o paciente "${patient.nome}"?`)) {
+                patientsDatabase = patientsDatabase.filter(p => p.id !== patientId);
+                savePatientsDatabase();
+                displayPatientsList();
+                showAlert('Paciente excluído!', 'success');
+            }
+        }
+
+        function displayPatientsList() {
+            const patientsList = document.getElementById('patientsList');
+            patientsList.innerHTML = '';
+
+            if (patientsDatabase.length === 0) {
+                patientsList.innerHTML = '<div class="no-patients">Nenhum paciente salvo ainda</div>';
+                return;
+            }
+
+            patientsDatabase.forEach(patient => {
+                const patientDiv = document.createElement('div');
+                patientDiv.className = 'patient-item';
+                patientDiv.innerHTML = `
+                    <div class="patient-info">
+                        <h4>${window.neopedEscapeHtml(patient.nome)}</h4>
+                        <p>Peso: ${formatarNumero(patient.peso) || 'N/A'} kg | Idade Gestacional: ${formatarNumero(patient.idadeGestacional) || 'N/A'} semanas</p>
+                        <p>Salvo em: ${new Date(patient.savedAt).toLocaleString('pt-BR')}</p>
+                        <p>Registros de controle: ${patient.controlRecords.length}</p>
+                    </div>
+                    <div class="patient-actions">
+                        <button onclick="loadPatient(${patient.id})" class="load-btn">Carregar</button>
+                        <button onclick="deletePatient(${patient.id})" class="delete-btn">Excluir</button>
+                    </div>
+                `;
+                patientsList.appendChild(patientDiv);
+            });
+        }
+
+        function openPatientModal() {
+            displayPatientsList();
+            document.getElementById('patientModal').style.display = 'flex';
+        }
+
+        function closePatientModal() {
+            document.getElementById('patientModal').style.display = 'none';
+        }
+
+        function newPatient() {
+            if (confirm('Deseja iniciar um novo paciente? Os dados atuais serão perdidos.')) {
+                clearAllData();
+                closePatientModal();
+            }
+        }
+
+        // Controlar modal de orientações
+        function openOrientationsModal() {
+            document.getElementById('orientationsModal').style.display = 'flex';
+        }
+
+        function closeOrientationsModal() {
+            document.getElementById('orientationsModal').style.display = 'none';
+        }
+
+        // Event listeners para os modais
+        document.addEventListener('DOMContentLoaded', function () {
+            // Fechar modais ao clicar no X
+            document.querySelectorAll('.close').forEach(closeBtn => {
+                closeBtn.addEventListener('click', function () {
+                    const modal = this.closest('.modal');
+                    modal.style.display = 'none';
+                });
+            });
+
+            // Fechar modais ao clicar fora deles
+            window.addEventListener('click', function (event) {
+                if (event.target.classList.contains('modal')) {
+                    event.target.style.display = 'none';
+                }
+            });
+
+            // Fechar modais com tecla ESC
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    document.querySelectorAll('.modal').forEach(modal => {
+                        modal.style.display = 'none';
+                    });
+                }
+            });
+
+            // Event listeners para modal de pacientes
+            document.getElementById('saveCurrentPatient').addEventListener('click', saveCurrentPatient);
+            document.getElementById('newPatient').addEventListener('click', newPatient);
+        });
+
+        // Limpar todos os dados
+        function clearAllData() {
+            if (confirm('Deseja limpar todos os dados e iniciar nova avaliação?')) {
+                // Limpar todos os campos do formulário
+                document.getElementById('nome').value = '';
+                document.getElementById('dataHoje').value = '';
+                document.getElementById('idadeGestacional').value = '';
+                document.getElementById('dataNascimento').value = '';
+                document.getElementById('bilirrubinaTotal').value = '';
+                document.getElementById('peso').value = '';
+                document.getElementById('hematocritoInicial').value = '';
+                document.getElementById('volumeSanguineo').value = '180';
+
+                // Ocultar seções de resultados
+                document.getElementById('results').style.display = 'none';
+
+                // Limpar registros de controle
+                controlRecords = [];
+                saveControlRecords();
+                displayControlRecords();
+                updateTotals();
+                clearCurrentInputs();
+
+                // Ocultar resumo final
+                document.getElementById('finalSummary').style.display = 'none';
+
+                // Limpar dados salvos
+                localStorage.removeItem(STORAGE_KEY);
+                localStorage.removeItem(CONTROL_RECORDS_KEY);
+
+                // Atualizar data atual
+                updateCurrentDate();
+
+                showAlert('Dados limpos. Nova avaliação iniciada.', 'success');
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('calculatorForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                calculateExsanguineoTransfusion();
+            });
+
+            document.getElementById('orientationsBtn').addEventListener('click', openOrientationsModal);
+            document.getElementById('savePatientBtn').addEventListener('click', saveCurrentPatient);
+            document.getElementById('loadPatientBtn').addEventListener('click', openPatientModal);
+
+            // Verificar se o botão existe antes de adicionar event listener
+            const generateBtn = document.getElementById('generateReportBtn');
+            if (generateBtn) {
+                console.log('Botao de gerar relatorio encontrado, adicionando event listener');
+                generateBtn.addEventListener('click', function () {
+                    console.log('Botao de gerar relatorio clicado');
+                    generateAndCopyReport();
+                });
+            } else {
+                console.error('Botao generateReportBtn nao encontrado!');
+            }
+
+            document.getElementById('clearBtn').addEventListener('click', clearAllData);
+
+            // Salvar dados automaticamente quando os campos mudam
+            document.querySelectorAll('input, select').forEach(input => {
+                input.addEventListener('input', saveData);
+                input.addEventListener('change', saveData);
+            });
+        });
+
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+
+</html>

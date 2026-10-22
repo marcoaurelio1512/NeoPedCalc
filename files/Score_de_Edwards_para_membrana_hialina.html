@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — Escala de Edwards (RX, uso educativo)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .alert {
+            background: #fffbe0;
+            border: 1px solid #f1e49a;
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+
+        .alert-title {
+            font-weight: 800;
+            color: #856404;
+            margin-bottom: 4px;
+        }
+
+        .btn {
+            border: 0;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 800;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: opacity 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .primary {
+            background: #111;
+            color: #fff;
+        }
+
+        .secondary {
+            background: #fff;
+            border: 1px solid #d9d9e6;
+            color: #111;
+        }
+
+        .total-score {
+            background: #e8fff0;
+            border: 1px solid #b4ffcf;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .score-number {
+            font-size: 48px;
+            font-weight: 900;
+            margin: 10px 0;
+            color: #111;
+        }
+
+        .interpretation {
+            background: #fffbe0;
+            border: 1px solid #f1e49a;
+            padding: 14px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .interpretation p {
+            margin: 0;
+            font-weight: 800;
+            font-size: 16px;
+        }
+
+        .report-section textarea {
+            font-family: monospace;
+            height: 150px;
+            margin-bottom: 10px;
+        }
+
+        .criteria-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .criteria-item {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 12px;
+            border-radius: 10px;
+        }
+
+        .criteria-item h4 {
+            font-size: 14px;
+            margin: 0 0 8px 0;
+            color: #111;
+        }
+
+        .score-display {
+            font-size: 12px;
+            color: #666;
+            margin-top: 6px;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #374151;
+            margin-top: 20px;
+        }
+
+        /* Modal Styles */
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(17, 17, 17, 0.1);
+            color: #111;
+            border: 2px solid #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-info:hover {
+            background: #111;
+            color: #fff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #2c3e50;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .modal {
+                padding: 10px;
+            }
+            .modal-content {
+                width: 95%;
+                max-height: 95vh;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <header>
+        <h1>Escala de Edwards — critérios radiológicos (educativo)</h1>
+        <p>Ferramenta educativa — pontuação radiológica conforme escala de Edwards (correlação com SDR na literatura; não substitui laudo nem decisão clínica)</p>
+        <div class="header-actions">
+            <button class="btn-info" onclick="abrirModal()">
+                Como usar
+            </button>
+        </div>
+    </header>
+    <div class="wrap">
+        <div class="card">
+            <div class="section">
+                <h2 style="margin-top:0;">Dados do Paciente</h2>
+                <div class="form-group">
+                    <label for="patientName">Nome do Paciente:</label>
+                    <input type="text" id="patientName" placeholder="Digite o nome completo">
+                </div>
+                <div class="form-group">
+                    <label for="birthDate">Data de Nascimento:</label>
+                    <input type="date" id="birthDate" onchange="calculateAge()">
+                </div>
+                <div class="form-group">
+                    <label for="gestationalAge">Idade Gestacional ao Nascer (semanas):</label>
+                    <input type="number" id="gestationalAge" min="20" max="42" value="30" onchange="calculateCorrectedAge()">
+                </div>
+                <div class="form-group">
+                    <label for="chronologicalAge">Idade Cronológica:</label>
+                    <input type="text" id="chronologicalAge" readonly placeholder="Calculada automaticamente" class="field-readonly">
+                </div>
+                <div class="form-group">
+                    <label for="correctedAge">Idade Gestacional Corrigida:</label>
+                    <input type="text" id="correctedAge" readonly placeholder="Calculada automaticamente" class="field-readonly">
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="section">
+                <h2>Avaliação Radiológica - RX de Tórax</h2>
+                    <div class="criteria-grid">
+                        <div class="criteria-item">
+                            <h4>Granulações</h4>
+                            <select id="granularity" onchange="calculateScore()">
+                                <option value="1">Pouco visíveis</option>
+                                <option value="2">Facilmente visíveis</option>
+                                <option value="3">Áreas opacas e aeradas</option>
+                                <option value="4">Predomínio de áreas opacas</option>
+                                <option value="5">Pulmões opacos</option>
+                            </select>
+                            <div class="score-display" id="granularityScore">1 ponto</div>
+                        </div>
+
+                        <div class="criteria-item">
+                            <h4>Broncograma Aéreo</h4>
+                            <select id="airBronchogram" onchange="calculateScore()">
+                                <option value="1">Nenhum</option>
+                                <option value="2">Tênue nas bases</option>
+                                <option value="3">Óbvio</option>
+                                <option value="4">Marcado</option>
+                                <option value="5">Nítido ou ausente</option>
+                            </select>
+                            <div class="score-display" id="airBronchogramScore">1 ponto</div>
+                        </div>
+
+                        <div class="criteria-item">
+                            <h4>Margens Cardíaca e Diafragmática</h4>
+                            <select id="margins" onchange="calculateScore()">
+                                <option value="1">Nítidas</option>
+                                <option value="2">Menos Nítidas</option>
+                                <option value="3">Discretamente imprecisa</option>
+                                <option value="4">Distinção difícil</option>
+                                <option value="5">Indiscernível</option>
+                            </select>
+                            <div class="score-display" id="marginsScore">1 ponto</div>
+                        </div>
+
+                        <div class="criteria-item">
+                            <h4>Aeração</h4>
+                            <select id="aeration" onchange="calculateScore()">
+                                <option value="1">Normal</option>
+                                <option value="2">Quase Normal</option>
+                                <option value="3">Normal ou pouco diminuída</option>
+                                <option value="4">Diminuída</option>
+                                <option value="5">Quase ausente</option>
+                            </select>
+                            <div class="score-display" id="aerationScore">1 ponto</div>
+                        </div>
+                    </div>
+
+                    <div class="total-score">
+                        <h3>SCORE TOTAL</h3>
+                        <div class="score-number" id="totalScore">4</div>
+                        <p>Pontuação de 4 a 20 pontos</p>
+                    </div>
+
+                    <div class="interpretation">
+                        <h4>Resultado informado (escala Edwards)</h4>
+                        <p id="interpretationText">Total inicial — correlacione com RX oficial e quadro clínico.</p>
+                    </div>
+
+                    <div class="alert" style="margin-top:14px;text-align:left;">
+                        <div class="alert-title">Como interpretar este resultado</div>
+                        <p style="margin:0;font-size:13px;line-height:1.5;color:#374151;">
+                            O valor é a <strong>soma educativa</strong> dos domínios radiológicos descritos por Edwards e correlatos. <strong>Não é diagnóstico automático.</strong> Compare com laudo radiológico, evolução clínica e protocolos institucionais.
+                        </p>
+                    </div>
+
+                    <div class="card" style="margin-top:12px;padding:12px;background:#f8fafc;border:1px solid #e2e8f0;">
+                        <h4 style="margin:0 0 8px;font-size:14px;color:#1e293b;">Referência bibliográfica principal</h4>
+                        <p style="margin:0;font-size:12px;line-height:1.45;color:#475569;">Edwards DK, Hilton SV, Merritt TA et al. Respiratory distress syndrome treated with human surfactant: radiographic findings. <em>Radiology</em>. 1985; 157:329-334.</p>
+                    </div>
+                </div>
+
+                <div class="report-section">
+                    <h3>Texto informativo para prontuário eletrônico (revisar)</h3>
+                    <div class="button-group">
+                        <button type="button" class="btn primary" onclick="copyReport(event)">Copiar texto (conferir antes de arquivar)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <p>Uso exclusivamente educacional e informativo para profissionais de saúde. Não prescreve nem substitui laudo de imagem ou julgamento clínico.</p>
+            <p><strong>Referência:</strong> Edwards DK, Hilton SV, Merritt TA et al. Respiratory distress syndrome treated with human surfactant: radiographic findings. Radiology. 1985; 157:329-334</p>
+        </div>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar (informação)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta página reproduz a <strong>soma de quatro domínios radiológicos</strong> associados na literatura ao padrão de SDR / membrana hialina (escala de Edwards e trabalhos correlatos). Serve para <strong>estudo e padronização de linguagem radiológica</strong>, não para emitir diagnóstico nem indicar tratamento.</p>
+                
+                <h3>Fórmula (implementação desta calculadora)</h3>
+                <div class="formula-box">
+                    <strong>Total = soma de 4 critérios</strong>, cada um pontuado de <strong>1 a 5</strong>:<br><br>
+                    • Granulações (reticulogranular)<br>
+                    • Broncograma aéreo<br>
+                    • Nitidez das margens cardíaca e diafragmática<br>
+                    • Grau de aeração pulmonar<br><br>
+                    <strong>Faixa do total nesta ferramenta:</strong> 4 a 20 pontos.<br>
+                    <strong>Observação:</strong> Outras publicações podem usar variantes de itens ou cortes numéricos; sempre confira o artigo original e o protocolo local.
+                </div>
+
+                <h3>Domínios avaliados</h3>
+                <ul>
+                    <li><strong>Granulações:</strong> intensidade do padrão reticulogranular</li>
+                    <li><strong>Broncograma aéreo:</strong> visibilidade das vias aéreas preenchidas por ar</li>
+                    <li><strong>Margens:</strong> nitidez do contorno cardíaco e diafragmático</li>
+                    <li><strong>Aeração:</strong> impressão global de volume/ventilação no RX</li>
+                </ul>
+
+                <h3>Instruções de uso</h3>
+                <ol>
+                    <li>Analise o RX de tórax com qualidade diagnóstica</li>
+                    <li>Atribua 1–5 em cada domínio, conforme as opções da lista</li>
+                    <li>O total atualiza automaticamente ao mudar qualquer critério</li>
+                    <li>Correlacione com clínica, gasometria e laudo oficial — esta tela não substitui o radiologista</li>
+                </ol>
+
+                <h3>Faixas de total (referência informal nesta página)</h3>
+                <p style="font-size:14px;line-height:1.5;">Para fins apenas de <strong>descrição do grau radiológico na escala somada aqui</strong> (não é laudo nem prognóstico):</p>
+                <ul>
+                    <li><strong>4–8 pontos:</strong> soma na faixa inferior — padrão usualmente descrito como menos intenso na correlação radiológica clássica com SDR</li>
+                    <li><strong>9–12 pontos:</strong> faixa intermediária</li>
+                    <li><strong>13–20 pontos:</strong> faixa superior — achados radiológicos em geral mais acentuados na mesma correlação descrita na literatura</li>
+                </ul>
+
+                <h3>O que a literatura costuma correlacionar (não prescreve conduta)</h3>
+                <p style="font-size:14px;line-height:1.5;">Estudos históricos relacionam escores radiológicos mais altos a quadros de maior comprometimento pulmonar em <strong>contextos de pesquisa e série de casos</strong>. <strong>Não há recomendação automática</strong> de oxigênio, CPAP, surfactante ou ventilação mecânica a partir desta calculadora — decisões são assistenciais e dependem de diretriz institucional e julgamento clínico.</p>
+
+                <h3>Considerações importantes</h3>
+                <ul>
+                    <li>Subjetividade entre observadores é esperada; use como apoio ao ensino, não como veredicto</li>
+                    <li>Idade gestacional e técnica do exame influenciam a leitura</li>
+                    <li>Reavalie o RX conforme a evolução</li>
+                    <li>Mantenha diagnósticos diferenciais em mente (lista abaixo)</li>
+                </ul>
+
+                <h3>Uso pretendido (informativo)</h3>
+                <ul>
+                    <li>Revisão de critérios radiológicos e vocabulário</li>
+                    <li>Comunicação entre equipes, sempre com ressalva educativa</li>
+                    <li>Leitura cruzada com referências bibliográficas</li>
+                </ul>
+
+                <h3>Diagnósticos diferenciais (contexto educativo)</h3>
+                <ul>
+                    <li><strong>Taquipneia Transitória:</strong> Padrão mais leve</li>
+                    <li><strong>Pneumonia:</strong> Padrão assimétrico</li>
+                    <li><strong>Síndrome de Aspiração:</strong> Padrão irregular</li>
+                    <li><strong>Hemorragia Pulmonar:</strong> Consolidação densa</li>
+                    <li><strong>Cardiopatia:</strong> Padrão vascular</li>
+                </ul>
+
+                <h3>Limitações</h3>
+                <ul>
+                    <li>Subjetividade na interpretação radiológica</li>
+                    <li>Pode variar entre radiologistas</li>
+                    <li>Não considera todos os aspectos clínicos</li>
+                    <li>Pode ser influenciado por técnica radiológica</li>
+                    <li>Não substitui avaliação clínica completa</li>
+                    <li>Requer experiência em radiologia neonatal</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Edwards DK, Hilton SW. Neonatal chest radiology. Radiol Clin North Am. 1975;13(2):227-45.<br>
+                    - Edwards DK. Radiology of hyaline membrane disease. Pediatr Radiol. 1986;16(1):2-8.<br>
+                    - Cleveland RH. A radiologic update on medical diseases of the newborn chest. Pediatr Radiol. 1995;25(8):631-7.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        function calculateScore() {
+            const granularity = parseInt(document.getElementById('granularity').value);
+            const airBronchogram = parseInt(document.getElementById('airBronchogram').value);
+            const margins = parseInt(document.getElementById('margins').value);
+            const aeration = parseInt(document.getElementById('aeration').value);
+            
+            const total = granularity + airBronchogram + margins + aeration;
+            
+            // Atualizar displays individuais
+            document.getElementById('granularityScore').textContent = granularity + ' ponto' + (granularity > 1 ? 's' : '');
+            document.getElementById('airBronchogramScore').textContent = airBronchogram + ' ponto' + (airBronchogram > 1 ? 's' : '');
+            document.getElementById('marginsScore').textContent = margins + ' ponto' + (margins > 1 ? 's' : '');
+            document.getElementById('aerationScore').textContent = aeration + ' ponto' + (aeration > 1 ? 's' : '');
+            
+            // Atualizar score total
+            document.getElementById('totalScore').textContent = total;
+            
+            // Atualizar interpretação
+            let interpretation = '';
+            if (total <= 8) {
+                interpretation = 'Total ' + total + ' pontos — faixa inferior da soma (4–8): padrão radiológico usualmente descrito na literatura como menos intenso no espectro associado à SDR; não confirma diagnóstico nem substitui laudo.';
+            } else if (total <= 12) {
+                interpretation = 'Total ' + total + ' pontos — faixa intermediária (9–12): correlação radiológica clássica de intensidade moderada no mesmo arcabouço descrito por Edwards et al.; correlacionar com clínica e laudo.';
+            } else {
+                interpretation = 'Total ' + total + ' pontos — faixa superior (13–20): achados em geral mais acentuados na escala somada aqui; gravidade e conduta dependem do contexto clínico e não são definidas por este total.';
+            }
+            
+            document.getElementById('interpretationText').textContent = interpretation;
+            
+        }
+
+        function getSelectedText(selectId) {
+            const select = document.getElementById(selectId);
+            return select.options[select.selectedIndex].text;
+        }
+
+        function calculateAge() {
+            const birthDate = document.getElementById('birthDate').value;
+            if (!birthDate) return;
+            
+            const birth = new Date(birthDate);
+            const today = new Date();
+            
+            let years = today.getFullYear() - birth.getFullYear();
+            let months = today.getMonth() - birth.getMonth();
+            let days = today.getDate() - birth.getDate();
+            
+            if (days < 0) {
+                months--;
+                days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+            }
+            
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+            
+            let ageText = '';
+            if (years > 0) {
+                ageText += years + ' ano' + (years > 1 ? 's' : '');
+                if (months > 0) {
+                    ageText += ' e ' + months + ' mês' + (months > 1 ? 'es' : '');
+                }
+            } else if (months > 0) {
+                ageText = months + ' mês' + (months > 1 ? 'es' : '');
+            } else {
+                ageText = days + ' dia' + (days > 1 ? 's' : '');
+            }
+            
+            document.getElementById('chronologicalAge').value = ageText;
+            calculateCorrectedAge();
+        }
+
+        function calculateCorrectedAge() {
+            const birthDate = document.getElementById('birthDate').value;
+            const gestationalAge = parseInt(document.getElementById('gestationalAge').value);
+            
+            if (!birthDate || !gestationalAge) return;
+            
+            const birth = new Date(birthDate);
+            const today = new Date();
+            
+            // Calcular idade cronológica em dias
+            const timeDiff = today.getTime() - birth.getTime();
+            const chronologicalDays = Math.floor(timeDiff / (1000 * 3600 * 24));
+            
+            // Calcular idade gestacional corrigida
+            const correctedWeeks = Math.floor((chronologicalDays + (gestationalAge * 7)) / 7);
+            const correctedDays = (chronologicalDays + (gestationalAge * 7)) % 7;
+            
+            let correctedAgeText = correctedWeeks + ' semanas';
+            if (correctedDays > 0) {
+                correctedAgeText += ' e ' + correctedDays + ' dia' + (correctedDays > 1 ? 's' : '');
+            }
+            
+            document.getElementById('correctedAge').value = correctedAgeText;
+        }
+
+
+        function copyReport(ev) {
+            const patientName = document.getElementById('patientName').value || '[Nome do Paciente]';
+            const birthDate = document.getElementById('birthDate').value || '[Data de Nascimento]';
+            const gestationalAge = document.getElementById('gestationalAge').value || '[Idade Gestacional]';
+            const chronologicalAge = document.getElementById('chronologicalAge').value || '[Idade Cronológica]';
+            const correctedAge = document.getElementById('correctedAge').value || '[Idade Gestacional Corrigida]';
+            
+            const granularity = parseInt(document.getElementById('granularity').value);
+            const airBronchogram = parseInt(document.getElementById('airBronchogram').value);
+            const margins = parseInt(document.getElementById('margins').value);
+            const aeration = parseInt(document.getElementById('aeration').value);
+            const total = granularity + airBronchogram + margins + aeration;
+            
+            const granularityText = getSelectedText('granularity');
+            const airBronchogramText = getSelectedText('airBronchogram');
+            const marginsText = getSelectedText('margins');
+            const aerationText = getSelectedText('aeration');
+            
+            const interpretation = document.getElementById('interpretationText').textContent;
+            const currentDate = new Date().toLocaleDateString('pt-BR');
+            var legalFoot = (typeof window.neopedLegalReportFooter === 'function') ? window.neopedLegalReportFooter() : '';
+            
+            const reportText = `RESUMO INFORMATIVO — SOMA DOS CRITÉRIOS RADIOLÓGICOS (ESCALA EDWARDS, FERRAMENTA EDUCATIVA)
+
+NOTA: Texto gerado para apoio informativo. Não constitui laudo de imagem nem diagnóstico. Interpretação e conduta são de responsabilidade do profissional de saúde.
+
+Identificação (opcional):
+Nome: ${patientName}
+Data de Nascimento: ${birthDate}
+Idade Gestacional ao Nascer: ${gestationalAge} semanas
+Idade Cronológica: ${chronologicalAge}
+Idade Gestacional Corrigida: ${correctedAge}
+
+Critérios pontuados nesta tela:
+- Granulações: ${granularityText} (${granularity} ponto${granularity > 1 ? 's' : ''})
+- Broncograma Aéreo: ${airBronchogramText} (${airBronchogram} ponto${airBronchogram > 1 ? 's' : ''})
+- Margens Cardíaca e Diafragmática: ${marginsText} (${margins} ponto${margins > 1 ? 's' : ''})
+- Aeração: ${aerationText} (${aeration} ponto${aeration > 1 ? 's' : ''})
+
+Total informado: ${total} pontos (faixa 4–20 nesta implementação)
+
+Descrição da faixa (educativa, conforme tela): ${interpretation}
+
+Referência: Edwards DK, Hilton SV, Merritt TA et al. Respiratory distress syndrome treated with human surfactant: radiographic findings. Radiology. 1985; 157:329-334
+
+Data de geração do texto: ${currentDate}` + legalFoot;
+            
+            var button = (ev && ev.target) || document.querySelector('.report-section .btn.primary');
+            var originalBg = button ? button.style.backgroundColor : '';
+            
+            navigator.clipboard.writeText(reportText).then(function() {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                if (button) {
+                    var originalText = button.textContent;
+                    button.textContent = 'Copiado!';
+                    button.style.backgroundColor = '#28a745';
+                    setTimeout(function() {
+                        button.textContent = originalText;
+                        button.style.backgroundColor = originalBg;
+                    }, 2000);
+                }
+            }).catch(function(err) {
+                console.error('Erro ao copiar: ', err);
+                if (typeof window.neopedCopyFail === 'function') window.neopedCopyFail(); else alert('Nao foi possivel copiar automaticamente. Revise o texto e copie manualmente para uso informativo.');
+            });
+        }
+
+
+        // Inicializar calculadora
+        document.addEventListener('DOMContentLoaded', function() {
+            calculateScore();
+            // Definir data atual como padrão para facilitar o teste
+            const today = new Date();
+            const todayString = today.getFullYear() + '-' + 
+                String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+                String(today.getDate()).padStart(2, '0');
+            document.getElementById('birthDate').value = todayString;
+            calculateAge();
+        });
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

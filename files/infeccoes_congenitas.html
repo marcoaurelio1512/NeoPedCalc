@@ -1,0 +1,1536 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>NeoPedCalc — Hub: Infecções congênitas (educativo)</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .row3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width:900px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .row3 {
+                grid-template-columns: 1fr;
+            }
+
+            .wrap {
+                padding: 12px;
+            }
+
+            header {
+                padding: 15px 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .wrap {
+                padding: 10px;
+            }
+
+            header {
+                padding: 12px 10px;
+            }
+
+            h1 {
+                font-size: 16px;
+            }
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+        }
+
+        select,
+        input,
+        textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        textarea {
+            min-height: 72px;
+            resize: vertical;
+        }
+
+        .btnrow {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            border: 0;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .primary {
+            background: #111;
+            color: #fff;
+        }
+
+        .ghost {
+            background: #fff;
+            border: 1px solid #d9d9e6;
+        }
+
+        .muted {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .k {
+            font-weight: 900;
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-weight: 900;
+            font-size: 12px;
+        }
+
+        .red {
+            background: #ffe5e5;
+            color: #a40000;
+        }
+
+        .orange {
+            background: #fff2d9;
+            color: #8a4b00;
+        }
+
+        .yellow {
+            background: #fffbe0;
+            color: #6c5a00;
+        }
+
+        .green {
+            background: #e8fff0;
+            color: #0a6a2a;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            background: #0b1020;
+            color: #eaf2ff;
+            padding: 12px;
+            border-radius: 12px;
+            overflow: auto;
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .notice {
+            background: #fffbe0;
+            border: 1px solid #f1e49a;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            color: #5a4a00;
+        }
+
+        .alert {
+            background: #ffe5e5;
+            border: 1px solid #e5e7eb;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            color: #7a0000;
+        }
+
+        .errbox {
+            display: none;
+            background: #111;
+            color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .errbox code {
+            color: #ffd2d2;
+        }
+
+        @media print {
+            body {
+                background: #fff;
+            }
+
+            header,
+            .no-print {
+                display: none !important;
+            }
+
+            .card {
+                border: 0;
+                margin: 0;
+                padding: 0;
+            }
+
+            pre {
+                background: #fff;
+                color: #000;
+                border: 1px solid #ddd;
+            }
+
+            .wrap {
+                max-width: 100%;
+                padding: 0;
+            }
+        }
+
+        /* Modal Styles */
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(17, 17, 17, 0.1);
+            color: #111;
+            border: 2px solid #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-info:hover {
+            background: #111;
+            color: #fff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #2c3e50;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .modal {
+                padding: 10px;
+                align-items: flex-start;
+            }
+
+            .modal-content {
+                width: 95%;
+                max-width: 95%;
+                margin: 20px auto;
+                max-height: calc(100vh - 40px);
+            }
+
+            .modal-body {
+                padding: 20px;
+                max-height: calc(100vh - 120px);
+            }
+
+            .modal-header {
+                padding: 15px 20px;
+            }
+
+            .modal-header h2 {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal {
+                padding: 5px;
+                align-items: flex-start;
+            }
+
+            .modal-content {
+                width: 98%;
+                max-width: 98%;
+                margin: 10px auto;
+                max-height: calc(100vh - 20px);
+                border-radius: 10px;
+            }
+
+            .modal-body {
+                padding: 15px;
+                max-height: calc(100vh - 100px);
+            }
+
+            .modal-header {
+                padding: 12px 15px;
+                border-radius: 10px 10px 0 0;
+            }
+
+            .modal-header h2 {
+                font-size: 16px;
+            }
+
+            .modal-body h3 {
+                font-size: 16px;
+            }
+
+            .close {
+                font-size: 24px;
+            }
+
+            .formula-box,
+            .reference-box {
+                padding: 12px;
+                font-size: 13px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+
+<body>
+    <header class="no-print">
+        <h1>NeoPedCalc — Hub Neonatal: Infecções Congênitas (classificação + prescrição guiada)</h1>
+        <div class="header-actions">
+            <button class="btn-info" onclick="abrirModal()">
+                Como usar
+            </button>
+        </div>
+    </header>
+
+    <div class="wrap">
+
+        <!-- DADOS GERAIS -->
+        <div class="card no-print">
+            <div class="row3">
+                <div>
+                    <label>Peso do RN (kg)</label>
+                    <input id="peso" type="number" step="0.01" min="0.5" max="8" placeholder="Ex.: 3,00"
+                        style="max-width:160px;" />
+                </div>
+                <div>
+                    <label>Idade gestacional ao nascer (semanas)</label>
+                    <input id="ig" type="number" step="1" min="22" max="43" placeholder="Ex.: 39"
+                        style="max-width:160px;" />
+                </div>
+                <div>
+                    <label>Idade pós-natal (dias)</label>
+                    <input id="idadeDias" type="number" step="1" min="0" max="365" placeholder="Ex.: 2"
+                        style="max-width:160px;" />
+                </div>
+            </div>
+
+            <div style="margin-top:12px;">
+                <label>Escolha a infecção</label>
+                <select id="tema">
+                    <option value="sifilis">Sífilis Congênita</option>
+                    <option value="toxo">Toxoplasmose Congênita</option>
+                    <option value="cmv">Citomegalovírus (CMV) Congênito</option>
+                    <option value="rubeola">Rubéola Congênita (SRC)</option>
+                    <option value="hiv">RN Exposto ao HIV (profilaxia)</option>
+                    <option value="hepb">Hepatite B (profilaxia ao nascer)</option>
+                </select>
+            </div>
+
+            <div class="notice" style="margin-top:10px;">
+                <span class="k">Nota</span>: módulo operacional. Ajuste final é clínico e pode variar por protocolo
+                local.
+            </div>
+
+            <div id="errbox" class="errbox">
+                <div><span class="k">Erro no app</span></div>
+                <div id="errtext"></div>
+            </div>
+        </div>
+
+        <!-- SÍFILIS -->
+        <div class="card" id="sec_sifilis">
+            <h3 style="margin:0 0 10px;">Sífilis Congênita</h3>
+            <div class="grid">
+                <div><label>RN sintomático?</label><select id="s_rnSint">
+                        <option value="nao">Não</option>
+                        <option value="sim">Sim</option>
+                    </select></div>
+                <div><label>VDRL materno no parto</label><select id="s_vdrlMae"></select></div>
+                <div><label>VDRL do RN</label><select id="s_vdrlRN"></select></div>
+                <div><label>Tratamento materno adequado?</label><select id="s_tratAdeq">
+                        <option value="sim">Sim</option>
+                        <option value="nao">Não</option>
+                        <option value="ns">Não sei</option>
+                    </select></div>
+                <div><label>Tratamento concluído &gt;30 dias antes do parto?</label><select id="s_t30">
+                        <option value="sim">Sim</option>
+                        <option value="nao">Não</option>
+                        <option value="ns">Não sei</option>
+                    </select></div>
+                <div><label>Queda documentada do VDRL?</label><select id="s_queda">
+                        <option value="sim">Sim</option>
+                        <option value="nao">Não</option>
+                        <option value="ns">Não sei</option>
+                    </select></div>
+                <div><label>Parceiro tratado?</label><select id="s_parceiro">
+                        <option value="sim">Sim</option>
+                        <option value="nao">Não</option>
+                        <option value="ns">Não sei</option>
+                    </select></div>
+                <div><label>Imunoglobulina M treponêmica do recém-nascido</label><select id="s_igm">
+                        <option value="nr">Não realizado</option>
+                        <option value="neg">Não reagente</option>
+                        <option value="pos">Reagente</option>
+                    </select></div>
+            </div>
+        </div>
+
+        <!-- TOXO -->
+        <div class="card hide" id="sec_toxo">
+            <h3 style="margin:0 0 10px;">Toxoplasmose Congênita</h3>
+
+            <div class="notice" style="margin-bottom:10px;">
+                <span class="k">Avidez do IgG (materna)</span>: “Alta” sugere infecção antiga (em geral &gt;4 meses) e
+                reduz
+                probabilidade de infecção na gestação. “Baixa” sugere infecção recente e aumenta risco fetal.
+            </div>
+
+            <div class="grid">
+                <div><label>RN sintomático?</label><select id="t_rnSint">
+                        <option value="nao">Não</option>
+                        <option value="sim">Sim</option>
+                    </select></div>
+                <div><label>Ultrassonografia/neuroimagem alterada?</label><select id="t_img">
+                        <option value="nao">Não</option>
+                        <option value="sim">Sim</option>
+                        <option value="nr">Não realizado</option>
+                    </select></div>
+                <div><label>Fundo de olho alterado?</label><select id="t_fo">
+                        <option value="nao">Não</option>
+                        <option value="sim">Sim</option>
+                        <option value="nr">Não realizado</option>
+                    </select></div>
+
+                <div><label>Imunoglobulina M anti-Toxoplasma do recém-nascido</label><select id="t_igm">
+                        <option value="nr">Não realizado</option>
+                        <option value="neg">Negativo</option>
+                        <option value="pos">Positivo</option>
+                    </select></div>
+                <div><label>Imunoglobulina A anti-Toxoplasma do recém-nascido</label><select id="t_iga">
+                        <option value="nr">Não realizado</option>
+                        <option value="neg">Negativo</option>
+                        <option value="pos">Positivo</option>
+                    </select></div>
+                <div><label>Reação em cadeia da polimerase para Toxoplasma</label><select id="t_pcr">
+                        <option value="nr">Não realizado</option>
+                        <option value="neg">Negativo</option>
+                        <option value="pos">Positivo</option>
+                    </select></div>
+
+                <div><label>Infecção materna na gestação?</label><select id="t_maeInf">
+                        <option value="sim">Sim</option>
+                        <option value="nao">Não</option>
+                        <option value="ns">Não sei</option>
+                    </select></div>
+
+                <!-- ✅ Avidez IgG materna -->
+                <div><label>Avidez do IgG materno</label><select id="t_avidez">
+                        <option value="nr">Não realizado</option>
+                        <option value="alta">Alta</option>
+                        <option value="baixa">Baixa</option>
+                        <option value="inter">Intermediária</option>
+                    </select></div>
+
+                <div><label>Seguimento garantido?</label><select id="t_seg">
+                        <option value="sim">Sim</option>
+                        <option value="nao">Não</option>
+                        <option value="ns">Não sei</option>
+                    </select></div>
+            </div>
+        </div>
+
+        <!-- CMV -->
+        <div class="card hide" id="sec_cmv">
+            <h3 style="margin:0 0 10px;">CMV Congênito</h3>
+            <div class="alert" id="cmvJanela" style="display:none; margin-bottom:10px;">
+                <span class="k">Janela diagnóstica</span>: após <span class="k">21 dias</span>, Reação em cadeia da
+                polimerase
+                positiva não diferencia congênito versus pós-natal.
+            </div>
+            <div class="grid">
+                <div><label>Reação em cadeia da polimerase para citomegalovírus</label><select id="c_pcr">
+                        <option value="nr">Não realizado</option>
+                        <option value="neg">Negativo</option>
+                        <option value="pos">Positivo</option>
+                    </select></div>
+                <div><label>Coleta até 21 dias?</label><select id="c_ate21">
+                        <option value="sim">Sim</option>
+                        <option value="nao">Não</option>
+                        <option value="ns">Não sei</option>
+                    </select></div>
+                <div><label>RN sintomático?</label><select id="c_sint">
+                        <option value="nao">Não</option>
+                        <option value="sim">Sim</option>
+                    </select></div>
+                <div><label>Sistema nervoso central alterado?</label><select id="c_snc">
+                        <option value="nao">Não</option>
+                        <option value="sim">Sim</option>
+                        <option value="nr">Não realizado</option>
+                    </select></div>
+                <div><label>Perda auditiva?</label><select id="c_aud">
+                        <option value="nao">Não</option>
+                        <option value="sim">Sim</option>
+                        <option value="nr">Não realizado</option>
+                    </select></div>
+                <div><label>Sinais sistêmicos?</label><select id="c_sist">
+                        <option value="nao">Não</option>
+                        <option value="sim">Sim</option>
+                        <option value="nr">Não realizado</option>
+                    </select></div>
+                <div><label>Consegue via oral?</label><select id="c_vo">
+                        <option value="sim">Sim</option>
+                        <option value="nao">Não</option>
+                    </select></div>
+                <div><label>Observação clínica</label><textarea id="c_obs"
+                        placeholder="Ex.: microcefalia, petéquias, RCIU, etc."></textarea></div>
+            </div>
+        </div>
+
+        <!-- RUBÉOLA -->
+        <div class="card hide" id="sec_rubeola">
+            <h3 style="margin:0 0 10px;">Rubéola Congênita (SRC)</h3>
+            <div class="grid">
+                <div><label>Rubéola na mãe na gestação?</label><select id="r_mae">
+                        <option value="sim">Sim</option>
+                        <option value="nao">Não</option>
+                        <option value="ns">Não sei</option>
+                    </select></div>
+                <div><label>RN com sinais compatíveis?</label><select id="r_sinais">
+                        <option value="nao">Não</option>
+                        <option value="sim">Sim</option>
+                    </select></div>
+                <div><label>Imunoglobulina M para rubéola no recém-nascido</label><select id="r_igm">
+                        <option value="nr">Não realizado</option>
+                        <option value="neg">Negativo</option>
+                        <option value="pos">Positivo</option>
+                    </select></div>
+                <div><label>Reação em cadeia da polimerase para rubéola</label><select id="r_pcr">
+                        <option value="nr">Não realizado</option>
+                        <option value="neg">Negativo</option>
+                        <option value="pos">Positivo</option>
+                    </select></div>
+            </div>
+        </div>
+
+        <!-- HIV -->
+        <div class="card hide" id="sec_hiv">
+            <h3 style="margin:0 0 10px;">RN Exposto ao HIV — Profilaxia</h3>
+            <div class="grid">
+                <div><label>Risco</label><select id="h_risco">
+                        <option value="baixo">Baixo risco</option>
+                        <option value="alto">Alto risco</option>
+                    </select></div>
+                <div><label>Consegue via oral?</label><select id="h_vo">
+                        <option value="sim">Sim</option>
+                        <option value="nao">Não</option>
+                    </select></div>
+                <div><label>Mãe usou raltegravir 2–24h antes do parto?</label><select id="h_ral_mae">
+                        <option value="nao">Não</option>
+                        <option value="sim">Sim</option>
+                        <option value="ns">Não sei</option>
+                    </select></div>
+                <div><label>Observação</label><textarea id="h_obs"
+                        placeholder="Ex.: sem aleitamento, profilaxia iniciada na sala de parto, etc."></textarea></div>
+            </div>
+        </div>
+
+        <!-- HEP B -->
+        <div class="card hide" id="sec_hepb">
+            <h3 style="margin:0 0 10px;">Hepatite B — Profilaxia ao nascer</h3>
+            <div class="grid">
+                <div>
+                    <label>HBsAg materno</label>
+                    <select id="b_hbsag">
+                        <option value="pos">Reagente/positivo</option>
+                        <option value="neg">Não reagente/negativo</option>
+                        <option value="des">Desconhecido</option>
+                    </select>
+                </div>
+                <div><label>Prematuro &lt;34 semanas ou &lt;2.000 g?</label><select id="b_prem">
+                        <option value="nao">Não</option>
+                        <option value="sim">Sim</option>
+                    </select></div>
+            </div>
+        </div>
+
+        <!-- BOTÕES -->
+        <div class="card no-print">
+            <div class="btnrow">
+                <button id="btnCalcular" class="primary">Classificar & Gerar Condutas</button>
+                <button id="btnCopiar" class="ghost">Copiar texto para prontuário</button>
+                <button id="btnPrint" class="ghost">Imprimir / PDF</button>
+                <button id="btnLimpar" class="ghost">Limpar</button>
+            </div>
+            <div class="muted" style="margin-top:8px;">Campos vazios assumem 0 (como antes).</div>
+        </div>
+
+        <!-- SAÍDA -->
+        <div class="card" id="outCard" style="display:none;">
+            <div id="badge"></div>
+
+            <h3 style="margin:10px 0 6px;">Conduta</h3>
+            <div id="conduta"></div>
+
+            <h3 style="margin:10px 0 6px;">Prescrição guiada</h3>
+            <div id="rx"></div>
+
+            <h3 style="margin:10px 0 6px;">Checklist de Alta</h3>
+            <div id="alta"></div>
+
+            <h3 style="margin:10px 0 6px;">Texto pronto (copiar no prontuário)</h3>
+            <pre id="texto"></pre>
+        </div>
+
+        <!-- REFERÊNCIAS -->
+        <div class="card">
+            <h3 style="margin:0 0 10px;">Referências (MS / SBP)</h3>
+            <div class="muted" style="line-height:1.6;" id="refsBox">
+                <div><span class="k">Sífilis congênita</span> — Ministério da Saúde. Protocolo Clínico e Diretrizes
+                    Terapêuticas
+                    de Infecções Sexualmente Transmissíveis (manejo na gestação e conduta neonatal).</div>
+                <div style="margin-top:6px;"><span class="k">Toxoplasmose congênita</span> — Sociedade Brasileira de
+                    Pediatria.
+                    Manual/Documento de Toxoplasmose Congênita e diretrizes nacionais.</div>
+                <div style="margin-top:6px;"><span class="k">Citomegalovírus congênito</span> — confirmação por reação
+                    em cadeia
+                    da polimerase até 21 dias; tratamento focado em sintomáticos (sistema nervoso central) e
+                    monitorização.</div>
+                <div style="margin-top:6px;"><span class="k">Rubéola congênita</span> — Ministério da Saúde. Síndrome da
+                    rubéola
+                    congênita e vigilância epidemiológica.</div>
+                <div style="margin-top:6px;"><span class="k">HIV</span> — Ministério da Saúde. Protocolo Clínico e
+                    Diretrizes
+                    Terapêuticas para manejo da infecção pelo HIV em crianças expostas e profilaxia neonatal.</div>
+                <div style="margin-top:6px;"><span class="k">Hepatite B</span> — Ministério da Saúde. Protocolo Clínico
+                    e
+                    Diretrizes Terapêuticas da Hepatite B e recomendações de imunização ao nascer.</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        (() => {
+            // ===== error UI
+            const errbox = document.getElementById("errbox");
+            const errtext = document.getElementById("errtext");
+            function showErr(e) {
+                if (!errbox) return;
+                errbox.style.display = "block";
+                errtext.innerHTML = `<code>${String(e && (e.stack || e.message || e))}</code>`;
+            }
+            window.addEventListener("error", (ev) => showErr(ev.error || ev.message));
+            window.addEventListener("unhandledrejection", (ev) => showErr(ev.reason));
+
+            const titulos = ["NR", "1:1", "1:2", "1:4", "1:8", "1:16", "1:32", "1:64", "1:128"];
+
+            const $ = (id) => {
+                const el = document.getElementById(id);
+                if (!el) throw new Error("Elemento não encontrado: #" + id);
+                return el;
+            };
+
+            // ✅ VDRL: manter 1:2, 1:8 etc; mostrar "Não realizado" no lugar de "NR" no dropdown
+            function fillSelect(id) {
+                const el = $(id);
+                el.innerHTML = "";
+                for (const t of titulos) {
+                    const op = document.createElement("option");
+                    op.value = t;
+                    op.textContent = (t === "NR") ? "Não realizado" : t;
+                    el.appendChild(op);
+                }
+            }
+
+            function round(n) { return Math.round(n); }
+            function fmt(n) { return Number(n).toLocaleString("pt-BR"); }
+
+            // sem mudar lógica: vazio vira 0
+            function kg() { return parseFloat($("peso").value || "0"); }
+            function ig() { return parseFloat($("ig").value || "0"); }
+            function dias() { return parseInt($("idadeDias").value || "0", 10); }
+
+            // ✅ corrigida
+            function tituloToLog2(t) {
+                if (t === "NR") return null;
+                const parts = t.split(":");
+                const n = parseInt(parts[1], 10);
+                return Math.log2(n);
+            }
+
+            function diffDiluicoes(rn, mae) {
+                const lr = tituloToLog2(rn);
+                const lm = tituloToLog2(mae);
+                if (lr === null || lm === null) return 0;
+                return lr - lm;
+            }
+
+            function htmlToPlain(el) {
+                if (!el) return "";
+                const clone = el.cloneNode(true);
+                clone.querySelectorAll("script,style").forEach(n => n.remove());
+                let text = clone.textContent || "";
+                text = text.replace(/\n\s+\n/g, "\n\n").trim();
+                return text;
+            }
+
+            // ===== helpers: texto por extenso no RELATÓRIO
+            function extSN(v) {
+                if (v === "sim") return "Sim";
+                if (v === "nao") return "Não";
+                if (v === "ns") return "Não sei";
+                if (v === "nr") return "Não realizado";
+                return String(v || "").trim();
+            }
+            function extNRNegPos(v) {
+                if (v === "nr") return "Não realizado";
+                if (v === "neg") return "Negativo";
+                if (v === "pos") return "Positivo";
+                return String(v || "").trim();
+            }
+            function extNR(v) {
+                if (v === "NR") return "Não realizado";
+                return String(v || "").trim();
+            }
+            function extAvidez(v) {
+                if (v === "nr") return "Não realizado";
+                if (v === "alta") return "Alta";
+                if (v === "baixa") return "Baixa";
+                if (v === "inter") return "Intermediária";
+                return String(v || "").trim();
+            }
+
+            function showOut(badgeHtml, condutaHtml, rxHtml, altaHtml, baseTexto) {
+                $("outCard").style.display = "block";
+                $("badge").innerHTML = badgeHtml;
+                $("conduta").innerHTML = condutaHtml;
+                $("rx").innerHTML = rxHtml;
+                $("alta").innerHTML = altaHtml;
+
+                const rxText = htmlToPlain($("rx")) || "(não aplicável)";
+                const altaText = htmlToPlain($("alta")) || "(não aplicável)";
+                const refsText = htmlToPlain($("refsBox")) || "";
+
+                const base = (baseTexto || "").trim();
+
+                const fullReport =
+                    `${base}
+
+PRESCRIÇÃO GUIADA
+${rxText}
+
+CHECKLIST DE ALTA
+${altaText}
+
+REFERÊNCIAS (MS/SBP)
+${refsText}`.trim();
+
+                $("texto").textContent = fullReport;
+            }
+
+            function trocarTema() {
+                const v = $("tema").value;
+                ["sifilis", "toxo", "cmv", "rubeola", "hiv", "hepb"].forEach(k => $("sec_" + k).classList.add("hide"));
+                $("sec_" + v).classList.remove("hide");
+                $("outCard").style.display = "none";
+            }
+
+            // ===== Checklists
+            function altaSifilis(confirm) {
+                return confirm
+                    ? `<ul style="margin:8px 0 0 18px;">
+            <li><span class="k">Concluir 10 dias</span> de penicilina.</li>
+            <li><span class="k">VDRL seriado</span>: 1, 3, 6 e 12 meses.</li>
+          </ul>`
+                    : `<ul style="margin:8px 0 0 18px;">
+            <li><span class="k">Sem tratamento</span> (baixo risco).</li>
+            <li><span class="k">VDRL seriado</span>: 1, 3, 6 e 12 meses.</li>
+          </ul>`;
+            }
+
+            function altaToxo(tratar) {
+                return tratar
+                    ? `<ul style="margin:8px 0 0 18px;">
+            <li><span class="k">Plano 12 meses</span> com pirimetamina + sulfadiazina + leucovorina.</li>
+            <li><span class="k">Hemograma</span> seriado (neutrófilos).</li>
+          </ul>`
+                    : `<ul style="margin:8px 0 0 18px;">
+            <li><span class="k">Imunoglobulina G seriada</span> até negativar (até 12 meses).</li>
+          </ul>`;
+            }
+
+            function altaCMV(tratar, janelaOk) {
+                const j = janelaOk ? "" : "<li><span class='k'>Atenção</span>: reação em cadeia da polimerase fora da janela não confirma congênito.</li>";
+                return tratar
+                    ? `<ul style="margin:8px 0 0 18px;">${j}<li><span class="k">Monitorizar</span> hemograma e transaminases.</li><li><span class="k">Audiologia</span> seriada.</li></ul>`
+                    : `<ul style="margin:8px 0 0 18px;">${j}<li><span class="k">Audiologia</span> seriada.</li></ul>`;
+            }
+
+            function altaRubeola(confirmOuSuspeita) {
+                return confirmOuSuspeita
+                    ? `<ul style="margin:8px 0 0 18px;"><li><span class="k">Notificar</span> e rastrear cardiologia, oftalmologia e audição.</li></ul>`
+                    : `<ul style="margin:8px 0 0 18px;"><li>Reavaliar se surgirem sinais compatíveis.</li></ul>`;
+            }
+
+            function altaHIV(risco) {
+                return `<ul style="margin:8px 0 0 18px;">
+          <li><span class="k">Completar 28 dias</span> de profilaxia.</li>
+          <li>Risco: <span class="k">${String(risco || "").toUpperCase()}</span>.</li>
+        </ul>`;
+            }
+
+            function altaHepB(hbsag, prem) {
+                const precisaIG = (hbsag !== "neg");
+                const premTxt = (prem === "sim") ? "Prematuro com menos de 2 kg: pode exigir esquema diferenciado conforme serviço." : "";
+                return `<ul style="margin:8px 0 0 18px;">
+          <li><span class="k">Vacina Hepatite B</span> ao nascer (ideal até 12 horas).</li>
+          ${precisaIG ? `<li><span class="k">Imunoglobulina específica anti-hepatite B 0,5 mL</span> intramuscular em sítio diferente.</li>` : ""}
+          <li>${premTxt}</li>
+        </ul>`;
+            }
+
+            // ===== LÓGICA (mesma estrutura; relatório por extenso)
+            function calcSifilis() {
+                const peso = kg();
+                const rnSint = $("s_rnSint").value;
+                const vdrlMae = $("s_vdrlMae").value;
+                const vdrlRN = $("s_vdrlRN").value;
+                const tratAdeq = $("s_tratAdeq").value;
+                const t30 = $("s_t30").value;
+                const queda = $("s_queda").value;
+                const parceiro = $("s_parceiro").value;
+                const igm = $("s_igm").value;
+
+                const d = diffDiluicoes(vdrlRN, vdrlMae);
+                const maeInadequada = (tratAdeq === "nao");
+                const maeIncerta = (tratAdeq === "ns" || t30 === "ns" || queda === "ns");
+                const riscoReinf = (parceiro !== "sim");
+
+                const confirm = (rnSint === "sim" || igm === "pos" || d >= 2 || maeInadequada);
+                const possivel = (!confirm && (maeIncerta || t30 !== "sim" || queda !== "sim" || riscoReinf));
+
+                let status, pill;
+                if (confirm) { status = "ALTO RISCO / TRATAR"; pill = "red"; }
+                else if (possivel) { status = "POSSÍVEL / CONDUTA CONSERVADORA"; pill = "orange"; }
+                else { status = "BAIXO RISCO / SEGUIMENTO"; pill = "green"; }
+
+                const ui = round(50000 * peso);
+
+                let conduta = "";
+                let rx = "";
+                if (status.includes("TRATAR")) {
+                    conduta = `<div class="pill ${pill}">${status}</div>
+            <ul style="margin:8px 0 0 18px;">
+              <li><span class="k">Investigar</span> conforme protocolo local.</li>
+              <li><span class="k">Tratar</span>: penicilina cristalina por 10 dias.</li>
+            </ul>`;
+                    rx = `<pre>Penicilina G cristalina 50.000 UI/kg/dose IV (≈ ${fmt(ui)} UI por dose)
+Menos de 7 dias: a cada 12 horas | A partir de 7 dias: a cada 8 horas
+Duração: 10 dias</pre>`;
+                } else if (status.includes("CONSERVADORA")) {
+                    conduta = `<div class="pill ${pill}">${status}</div>
+            <ul style="margin:8px 0 0 18px;">
+              <li><span class="k">Estratégia segura</span>: tratar como possível ou penicilina benzatina dose única (serviço/seguimento).</li>
+            </ul>`;
+                    rx = `<pre>Opção padrão: Penicilina G cristalina 50.000 UI/kg/dose IV (≈ ${fmt(ui)} UI por dose) por 10 dias.
+Alternativa: Penicilina benzatina 50.000 UI/kg intramuscular, dose única.</pre>`;
+                } else {
+                    conduta = `<div class="pill ${pill}">${status}</div>
+            <ul style="margin:8px 0 0 18px;">
+              <li><span class="k">Sem tratamento</span> agora. Seguimento com VDRL seriado.</li>
+            </ul>`;
+                    rx = `<div class="muted">Sem prescrição neste cenário.</div>`;
+                }
+
+                const alta = altaSifilis(status.includes("TRATAR") || status.includes("CONSERVADORA"));
+
+                const baseTexto =
+                    `SÍFILIS CONGÊNITA — AVALIAÇÃO E CONDUTA
+Peso do recém-nascido: ${peso.toFixed(2)} kg | Idade gestacional: ${ig()} semanas | Idade pós-natal: ${dias()} dias
+VDRL materno no parto: ${extNR(vdrlMae)} | VDRL do recém-nascido: ${extNR(vdrlRN)} | Diferença em diluições: ${d.toFixed(0)}
+Recém-nascido sintomático: ${extSN(rnSint)}
+Imunoglobulina M treponêmica do recém-nascido: ${extNRNegPos(igm)}
+Tratamento materno adequado: ${extSN(tratAdeq)} | Concluído há mais de 30 dias: ${extSN(t30)} | Queda documentada do VDRL: ${extSN(queda)} | Parceiro tratado: ${extSN(parceiro)}
+
+Classificação: ${status}
+`;
+                showOut(`<div class="pill ${pill}">${status}</div>`, conduta, rx, alta, baseTexto);
+            }
+
+            function calcToxo() {
+                const peso = kg();
+                const rnSint = $("t_rnSint").value;
+                const img = $("t_img").value;
+                const fo = $("t_fo").value;
+                const igm = $("t_igm").value;
+                const iga = $("t_iga").value;
+                const pcr = $("t_pcr").value;
+                const maeInf = $("t_maeInf").value;
+                const avidez = $("t_avidez").value;
+                const seg = $("t_seg").value;
+
+                const confirmLab = (igm === "pos" || iga === "pos" || pcr === "pos");
+                const achados = (img === "sim" || fo === "sim");
+
+                const avidezAlta = (avidez === "alta");
+                const avidezBaixaOuInter = (avidez === "baixa" || avidez === "inter");
+                const maeInfMenosProvavel = (maeInf === "nao") || (maeInf === "ns" && avidezAlta);
+
+                let status, pill, tratar = false;
+
+                if (confirmLab) {
+                    status = "CONFIRMADA — TRATAR 12 MESES";
+                    pill = "red"; tratar = true;
+                } else if (achados && !maeInfMenosProvavel) {
+                    status = "PROVÁVEL — TRATAR 12 MESES";
+                    pill = "orange"; tratar = true;
+                } else if (seg !== "sim" && !maeInfMenosProvavel && (maeInf === "sim" || maeInf === "ns")) {
+                    status = "PROVÁVEL (conservador) — considerar tratar";
+                    pill = "orange"; tratar = true;
+                } else {
+                    status = "EXPOSIÇÃO SEM EVIDÊNCIA — acompanhar";
+                    pill = "green"; tratar = false;
+                }
+
+                const sulfaDose = round(50 * peso);
+                const pirAtaqueDia = round(2 * peso);
+                const pirAtaqueDose = round(pirAtaqueDia / 2);
+                const pirManutDia = round(1 * peso);
+                const leuco = (peso < 2.5 ? 5 : 10);
+
+                const detalheAvidez = avidezAlta
+                    ? `<li><span class="k">Avidez do IgG materno alta</span>: sugere infecção antiga; reduz probabilidade de infecção durante a gestação.</li>`
+                    : (avidezBaixaOuInter
+                        ? `<li><span class="k">Avidez do IgG materno ${extAvidez(avidez).toLowerCase()}</span>: aumenta suspeita de infecção recente na gestação (interpretar com o contexto clínico).</li>`
+                        : `<li><span class="k">Avidez do IgG materno</span>: não realizada.</li>`);
+
+                const conduta = tratar
+                    ? `<div class="pill ${pill}">${status}</div>
+            <ul style="margin:8px 0 0 18px;">
+              <li><span class="k">Estadiar</span>: hemograma e função hepática, neuroimagem/ultrassonografia, fundo de olho.</li>
+              ${detalheAvidez}
+            </ul>`
+                    : `<div class="pill ${pill}">${status}</div>
+            <ul style="margin:8px 0 0 18px;">
+              <li><span class="k">Sem tratamento</span> se sem evidência. Seguir imunoglobulina G seriada.</li>
+              ${detalheAvidez}
+            </ul>`;
+
+                const rx = tratar
+                    ? `<pre>Sulfadiazina: 50 mg/kg/dose via oral a cada 12 horas → ${fmt(sulfaDose)} mg por dose
+
+Pirimetamina:
+- Ataque (2 dias): 2 mg/kg/dia dividido a cada 12 horas → ${fmt(pirAtaqueDose)} mg a cada 12 horas por 2 dias
+- Manutenção: 1 mg/kg/dia → ${fmt(pirManutDia)} mg uma vez ao dia
+
+Leucovorina: ${leuco} mg via oral, três vezes por semana
+Duração: 12 meses</pre>`
+                    : `<div class="muted">Sem prescrição neste cenário.</div>`;
+
+                const alta = altaToxo(tratar);
+
+                const baseTexto =
+                    `TOXOPLASMOSE CONGÊNITA — AVALIAÇÃO E CONDUTA
+Peso do recém-nascido: ${peso.toFixed(2)} kg | Idade gestacional: ${ig()} semanas | Idade pós-natal: ${dias()} dias
+Recém-nascido sintomático: ${extSN(rnSint)}
+Ultrassonografia/neuroimagem: ${extSN(img)}
+Fundo de olho: ${extSN(fo)}
+Imunoglobulina M anti-Toxoplasma do recém-nascido: ${extNRNegPos(igm)}
+Imunoglobulina A anti-Toxoplasma do recém-nascido: ${extNRNegPos(iga)}
+Reação em cadeia da polimerase para Toxoplasma: ${extNRNegPos(pcr)}
+Infecção materna na gestação: ${extSN(maeInf)}
+Avidez do IgG materno: ${extAvidez(avidez)}
+Seguimento garantido: ${extSN(seg)}
+
+Classificação: ${status}
+`;
+                showOut(`<div class="pill ${pill}">${status}</div>`, conduta, rx, alta, baseTexto);
+            }
+
+            function calcCMV() {
+                const peso = kg();
+                const idade = dias();
+                const pcr = $("c_pcr").value;
+                const ate21 = $("c_ate21").value;
+                const sint = $("c_sint").value;
+                const snc = $("c_snc").value;
+                const aud = $("c_aud").value;
+                const sist = $("c_sist").value;
+                const obs = ($("c_obs").value || "").trim();
+
+                const janelaOk = (idade <= 21 && ate21 !== "nao") || (ate21 === "sim");
+                $("cmvJanela").style.display = (!janelaOk && pcr === "pos") ? "block" : "none";
+
+                let status = "SEM CONFIRMAÇÃO — investigar ou descartar";
+                let pill = "yellow";
+                let tratar = false;
+
+                if (pcr === "pos" && janelaOk) {
+                    if (snc === "sim") {
+                        status = "CITOMEGALOVÍRUS CONGÊNITO SINTOMÁTICO (SISTEMA NERVOSO CENTRAL POSITIVO) — considerar tratar";
+                        pill = "red"; tratar = true;
+                    } else if (sint === "sim" || aud === "sim" || sist === "sim") {
+                        status = "CITOMEGALOVÍRUS CONGÊNITO SINTOMÁTICO — avaliar tratar";
+                        pill = "orange"; tratar = true;
+                    } else {
+                        status = "CITOMEGALOVÍRUS CONGÊNITO ASSINTOMÁTICO — seguimento";
+                        pill = "green"; tratar = false;
+                    }
+                } else if (pcr === "pos" && !janelaOk) {
+                    status = "REAÇÃO EM CADEIA DA POLIMERASE POSITIVA FORA DA JANELA (ATÉ 21 DIAS) — NÃO CONFIRMA CONGÊNITO";
+                    pill = "orange"; tratar = false;
+                } else if (pcr === "neg") {
+                    status = "REAÇÃO EM CADEIA DA POLIMERASE NEGATIVA — citomegalovírus congênito improvável";
+                    pill = "green"; tratar = false;
+                }
+
+                const valgaDose = round(16 * peso);
+                const ganciDose = round(6 * peso);
+
+                const conduta =
+                    `<div class="pill ${pill}">${status}</div>
+          <ul style="margin:8px 0 0 18px;">
+            <li><span class="k">Estadiar</span>: hemograma, transaminases, neuroimagem, audiologia e oftalmologia.</li>
+            ${obs ? `<li><span class="k">Observação</span>: ${obs}</li>` : ""}
+          </ul>`;
+
+                const rx = tratar
+                    ? `<pre>Se via oral:
+Valganciclovir 16 mg/kg/dose via oral a cada 12 horas → ${fmt(valgaDose)} mg por dose
+
+Se via intravenosa:
+Ganciclovir 6 mg/kg/dose intravenoso a cada 12 horas → ${fmt(ganciDose)} mg por dose</pre>`
+                    : `<div class="muted">Sem prescrição automática neste cenário.</div>`;
+
+                const alta = altaCMV(tratar, janelaOk);
+
+                const baseTexto =
+                    `CITOMEGALOVÍRUS — AVALIAÇÃO E CONDUTA
+Peso do recém-nascido: ${peso.toFixed(2)} kg | Idade gestacional: ${ig()} semanas | Idade pós-natal: ${idade} dias
+Reação em cadeia da polimerase para citomegalovírus: ${extNRNegPos(pcr)}
+Coleta até 21 dias: ${extSN(ate21)} | Janela diagnóstica adequada: ${janelaOk ? "Sim" : "Não"}
+Recém-nascido sintomático: ${extSN(sint)}
+Sistema nervoso central: ${extSN(snc)}
+Perda auditiva: ${extSN(aud)}
+Sinais sistêmicos: ${extSN(sist)}
+${obs ? ("Observação clínica: " + obs) : ""}
+
+Classificação: ${status}
+`;
+                showOut(`<div class="pill ${pill}">${status}</div>`, conduta, rx, alta, baseTexto);
+            }
+
+            function calcRubeola() {
+                const mae = $("r_mae").value;
+                const sinais = $("r_sinais").value;
+                const igm = $("r_igm").value;
+                const pcr = $("r_pcr").value;
+
+                const confirm = (igm === "pos" || pcr === "pos");
+                let status, pill;
+                if (confirm) { status = "RUBÉOLA CONGÊNITA CONFIRMADA — notificar e rastrear"; pill = "red"; }
+                else if (mae !== "nao" && sinais === "sim") { status = "SUSPEITA FORTE — investigar e notificar"; pill = "orange"; }
+                else if (mae === "sim") { status = "EXPOSIÇÃO — investigar"; pill = "yellow"; }
+                else { status = "BAIXA PROBABILIDADE"; pill = "green"; }
+
+                const conduta =
+                    `<div class="pill ${pill}">${status}</div>
+          <ul style="margin:8px 0 0 18px;">
+            <li><span class="k">Sem antiviral específico</span>. Rastrear cardiologia, oftalmologia e audição.</li>
+          </ul>`;
+
+                const rx = `<div class="muted">Sem prescrição antiviral específica.</div>`;
+                const alta = altaRubeola(confirm || status.includes("SUSPEITA"));
+
+                const baseTexto =
+                    `RUBÉOLA CONGÊNITA — AVALIAÇÃO E CONDUTA
+Idade gestacional: ${ig()} semanas | Idade pós-natal: ${dias()} dias
+Rubéola materna na gestação: ${extSN(mae)}
+Sinais compatíveis no recém-nascido: ${extSN(sinais)}
+Imunoglobulina M para rubéola no recém-nascido: ${extNRNegPos(igm)}
+Reação em cadeia da polimerase para rubéola: ${extNRNegPos(pcr)}
+
+Classificação: ${status}
+`;
+                showOut(`<div class="pill ${pill}">${status}</div>`, conduta, rx, alta, baseTexto);
+            }
+
+            function calcHIV() {
+                const peso = kg();
+                const IG = ig();
+                const risco = $("h_risco").value;
+                const vo = $("h_vo").value;
+                const ralMae = $("h_ral_mae").value;
+                const obs = ($("h_obs").value || "").trim();
+
+                function doseZDV_VO() {
+                    if (IG >= 35) return `Zidovudina via oral: 4 mg/kg/dose a cada 12 horas → ${fmt(round(4 * peso))} mg por dose`;
+                    if (IG >= 30 && IG < 35) {
+                        return `Zidovudina via oral:
+- 0–14 dias: 2 mg/kg/dose a cada 12 horas → ${fmt(round(2 * peso))} mg por dose
+- 15–28 dias: 3 mg/kg/dose a cada 12 horas → ${fmt(round(3 * peso))} mg por dose`;
+                    }
+                    return `Zidovudina via oral: 2 mg/kg/dose a cada 12 horas → ${fmt(round(2 * peso))} mg por dose`;
+                }
+
+                function dose3TC() {
+                    return `Lamivudina via oral: 2 mg/kg/dose a cada 12 horas → ${fmt(round(2 * peso))} mg por dose (usar se idade gestacional igual ou maior que 34 semanas)`;
+                }
+
+                function doseRAL() {
+                    return `Raltegravir via oral:
+- 1ª semana: 1,5 mg/kg/dose uma vez ao dia → ${fmt(round(1.5 * peso))} mg por dia
+- 2ª–4ª semana: 3 mg/kg/dose a cada 12 horas → ${fmt(round(3 * peso))} mg por dose`;
+                }
+
+                function doseNVP() {
+                    if (IG >= 37) return `Nevirapina via oral: 6 mg/kg/dose a cada 12 horas → ${fmt(round(6 * peso))} mg por dose`;
+                    return `Nevirapina via oral: 4–6 mg/kg/dose a cada 12 horas → ${fmt(round(4 * peso))} a ${fmt(round(6 * peso))} mg por dose`;
+                }
+
+                let status, pill;
+                let esquema = [];
+                if (risco === "baixo") {
+                    status = "BAIXO RISCO — zidovudina por 28 dias";
+                    pill = "green";
+                    esquema.push(doseZDV_VO());
+                } else {
+                    if (IG < 34) {
+                        status = "ALTO RISCO (idade gestacional menor que 34 semanas) — zidovudina por 28 dias (operacional)";
+                        pill = "orange";
+                        esquema.push(doseZDV_VO());
+                    } else if (IG >= 37 && peso >= 2.0) {
+                        status = "ALTO RISCO — zidovudina + lamivudina + raltegravir por 28 dias";
+                        pill = "red";
+                        esquema.push(doseZDV_VO(), dose3TC(), doseRAL());
+                    } else {
+                        status = "ALTO RISCO — zidovudina + lamivudina + nevirapina por 28 dias";
+                        pill = "red";
+                        esquema.push(doseZDV_VO(), dose3TC(), doseNVP());
+                    }
+                }
+
+                const conduta =
+                    `<div class="pill ${pill}">${status}</div>
+          <ul style="margin:8px 0 0 18px;">
+            <li>Consegue via oral: ${extSN(vo)} | Uso materno de raltegravir 2–24 horas antes do parto: ${extSN(ralMae)}</li>
+            ${obs ? `<li><span class="k">Observação</span>: ${obs}</li>` : ""}
+          </ul>`;
+
+                const rx = `<pre>${esquema.join("\n\n")}</pre>`;
+                const alta = altaHIV(risco);
+
+                const baseTexto =
+                    `RECÉM-NASCIDO EXPOSTO AO HIV — PROFILAXIA
+Peso do recém-nascido: ${peso.toFixed(2)} kg | Idade gestacional: ${IG} semanas | Idade pós-natal: ${dias()} dias
+Risco: ${risco === "alto" ? "Alto risco" : "Baixo risco"}
+Consegue via oral: ${extSN(vo)}
+Uso materno de raltegravir 2–24 horas antes do parto: ${extSN(ralMae)}
+${obs ? ("Observação: " + obs) : ""}
+
+Classificação: ${status}
+`;
+                showOut(`<div class="pill ${pill}">${status}</div>`, conduta, rx, alta, baseTexto);
+            }
+
+            function calcHepB() {
+                const hbsag = $("b_hbsag").value;
+                const prem = $("b_prem").value;
+
+                const vacina = "Vacina Hepatite B (monovalente) intramuscular: 0,5 mL ao nascer (ideal até 12 horas).";
+                const ighahb = "Imunoglobulina específica anti-hepatite B intramuscular: 0,5 mL, em sítio diferente (ideal até 12–24 horas).";
+
+                let status, pill;
+                if (hbsag === "pos") { status = "PROFILAXIA COMPLETA — vacina + imunoglobulina específica"; pill = "red"; }
+                else if (hbsag === "des") { status = "HBsAg desconhecido — vacina imediata + considerar imunoglobulina específica"; pill = "orange"; }
+                else { status = "PROFILAXIA DE ROTINA — vacina ao nascer"; pill = "green"; }
+
+                const conduta =
+                    `<div class="pill ${pill}">${status}</div>
+          <ul style="margin:8px 0 0 18px;">
+            <li>${vacina}</li>
+            ${hbsag !== "neg" ? `<li>${ighahb}</li>` : ""}
+            <li>Prematuro com menos de 34 semanas ou menos de 2.000 g: ${extSN(prem)}</li>
+          </ul>`;
+
+                const rx = `<pre>${vacina}\n${hbsag !== "neg" ? ighahb : ""}</pre>`;
+                const alta = altaHepB(hbsag, prem);
+
+                const baseTexto =
+                    `HEPATITE B — PROFILAXIA AO NASCER
+Idade gestacional: ${ig()} semanas | Idade pós-natal: ${dias()} dias
+Prematuro com menos de 34 semanas ou menos de 2.000 g: ${extSN(prem)}
+HBsAg materno: ${hbsag === "pos" ? "Reagente/positivo" : (hbsag === "neg" ? "Não reagente/negativo" : "Desconhecido")}
+
+Conduta: ${status}
+`;
+                showOut(`<div class="pill ${pill}">${status}</div>`, conduta, rx, alta, baseTexto);
+            }
+
+            function calcular() {
+                const t = $("tema").value;
+                if (t === "sifilis") return calcSifilis();
+                if (t === "toxo") return calcToxo();
+                if (t === "cmv") return calcCMV();
+                if (t === "rubeola") return calcRubeola();
+                if (t === "hiv") return calcHIV();
+                if (t === "hepb") return calcHepB();
+            }
+
+            function copiar() {
+                const t = $("texto").textContent || "";
+                if (!t) return;
+                navigator.clipboard.writeText(t).then(function() { if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.'); }).catch(function(e) { if (typeof window.neopedCopyFail === 'function') window.neopedCopyFail(); else alert('Nao foi possivel copiar automaticamente. Revise o texto e copie manualmente para uso informativo.'); showErr(e); });
+            }
+
+            function imprimirPdf() {
+                if ($("outCard").style.display === "none") return;
+                window.print();
+            }
+
+            function limpar() {
+                $("peso").value = ""; $("ig").value = ""; $("idadeDias").value = "";
+                $("tema").value = "sifilis";
+                trocarTema();
+                $("outCard").style.display = "none";
+            }
+
+            // INIT
+            try {
+                fillSelect("s_vdrlMae");
+                fillSelect("s_vdrlRN");
+                $("s_vdrlMae").value = "NR";
+                $("s_vdrlRN").value = "NR";
+
+                $("tema").addEventListener("change", trocarTema);
+                $("btnCalcular").addEventListener("click", () => { try { calcular(); } catch (e) { showErr(e); } });
+                $("btnCopiar").addEventListener("click", () => { try { copiar(); } catch (e) { showErr(e); } });
+                $("btnPrint").addEventListener("click", () => { try { imprimirPdf(); } catch (e) { showErr(e); } });
+                $("btnLimpar").addEventListener("click", () => { try { limpar(); } catch (e) { showErr(e); } });
+
+                trocarTema();
+            } catch (e) {
+                showErr(e);
+            }
+        })();
+
+        // Funções do Modal
+        function abrirModal() {
+            var modal = document.getElementById('modalInfo');
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function fecharModal() {
+            var modal = document.getElementById('modalInfo');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+    </script>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — Infecções congênitas (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Como Usar Esta Calculadora</h3>
+                <ol>
+                    <li><strong>Preencha os Dados do Paciente:</strong> Informe o peso do recém-nascido (em kg), a idade gestacional ao nascer (em semanas) e a idade pós-natal (em dias).</li>
+                    <li><strong>Selecione a Infecção:</strong> Escolha no menu suspenso qual infecção congênita deseja avaliar:
+                        <ul>
+                            <li>Sífilis Congênita</li>
+                            <li>Toxoplasmose Congênita</li>
+                            <li>Citomegalovírus (CMV) Congênito</li>
+                            <li>Rubéola Congênita (SRC)</li>
+                            <li>RN Exposto ao HIV (profilaxia)</li>
+                            <li>Hepatite B (profilaxia ao nascer)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Preencha os Dados Específicos:</strong> Para cada tipo de infecção, preencha os campos específicos que aparecerão na tela, como resultados de exames, sintomas do recém-nascido, histórico materno, etc.</li>
+                    <li><strong>Calcule:</strong> Clique no botão "Calcular" para obter a classificação da infecção e a prescrição guiada.</li>
+                    <li><strong>Visualize os Resultados:</strong> Os resultados incluirão a classificação (definida, provável, possível, etc.), a conduta recomendada, a prescrição sugerida e orientações para alta.</li>
+                    <li><strong>Copie ou Imprima:</strong> Use os botões "Copiar" ou "Imprimir" para salvar o relatório no prontuário eletrônico.</li>
+                </ol>
+
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta calculadora auxilia na classificação e prescrição guiada para infecções congênitas em recém-nascidos, baseada em protocolos clínicos estabelecidos. Ela ajuda na tomada de decisão clínica, fornecendo orientações sobre diagnóstico, tratamento e seguimento.</p>
+
+                <h3>Infecções Disponíveis</h3>
+                <ul>
+                    <li><strong>Sífilis Congênita:</strong> Classificação baseada em sintomas do RN, VDRL materno e do RN, tratamento materno, e exames complementares.</li>
+                    <li><strong>Toxoplasmose Congênita:</strong> Avaliação considerando sintomas, exames de imagem, fundo de olho, sorologia e avidez do IgG materno.</li>
+                    <li><strong>CMV Congênito:</strong> Classificação baseada em PCR, janela diagnóstica (até 21 dias), sintomas e comprometimento de sistemas.</li>
+                    <li><strong>Rubéola Congênita:</strong> Avaliação considerando infecção materna na gestação, sinais no RN e exames sorológicos.</li>
+                    <li><strong>HIV:</strong> Protocolo de profilaxia para recém-nascidos expostos ao HIV.</li>
+                    <li><strong>Hepatite B:</strong> Protocolo de profilaxia ao nascer para prevenção de transmissão vertical.</li>
+                </ul>
+
+                <h3>Dados Necessários</h3>
+                <div class="formula-box">
+                    <strong>Dados Gerais (obrigatórios):</strong><br>
+                    • Peso do recém-nascido (kg)<br>
+                    • Idade gestacional ao nascer (semanas)<br>
+                    • Idade pós-natal (dias)<br><br>
+                    <strong>Dados Específicos:</strong> Variam conforme o tipo de infecção selecionada. Preencha todos os campos disponíveis para obter uma classificação mais precisa.
+                </div>
+
+                <h3>Interpretação dos Resultados</h3>
+                <ul>
+                    <li><strong>Classificação:</strong> A calculadora fornece uma classificação da infecção (definida, provável, possível, etc.) baseada nos critérios clínicos e laboratoriais informados.</li>
+                    <li><strong>Conduta:</strong> Orientações sobre a conduta recomendada para o caso.</li>
+                    <li><strong>Prescrição:</strong> Sugestão de prescrição medicamentosa baseada no peso e idade do paciente.</li>
+                    <li><strong>Alta:</strong> Critérios e orientações para alta hospitalar quando aplicável.</li>
+                </ul>
+
+                <h3>Considerações Importantes</h3>
+                <ul>
+                    <li>Esta é uma ferramenta de apoio à decisão clínica e não substitui o julgamento médico.</li>
+                    <li>O ajuste final da prescrição deve ser feito pelo médico responsável, considerando o protocolo local e as particularidades de cada caso.</li>
+                    <li>Alguns exames podem não estar disponíveis imediatamente; a calculadora considera essa situação.</li>
+                    <li>Para CMV, é fundamental respeitar a janela diagnóstica de 21 dias para diferenciação entre infecção congênita e pós-natal.</li>
+                    <li>Para toxoplasmose, a avidez do IgG materno é um parâmetro importante para avaliar o risco de infecção na gestação.</li>
+                    <li>Sempre consulte os protocolos locais e atualizações das diretrizes clínicas.</li>
+                </ul>
+
+                <h3>Limitações</h3>
+                <ul>
+                    <li>Baseada em protocolos gerais; pode não refletir variações regionais ou protocolos específicos de cada instituição.</li>
+                    <li>Requer interpretação clínica e ajuste individualizado.</li>
+                    <li>Não substitui a avaliação clínica completa e o acompanhamento multidisciplinar.</li>
+                    <li>Alguns casos complexos podem necessitar de avaliação especializada adicional.</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Nota:</strong> Esta calculadora é um módulo operacional. O ajuste final é clínico e pode variar por protocolo local. Sempre consulte as diretrizes atualizadas e os protocolos da sua instituição.
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../js/neoped-datetime-fix.js"></script>
+    <script src="../js/neoped-nav.js"></script>
+</body>
+
+</html>

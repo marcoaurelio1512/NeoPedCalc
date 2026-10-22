@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — Policitemia neonatal e pediátrica (educativo)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #e74c3c;
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #e74c3c;
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+        }
+
+        .info-box {
+            background: #fff3cd;
+            border: 2px solid #d1d5db;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .info-box h3 {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .info-box table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .info-box table td {
+            padding: 8px;
+            color: #856404;
+        }
+
+        .info-box table td:first-child {
+            font-weight: 600;
+        }
+
+        .results-section {
+            background: #fff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid #e1e8ed;
+            display: none;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .result-value {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #e74c3c;
+        }
+
+        .protocol-box {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .protocol-box h3 {
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .protocol-box p {
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .protocol-box ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .protocol-box li {
+            margin-bottom: 8px;
+        }
+
+        .report-btn {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .report-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .report-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .reference-info {
+            background: #fff;
+            border: 1px solid #e1e8ed;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .reference-info h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .reference-info p {
+            color: #374151;
+            font-size: 0.9em;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .procedure-section {
+            background: #fff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid #e1e8ed;
+            display: none;
+        }
+
+        .procedure-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .procedure-header h2 {
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .start-time-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .start-time-group label {
+            margin: 0;
+            font-size: 0.9em;
+        }
+
+        .start-time-group input {
+            width: 150px;
+            padding: 8px;
+        }
+
+        .cycle-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #fff;
+        }
+
+        .cycle-table th {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .cycle-table td {
+            padding: 8px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .cycle-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .cycle-table tr:hover {
+            background: #e9ecef;
+        }
+
+        .cycle-table input[type="number"],
+        .cycle-table input[type="time"] {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #e1e8ed;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+
+        .cycle-table input[type="number"]:focus,
+        .cycle-table input[type="time"]:focus {
+            outline: none;
+            border-color: #d1d5db;
+        }
+
+        .cycle-table .readonly-cell {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .time-cell {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .time-cell input {
+            flex: 1;
+        }
+
+        .mark-time-btn {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85em;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .mark-time-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+        }
+
+        .mark-time-btn:active {
+            transform: scale(0.95);
+        }
+
+        .saida {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        .entrada {
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        .balance-row {
+            background: #fff3cd !important;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        .balance-row td {
+            border-top: 3px solid #d1d5db;
+            border-bottom: 3px solid #d1d5db;
+        }
+
+        .generate-procedure-btn {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .generate-procedure-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 5px; }
+            .header h1 { font-size: 1.4em; }
+            .header p { font-size: 0.9em; }
+            .content { padding: 15px; }
+            .section { padding: 12px; }
+            .section h3 { font-size: 1.1em; }
+            input, select { padding: 10px; font-size: 14px; }
+            button { padding: 10px; font-size: 14px; }
+            .results { padding: 12px; }
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+        }
+        .header-actions .btn-info {
+            width: auto;
+            max-width: 100%;
+        }
+        #modalInfo {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            inset: 0;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
+            box-sizing: border-box;
+            background: rgba(15, 23, 42, 0.5);
+            overflow: auto;
+        }
+        #modalInfo .modal-content {
+            background: #fff;
+            border-radius: 14px;
+            width: 100%;
+            max-height: 86vh;
+            overflow: auto;
+            padding: 0;
+        }
+        #modalInfo .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: #f8fafc;
+            border-radius: 14px 14px 0 0;
+        }
+        #modalInfo .modal-header h2 {
+            margin: 0;
+            font-size: 1.15rem;
+            color: #1e293b;
+        }
+        #modalInfo .modal-body {
+            padding: 18px 20px 22px;
+            line-height: 1.55;
+            color: #334155;
+        }
+        #modalInfo .modal-body h3 {
+            margin: 1.1em 0 0.5em;
+            font-size: 1rem;
+            color: #0f172a;
+        }
+        #modalInfo .modal-body h3:first-child { margin-top: 0; }
+        #modalInfo .modal-body ul, #modalInfo .modal-body ol {
+            margin: 0.4em 0 0.8em 1.2em;
+            padding: 0;
+        }
+        #modalInfo .modal-body li { margin-bottom: 0.35em; }
+        #modalInfo .close {
+            cursor: pointer;
+            font-size: 1.5rem;
+            line-height: 1;
+            color: #64748b;
+            border: none;
+            background: none;
+            padding: 4px 8px;
+        }
+        #modalInfo .close:hover { color: #0f172a; }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🩸 Policitemia Neonatal e Pediátrica (educativo)</h1>
+            <p>Estimativas de volume e organização didática de hemodiluição para apoio informativo</p>
+            <div class="header-actions">
+                <button type="button" class="btn-info" onclick="abrirModalComoUsar()">Como usar</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Dados do Paciente -->
+            <div class="section">
+                <h2>👤 Dados do Paciente</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label for="nome">Nome do Neonato:</label>
+                        <input type="text" id="nome" placeholder="Digite o nome">
+                    </div>
+                    <div class="form-group">
+                        <label for="dataNascimento">Data de Nascimento:</label>
+                        <input type="date" id="dataNascimento" onchange="calcularIdade()">
+                    </div>
+                    <div class="form-group">
+                        <label for="data">Data da Avaliação:</label>
+                        <input type="datetime-local" id="data" onchange="calcularIdade()">
+                    </div>
+                    <div class="form-group">
+                        <label>Idade Calculada:</label>
+                        <input type="text" id="idadeCalculada" readonly style="background-color: #f8f9fa; font-weight: 600;">
+                    </div>
+                </div>
+                <div id="camposIGContainer" style="display: none;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                        <div class="form-group">
+                            <label for="igNascimento">Idade Gestacional ao Nascer (semanas):</label>
+                            <input type="number" id="igNascimento" step="1" min="20" max="44" placeholder="Ex: 34" onchange="calcularIdadeGestacionalCorrigida()">
+                        </div>
+                        <div class="form-group">
+                            <label>Idade Gestacional Corrigida:</label>
+                            <input type="text" id="igCorrigida" readonly style="background-color: #f8f9fa; font-weight: 600;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informação sobre Volume Sanguíneo -->
+            <div class="info-box">
+                <h3>📊 Volume Sanguíneo Estimado (mL/kg)</h3>
+                <table>
+                    <tr>
+                        <td>RN Pré-termo:</td>
+                        <td>90 a 100 mL/kg</td>
+                    </tr>
+                    <tr>
+                        <td>RN a termo:</td>
+                        <td>80 a 90 mL/kg</td>
+                    </tr>
+                    <tr>
+                        <td>Lactentes 3m a 1 ano:</td>
+                        <td>70 a 80 mL/kg</td>
+                    </tr>
+                    <tr>
+                        <td>Crianças > 1 ano:</td>
+                        <td>70 mL/kg</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Parâmetros Clínicos -->
+            <div class="section">
+                <h2>🔬 Parâmetros Clínicos</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="peso">Peso do Neonato (kg):</label>
+                        <input type="number" id="peso" step="0.001" min="0.5" max="10" placeholder="Ex: 3.500" oninput="calcular()">
+                    </div>
+                    <div class="form-group">
+                        <label for="htAtual">Hematócrito Atual (%):</label>
+                        <input type="number" id="htAtual" step="1" min="1" max="100" placeholder="Ex: 70" oninput="calcular()">
+                    </div>
+                    <div class="form-group">
+                        <label for="htIdeal">Hematócrito Ideal (%):</label>
+                        <input type="number" id="htIdeal" step="1" min="1" max="100" placeholder="Ex: 55" value="55" oninput="calcular()">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="volSanguineo">Volume Sanguíneo (mL/kg):</label>
+                        <input type="number" id="volSanguineo" step="1" min="60" max="100" placeholder="Ex: 80" value="80" oninput="calcular()" readonly style="background-color: #f8f9fa;">
+                        <small style="color: #374151; font-size: 0.9em;">Calculado automaticamente pela idade</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="aliquota">Alíquotas de (mL):</label>
+                        <input type="number" id="aliquota" step="1" min="5" max="20" placeholder="Ex: 10" value="10" oninput="calcular()">
+                        <small style="color: #374151; font-size: 0.9em;">Volume de cada alíquota para exsanguineotransfusão parcial</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resultados -->
+            <div class="results-section" id="resultsSection">
+                <h2 style="color: #2c3e50; margin-bottom: 20px;">📊 Resultados dos Cálculos</h2>
+                
+                <div class="result-item">
+                    <div class="result-label">Volume Sanguíneo Total Estimado</div>
+                    <div class="result-value" id="volSanguineoTotal">0 mL</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Volume de Soro Fisiológico 0,9% (Hemodiluição)</div>
+                    <div class="result-value" id="volumeSoro">0 mL</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Número de Alíquotas</div>
+                    <div class="result-value" id="numAliquotas">0</div>
+                </div>
+
+                <div class="protocol-box">
+                    <h3>📋 Protocolo de Hemodiluição</h3>
+                    <p><strong>Sequência didática (referência bibliográfica — não é prescrição nem ordem de procedimento):</strong></p>
+                    <ul>
+                        <li>Volume estimado de troca (sangue): <strong id="volRetira">0 mL</strong> (cálculo educativo)</li>
+                        <li>Volume correspondente de SF 0,9% citado na mesma lógica: <strong id="volInfunde">0 mL</strong></li>
+                        <li>Exemplo de alíquotas para estudo: <strong id="volAliquota">10 mL</strong></li>
+                        <li>Número de ciclos matemáticos: <strong id="numCiclos">0</strong></li>
+                    </ul>
+                    <p style="margin-top: 15px;"><strong>Observações Importantes:</strong></p>
+                    <ul>
+                        <li>Na prática assistencial costuma-se enfatizar técnica asséptica em procedimentos invasivos</li>
+                        <li>Monitorização de sinais vitais conforme protocolo local</li>
+                        <li>Glicemia e hematócrito de controle são temas recorrentes na literatura — planejamento clínico</li>
+                        <li>Sinais de hiperviscosidade: correlacionar ao quadro</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Seção de Procedimento -->
+            <div class="procedure-section" id="procedureSection">
+                <div class="procedure-header">
+                    <h2>⏱️ Controle do Procedimento</h2>
+                    <div class="start-time-group">
+                        <label for="horarioInicio">Horário de Início:</label>
+                        <input type="time" id="horarioInicio">
+                    </div>
+                </div>
+
+                <table class="cycle-table" id="cycleTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">Ciclo</th>
+                            <th style="width: 100px;">Horário</th>
+                            <th style="width: 150px;">Tipo</th>
+                            <th style="width: 100px;">Volume (mL)</th>
+                            <th style="width: 100px;">Acum. Entrada</th>
+                            <th style="width: 100px;">Acum. Saída</th>
+                            <th style="width: 100px;">Balanço</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cycleTableBody">
+                    </tbody>
+                </table>
+
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="generate-procedure-btn" onclick="adicionarLinha()" style="width: auto; flex: 1; background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);">
+                        ➕ Adicionar Linha
+                    </button>
+                    <button type="button" class="generate-procedure-btn" onclick="limparTabela()" style="width: auto; flex: 1; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">
+                        🗑️ Limpar Tabela
+                    </button>
+                </div>
+            </div>
+
+            <!-- Botão Gerar texto informativo -->
+            <button type="button" class="report-btn" onclick="gerarRelatorio()" id="reportBtn" disabled>
+                📋 Copiar texto informativo
+            </button>
+
+            <!-- Referências -->
+            <div class="reference-info">
+                <h3>📚 Referências</h3>
+                <p><strong>Ronald SL.</strong> Pediatric Anesthesia - The Requisites in Anestesiology. Fluid and blood Administration, 2004, 115-121.</p>
+                <p><strong>Policitemia Neonatal:</strong> Definida como hematócrito venoso central > 65% ou hemoglobina > 22 g/dL.</p>
+                <p><strong>Indicações de Tratamento:</strong> Policitemia sintomática ou hematócrito > 70%.</p>
+                <p><strong>Fórmula de Cálculo:</strong> Volume de Hemodiluição = Volume Sanguíneo Total × (Ht Atual - Ht Ideal) / Ht Atual</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalInfo" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalComoUsarTitulo" onclick="if(event.target===this)fecharModalComoUsar()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 id="modalComoUsarTitulo">Como usar — Policitemia</h2>
+                <button type="button" class="close" onclick="fecharModalComoUsar()" aria-label="Fechar">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Estimar volume sanguíneo, volume de hemodiluição com soro fisiológico 0,9% e organizar exsanguineotransfusão parcial (EPT) em alíquotas, com registro de ciclos e texto informativo.</p>
+                <h3>Dados</h3>
+                <ol>
+                    <li>Preencha identificação, datas; a idade calculada abre campos de IG corrigida quando aplicável.</li>
+                    <li><strong>Peso (kg)</strong>, <strong>hematócrito atual</strong> e <strong>hematócrito alvo</strong> (padrão 55%).</li>
+                    <li>O <strong>volume sanguíneo (mL/kg)</strong> é sugerido pela idade (tabela de referência na tela); ajuste só se houver indicação clínica.</li>
+                    <li>Defina o tamanho das <strong>alíquotas (mL)</strong> para a EPT.</li>
+                </ol>
+                <h3>Resultados e procedimento</h3>
+                <ul>
+                    <li>Os cartões mostram volume total de sangue, volume de soro a trocar, número de alíquotas e passos do protocolo.</li>
+                    <li><strong>Gerar texto informativo</strong> só habilita quando peso e hematócrito são válidos e o Ht atual é maior que o ideal (há cálculo a exibir).</li>
+                    <li>Em <strong>Controle do procedimento</strong>, registre horários e ciclos de retirada/infusão.</li>
+                </ul>
+                <h3>Limitações</h3>
+                <p>Indicação de tratamento, monitorização (glicemia, Ht pós-procedimento) e decisão de realizar EPT são clínicas; use os critérios e referências no rodapé da página.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModalComoUsar() {
+            document.getElementById('modalInfo').style.display = 'flex';
+        }
+        function fecharModalComoUsar() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        // Inicializar data atual
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+                .toISOString()
+                .slice(0, 16);
+            document.getElementById('data').value = localDateTime;
+            
+            // Inicializar horário de início
+            const currentTime = now.toTimeString().slice(0, 5);
+            document.getElementById('horarioInicio').value = currentTime;
+            
+            // Inicializar tabela com linha de balanço
+            adicionarLinhaBalanco();
+        });
+
+        function calcularIdade() {
+            const dataNascimento = document.getElementById('dataNascimento').value;
+            const dataAvaliacao = document.getElementById('data').value;
+
+            if (!dataNascimento || !dataAvaliacao) {
+                document.getElementById('idadeCalculada').value = '';
+                document.getElementById('volSanguineo').value = '80';
+                document.getElementById('camposIGContainer').style.display = 'none';
+                return;
+            }
+
+            const nascimento = new Date(dataNascimento);
+            const avaliacao = new Date(dataAvaliacao);
+
+            // Calcular diferença em milissegundos
+            const diff = avaliacao - nascimento;
+            
+            if (diff < 0) {
+                alert('A data de avaliação não pode ser anterior à data de nascimento.');
+                document.getElementById('idadeCalculada').value = '';
+                return;
+            }
+
+            // Converter para dias, meses e anos
+            const umDia = 1000 * 60 * 60 * 24;
+            const totalDias = Math.floor(diff / umDia);
+            
+            let anos = 0;
+            let meses = 0;
+            let dias = totalDias;
+
+            // Calcular anos
+            let dataTemp = new Date(nascimento);
+            while (true) {
+                dataTemp.setFullYear(dataTemp.getFullYear() + 1);
+                if (dataTemp > avaliacao) {
+                    dataTemp.setFullYear(dataTemp.getFullYear() - 1);
+                    break;
+                }
+                anos++;
+            }
+
+            // Calcular meses
+            while (true) {
+                dataTemp.setMonth(dataTemp.getMonth() + 1);
+                if (dataTemp > avaliacao) {
+                    dataTemp.setMonth(dataTemp.getMonth() - 1);
+                    break;
+                }
+                meses++;
+            }
+
+            // Calcular dias restantes
+            dias = Math.floor((avaliacao - dataTemp) / umDia);
+
+            // Formatar idade
+            let idadeTexto = '';
+            if (anos > 0) {
+                idadeTexto = `${anos} ano${anos > 1 ? 's' : ''}`;
+                if (meses > 0) idadeTexto += `, ${meses} mês${meses > 1 ? 'es' : ''}`;
+                if (dias > 0) idadeTexto += `, ${dias} dia${dias > 1 ? 's' : ''}`;
+            } else if (meses > 0) {
+                idadeTexto = `${meses} mês${meses > 1 ? 'es' : ''}`;
+                if (dias > 0) idadeTexto += `, ${dias} dia${dias > 1 ? 's' : ''}`;
+            } else {
+                idadeTexto = `${dias} dia${dias > 1 ? 's' : ''}`;
+            }
+
+            document.getElementById('idadeCalculada').value = idadeTexto;
+
+            // Mostrar campos de IG apenas se <= 29 dias
+            if (totalDias <= 29) {
+                document.getElementById('camposIGContainer').style.display = 'block';
+                // Calcular IG corrigida se já tiver IG ao nascer
+                calcularIdadeGestacionalCorrigida();
+            } else {
+                document.getElementById('camposIGContainer').style.display = 'none';
+                document.getElementById('igNascimento').value = '';
+                document.getElementById('igCorrigida').value = '';
+            }
+
+            // Determinar volume sanguíneo baseado na idade e IG corrigida
+            determinarVolumeSanguineo(totalDias);
+        }
+
+        function calcularIdadeGestacionalCorrigida() {
+            const dataNascimento = document.getElementById('dataNascimento').value;
+            const dataAvaliacao = document.getElementById('data').value;
+            const igNascimento = parseFloat(document.getElementById('igNascimento').value) || 0;
+
+            if (!dataNascimento || !dataAvaliacao || igNascimento === 0) {
+                document.getElementById('igCorrigida').value = '';
+                return;
+            }
+
+            const nascimento = new Date(dataNascimento);
+            const avaliacao = new Date(dataAvaliacao);
+            const umDia = 1000 * 60 * 60 * 24;
+            const totalDias = Math.floor((avaliacao - nascimento) / umDia);
+
+            // Calcular idade gestacional corrigida
+            const semanasPassadas = Math.floor(totalDias / 7);
+            const diasRestantes = totalDias % 7;
+            
+            const igCorrigidaSemanas = igNascimento + semanasPassadas;
+            const igCorrigidaDias = diasRestantes;
+
+            // Formatar
+            let textoIG = `${igCorrigidaSemanas} semanas`;
+            if (igCorrigidaDias > 0) {
+                textoIG += ` e ${igCorrigidaDias} dia${igCorrigidaDias > 1 ? 's' : ''}`;
+            }
+
+            // Classificação
+            let classificacao = '';
+            if (igCorrigidaSemanas < 28) {
+                classificacao = ' (Pré-termo extremo)';
+            } else if (igCorrigidaSemanas < 32) {
+                classificacao = ' (Muito pré-termo)';
+            } else if (igCorrigidaSemanas < 34) {
+                classificacao = ' (Pré-termo moderado)';
+            } else if (igCorrigidaSemanas < 37) {
+                classificacao = ' (Pré-termo tardio)';
+            } else {
+                classificacao = ' (A termo)';
+            }
+
+            document.getElementById('igCorrigida').value = textoIG + classificacao;
+
+            // Recalcular volume sanguíneo
+            determinarVolumeSanguineo(totalDias);
+        }
+
+        function determinarVolumeSanguineo(totalDias) {
+            let volSanguineo = 80; // Padrão
+
+            if (totalDias <= 29) {
+                // Neonato - usar IG corrigida se disponível
+                const igNascimento = parseFloat(document.getElementById('igNascimento').value) || 0;
+                
+                if (igNascimento > 0) {
+                    const igCorrigidaSemanas = igNascimento + Math.floor(totalDias / 7);
+                    
+                    if (igCorrigidaSemanas < 37) {
+                        // RN Pré-termo
+                        volSanguineo = 95; // Média entre 90-100
+                    } else {
+                        // RN a termo
+                        volSanguineo = 85; // Média entre 80-90
+                    }
+                } else {
+                    // Sem IG informada - usar critério de peso
+                    const peso = parseFloat(document.getElementById('peso').value) || 0;
+                    if (peso > 0 && peso < 2.5) {
+                        volSanguineo = 95; // Provável pré-termo
+                    } else {
+                        volSanguineo = 85; // Provável a termo
+                    }
+                }
+            } else if (totalDias <= 90) {
+                // 1-3 meses
+                volSanguineo = 80;
+            } else if (totalDias <= 365) {
+                // 3 meses a 1 ano
+                volSanguineo = 75; // Média entre 70-80
+            } else {
+                // > 1 ano
+                volSanguineo = 70;
+            }
+
+            document.getElementById('volSanguineo').value = volSanguineo;
+
+            // Recalcular após definir o volume sanguíneo
+            calcular();
+        }
+
+        function calcular() {
+            const peso = parseFloat(document.getElementById('peso').value) || 0;
+            const htAtual = parseFloat(document.getElementById('htAtual').value) || 0;
+            const htIdeal = parseFloat(document.getElementById('htIdeal').value) || 55;
+            const volSanguineoKg = parseFloat(document.getElementById('volSanguineo').value) || 80;
+            const aliquota = parseFloat(document.getElementById('aliquota').value) || 10;
+
+            // Validar entradas
+            if (peso <= 0 || htAtual <= 0 || htIdeal <= 0) {
+                document.getElementById('resultsSection').style.display = 'none';
+                document.getElementById('reportBtn').disabled = true;
+                return;
+            }
+
+            // Verificar se faz sentido tratar
+            if (htAtual <= htIdeal) {
+                document.getElementById('resultsSection').style.display = 'none';
+                document.getElementById('reportBtn').disabled = true;
+                return;
+            }
+
+            // Cálculos
+            // Volume sanguíneo total = Peso × Volume por kg
+            const volSanguineoTotal = peso * volSanguineoKg;
+
+            // Fórmula de hemodiluição
+            // Volume de soro = Volume sanguíneo total × (Ht atual - Ht ideal) / Ht atual
+            const volumeSoro = volSanguineoTotal * (htAtual - htIdeal) / htAtual;
+
+            // Número de alíquotas
+            const numAliquotas = Math.ceil(volumeSoro / aliquota);
+
+            // Exibir resultados
+            document.getElementById('volSanguineoTotal').textContent = volSanguineoTotal.toFixed(1) + ' mL';
+            document.getElementById('volumeSoro').textContent = volumeSoro.toFixed(1) + ' mL';
+            document.getElementById('numAliquotas').textContent = numAliquotas;
+
+            // Protocolo
+            document.getElementById('volRetira').textContent = volumeSoro.toFixed(1) + ' mL';
+            document.getElementById('volInfunde').textContent = volumeSoro.toFixed(1) + ' mL';
+            document.getElementById('volAliquota').textContent = aliquota.toFixed(1) + ' mL';
+            document.getElementById('numCiclos').textContent = numAliquotas;
+
+            // Mostrar seção de resultados
+            document.getElementById('resultsSection').style.display = 'block';
+            document.getElementById('procedureSection').style.display = 'block';
+            document.getElementById('reportBtn').disabled = false;
+        }
+
+        let linhaProcedimentoCounter = 0;
+
+        function gerarProcedimento() {
+            const aliquota = parseFloat(document.getElementById('aliquota').value) || 10;
+            const volumeSoroText = document.getElementById('volumeSoro').textContent;
+            const volumeSoro = parseFloat(volumeSoroText.replace(' mL', '')) || 0;
+            const numAliquotasText = document.getElementById('numAliquotas').textContent;
+            const numAliquotas = parseInt(numAliquotasText) || 0;
+            const horarioInicio = document.getElementById('horarioInicio').value;
+
+            if (volumeSoro <= 0 || numAliquotas <= 0 || !horarioInicio) {
+                alert('Por favor, verifique os cálculos e o horário de início antes de gerar o procedimento.');
+                return;
+            }
+
+            // Limpar tabela primeiro
+            limparTabela();
+
+            // Calcular intervalos (assumir 5 minutos entre cada ciclo)
+            const intervaloMinutos = 5;
+            const tbody = document.getElementById('cycleTableBody');
+
+            // Converter horário de início para minutos
+            const [horaInicio, minutoInicio] = horarioInicio.split(':').map(Number);
+            let totalMinutos = horaInicio * 60 + minutoInicio;
+
+            // Gerar ciclos
+            for (let i = 1; i <= numAliquotas; i++) {
+                // Calcular horário deste ciclo
+                const hora = Math.floor(totalMinutos / 60) % 24;
+                const minuto = totalMinutos % 60;
+                const horarioFormatado = `${String(hora).padStart(2, '0')}:${String(minuto).padStart(2, '0')}`;
+
+                // Primeira linha: SAÍDA de sangue
+                adicionarLinhaEditavel(i, horarioFormatado, 'saida', aliquota);
+
+                // Avançar 1 minuto para a entrada
+                totalMinutos += 1;
+                const horaEntrada = Math.floor(totalMinutos / 60) % 24;
+                const minutoEntrada = totalMinutos % 60;
+                const horarioEntrada = `${String(horaEntrada).padStart(2, '0')}:${String(minutoEntrada).padStart(2, '0')}`;
+
+                // Segunda linha: ENTRADA de soro
+                adicionarLinhaEditavel('', horarioEntrada, 'entrada', aliquota);
+
+                // Avançar para o próximo ciclo
+                totalMinutos += intervaloMinutos - 1;
+            }
+
+            // Adicionar linha de balanço
+            adicionarLinhaBalanco();
+
+            alert('Tabela modelo gerada com sucesso! Você pode editar os valores conforme necessário.');
+        }
+
+        function adicionarLinhaEditavel(ciclo, horario, tipo, volume) {
+            const tbody = document.getElementById('cycleTableBody');
+            const row = tbody.insertRow(tbody.rows.length > 0 && tbody.rows[tbody.rows.length - 1].className === 'balance-row' ? tbody.rows.length - 1 : tbody.rows.length);
+            
+            const tipoTexto = tipo === 'saida' ? '⬇️ SAÍDA (Sangue)' : '⬆️ ENTRADA (Soro 0,9%)';
+            const tipoClass = tipo === 'saida' ? 'saida' : 'entrada';
+            const sinal = tipo === 'saida' ? '-' : '+';
+            
+            const timeInputId = `time-${Date.now()}-${Math.random()}`;
+            
+            row.innerHTML = `
+                <td style="text-align: center;">${ciclo}</td>
+                <td>
+                    <div class="time-cell">
+                        <input type="time" id="${timeInputId}" value="${horario}" onchange="atualizarBalancos()">
+                        <button class="mark-time-btn" onclick="marcarHorarioAtual('${timeInputId}')" title="Marcar horário atual">⏱️</button>
+                    </div>
+                </td>
+                <td class="${tipoClass}">${tipoTexto}</td>
+                <td><input type="number" step="0.1" min="0" placeholder="${volume.toFixed(1)}" oninput="atualizarBalancos()" style="text-align: right;"></td>
+                <td class="readonly-cell" data-acum-entrada>0.0</td>
+                <td class="readonly-cell" data-acum-saida>0.0</td>
+                <td class="readonly-cell" data-balanco>0.0</td>
+            `;
+            row.dataset.tipo = tipo;
+            
+            atualizarBalancos();
+        }
+
+        function marcarHorarioAtual(timeInputId) {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const currentTime = `${hours}:${minutes}`;
+            
+            const input = document.getElementById(timeInputId);
+            if (input) {
+                input.value = currentTime;
+                // Adicionar efeito visual de confirmação
+                const btn = input.parentElement.querySelector('.mark-time-btn');
+                if (btn) {
+                    btn.textContent = '✓';
+                    setTimeout(() => {
+                        btn.textContent = '⏱️';
+                    }, 1000);
+                }
+            }
+        }
+
+        function adicionarLinha() {
+            const aliquota = parseFloat(document.getElementById('aliquota').value) || 10;
+            
+            // Obter o volume total de soro calculado
+            const volumeSoroText = document.getElementById('volumeSoro').textContent;
+            const volumeSoroTotal = parseFloat(volumeSoroText.replace(' mL', '')) || 0;
+            
+            if (volumeSoroTotal <= 0) {
+                alert('Realize os cálculos primeiro para determinar o volume de soro necessário.');
+                return;
+            }
+            
+            // Verificar se já existe alguma linha
+            const tbody = document.getElementById('cycleTableBody');
+            const linhasExistentes = Array.from(tbody.rows).filter(row => !row.classList.contains('balance-row'));
+            
+            // Calcular o volume total real digitado (baseado nas linhas de entrada)
+            let volumeEntradaReal = 0;
+            linhasExistentes.forEach(row => {
+                if (row.dataset.tipo === 'entrada') {
+                    const volumeInput = row.cells[3].querySelector('input[type="number"]');
+                    const valor = parseFloat(volumeInput.value) || 0; // Apenas valores digitados, não placeholder
+                    volumeEntradaReal += valor;
+                }
+            });
+            
+            // Bloquear se o volume real digitado já atingiu ou superou o volume necessário
+            if (volumeEntradaReal >= volumeSoroTotal) {
+                alert(`✓ Volume alvo já atingido!\n\nVolume necessário: ${volumeSoroTotal.toFixed(1)} mL\nVolume real infundido: ${volumeEntradaReal.toFixed(1)} mL\n\nProcedimento completo. Não é possível adicionar mais linhas.`);
+                return;
+            }
+            
+            const ultimaLinha = linhasExistentes[linhasExistentes.length - 1];
+            
+            let proximoTipo = 'saida'; // Começa com saída (retirada de sangue)
+            let ciclo = '';
+            
+            // Determinar o próximo tipo (alternar entre saída e entrada)
+            if (ultimaLinha) {
+                const tipoAnterior = ultimaLinha.dataset.tipo;
+                proximoTipo = tipoAnterior === 'saida' ? 'entrada' : 'saida';
+                
+                // Se for saída (novo ciclo), incrementar o número do ciclo
+                if (proximoTipo === 'saida') {
+                    const cicloAnterior = ultimaLinha.cells[0].textContent.trim();
+                    if (cicloAnterior && !isNaN(cicloAnterior)) {
+                        ciclo = parseInt(cicloAnterior) + 1;
+                    } else {
+                        // Contar quantos ciclos já existem
+                        const ciclosExistentes = linhasExistentes.filter(row => row.dataset.tipo === 'saida').length;
+                        ciclo = ciclosExistentes + 1;
+                    }
+                }
+            } else {
+                // Primeira linha é sempre uma saída (ciclo 1)
+                ciclo = 1;
+            }
+            
+            // Horário vazio para ser preenchido clicando no botão ⏱️
+            adicionarLinhaEditavel(ciclo, '', proximoTipo, aliquota);
+            
+            // Verificar se após adicionar esta linha o volume será atingido
+            if (proximoTipo === 'entrada') {
+                const novoVolumeTotal = volumeEntradaPlanejado + aliquota;
+                if (novoVolumeTotal >= volumeSoroTotal) {
+                    setTimeout(() => {
+                        alert(`✓ Volume de soro atingido!\n\nVolume necessário: ${volumeSoroTotal.toFixed(1)} mL\nVolume planejado: ${novoVolumeTotal.toFixed(1)} mL\n\nProcedimento completo.`);
+                    }, 100);
+                }
+            }
+        }
+
+        function limparTabela() {
+            const tbody = document.getElementById('cycleTableBody');
+            tbody.innerHTML = '';
+            linhaProcedimentoCounter = 0;
+            adicionarLinhaBalanco();
+        }
+
+        function adicionarLinhaBalanco() {
+            const tbody = document.getElementById('cycleTableBody');
+            
+            // Remover linha de balanço existente
+            const linhasBalanco = tbody.querySelectorAll('.balance-row');
+            linhasBalanco.forEach(linha => linha.remove());
+            
+            // Adicionar nova linha de balanço
+            const rowBalance = tbody.insertRow();
+            rowBalance.className = 'balance-row';
+            rowBalance.innerHTML = `
+                <td colspan="3" style="text-align: right;"><strong>BALANÇO FINAL:</strong></td>
+                <td class="readonly-cell" id="balancoFinal">0.0</td>
+                <td class="readonly-cell" id="totalEntrada">0.0</td>
+                <td class="readonly-cell" id="totalSaida">0.0</td>
+                <td class="readonly-cell" id="balancoFinalResult">0.0</td>
+            `;
+        }
+
+        function atualizarBalancos() {
+            const tbody = document.getElementById('cycleTableBody');
+            const rows = Array.from(tbody.rows).filter(row => !row.classList.contains('balance-row'));
+            
+            let acumuladoEntrada = 0;
+            let acumuladoSaida = 0;
+            
+            rows.forEach(row => {
+                const tipo = row.dataset.tipo;
+                const volumeInput = row.cells[3].querySelector('input[type="number"]');
+                const volume = parseFloat(volumeInput.value) || 0;
+                
+                if (tipo === 'entrada') {
+                    acumuladoEntrada += volume;
+                } else if (tipo === 'saida') {
+                    acumuladoSaida += volume;
+                }
+                
+                // Atualizar células de acumulados
+                row.querySelector('[data-acum-entrada]').textContent = acumuladoEntrada.toFixed(1);
+                row.querySelector('[data-acum-saida]').textContent = acumuladoSaida.toFixed(1);
+                row.querySelector('[data-balanco]').textContent = (acumuladoEntrada - acumuladoSaida).toFixed(1);
+            });
+            
+            // Atualizar linha de balanço final
+            const balancoFinal = acumuladoEntrada - acumuladoSaida;
+            document.getElementById('totalEntrada').textContent = acumuladoEntrada.toFixed(1);
+            document.getElementById('totalSaida').textContent = acumuladoSaida.toFixed(1);
+            document.getElementById('balancoFinal').textContent = balancoFinal.toFixed(1);
+            document.getElementById('balancoFinalResult').textContent = balancoFinal.toFixed(1);
+        }
+
+        function gerarRelatorio() {
+            const nome = document.getElementById('nome').value || 'Não informado';
+            const dataNascimento = document.getElementById('dataNascimento').value || '';
+            const data = document.getElementById('data').value || 'Não informada';
+            const idadeCalculada = document.getElementById('idadeCalculada').value || 'Não calculada';
+            const peso = parseFloat(document.getElementById('peso').value) || 0;
+            const htAtual = parseFloat(document.getElementById('htAtual').value) || 0;
+            const htIdeal = parseFloat(document.getElementById('htIdeal').value) || 55;
+            const volSanguineoKg = parseFloat(document.getElementById('volSanguineo').value) || 80;
+            const aliquota = parseFloat(document.getElementById('aliquota').value) || 10;
+
+            if (peso <= 0 || htAtual <= 0) {
+                alert('Por favor, preencha todos os parâmetros antes de gerar o relatório.');
+                return;
+            }
+
+            // Formatar data de nascimento
+            let dataNascFormatada = 'Nao informada';
+            if (dataNascimento) {
+                const dtNasc = new Date(dataNascimento + 'T00:00:00');
+                dataNascFormatada = dtNasc.toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+            }
+
+            // Formatar data
+            let dataFormatada = 'Nao informada';
+            if (data) {
+                const dt = new Date(data);
+                dataFormatada = dt.toLocaleString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+
+            // Recalcular
+            const volSanguineoTotal = peso * volSanguineoKg;
+            const volumeSoro = volSanguineoTotal * (htAtual - htIdeal) / htAtual;
+            const numAliquotas = Math.ceil(volumeSoro / aliquota);
+
+            // Gerar tabela de procedimento para o relatório (dados reais da tabela editável)
+            const horarioInicio = document.getElementById('horarioInicio').value;
+            const tbody = document.getElementById('cycleTableBody');
+            const rows = tbody ? Array.from(tbody.rows).filter(row => !row.classList.contains('balance-row')) : [];
+
+            let tabelaProcedimento = '';
+            if (rows.length > 0 && horarioInicio) {
+                tabelaProcedimento = '\n\nCONTROLE DO PROCEDIMENTO\n------------------------\n';
+                tabelaProcedimento += `Horario de Inicio: ${horarioInicio}\n\n`;
+                tabelaProcedimento += 'Ciclo | Horario | Tipo                    | Volume  | Acum.Entrada | Acum.Saida | Balanco\n';
+                tabelaProcedimento += '------|---------|-------------------------|---------|--------------|------------|--------\n';
+
+                // Ler dados da tabela editável
+                rows.forEach(row => {
+                    const ciclo = row.cells[0].textContent || '  ';
+                    const horarioInput = row.cells[1].querySelector('input[type="time"]');
+                    const horario = horarioInput ? horarioInput.value : '00:00';
+                    const tipo = row.dataset.tipo;
+                    const tipoTexto = tipo === 'saida' ? 'SAIDA (Sangue)' : 'ENTRADA (Soro 0,9%)';
+                    const volumeInput = row.cells[3].querySelector('input[type="number"]');
+                    const volume = parseFloat(volumeInput.value) || 0;
+                    const sinal = tipo === 'saida' ? '-' : '+';
+                    const acumEntrada = row.querySelector('[data-acum-entrada]').textContent;
+                    const acumSaida = row.querySelector('[data-acum-saida]').textContent;
+                    const balanco = row.querySelector('[data-balanco]').textContent;
+
+                    tabelaProcedimento += `  ${String(ciclo).padStart(2)} | ${horario} | ${tipoTexto.padEnd(23)} | ${sinal}${volume.toFixed(1).padStart(5)} | ${acumEntrada.padStart(12)} | ${acumSaida.padStart(10)} | ${balanco.padStart(7)}\n`;
+                });
+
+                // Adicionar balanço final
+                const totalEntrada = document.getElementById('totalEntrada') ? document.getElementById('totalEntrada').textContent : '0.0';
+                const totalSaida = document.getElementById('totalSaida') ? document.getElementById('totalSaida').textContent : '0.0';
+                const balancoFinalResult = document.getElementById('balancoFinalResult') ? document.getElementById('balancoFinalResult').textContent : '0.0';
+
+                tabelaProcedimento += '------|---------|-------------------------|---------|--------------|------------|--------\n';
+                tabelaProcedimento += `BALANCO FINAL:                          ${balancoFinalResult.padStart(7)} | ${totalEntrada.padStart(12)} | ${totalSaida.padStart(10)} | ${balancoFinalResult.padStart(7)}\n`;
+            }
+
+            let relatorio = `RESUMO INFORMATIVO — POLICITEMIA NEONATAL (EDUCATIVO)
+========================================
+
+DADOS DO PACIENTE
+-----------------
+Nome: ${nome}
+Data de Nascimento: ${dataNascFormatada}
+Idade: ${idadeCalculada}
+Data da Avaliacao: ${dataFormatada}
+
+PARAMETROS CLINICOS
+-------------------
+Peso do Neonato: ${peso.toFixed(2)} kg
+Hematocrito Atual: ${htAtual.toFixed(1)}%
+Hematocrito Ideal: ${htIdeal.toFixed(1)}%
+Volume Sanguineo Estimado: ${volSanguineoKg.toFixed(1)} mL/kg (automatico por idade)
+
+CALCULOS
+--------
+Volume Sanguineo Total: ${volSanguineoTotal.toFixed(1)} mL
+Volume de Soro Fisiologico 0,9%: ${volumeSoro.toFixed(1)} mL
+Aliquotas de: ${aliquota.toFixed(1)} mL
+Numero de Aliquotas: ${numAliquotas}
+
+RESUMO EDUCATIVO (NAO ORDENA PROCEDIMENTO)
+------------------------------------------
+Exemplo numerico baseado na formula abaixo (conferir com protocolo institucional):
+
+1. Volume estimado de troca (sangue): ${volumeSoro.toFixed(1)} mL
+2. Volume correspondente de SF 0,9% no mesmo modelo: ${volumeSoro.toFixed(1)} mL
+3. Particao matematica em aliquotas de ${aliquota.toFixed(1)} mL
+4. Numero de ciclos calculados: ${numAliquotas}
+${tabelaProcedimento}
+OBSERVACOES (REFERENCIA + CONTEXTO CLINICO)
+------------------------------------------
+- Procedimentos invasivos exigem decisao, prescricao e monitorizacao pelo profissional assistente
+- Na pratica costuma-se discutir monitorizacao de sinais vitais e glicemia conforme protocolo local
+- Hematocrito de controle e sinais de hiperviscosidade: correlacao clinica
+- Definicoes frequentes na literatura: Ht venoso central > 65% ou Hb > 22 g/dL (referencia consultiva)
+- Indicacoes de tratamento na literatura costumam citar policitemia sintomatica ou Ht > 70% — decisao assistencial
+
+FORMULA UTILIZADA
+-----------------
+Volume de Hemodiluicao = Volume Sanguineo Total x (Ht Atual - Ht Ideal) / Ht Atual
+
+REFERENCIAS
+-----------
+Ronald SL. Pediatric Anesthesia - The Requisites in Anestesiology. 
+Fluid and blood Administration, 2004, 115-121.
+
+Data de Geracao: ${new Date().toLocaleString('pt-BR')}
+`;
+
+            relatorio = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorio;
+            var relatorioFinal = relatorio;
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorioFinal += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                relatorioFinal += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            // Copiar para a área de transferência
+            navigator.clipboard.writeText(relatorioFinal).then(() => {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(() => {
+                // Fallback para navegadores que não suportam clipboard API
+                const textArea = document.createElement('textarea');
+                textArea.value = relatorioFinal;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

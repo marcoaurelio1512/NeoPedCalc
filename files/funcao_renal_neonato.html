@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — Função renal neonatal (educativo)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .form-section h3 {
+            font-size: 14px;
+            margin: 0 0 15px 0;
+            color: #111;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .result-display {
+            background: #e8fff0;
+            border: 1px solid #b4ffcf;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .result-number {
+            font-size: 36px;
+            font-weight: 900;
+            margin: 10px 0;
+            color: #111;
+        }
+
+        .result-interpretation {
+            font-weight: 800;
+            font-size: 14px;
+            color: #111;
+        }
+
+        .calculate-btn, .report-btn {
+            background: #111;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .warning {
+            background: #fffbe0;
+            border: 1px solid #f1e49a;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .reference-table {
+            margin-top: 25px;
+            overflow-x: auto;
+        }
+
+        .reference-table table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .reference-table th, .reference-table td {
+            padding: 10px;
+            border: 1px solid #e7e7ee;
+            text-align: left;
+        }
+
+        .reference-table th {
+            background: #f6f7fb;
+            font-weight: 800;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #374151;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        /* Modal Styles */
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(17, 17, 17, 0.1);
+            color: #111;
+            border: 2px solid #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-info:hover {
+            background: #111;
+            color: #fff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #2c3e50;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .modal {
+                padding: 10px;
+            }
+            .modal-content {
+                width: 95%;
+                max-height: 95vh;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+<body>
+    <header>
+        <h1>🧪 Função Renal Neonatal</h1>
+        <p>Avaliação completa da função renal em recém-nascidos</p>
+        <div class="header-actions">
+            <button class="btn-info" onclick="abrirModal()">
+                Como usar
+            </button>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="card">
+            <div class="form-container">
+            <!-- Dados do Paciente -->
+            <div class="form-section">
+                <h3>👶 Dados do Paciente</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome">Nome do Paciente:</label>
+                        <input type="text" id="nome" placeholder="Ex: João Silva">
+                    </div>
+                    <div class="form-group">
+                        <label for="idadeGestacional">Idade Gestacional (semanas):</label>
+                        <input type="number" id="idadeGestacional" placeholder="Ex: 32" min="22" max="42" step="0.1">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="alturaNascimento">Altura ao Nascimento (cm):</label>
+                        <input type="number" id="alturaNascimento" placeholder="Ex: 45" min="20" max="60" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label for="peso">Peso Atual (kg):</label>
+                        <input type="number" id="peso" placeholder="Ex: 1.5" min="0.3" max="5" step="0.01">
+                    </div>
+                </div>
+            </div>
+
+            <!-- TFG Neonatal -->
+            <div class="form-section">
+                <h3>🔬 Taxa de Filtração Glomerular (TFG) Neonatal</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="creatininaPlasmatica">Creatinina Plasmática (mg/dL):</label>
+                        <input type="number" id="creatininaPlasmatica" placeholder="Ex: 0.8" step="0.01" min="0.1" max="5">
+                    </div>
+                    <div class="form-group">
+                        <label for="constanteK">Constante K:</label>
+                        <input type="number" id="constanteK" placeholder="Calculada automaticamente" readonly style="background-color: #f8f9fa; color: #374151;">
+                    </div>
+                </div>
+                <div class="warning">
+                    <strong>ℹ️ Informação:</strong> A constante K é calculada automaticamente baseada na idade gestacional do neonato.
+                </div>
+                <div class="result-display" id="tfgResult">
+                    <div class="result-number" id="tfgNumber">0</div>
+                    <div class="result-interpretation" id="tfgInterpretation">mL/min/1.73m²</div>
+                </div>
+            </div>
+
+            <!-- Depuração de Creatinina -->
+            <div class="form-section">
+                <h3>💧 Depuração de Creatinina</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="creatininaUrinaria">Creatinina Urinária (mg/dL):</label>
+                        <input type="number" id="creatininaUrinaria" placeholder="Ex: 120" step="0.1" min="1" max="500">
+                    </div>
+                    <div class="form-group">
+                        <label for="volumeUrinario">Volume Urinário (mL):</label>
+                        <input type="number" id="volumeUrinario" placeholder="Ex: 50" min="1" max="200">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tempoColeta">Tempo de Coleta (horas):</label>
+                        <input type="number" id="tempoColeta" placeholder="Ex: 24" min="1" max="24" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label for="creatininaPlasmaticaDepuracao">Creatinina Plasmática (mg/dL):</label>
+                        <input type="number" id="creatininaPlasmaticaDepuracao" placeholder="Ex: 0.8" step="0.01" min="0.1" max="5">
+                    </div>
+                </div>
+                <div class="result-display" id="depuracaoResult">
+                    <div class="result-number" id="depuracaoNumber">0</div>
+                    <div class="result-interpretation" id="depuracaoInterpretation">mL/min/1.73m²</div>
+                </div>
+            </div>
+
+            <!-- Fração de Excreção de Sódio -->
+            <div class="form-section">
+                <h3>🧂 Fração de Excreção de Sódio (FeNa)</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="sodioUrinario">Sódio Urinário (mEq/L):</label>
+                        <input type="number" id="sodioUrinario" placeholder="Ex: 50" step="0.1" min="1" max="200">
+                    </div>
+                    <div class="form-group">
+                        <label for="sodioPlasmatico">Sódio Plasmático (mEq/L):</label>
+                        <input type="number" id="sodioPlasmatico" placeholder="Ex: 140" step="0.1" min="100" max="200">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="creatininaUrinariaFeNa">Creatinina Urinária (mg/dL):</label>
+                        <input type="number" id="creatininaUrinariaFeNa" placeholder="Ex: 120" step="0.1" min="1" max="500">
+                    </div>
+                    <div class="form-group">
+                        <label for="creatininaPlasmaticaFeNa">Creatinina Plasmática (mg/dL):</label>
+                        <input type="number" id="creatininaPlasmaticaFeNa" placeholder="Ex: 0.8" step="0.01" min="0.1" max="5">
+                    </div>
+                </div>
+                <div class="result-display" id="fenaResult">
+                    <div class="result-number" id="fenaNumber">0</div>
+                    <div class="result-interpretation" id="fenaInterpretation">%</div>
+                </div>
+            </div>
+
+            <!-- Osmolaridade Urinária -->
+            <div class="form-section">
+                <h3>🧪 Osmolaridade Urinária</h3>
+                <div class="form-group">
+                    <label for="densidadeUrinaria">Densidade Urinária:</label>
+                    <input type="number" id="densidadeUrinaria" placeholder="Ex: 1.020 ou 1020" min="1.000" max="1.050" step="0.001">
+                    <small class="form-text text-muted">Digite 1020 para 1.020, 1015 para 1.015, etc.</small>
+                </div>
+                <div class="warning">
+                    <strong>ℹ️ Informação:</strong> O cálculo é automático e inclui interpretação baseada na idade gestacional do neonato.
+                </div>
+                <div class="result-display" id="osmolaridadeResult">
+                    <div class="result-number" id="osmolaridadeNumber">0</div>
+                    <div class="result-interpretation" id="osmolaridadeInterpretation">mOsm/L</div>
+                </div>
+            </div>
+
+            <button class="calculate-btn" onclick="calcularTudo()">Calcular Função Renal Neonatal</button>
+            <button class="report-btn" onclick="gerarRelatorio()">Gerar Relatório</button>
+
+            <!-- Tabela de Referência -->
+            <div class="reference-table">
+                <h3>📊 TFG Normal em Neonatos (mL/min/1.73m²)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Idade Gestacional</th>
+                            <th>TFG Normal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>24-28 semanas</td>
+                            <td>15-25</td>
+                        </tr>
+                        <tr>
+                            <td>29-32 semanas</td>
+                            <td>20-35</td>
+                        </tr>
+                        <tr>
+                            <td>33-36 semanas</td>
+                            <td>25-45</td>
+                        </tr>
+                        <tr>
+                            <td>37-40 semanas</td>
+                            <td>30-50</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Informação sobre Correlação -->
+            <div class="reference-table">
+                <h3>🧪 Correlação Densidade × Osmolaridade</h3>
+                <div class="info-box">
+                    <p><strong>Fórmula:</strong> Osmolaridade = (Densidade - 1.000) × 40.000</p>
+                    <p><strong>Exemplo:</strong> Densidade 1.020 → (1.020 - 1.000) × 40.000 = 800 mOsm/L</p>
+                </div>
+                <div class="warning">
+                    <strong>⚠️ Importante:</strong> Esta é uma estimativa aproximada. Para valores precisos, use osmometria direta.
+                </div>
+            </div>
+
+            <!-- Osmolaridade Máxima -->
+            <div class="reference-table">
+                <h3>🧪 Osmolaridade Urinária Máxima - Neonatos</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tipo de RN</th>
+                            <th>Osmolaridade Máxima (mOsm/L)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>RN Pré-termo</td>
+                            <td>600</td>
+                        </tr>
+                        <tr>
+                            <td>RN A termo</td>
+                            <td>800</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="warning">
+                    <strong>⚠️ Interpretação IRA:</strong> Pré-renal > 400 mOsm/L | Intrínseca < 400 mOsm/L
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="footer">
+        <p>Calculadora de Função Renal Neonatal</p>
+        <p><strong>Referências:</strong> Schwartz GJ, et al. Pediatrics. 1976;58(2):259-63.</p>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — Função renal neonatal (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta calculadora auxilia na avaliação da função renal em recém-nascidos, fornecendo análise de parâmetros específicos para diferentes idades gestacionais e pós-natais, com fórmulas adaptadas para a imaturidade dos sistemas renais neonatais.</p>
+                
+                <h3>Fórmulas Principais</h3>
+                <div class="formula-box">
+                    <strong>Fórmula de Schwartz Neonatal (TFG):</strong><br>
+                    TFG = (k × altura) / creatinina sérica<br><br>
+                    <strong>Valores de k neonatal:</strong><br>
+                    • <strong>Pré-termo extremo:</strong> k = 0.33<br>
+                    • <strong>Pré-termo:</strong> k = 0.45<br>
+                    • <strong>Termo:</strong> k = 0.45<br>
+                    • <strong>Pós-termo:</strong> k = 0.45<br><br>
+                    <strong>Clearance de Creatinina Neonatal:</strong><br>
+                    ClCr = (Ucr × V) / (Scr × T)<br><br>
+                    <strong>Filtração Glomerular Normal Neonatal:</strong><br>
+                    • <strong>Pré-termo extremo:</strong> 15-30 mL/min/1.73m²<br>
+                    • <strong>Pré-termo:</strong> 20-40 mL/min/1.73m²<br>
+                    • <strong>Termo:</strong> 20-40 mL/min/1.73m²
+                </div>
+
+                <h3>Parâmetros Avaliados</h3>
+                <ul>
+                    <li><strong>Creatinina Sérica:</strong> Função renal imatura</li>
+                    <li><strong>Ureia:</strong> Função renal e hidratação</li>
+                    <li><strong>Clearance de Creatinina:</strong> TFG estimada</li>
+                    <li><strong>Taxa de Filtração Glomerular:</strong> Função renal</li>
+                    <li><strong>Eletrólitos:</strong> Na, K, Cl, P, Mg</li>
+                    <li><strong>Proteinúria:</strong> Perda de proteínas</li>
+                    <li><strong>Microalbuminúria:</strong> Função glomerular</li>
+                    <li><strong>Urina Completa:</strong> Análise geral</li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Insira a Idade Gestacional:</strong> Em semanas</li>
+                    <li><strong>Insira a Idade Pós-natal:</strong> Em dias</li>
+                    <li><strong>Insira o Peso:</strong> Em kg</li>
+                    <li><strong>Insira a Altura:</strong> Em cm</li>
+                    <li><strong>Insira a Creatinina:</strong> Sérica em mg/dL</li>
+                    <li><strong>Calcule:</strong> Sistema calcula TFG neonatal</li>
+                </ol>
+
+                <h3>Considerações Especiais Neonatais</h3>
+                <ul>
+                    <li><strong>Idade Gestacional:</strong> Pré-termos têm função imatura</li>
+                    <li><strong>Idade Pós-natal:</strong> Primeira semana - adaptação</li>
+                    <li><strong>Função Renal:</strong> Imatura, desenvolvimento rápido</li>
+                    <li><strong>Metabolismo:</strong> Reduzido em pré-termos</li>
+                    <li><strong>Desenvolvimento:</strong> Maturidade dos sistemas</li>
+                    <li><strong>Variações:</strong> Fisiológicas e patológicas</li>
+                    <li><strong>Contexto:</strong> Clínico e laboratorial</li>
+                    <li><strong>Monitoramento:</strong> Contínuo e frequente</li>
+                </ul>
+
+                <h3>Causas de Disfunção Renal Neonatal</h3>
+                <ul>
+                    <li><strong>Insuficiência Renal Aguda:</strong> Asfixia, sepse, choque</li>
+                    <li><strong>Malformações:</strong> Congênitas</li>
+                    <li><strong>Obstruções:</strong> Ureteral, uretral</li>
+                    <li><strong>Infecções:</strong> Pielonefrite</li>
+                    <li><strong>Medicações:</strong> Nefrotóxicas</li>
+                    <li><strong>Doenças Sistêmicas:</strong> Sepse, choque</li>
+                    <li><strong>Hipoperfusão:</strong> Pré-renal</li>
+                    <li><strong>Isquemia:</strong> Renal</li>
+                </ul>
+
+                <h3>Monitoramento e Condutas Neonatais</h3>
+                <ul>
+                    <li><strong>Repetição:</strong> Frequência de exames</li>
+                    <li><strong>Correção:</strong> Tratamento específico</li>
+                    <li><strong>Suporte:</strong> Hidratação, diálise</li>
+                    <li><strong>Medicações:</strong> Ajuste de dose</li>
+                    <li><strong>Fluidoterapia:</strong> Correção de distúrbios</li>
+                    <li><strong>Monitoramento:</strong> Contínuo</li>
+                </ul>
+
+                <h3>Limitações e Considerações</h3>
+                <ul>
+                    <li>Não substitui avaliação clínica</li>
+                    <li>Requer contexto clínico</li>
+                    <li>Variações individuais</li>
+                    <li>Interferências técnicas</li>
+                    <li>Coleta adequada necessária</li>
+                    <li>Transporte e processamento</li>
+                    <li>Equipamentos calibrados</li>
+                    <li>Interpretação experiente</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Schwartz GJ, et al. New equations to estimate GFR in children with CKD. J Am Soc Nephrol. 2009;20(3):629-637.<br>
+                    - Martin RJ, et al. Fanaroff and Martin's neonatal-perinatal medicine. 11th ed. Elsevier; 2020.<br>
+                    - Gleason CA, et al. Avery's diseases of the newborn. 10th ed. Elsevier; 2018.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Função para calcular constante K neonatal
+        function calcularConstanteK() {
+            const idadeGestacional = parseFloat(document.getElementById('idadeGestacional').value) || 0;
+            
+            let k = 0;
+            let explicacao = '';
+            
+            if (idadeGestacional < 28) {
+                k = 0.33;
+                explicacao = 'RN pré-termo extremo (<28 sem)';
+            } else if (idadeGestacional < 32) {
+                k = 0.35;
+                explicacao = 'RN pré-termo (28-31 sem)';
+            } else if (idadeGestacional < 37) {
+                k = 0.40;
+                explicacao = 'RN pré-termo tardio (32-36 sem)';
+            } else {
+                k = 0.45;
+                explicacao = 'RN a termo (≥37 sem)';
+            }
+            
+            const campoK = document.getElementById('constanteK');
+            if (campoK) {
+                if (k > 0) {
+                    campoK.value = k.toFixed(2);
+                    campoK.title = explicacao;
+                } else {
+                    campoK.value = '';
+                    campoK.title = 'Digite idade gestacional para calcular';
+                }
+            }
+            return k;
+        }
+
+        // Função para calcular TFG neonatal
+        function calcularTFG() {
+            const altura = parseFloat(document.getElementById('alturaNascimento').value) || 0;
+            const creatinina = parseFloat(document.getElementById('creatininaPlasmatica').value) || 0;
+            const k = calcularConstanteK();
+            
+            if (altura > 0 && creatinina > 0 && k > 0) {
+                const tfg = (k * altura) / creatinina;
+                const tfgArredondada = Math.round(tfg);
+                
+                // Interpretação baseada na idade gestacional
+                const idadeGestacional = parseFloat(document.getElementById('idadeGestacional').value) || 0;
+                let interpretacao = '';
+                
+                if (idadeGestacional < 28) {
+                    if (tfg >= 15) {
+                        interpretacao = 'TFG normal para idade gestacional';
+                    } else {
+                        interpretacao = 'TFG reduzida para idade gestacional';
+                    }
+                } else if (idadeGestacional < 32) {
+                    if (tfg >= 20) {
+                        interpretacao = 'TFG normal para idade gestacional';
+                    } else {
+                        interpretacao = 'TFG reduzida para idade gestacional';
+                    }
+                } else if (idadeGestacional < 37) {
+                    if (tfg >= 25) {
+                        interpretacao = 'TFG normal para idade gestacional';
+                    } else {
+                        interpretacao = 'TFG reduzida para idade gestacional';
+                    }
+                } else {
+                    if (tfg >= 30) {
+                        interpretacao = 'TFG normal para idade gestacional';
+                    } else {
+                        interpretacao = 'TFG reduzida para idade gestacional';
+                    }
+                }
+                
+                document.getElementById('tfgNumber').textContent = tfgArredondada;
+                document.getElementById('tfgInterpretation').textContent = interpretacao;
+                document.getElementById('tfgResult').style.display = 'block';
+            } else {
+                document.getElementById('tfgResult').style.display = 'none';
+            }
+        }
+
+        // Função para calcular depuração urinária
+        function calcularDepuracao() {
+            const creatininaUrinaria = parseFloat(document.getElementById('creatininaUrinaria').value) || 0;
+            const volumeUrinario = parseFloat(document.getElementById('volumeUrinario').value) || 0;
+            const tempoColetaHoras = parseFloat(document.getElementById('tempoColeta').value) || 0;
+            const creatininaPlasmatica = parseFloat(document.getElementById('creatininaPlasmaticaDepuracao').value) || 0;
+            const altura = parseFloat(document.getElementById('alturaNascimento').value) || 0;
+            const peso = parseFloat(document.getElementById('peso').value) || 0;
+            
+            if (creatininaUrinaria > 0 && volumeUrinario > 0 && tempoColetaHoras > 0 && creatininaPlasmatica > 0 && altura > 0 && peso > 0) {
+                const tempoColetaMinutos = tempoColetaHoras * 60;
+                const depuracao = (creatininaUrinaria * volumeUrinario) / (creatininaPlasmatica * tempoColetaMinutos);
+                const superficieCorporal = Math.sqrt((altura * peso) / 3600);
+                const depuracaoAjustada = depuracao * (1.73 / superficieCorporal);
+                const depuracaoArredondada = Math.round(depuracaoAjustada);
+                
+                // Interpretação clínica da depuração
+                let interpretacao = '';
+                if (depuracaoArredondada >= 30) {
+                    interpretacao = 'Depuração normal para neonato (≥30 mL/min/1.73m²)';
+                } else if (depuracaoArredondada >= 20) {
+                    interpretacao = 'Depuração levemente reduzida (20-29 mL/min/1.73m²)';
+                } else if (depuracaoArredondada >= 15) {
+                    interpretacao = 'Depuração moderadamente reduzida (15-19 mL/min/1.73m²)';
+                } else {
+                    interpretacao = 'Depuração severamente reduzida (<15 mL/min/1.73m²)';
+                }
+                
+                document.getElementById('depuracaoNumber').textContent = depuracaoArredondada;
+                document.getElementById('depuracaoResult').style.display = 'block';
+                document.getElementById('depuracaoInterpretation').textContent = interpretacao;
+            } else {
+                document.getElementById('depuracaoResult').style.display = 'none';
+            }
+        }
+
+        // Função para calcular FeNa
+        function calcularFeNa() {
+            const sodioUrinario = parseFloat(document.getElementById('sodioUrinario').value) || 0;
+            const sodioPlasmatico = parseFloat(document.getElementById('sodioPlasmatico').value) || 0;
+            const creatininaUrinaria = parseFloat(document.getElementById('creatininaUrinariaFeNa').value) || 0;
+            const creatininaPlasmatica = parseFloat(document.getElementById('creatininaPlasmaticaFeNa').value) || 0;
+            
+            if (sodioUrinario > 0 && sodioPlasmatico > 0 && creatininaUrinaria > 0 && creatininaPlasmatica > 0) {
+                const fena = (sodioUrinario * creatininaPlasmatica) / (sodioPlasmatico * creatininaUrinaria) * 100;
+                const fenaArredondada = Math.round(fena * 100) / 100;
+                
+                // Interpretação da FeNa
+                let interpretacao = '';
+                if (fena < 1) {
+                    interpretacao = 'FeNa baixa - IRA pré-renal';
+                } else if (fena > 2) {
+                    interpretacao = 'FeNa alta - IRA intrínseca';
+                } else {
+                    interpretacao = 'FeNa intermediária';
+                }
+                
+                document.getElementById('fenaNumber').textContent = fenaArredondada;
+                document.getElementById('fenaResult').style.display = 'block';
+                document.getElementById('fenaInterpretation').textContent = interpretacao;
+            } else {
+                document.getElementById('fenaResult').style.display = 'none';
+            }
+        }
+
+        // Função para calcular osmolaridade urinária
+        function calcularOsmolaridade() {
+            const densidade = parseFloat(document.getElementById('densidadeUrinaria').value) || 0;
+            const idadeGestacional = parseFloat(document.getElementById('idadeGestacional').value) || 0;
+            
+            if (densidade > 0) {
+                const osmolaridade = Math.round((densidade - 1.000) * 40000);
+                
+                // Interpretação baseada na idade gestacional
+                let interpretacao = '';
+                let cor = '#28a745';
+                
+                if (idadeGestacional < 37) { // RN Pré-termo
+                    if (osmolaridade >= 600) {
+                        interpretacao = 'RN Pré-termo: Capacidade limitada (≥600 mOsm/L)';
+                        cor = '#28a745';
+                    } else {
+                        interpretacao = 'RN Pré-termo: Capacidade reduzida (<600 mOsm/L)';
+                        cor = '#ffc107';
+                    }
+                } else { // RN A termo
+                    if (osmolaridade >= 800) {
+                        interpretacao = 'RN A termo: Capacidade moderada (≥800 mOsm/L)';
+                        cor = '#28a745';
+                    } else {
+                        interpretacao = 'RN A termo: Capacidade reduzida (<800 mOsm/L)';
+                        cor = '#ffc107';
+                    }
+                }
+                
+                // Adicionar interpretação para IRA
+                if (osmolaridade > 400) {
+                    interpretacao += '<br><strong>IRA Pré-renal:</strong> Preservação da concentração';
+                } else {
+                    interpretacao += '<br><strong>IRA Intrínseca:</strong> Perda da capacidade de concentração';
+                }
+                
+                document.getElementById('osmolaridadeNumber').textContent = osmolaridade;
+                document.getElementById('osmolaridadeResult').style.display = 'block';
+                document.getElementById('osmolaridadeInterpretation').innerHTML = `mOsm/L<br><small style="color: ${cor}; font-weight: bold;">${interpretacao}</small>`;
+            } else {
+                document.getElementById('osmolaridadeResult').style.display = 'none';
+            }
+        }
+
+        // Função para calcular tudo
+        function calcularTudo() {
+            calcularTFG();
+            calcularDepuracao();
+            calcularFeNa();
+            calcularOsmolaridade();
+        }
+
+        // Função para gerar relatório UTF-8 sem acentos
+        function gerarRelatorio() {
+            const nome = document.getElementById('nome').value || 'Paciente';
+            const idadeGestacional = document.getElementById('idadeGestacional').value || '0';
+            const alturaNascimento = document.getElementById('alturaNascimento').value || '0';
+            const peso = document.getElementById('peso').value || '0';
+            const creatininaPlasmatica = document.getElementById('creatininaPlasmatica').value || '0';
+            const creatininaUrinaria = document.getElementById('creatininaUrinaria').value || '0';
+            const volumeUrinario = document.getElementById('volumeUrinario').value || '0';
+            const tempoColeta = document.getElementById('tempoColeta').value || '0';
+            const sodioUrinario = document.getElementById('sodioUrinario').value || '0';
+            const sodioPlasmatico = document.getElementById('sodioPlasmatico').value || '0';
+            const densidadeUrinaria = document.getElementById('densidadeUrinaria').value || '0';
+            
+            const constanteK = document.getElementById('constanteK').value || '0';
+            const tfg = document.getElementById('tfgNumber').textContent || '0';
+            const depuracao = document.getElementById('depuracaoNumber').textContent || '0';
+            const fena = document.getElementById('fenaNumber').textContent || '0';
+            const osmolaridade = document.getElementById('osmolaridadeNumber').textContent || '0';
+            
+            const dataHora = new Date().toLocaleString('pt-BR');
+            
+            let relatorio = `RELATORIO - FUNCAO RENAL NEONATAL
+========================================
+
+DADOS DO PACIENTE
+-----------------
+Data/Hora: ${dataHora}
+Nome: ${nome}
+Idade Gestacional: ${idadeGestacional} semanas
+Altura ao Nascimento: ${alturaNascimento} cm
+Peso Atual: ${peso} kg
+
+DADOS LABORATORIAIS
+-------------------
+Creatinina Plasmatica: ${creatininaPlasmatica} mg/dL
+Creatinina Urinaria: ${creatininaUrinaria} mg/dL
+Volume Urinario: ${volumeUrinario} mL
+Tempo de Coleta: ${tempoColeta} horas
+Sodio Urinario: ${sodioUrinario} mEq/L
+Sodio Plasmatico: ${sodioPlasmatico} mEq/L
+Densidade Urinaria: ${densidadeUrinaria}
+
+CALCULOS REALIZADOS
+-------------------
+1. TAXA DE FILTRACAO GLOMERULAR (TFG) NEONATAL
+   TFG Calculada: ${tfg} mL/min/1.73m²
+   Constante K: ${constanteK}
+   Interpretacao: ${document.getElementById('tfgInterpretation').textContent || 'Nao calculado'}
+
+2. DEPURACAO DE CREATININA
+   Depuracao: ${depuracao} mL/min/1.73m²
+   Interpretacao: ${document.getElementById('depuracaoInterpretation').textContent || 'Nao calculado'}
+
+3. FRACAO DE EXCRECAO DE SODIO (FeNa)
+   FeNa: ${fena}%
+   Interpretacao: ${document.getElementById('fenaInterpretation').textContent || 'Nao calculado'}
+
+4. OSMOLARIDADE URINARIA
+   Osmolaridade: ${osmolaridade} mOsm/L
+   Interpretacao: ${document.getElementById('osmolaridadeInterpretation').textContent || 'Nao calculado'}
+
+INTERPRETACAO CLINICA
+---------------------
+${gerarInterpretacaoClinica()}
+
+OBSERVACOES IMPORTANTES
+-----------------------
+- A TFG e calculada pela formula de Schwartz para neonatos
+- A constante K varia conforme a idade gestacional
+- A depuracao de creatinina requer coleta de urina adequada
+- A FeNa auxilia na diferenciacao entre IRA pre-renal e intrínseca
+- A osmolaridade urinaria e uma estimativa baseada na densidade
+- Valores de referencia sao especificos para neonatos
+- Todos os calculos devem ser interpretados em conjunto com o quadro clinico
+
+REFERENCIAS
+-----------
+- Schwartz GJ, et al. A simple estimate of glomerular filtration rate in children derived from body length and plasma creatinine. Pediatrics. 1976;58(2):259-263.
+- KDIGO Clinical Practice Guidelines for Acute Kidney Injury. Kidney Int Suppl. 2012;2(1):1-138.
+- Neonatal Kidney Function: Development and Assessment. Pediatr Nephrol. 2018;33(2):203-216.
+
+DETALHES TECNICOS
+-----------------
+Calculadora: Funcao Renal Neonatal
+Versao: 1.0
+Data de Geracao: ${dataHora}
+Formato: UTF-8 sem acentos`;
+
+            // Copiar para área de transferência
+            navigator.clipboard.writeText(relatorio).then(function() {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(function(err) {
+                console.error('Erro ao copiar relatorio: ', err);
+                if (typeof window.neopedCopyFail === 'function') window.neopedCopyFail(); else alert('Nao foi possivel copiar automaticamente. Revise o texto e copie manualmente para uso informativo.');
+                mostrarRelatorioModal(relatorio);
+            });
+        }
+
+        // Função para gerar interpretação clínica
+        function gerarInterpretacaoClinica() {
+            const tfg = parseFloat(document.getElementById('tfgNumber').textContent) || 0;
+            const idadeGestacional = parseFloat(document.getElementById('idadeGestacional').value) || 0;
+            const fena = parseFloat(document.getElementById('fenaNumber').textContent) || 0;
+            const osmolaridade = parseFloat(document.getElementById('osmolaridadeNumber').textContent) || 0;
+            
+            let interpretacao = '';
+            
+            // Interpretação da TFG
+            if (tfg > 0) {
+                if (idadeGestacional < 28) {
+                    if (tfg >= 15) {
+                        interpretacao += 'TFG normal para idade gestacional. ';
+                    } else {
+                        interpretacao += 'TFG reduzida para idade gestacional. ';
+                    }
+                } else if (idadeGestacional < 32) {
+                    if (tfg >= 20) {
+                        interpretacao += 'TFG normal para idade gestacional. ';
+                    } else {
+                        interpretacao += 'TFG reduzida para idade gestacional. ';
+                    }
+                } else if (idadeGestacional < 37) {
+                    if (tfg >= 25) {
+                        interpretacao += 'TFG normal para idade gestacional. ';
+                    } else {
+                        interpretacao += 'TFG reduzida para idade gestacional. ';
+                    }
+                } else {
+                    if (tfg >= 30) {
+                        interpretacao += 'TFG normal para idade gestacional. ';
+                    } else {
+                        interpretacao += 'TFG reduzida para idade gestacional. ';
+                    }
+                }
+            }
+            
+            // Interpretação da FeNa
+            if (fena > 0) {
+                if (fena < 1) {
+                    interpretacao += 'FeNa baixa, sugestiva de IRA pre-renal. ';
+                } else if (fena > 2) {
+                    interpretacao += 'FeNa alta, sugestiva de IRA intrínseca. ';
+                } else {
+                    interpretacao += 'FeNa intermediaria. ';
+                }
+            }
+            
+            // Interpretação da osmolaridade
+            if (osmolaridade > 0) {
+                if (idadeGestacional < 37) {
+                    if (osmolaridade >= 600) {
+                        interpretacao += 'Capacidade de concentracao adequada para RN pre-termo. ';
+                    } else {
+                        interpretacao += 'Capacidade de concentracao reduzida para RN pre-termo. ';
+                    }
+                } else {
+                    if (osmolaridade >= 800) {
+                        interpretacao += 'Capacidade de concentracao adequada para RN a termo. ';
+                    } else {
+                        interpretacao += 'Capacidade de concentracao reduzida para RN a termo. ';
+                    }
+                }
+            }
+            
+            return interpretacao || 'Interpretacao clinica nao disponivel.';
+        }
+
+        // Função para mostrar relatório em modal (fallback)
+        function mostrarRelatorioModal(relatorio) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                z-index: 1000;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            `;
+            
+            const content = document.createElement('div');
+            content.style.cssText = `
+                background: white;
+                padding: 20px;
+                border-radius: 10px;
+                max-width: 80%;
+                max-height: 80%;
+                overflow: auto;
+                font-family: monospace;
+                white-space: pre-wrap;
+                font-size: 12px;
+                line-height: 1.4;
+            `;
+            content.textContent = relatorio;
+            
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = 'Fechar';
+            closeBtn.style.cssText = `
+                margin-top: 10px;
+                padding: 10px 20px;
+                background: #6b7280;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            `;
+            closeBtn.onclick = () => document.body.removeChild(modal);
+            
+            modal.appendChild(content);
+            modal.appendChild(closeBtn);
+            document.body.appendChild(modal);
+        }
+
+        // Função para sincronizar campos duplicados
+        function sincronizarCampos(campoOrigem, campoDestino) {
+            const valor = document.getElementById(campoOrigem).value;
+            if (valor) {
+                document.getElementById(campoDestino).value = valor;
+            }
+        }
+
+        // Event listeners para cálculo automático
+        document.addEventListener('DOMContentLoaded', function() {
+            // TFG
+            document.getElementById('idadeGestacional').addEventListener('input', calcularTFG);
+            document.getElementById('alturaNascimento').addEventListener('input', calcularTFG);
+            document.getElementById('creatininaPlasmatica').addEventListener('input', function() {
+                calcularTFG();
+                sincronizarCampos('creatininaPlasmatica', 'creatininaPlasmaticaDepuracao');
+                sincronizarCampos('creatininaPlasmatica', 'creatininaPlasmaticaFeNa');
+            });
+            document.getElementById('peso').addEventListener('input', calcularTFG);
+            
+            // Depuração
+            document.getElementById('creatininaUrinaria').addEventListener('input', function() {
+                calcularDepuracao();
+                sincronizarCampos('creatininaUrinaria', 'creatininaUrinariaFeNa');
+            });
+            document.getElementById('volumeUrinario').addEventListener('input', calcularDepuracao);
+            document.getElementById('tempoColeta').addEventListener('input', calcularDepuracao);
+            document.getElementById('creatininaPlasmaticaDepuracao').addEventListener('input', function() {
+                calcularDepuracao();
+                sincronizarCampos('creatininaPlasmaticaDepuracao', 'creatininaPlasmatica');
+                sincronizarCampos('creatininaPlasmaticaDepuracao', 'creatininaPlasmaticaFeNa');
+            });
+            
+            // FeNa
+            document.getElementById('sodioUrinario').addEventListener('input', calcularFeNa);
+            document.getElementById('sodioPlasmatico').addEventListener('input', calcularFeNa);
+            document.getElementById('creatininaUrinariaFeNa').addEventListener('input', function() {
+                calcularFeNa();
+                sincronizarCampos('creatininaUrinariaFeNa', 'creatininaUrinaria');
+            });
+            document.getElementById('creatininaPlasmaticaFeNa').addEventListener('input', function() {
+                calcularFeNa();
+                sincronizarCampos('creatininaPlasmaticaFeNa', 'creatininaPlasmatica');
+                sincronizarCampos('creatininaPlasmaticaFeNa', 'creatininaPlasmaticaDepuracao');
+            });
+            
+            // Osmolaridade
+            document.getElementById('densidadeUrinaria').addEventListener('input', function() {
+                // Formatar entrada para formato decimal (1.010 em vez de 1010)
+                let valor = this.value;
+                if (valor && !valor.includes('.')) {
+                    // Se não tem ponto decimal, adicionar
+                    if (valor.length >= 3) {
+                        valor = valor.substring(0, 1) + '.' + valor.substring(1);
+                        this.value = valor;
+                    }
+                }
+                calcularOsmolaridade();
+            });
+            
+            // Formatação adicional para quando o usuário termina de digitar
+            document.getElementById('densidadeUrinaria').addEventListener('blur', function() {
+                let valor = this.value;
+                if (valor && !valor.includes('.')) {
+                    // Se não tem ponto decimal, adicionar
+                    if (valor.length >= 3) {
+                        valor = valor.substring(0, 1) + '.' + valor.substring(1);
+                        this.value = valor;
+                        calcularOsmolaridade();
+                    }
+                }
+            });
+        });
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

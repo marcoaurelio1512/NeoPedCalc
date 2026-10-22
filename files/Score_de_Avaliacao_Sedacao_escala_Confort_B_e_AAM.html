@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — COMFORT B e AAM (educativo)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .patient-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .patient-info div {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            background: #f8f9fa;
+            border-bottom: 1px solid #e7e7ee;
+            padding: 12px 14px;
+            font-weight: 800;
+            font-size: 14px;
+            border-radius: 10px 10px 0 0;
+            margin: 0 0 14px 0;
+        }
+
+        .comfort-buttons-container, .aam-button-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .comfort-button, .aam-button {
+            background: #fff;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .comfort-button:hover, .aam-button:hover {
+            border-color: #111;
+            background: #f9f9f9;
+        }
+
+        .comfort-button.selected, .aam-button.selected {
+            background: #111;
+            color: #fff;
+            border-color: #111;
+        }
+
+        .comfort-score, .aam-score {
+            font-size: 18px;
+            font-weight: 900;
+            margin-bottom: 4px;
+        }
+
+        .comfort-title, .aam-title {
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .aam-description {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        .total-score {
+            background: #e8fff0;
+            border: 1px solid #b4ffcf;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .total-score h3 {
+            margin: 0 0 10px;
+            color: #0a6a2a;
+        }
+
+        .total-score input {
+            background: transparent;
+            border: 0;
+            font-size: 32px;
+            font-weight: 900;
+            width: auto;
+            text-align: center;
+            color: #111;
+        }
+
+        .result {
+            font-weight: 800;
+            color: #d32f2f;
+            margin-top: 8px;
+        }
+
+        .copy-button {
+            background: #111;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin: 20px 0;
+        }
+
+        .references {
+            background: #f8f9fa;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .references h4 {
+            margin: 0 0 8px;
+            color: #111;
+        }
+
+        .interpretation {
+            background: #fffbe0;
+            border: 1px solid #f1e49a;
+            padding: 14px;
+            border-radius: 10px;
+            margin: 10px 0;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        /* Modal Styles */
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(17, 17, 17, 0.1);
+            color: #111;
+            border: 2px solid #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-info:hover {
+            background: #111;
+            color: #fff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #2c3e50;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .modal {
+                padding: 10px;
+            }
+            .modal-content {
+                width: 95%;
+                max-height: 95vh;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <header>
+        <h1>COMFORT B e AAM</h1>
+        <p>Ferramenta educativa — soma comportamental e escala motora; <strong>não prescreve</strong> sedação nem ajuste de drogas</p>
+        <div class="header-actions">
+            <button class="btn-info" onclick="abrirModal()">
+                Como usar
+            </button>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="card">
+            <div class="content">
+            <form id="formc" name="formc">
+                <div class="patient-info">
+                    <div>
+                        <label for="patientName">Nome do Paciente:</label>
+                        <input type="text" id="patientName" name="patientName" placeholder="Digite o nome do paciente">
+                    </div>
+                    <div>
+                        <label for="birthDate">Data de Nascimento:</label>
+                        <input type="date" id="birthDate" name="birthDate">
+                    </div>
+                    <div>
+                        <label for="age">Idade:</label>
+                        <input type="text" id="age" name="age" readonly placeholder="Ex: 2 anos e 3 meses">
+                    </div>
+                    <div>
+                        <label for="date">Data da Avaliação:</label>
+                        <input type="text" id="date" name="date" readonly>
+                    </div>
+                </div>
+                
+                <!-- Escala COMFORT B - Nivel de Consciencia -->
+                <div class="section">
+                    <div class="section-header">
+                        Escala COMFORT B - Nivel de Consciencia
+                    </div>
+                    <div style="padding: 20px;">
+                        <h4 style="margin-bottom: 20px; color: #333;">Selecione o nivel de consciencia:</h4>
+                        <div class="comfort-buttons-container">
+                            <button type="button" class="comfort-button" data-category="consciencia" data-score="1" onclick="selectComfortScore('consciencia', 1)">
+                                <div class="comfort-score">1</div>
+                                <div class="comfort-title">Sono profundo</div>
+                            </button>
+                            
+                            <button type="button" class="comfort-button" data-category="consciencia" data-score="2" onclick="selectComfortScore('consciencia', 2)">
+                                <div class="comfort-score">2</div>
+                                <div class="comfort-title">Sono superficial</div>
+                            </button>
+                            
+                            <button type="button" class="comfort-button" data-category="consciencia" data-score="3" onclick="selectComfortScore('consciencia', 3)">
+                                <div class="comfort-score">3</div>
+                                <div class="comfort-title">Letargico</div>
+                            </button>
+                            
+                            <button type="button" class="comfort-button" data-category="consciencia" data-score="4" onclick="selectComfortScore('consciencia', 4)">
+                                <div class="comfort-score">4</div>
+                                <div class="comfort-title">Acordado e alerta</div>
+                            </button>
+                            
+                            <button type="button" class="comfort-button" data-category="consciencia" data-score="5" onclick="selectComfortScore('consciencia', 5)">
+                                <div class="comfort-score">5</div>
+                                <div class="comfort-title">Hiperalerta</div>
+                            </button>
+                        </div>
+                        <div style="margin-top: 15px; text-align: center;">
+                            <strong>Selecionado: <span id="conscienciaSelected">Nenhum</span></strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Calma/Agitacao -->
+                <div class="section">
+                    <div class="section-header">
+                        Calma / Agitacao
+                    </div>
+                    <div style="padding: 20px;">
+                        <h4 style="margin-bottom: 20px; color: #333;">Selecione o nivel de calma/agitacao:</h4>
+                        <div class="comfort-buttons-container">
+                            <button type="button" class="comfort-button" data-category="calma" data-score="1" onclick="selectComfortScore('calma', 1)">
+                                <div class="comfort-score">1</div>
+                                <div class="comfort-title">Calma</div>
+                            </button>
+                            
+                            <button type="button" class="comfort-button" data-category="calma" data-score="2" onclick="selectComfortScore('calma', 2)">
+                                <div class="comfort-score">2</div>
+                                <div class="comfort-title">Ansiedade leve</div>
+                            </button>
+                            
+                            <button type="button" class="comfort-button" data-category="calma" data-score="3" onclick="selectComfortScore('calma', 3)">
+                                <div class="comfort-score">3</div>
+                                <div class="comfort-title">Ansioso</div>
+                            </button>
+                            
+                            <button type="button" class="comfort-button" data-category="calma" data-score="4" onclick="selectComfortScore('calma', 4)">
+                                <div class="comfort-score">4</div>
+                                <div class="comfort-title">Muito ansioso</div>
+                            </button>
+                            
+                            <button type="button" class="comfort-button" data-category="calma" data-score="5" onclick="selectComfortScore('calma', 5)">
+                                <div class="comfort-score">5</div>
+                                <div class="comfort-title">Amedrontado</div>
+                            </button>
+                        </div>
+                        <div style="margin-top: 15px; text-align: center;">
+                            <strong>Selecionado: <span id="calmaSelected">Nenhum</span></strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Movimento Fisico -->
+                <div class="section">
+                    <div class="section-header">
+                        Movimento Fisico
+                    </div>
+                    <div style="padding: 20px;">
+                        <h4 style="margin-bottom: 20px; color: #333;">Selecione o nivel de movimento fisico:</h4>
+                        <div class="comfort-buttons-container">
+                            <button type="button" class="comfort-button" data-category="movimento" data-score="1" onclick="selectComfortScore('movimento', 1)">
+                                <div class="comfort-score">1</div>
+                                <div class="comfort-title">Ausencia de movimento</div>
+                            </button>
+                            
+                            <button type="button" class="comfort-button" data-category="movimento" data-score="2" onclick="selectComfortScore('movimento', 2)">
+                                <div class="comfort-score">2</div>
+                                <div class="comfort-title">Movimento leve ocasional</div>
+                            </button>
+                            
+                            <button type="button" class="comfort-button" data-category="movimento" data-score="3" onclick="selectComfortScore('movimento', 3)">
+                                <div class="comfort-score">3</div>
+                                <div class="comfort-title">Movimento leve frequente</div>
+                            </button>
+                            
+                            <button type="button" class="comfort-button" data-category="movimento" data-score="4" onclick="selectComfortScore('movimento', 4)">
+                                <div class="comfort-score">4</div>
+                                <div class="comfort-title">Movimento vigoroso limitado</div>
+                            </button>
+                            
+                            <button type="button" class="comfort-button" data-category="movimento" data-score="5" onclick="selectComfortScore('movimento', 5)">
+                                <div class="comfort-score">5</div>
+                                <div class="comfort-title">Movimento vigoroso completo</div>
+                            </button>
+                        </div>
+                        <div style="margin-top: 15px; text-align: center;">
+                            <strong>Selecionado: <span id="movimentoSelected">Nenhum</span></strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tonus Muscular -->
+                <div class="section">
+                    <div class="section-header">
+                        Tonus Muscular
+                    </div>
+                    <div style="padding: 20px;">
+                        <h4 style="margin-bottom: 20px; color: #333;">Selecione o nivel de tonus muscular:</h4>
+                        <div class="comfort-buttons-container">
+                            <button type="button" class="comfort-button" data-category="tonus" data-score="1" onclick="selectComfortScore('tonus', 1)">
+                                <div class="comfort-score">1</div>
+                                <div class="comfort-title">Totalmente relaxado</div>
+                            </button>
+                            
+                            <button type="button" class="comfort-button" data-category="tonus" data-score="2" onclick="selectComfortScore('tonus', 2)">
+                                <div class="comfort-score">2</div>
+                                <div class="comfort-title">Hipotonico</div>
+                            </button>
+                            
+                            <button type="button" class="comfort-button" data-category="tonus" data-score="3" onclick="selectComfortScore('tonus', 3)">
+                                <div class="comfort-score">3</div>
+                                <div class="comfort-title">Normotonico</div>
+                            </button>
+                            
+                            <button type="button" class="comfort-button" data-category="tonus" data-score="4" onclick="selectComfortScore('tonus', 4)">
+                                <div class="comfort-score">4</div>
+                                <div class="comfort-title">Hipertonico com flexao</div>
+                            </button>
+                            
+                            <button type="button" class="comfort-button" data-category="tonus" data-score="5" onclick="selectComfortScore('tonus', 5)">
+                                <div class="comfort-score">5</div>
+                                <div class="comfort-title">Rigidez extrema</div>
+                            </button>
+                        </div>
+                        <div style="margin-top: 15px; text-align: center;">
+                            <strong>Selecionado: <span id="tonusSelected">Nenhum</span></strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tensao Facial -->
+                <div class="section">
+                    <div class="section-header">
+                        Tensao Facial
+                    </div>
+                    <div style="padding: 20px;">
+                        <h4 style="margin-bottom: 20px; color: #333;">Selecione o nivel de tensao facial:</h4>
+                        <div class="comfort-buttons-container">
+                            <button type="button" class="comfort-button" data-category="tensao" data-score="1" onclick="selectComfortScore('tensao', 1)">
+                                <div class="comfort-score">1</div>
+                                <div class="comfort-title">Musculos faciais totalmente relaxados</div>
+                            </button>
+                            
+                            <button type="button" class="comfort-button" data-category="tensao" data-score="2" onclick="selectComfortScore('tensao', 2)">
+                                <div class="comfort-score">2</div>
+                                <div class="comfort-title">Tonus facial normal</div>
+                            </button>
+                            
+                            <button type="button" class="comfort-button" data-category="tensao" data-score="3" onclick="selectComfortScore('tensao', 3)">
+                                <div class="comfort-score">3</div>
+                                <div class="comfort-title">Tensao evidente em alguns musculos</div>
+                            </button>
+                            
+                            <button type="button" class="comfort-button" data-category="tensao" data-score="4" onclick="selectComfortScore('tensao', 4)">
+                                <div class="comfort-score">4</div>
+                                <div class="comfort-title">Tensao evidente em toda a face</div>
+                            </button>
+                            
+                            <button type="button" class="comfort-button" data-category="tensao" data-score="5" onclick="selectComfortScore('tensao', 5)">
+                                <div class="comfort-score">5</div>
+                                <div class="comfort-title">Musculos faciais contorcidos</div>
+                            </button>
+                        </div>
+                        <div style="margin-top: 15px; text-align: center;">
+                            <strong>Selecionado: <span id="tensaoSelected">Nenhum</span></strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Escala AAM -->
+                <div class="section">
+                    <div class="section-header">
+                        Escala AAM - Avaliacao de Atividade Motora
+                    </div>
+                    <div style="padding: 20px; background-color: #f8f9fa; margin-bottom: 20px; border-radius: 8px;">
+                        <p><strong>Estimulo doloroso/nocivo:</strong> Extubacao traqueal planejada, aspiracao traqueal ou menos de 5 segundos de pressao do leito ungueal</p>
+                    </div>
+                    
+                    <div style="padding: 20px;">
+                        <h4 style="margin-bottom: 20px; color: #333;">Selecione o nivel de atividade motora:</h4>
+                        
+                        <div class="aam-buttons-container">
+                            <div class="aam-button-row">
+                                <button type="button" class="aam-button" data-score="0" onclick="selectAAMScore(0)">
+                                    <div class="aam-score">0</div>
+                                    <div class="aam-title">Irresponsivo</div>
+                                    <div class="aam-description">Nao se move com estimulo doloroso</div>
+                                </button>
+                                
+                                <button type="button" class="aam-button" data-score="1" onclick="selectAAMScore(1)">
+                                    <div class="aam-score">1</div>
+                                    <div class="aam-title">Responsivo apenas ao estimulo doloroso</div>
+                                    <div class="aam-description">Abre os olhos ou levanta a sobrancelha ou vira a cabeca em direcao ao estimulo ou move os membros com estimulo doloroso</div>
+                                </button>
+                                
+                                <button type="button" class="aam-button" data-score="2" onclick="selectAAMScore(2)">
+                                    <div class="aam-score">2</div>
+                                    <div class="aam-title">Responsivo ao toque ou nome</div>
+                                    <div class="aam-description">Abre os olhos ou levanta a sobrancelha ou vira a cabeca em direcao ao estimulo ou move os membros quando tocado ou seu nome e falado em voz alta</div>
+                                </button>
+                            </div>
+                            
+                            <div class="aam-button-row">
+                                <button type="button" class="aam-button" data-score="3" onclick="selectAAMScore(3)">
+                                    <div class="aam-score">3</div>
+                                    <div class="aam-title">Calmo e cooperativo</div>
+                                    <div class="aam-description">Nenhum estimulo externo e necessario para provocar movimento e paciente arruma lencois ou roupas ativamente e segue comandos</div>
+                                </button>
+                                
+                                <button type="button" class="aam-button" data-score="4" onclick="selectAAMScore(4)">
+                                    <div class="aam-score">4</div>
+                                    <div class="aam-title">Inquieto e cooperativo</div>
+                                    <div class="aam-description">Nenhum estimulo externo e necessario para provocar movimento e paciente esta puxando lencois ou tubos ou se descobrindo e segue comandos</div>
+                                </button>
+                                
+                                <button type="button" class="aam-button" data-score="5" onclick="selectAAMScore(5)">
+                                    <div class="aam-score">5</div>
+                                    <div class="aam-title">Agitado</div>
+                                    <div class="aam-description">Nenhum estimulo externo e necessario para provocar movimento e tenta sentar-se ou movimenta membros para fora da cama e nao segue comandos conscientemente</div>
+                                </button>
+                            </div>
+                            
+                            <div class="aam-button-row">
+                                <button type="button" class="aam-button" data-score="6" onclick="selectAAMScore(6)">
+                                    <div class="aam-score">6</div>
+                                    <div class="aam-title">Perigosamente Agitado</div>
+                                    <div class="aam-description">Nenhum estimulo externo e necessario para provocar movimento e paciente esta puxando tubos e cateteres ou se virando de um lado para outro ou batendo nos cuidadores ou tentando sair da cama e nao acalma quando solicitado</div>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 20px; text-align: center;">
+                            <strong>Escolha selecionada: <span id="selectedAAMScore">0</span></strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Resultado Total -->
+                <div class="total-score">
+                    <h3>ESCORE COMFORT B</h3>
+                    <input type="text" id="totalScore" name="totalScore" value="0" readonly>
+                    <div class="result" id="result"></div>
+                </div>
+                
+                <div class="interpretation" id="interpretation">
+                    <h4>Descrição da faixa (educativo)</h4>
+                    <p>Preencha os critérios acima. Os rótulos seguem os cortes programados nesta página — não substituem prescrição.</p>
+                </div>
+                
+                <button type="button" class="copy-button" onclick="copyReportToClipboard()">
+                    Copiar texto informativo
+                </button>
+                
+                <div class="references">
+                    <h4>Referencias</h4>
+                    <p><strong>Escala COMFORT B:</strong><br>
+                    Ambuel B, Hamlett KW, Marx CM, Blumer JL. Assessing distress in pediatric intensive care environments: the COMFORT scale. J Pediatr Psychol. 1992;17(1):95-109.</p>
+                    
+                    <p><strong>Escala AAM (Motor Activity Assessment Scale):</strong><br>
+                    Devlin JW, Boleski G, Mlynarek M, Nerenz DR, Peterson E, Jankowski M, et al. Motor Activity Assessment Scale: a valid and reliable sedation scale for use with mechanically ventilated patients in an adult surgical intensive care unit. Crit Care Med. 1999;27(7):1271-5. Comment in: Crit Care Med. 1999;27(7):1384-5. Crit Care Med. 2000;28(8):3124.</p>
+                </div>
+            </form>
+            </div> <!-- End card -->
+
+            <div class="footer">
+                NeoPedCalc &copy; <span data-neoped-year></span> — uso educacional; não automatiza titulação de sedoanalgesia.
+            </div>
+        </div> <!-- End wrap -->
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar (informação)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta tela soma <strong>cinco domínios</strong> da versão comportamental associada à família COMFORT (consciência, calma/agitação, movimento, tônus, tensão facial) e registra um valor da <strong>AAM</strong> (escala de atividade motora, derivada de contexto adulto de UTI). Serve para <strong>estudo e registro informativo</strong> — <strong>não indica aumento nem redução de sedação</strong>.</p>
+
+                <h3>O que esta página calcula</h3>
+                <div class="formula-box">
+                    <strong>COMFORT B (implementação desta tela):</strong> soma de 5 itens, cada um pontuado de 1 a 5 → total teórico <strong>5 a 25</strong> quando todos preenchidos.<br><br>
+                    <strong>Faixas programadas neste código (rótulos locais):</strong><br>
+                    • ≤10 pontos → rótulo <strong>SUPER-SEDADO</strong><br>
+                    • 11 a 22 → <strong>SEDADO</strong><br>
+                    • &gt;22 → <strong>POUCO SEDADO</strong><br><br>
+                    <strong>AAM:</strong> um único nível de <strong>0 a 6</strong>, independente da soma COMFORT. Descrições na tela seguem a publicação original (ventilados em UTI adulta); uso em pediatria é <strong>contextual</strong>.<br><br>
+                    <strong>Nota:</strong> Outras versões da escala COMFORT incluem mais domínios; confira artigo e protocolo da sua instituição.
+                </div>
+
+                <h3>Passos</h3>
+                <ol>
+                    <li>Preencha identificação opcional; idade e data podem ser calculadas automaticamente onde houver script.</li>
+                    <li>Marque um valor em cada bloco COMFORT B e um valor AAM.</li>
+                    <li>Leia o rótulo como <strong>correlação com a soma</strong>, não como ordem terapêutica.</li>
+                    <li>Use <strong>Copiar texto informativo</strong> e revise antes de arquivar.</li>
+                </ol>
+
+                <h3>Uso pretendido</h3>
+                <ul>
+                    <li>Treino de observação comportamental e vocabulário das escalas</li>
+                    <li>Rascunho de texto para discussão de caso, com ressalvas explícitas</li>
+                    <li>Comparação com literatura e diretrizes de sedação do serviço</li>
+                </ul>
+
+                <h3>Limitações</h3>
+                <ul>
+                    <li>Subjetividade entre avaliadores</li>
+                    <li>Cortes numéricos desta página podem diferir de outros autores</li>
+                    <li>AAM não foi validada nesta interface pediátrica</li>
+                    <li>Não integra gasometria, ventilação nem prescrição em vigor</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências (rodapé da tela):</strong> Ambuel et al., COMFORT; Devlin et al., AAM. Leituras complementares: van Dijk et al.; Ista et al. (COMFORT behavior); escalas pediátricas de sedação conforme sua UTI.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Atualiza a data automaticamente
+        document.getElementById('date').value = new Date().toLocaleDateString('pt-BR');
+        
+        // Função para calcular idade em anos, meses e dias
+        function calculateAge(birthDate) {
+            if (!birthDate) return '';
+            
+            const today = new Date();
+            const birth = new Date(birthDate);
+            
+            let years = today.getFullYear() - birth.getFullYear();
+            let months = today.getMonth() - birth.getMonth();
+            let days = today.getDate() - birth.getDate();
+            
+            // Ajusta se o dia atual é menor que o dia de nascimento
+            if (days < 0) {
+                months--;
+                // Pega o último dia do mês anterior
+                const lastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+                days += lastMonth.getDate();
+            }
+            
+            // Ajusta se o mês atual é menor que o mês de nascimento
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+            
+            // Formata a idade de forma apropriada
+            if (years > 0) {
+                if (months > 0) {
+                    return `${years} ano${years > 1 ? 's' : ''} e ${months} mês${months > 1 ? 'es' : ''}`;
+                } else {
+                    return `${years} ano${years > 1 ? 's' : ''}`;
+                }
+            } else if (months > 0) {
+                if (days > 0) {
+                    return `${months} mês${months > 1 ? 'es' : ''} e ${days} dia${days > 1 ? 's' : ''}`;
+                } else {
+                    return `${months} mês${months > 1 ? 'es' : ''}`;
+                }
+            } else {
+                return `${days} dia${days > 1 ? 's' : ''}`;
+            }
+        }
+        
+        // Adiciona evento para calcular idade quando a data de nascimento for alterada
+        document.getElementById('birthDate').addEventListener('change', function() {
+            const age = calculateAge(this.value);
+            if (age !== '') {
+                document.getElementById('age').value = age;
+            } else {
+                document.getElementById('age').value = '';
+            }
+        });
+        
+        // Variavel para armazenar o score AAM selecionado
+        let selectedAAMScore = 0;
+        
+        // Objeto para armazenar os scores selecionados da Escala COMFORT B
+        let comfortBScores = {
+            consciencia: 0,
+            calma: 0,
+            movimento: 0,
+            tonus: 0,
+            tensao: 0
+        };
+        
+        function selectComfortScore(category, score) {
+            // Remove a classe 'selected' de todos os botoes da categoria
+            document.querySelectorAll(`[data-category="${category}"]`).forEach(button => {
+                button.classList.remove('selected');
+            });
+            
+            // Adiciona a classe 'selected' ao botao clicado
+            const clickedButton = document.querySelector(`[data-category="${category}"][data-score="${score}"]`);
+            clickedButton.classList.add('selected');
+            
+            // Atualiza o score selecionado
+            comfortBScores[category] = score;
+            
+            // Atualiza o texto de selecionado
+            const categoryNames = {
+                consciencia: 'conscienciaSelected',
+                calma: 'calmaSelected',
+                movimento: 'movimentoSelected',
+                tonus: 'tonusSelected',
+                tensao: 'tensaoSelected'
+            };
+            
+            const buttonTitle = clickedButton.querySelector('.comfort-title').textContent;
+            document.getElementById(categoryNames[category]).textContent = buttonTitle;
+            
+            // Recalcula o score total
+            calculateScore();
+        }
+        
+        function selectAAMScore(score) {
+            // Remove a classe 'selected' de todos os botoes
+            document.querySelectorAll('.aam-button').forEach(button => {
+                button.classList.remove('selected');
+            });
+            
+            // Adiciona a classe 'selected' ao botao clicado
+            const clickedButton = document.querySelector(`.aam-button[data-score="${score}"]`);
+            if (!clickedButton) return;
+            clickedButton.classList.add('selected');
+            
+            // Atualiza o score selecionado
+            selectedAAMScore = score;
+            document.getElementById('selectedAAMScore').textContent = score;
+            
+            // Recalcula o score total
+            calculateScore();
+        }
+        
+        function calculateScore() {
+            let comfortBScore = 0;
+            
+            // Soma todos os scores selecionados da Escala COMFORT B
+            Object.values(comfortBScores).forEach(score => {
+                comfortBScore += score;
+            });
+            
+            // Atualiza o escore total (apenas COMFORT B)
+            document.getElementById('totalScore').value = comfortBScore;
+            
+            // Determina a classificacao baseada APENAS no COMFORT B
+            let classification = '';
+            let interpretation = '';
+            
+            if (comfortBScore <= 10) {
+                classification = 'SUPER-SEDADO';
+                interpretation = 'Soma na faixa baixa desta ferramenta (≤10 pontos), rotulada SUPER-SEDADO pelos cortes locais. Em publicações e protocolos, totais baixos costumam correlacionar com maior profundidade observada na escala — ajuste de fármacos é prescrição médica, não orientação desta página.';
+            } else if (comfortBScore >= 11 && comfortBScore <= 22) {
+                classification = 'SEDADO';
+                interpretation = 'Soma intermediária (11–22), rótulo SEDADO nesta implementação. Use como registro educativo; decisão de titular sedação pertence ao assistencial.';
+            } else if (comfortBScore > 22) {
+                classification = 'POUCO SEDADO';
+                interpretation = 'Soma &gt;22, rótulo POUCO SEDADO nesta ferramenta. Correlacione com clínica, dor e ventilação; esta tela não recomenda dose.';
+            }
+            
+            document.getElementById('result').textContent = classification;
+            document.getElementById('interpretation').innerHTML = `
+                <h4>Descrição da faixa — COMFORT B (educativo)</h4>
+                <p>${interpretation}</p>
+                <p><strong>Soma COMFORT B:</strong> ${comfortBScore} pontos (5 domínios nesta tela)</p>
+                <p><strong>AAM:</strong> ${selectedAAMScore} (0–6, escala independente; ver limitações no “Como usar”)</p>
+            `;
+        }
+        
+        function removeAccents(str) {
+            return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        }
+        
+        function copyReportToClipboard() {
+            const patientName = document.getElementById('patientName').value || 'Paciente nao informado';
+            const birthDate = document.getElementById('birthDate').value;
+            const age = document.getElementById('age').value;
+            const date = document.getElementById('date').value;
+            const totalScore = document.getElementById('totalScore').value;
+            const result = document.getElementById('result').textContent;
+            const aamScore = selectedAAMScore;
+            
+            // Remove acentos e caracteres especiais
+            const cleanPatientName = removeAccents(patientName);
+            const cleanResult = removeAccents(result);
+            
+            var legalFoot = (typeof window.neopedLegalReportFooter === 'function') ? window.neopedLegalReportFooter() : '';
+
+            let report = '';
+            report += 'RESUMO INFORMATIVO — COMFORT B E AAM (FERRAMENTA EDUCATIVA)\n';
+            report += '===========================================================\n\n';
+            report += 'NOTA: Texto para apoio informativo. Nao prescreve sedacao nem doses. Revisar antes de arquivar.\n\n';
+            report += 'PACIENTE: ' + cleanPatientName.toUpperCase() + '\n';
+            report += 'DATA DE NASCIMENTO: ' + (birthDate || 'Nao informada') + '\n';
+            report += 'IDADE: ' + (age || 'Nao calculada') + '\n';
+            report += 'DATA DA AVALIACAO: ' + date + '\n\n';
+            report += 'RESULTADO DA AVALIACAO:\n';
+            report += '-----------------------\n';
+            report += 'ESCALA COMFORT B:\n';
+            report += 'ESCORE: ' + totalScore + ' pontos\n';
+            report += 'CLASSIFICACAO: ' + cleanResult + '\n\n';
+            
+            report += 'DETALHAMENTO COMFORT B:\n';
+            report += '----------------------\n';
+            report += 'Nivel de Consciencia: ' + (document.getElementById('conscienciaSelected').textContent || 'Nao selecionado') + '\n';
+            report += 'Calma/Agitacao: ' + (document.getElementById('calmaSelected').textContent || 'Nao selecionado') + '\n';
+            report += 'Movimento Fisico: ' + (document.getElementById('movimentoSelected').textContent || 'Nao selecionado') + '\n';
+            report += 'Tonus Muscular: ' + (document.getElementById('tonusSelected').textContent || 'Nao selecionado') + '\n';
+            report += 'Tensao Facial: ' + (document.getElementById('tensaoSelected').textContent || 'Nao selecionado') + '\n\n';
+            
+            // Interpretacao dos resultados
+            const score = parseInt(totalScore);
+            let interpretation = '';
+            if (score <= 10) {
+                interpretation = 'Faixa <=10 pontos (corte desta pagina): rotulo SUPER-SEDADO — correlacao descritiva; sem recomendacao de droga.';
+            } else if (score >= 11 && score <= 22) {
+                interpretation = 'Faixa 11-22: rotulo SEDADO nesta ferramenta — uso educativo.';
+            } else if (score > 22) {
+                interpretation = 'Faixa >22: rotulo POUCO SEDADO nesta ferramenta — integrar com clinica e prescricao.';
+            }
+            
+            report += 'DESCRICAO EDUCATIVA (COMFORT B):\n';
+            report += '--------------------------------\n';
+            report += interpretation + '\n\n';
+            
+            report += 'ESCALA AAM (AVALIACAO DE ATIVIDADE MOTORA):\n';
+            report += '-------------------------------------------\n';
+            report += 'ESCORE: ' + aamScore + ' pontos\n';
+            report += 'NOTA: Escala independente do COMFORT B\n\n';
+            
+            report += 'OBSERVACOES:\n';
+            report += '------------\n';
+            report += 'Registro gerado pela NeoPedCalc para fins educacionais. COMFORT B nesta tela usa 5 dominios; AAM e escala independente (0-6).\n\n';
+            
+            report += 'REFERENCIAS:\n';
+            report += '------------\n';
+            report += 'ESCALA COMFORT B:\n';
+            report += 'Ambuel B, Hamlett KW, Marx CM, Blumer JL. Assessing\n';
+            report += 'distress in pediatric intensive care environments: the COMFORT scale.\n';
+            report += 'J Pediatr Psychol. 1992;17(1):95-109.\n\n';
+            report += 'ESCALA AAM (MOTOR ACTIVITY ASSESSMENT SCALE):\n';
+            report += 'Devlin JW, Boleski G, Mlynarek M, Nerenz DR, Peterson E,\n';
+            report += 'Jankowski M, et al. Motor Activity Assessment Scale: a valid and\n';
+            report += 'reliable sedation scale for use with mechanically ventilated patients\n';
+            report += 'in an adult surgical intensive care unit. Crit Care Med.\n';
+            report += '1999;27(7):1271-5. Comment in: Crit Care Med. 1999;27(7):1384-5.\n';
+            report += 'Crit Care Med. 2000;28(8):3124.\n\n';
+            report += 'TEXTO GERADO EM: ' + new Date().toLocaleString('pt-BR') + '\n';
+            report += legalFoot;
+            
+            // Copia para a area de transferencia
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(report).then(function() {
+                    if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                }).catch(function(err) {
+                    fallbackCopyTextToClipboard(report);
+                });
+            } else {
+                fallbackCopyTextToClipboard(report);
+            }
+        }
+        
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                } else {
+                    if (typeof window.neopedCopyFail === 'function') window.neopedCopyFail(); else alert('Nao foi possivel copiar automaticamente. Revise o texto e copie manualmente para uso informativo.');
+                }
+            } catch (err) {
+                if (typeof window.neopedCopyFail === 'function') window.neopedCopyFail(); else alert('Nao foi possivel copiar automaticamente. Revise o texto e copie manualmente para uso informativo.');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+        
+        // Inicializa o calculo e seleciona o botao 0 por padrao
+        selectAAMScore(0);
+        calculateScore();
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

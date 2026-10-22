@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>NeoPedCalc — Queimaduras pediátricas e neonatais (educativo)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .section h2, .section h3 {
+            font-size: 16px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-weight: 700;
+            border-bottom: 1px solid #f0f0f5;
+            padding-bottom: 8px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-span-2 {
+            grid-column: span 2;
+        }
+
+        .alert-box {
+            background: #fffbe6;
+            border: 1px solid #e5e7eb;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .alert-box h3 {
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #856404;
+        }
+
+        .alert-box ul {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 700;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .result-box {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .result-box h3 {
+            font-size: 15px;
+            margin-bottom: 12px;
+            color: #111;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .result-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .result-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: #111;
+        }
+
+        .total-burn-box {
+            background: #111;
+            color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .total-burn-box h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .report-btn {
+            background: #111;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 15px;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .report-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .reference-info {
+            background: #fffbe6;
+            border: 1px solid #e5e7eb;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-top: 15px;
+        }
+
+        /* Modal Styles */
+        .btn-info {
+            background: rgba(17, 17, 17, 0.1);
+            color: #111;
+            border: 2px solid #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 { margin: 0; font-size: 20px; }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: 1px solid #e5e7eb;
+            padding: 12px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        .input-hidden {
+            display: none;
+        }
+
+        .field-readonly {
+            background: #f8f9fa;
+        }
+
+        .triage-box {
+            background: #fff;
+            border: 2px solid #111;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+
+        .triage-title h3 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .triage-warning--red { color: #dc3545; font-weight: 700; }
+        .triage-warning--orange { color: #fd7e14; font-weight: 700; }
+        .triage-warning--yellow { color: #ffc107; font-weight: 700; }
+        .triage-warning--green { color: #28a745; font-weight: 700; }
+
+        @media (max-width: 768px) {
+            .wrap { padding: 12px; }
+            .form-row { grid-template-columns: 1fr; }
+            .form-span-2 { grid-column: span 1; }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <header>
+        <h1>🩹 Calculadora de Queimaduras Pediátricas e Neonatais</h1>
+        <p>Avaliação de Área Queimada e Reposição Volêmica</p>
+        <div class="header-actions">
+            <button class="btn-info" onclick="abrirModal()">
+                Como usar
+            </button>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="card">
+            <!-- Alert Box -->
+            <div class="alert-box">
+                <h3>Classificação das Queimaduras</h3>
+                <ul>
+                    <li><strong>I Grau (1º):</strong> Hiperemia, dor, sem vesículas. Atinge epiderme.</li>
+                    <li><strong>II Grau (2º):</strong> Muita dor, vesículas, bolhas e hiperemia. Atinge epiderme e derme.</li>
+                    <li><strong>III Grau (3º):</strong> Sem dor (destruição de terminações nervosas), branco anacarado. Atinge derme, epiderme e tecidos profundos.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <!-- Dados do Paciente -->
+            <div class="section">
+                <h2>Dados do Paciente</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome">Nome:</label>
+                        <input type="text" id="nome" placeholder="Digite o nome">
+                    </div>
+                    <div class="form-group">
+                        <label for="data">Data/Hora da Avaliação:</label>
+                        <input type="datetime-local" id="data" onchange="calcularIdadeAutomatica()">
+                    </div>
+                    <div class="form-group">
+                        <label for="dataNascimento">Data de Nascimento (opcional):</label>
+                        <input type="date" id="dataNascimento" onchange="calcularIdadeAutomatica()">
+                    </div>
+                    <div class="form-group">
+                        <label for="idade">Idade:</label>
+                        <input type="text" id="idadeDetalhada" readonly class="field-readonly" placeholder="Anos, meses e dias">
+                        <input type="number" id="idade" min="0" max="18" step="0.01" placeholder="Digite em anos" onchange="calcular()" class="input-hidden">
+                    </div>
+                    <div class="form-group">
+                        <label for="peso">Peso Real (kg):</label>
+                        <input type="number" id="peso" min="0" step="0.001" placeholder="Deixe vazio se usar estimado" onchange="limparEstimado(); calcular()">
+                    </div>
+                    <div class="form-group">
+                        <label for="altura">Altura Real (cm):</label>
+                        <input type="number" id="altura" min="0" step="0.1" placeholder="Deixe vazio se usar estimado" onchange="limparEstimado(); calcular()">
+                    </div>
+                    <div class="form-group form-span-2">
+                        <label for="pesoEstimado">OU use Peso/Altura Estimados (se não puder medir):</label>
+                        <select id="pesoEstimado" onchange="usarPesoEstimado()">
+                            <option value="">Selecione a idade...</option>
+                            <option value="3.5|50">RN (0-1 mês) - 3.5 kg / 50 cm</option>
+                            <option value="4.5|55">2 meses - 4.5 kg / 55 cm</option>
+                            <option value="5.5|58">3 meses - 5.5 kg / 58 cm</option>
+                            <option value="6.5|61">4 meses - 6.5 kg / 61 cm</option>
+                            <option value="7.0|64">5 meses - 7.0 kg / 64 cm</option>
+                            <option value="7.5|66">6 meses - 7.5 kg / 66 cm</option>
+                            <option value="8.0|68">7-8 meses - 8.0 kg / 68 cm</option>
+                            <option value="8.5|70">9-10 meses - 8.5 kg / 70 cm</option>
+                            <option value="9.0|72">11-12 meses - 9.0 kg / 72 cm</option>
+                            <option value="10.0|77">15 meses - 10 kg / 77 cm</option>
+                            <option value="11.0|81">18 meses - 11 kg / 81 cm</option>
+                            <option value="12.0|85">2 anos - 12 kg / 85 cm</option>
+                            <option value="14.0|95">3 anos - 14 kg / 95 cm</option>
+                            <option value="16.0|103">4 anos - 16 kg / 103 cm</option>
+                            <option value="18.0|110">5 anos - 18 kg / 110 cm</option>
+                            <option value="20.0|116">6 anos - 20 kg / 116 cm</option>
+                            <option value="22.0|122">7 anos - 22 kg / 122 cm</option>
+                            <option value="25.0|128">8 anos - 25 kg / 128 cm</option>
+                            <option value="28.0|133">9 anos - 28 kg / 133 cm</option>
+                            <option value="31.0|138">10 anos - 31 kg / 138 cm</option>
+                            <option value="35.0|143">11 anos - 35 kg / 143 cm</option>
+                            <option value="40.0|149">12 anos - 40 kg / 149 cm</option>
+                            <option value="45.0|156">13 anos - 45 kg / 156 cm</option>
+                            <option value="50.0|163">14 anos - 50 kg / 163 cm</option>
+                            <option value="55.0|169">15 anos - 55 kg / 169 cm</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="bsa">BSA (m²):</label>
+                        <input type="text" id="bsa" readonly class="field-readonly">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <!-- Área Queimada -->
+            <div class="section" id="areaQueimadaSection" style="display: none;">
+                <h2>Área Queimada (2º e 3º Grau) - Regra de Lund-Browder</h2>
+                <div class="table-wrap">
+                    <table class="burn-area-table">
+                        <thead>
+                            <tr>
+                                <th>Região Corporal</th>
+                                <th>Anterior</th>
+                                <th>Posterior</th>
+                                <th id="colHeader0" style="display: none;">% (0-1 ano)</th>
+                                <th id="colHeader1" style="display: none;">% (1-4 anos)</th>
+                                <th id="colHeader2" style="display: none;">% (5-9 anos)</th>
+                                <th id="colHeader3" style="display: none;">% (10-14 anos)</th>
+                                <th id="colHeader4" style="display: none;">% (≥15 anos)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="burnAreaTable"></tbody>
+                    </table>
+                </div>
+                <div class="total-burn-box">
+                    <h3>ÁREA TOTAL QUEIMADA: <span id="totalBurnArea">0.0</span>%</h3>
+                </div>
+            </div>
+            
+            <!-- Aviso quando não há idade -->
+            <div class="section" id="avisoIdade">
+                <h2>Área Queimada (2º e 3º Grau) - Regra de Lund-Browder</h2>
+                <div class="age-warning">
+                    <p class="age-warning-text">
+                        <strong>Por favor, informe a IDADE da criança</strong> (digitando ou selecionando peso/altura estimados) para visualizar e preencher a tabela de áreas queimadas.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <!-- Interpretação e Triagem -->
+            <div class="section" id="triagemSection" style="display: none;">
+                <h2>Triagem e Encaminhamento</h2>
+                <div class="triage-box">
+                    <div class="triage-title">
+                        <h3 id="localEncaminhamento">-</h3>
+                    </div>
+                    <div id="criteriosTriagem" class="triage-criteria"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <!-- Resultados -->
+            <div class="results-grid">
+                <!-- Parkland -->
+                <div class="result-box">
+                    <h3>Fórmula de Parkland</h3>
+                    <div class="result-item">
+                        <span class="result-label">24 horas:</span>
+                        <span class="result-value" id="parkland24h">0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Primeiras 8h:</span>
+                        <span class="result-value" id="parkland8h">0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Primeiras 8h (mL/h):</span>
+                        <span class="result-value" id="parkland8hRate">0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">16h restantes:</span>
+                        <span class="result-value" id="parkland16h">0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">16h restantes (mL/h):</span>
+                        <span class="result-value" id="parkland16hRate">0</span>
+                    </div>
+                </div>
+
+                <!-- Carvajal -->
+                <div class="result-box">
+                    <h3>Fórmula de Carvajal Modificada</h3>
+                    <div class="result-item">
+                        <span class="result-label">Dia 1 - 24 horas:</span>
+                        <span class="result-value" id="carvajal24h">0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Dia 1 - Primeiras 8h:</span>
+                        <span class="result-value" id="carvajal8h">0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Dia 1 - Primeiras 8h (mL/h):</span>
+                        <span class="result-value" id="carvajal8hRate">0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Dia 1 - 16h restantes:</span>
+                        <span class="result-value" id="carvajal16h">0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Dia 1 - 16h restantes (mL/h):</span>
+                        <span class="result-value" id="carvajal16hRate">0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Dia 2 - 24 horas:</span>
+                        <span class="result-value" id="carvajalDia2">0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Dia 2 - (mL/h):</span>
+                        <span class="result-value" id="carvajalDia2Rate">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botão Gerar Relatório -->
+            <button type="button" class="report-btn" onclick="gerarRelatorio()" id="reportBtn">
+                Copiar texto informativo
+            </button>
+        </div>
+
+        <div class="card">
+            <!-- Referências -->
+            <div class="section">
+                <h3>Referências Bibliográficas</h3>
+                <p>1. Baxter C. Problems and Complications in Burn Shock Resuscitation. Surg Clin N Amer 58:1315, 1978.</p>
+                <p>2. Baxter C. Fluid Resuscitation, Burn Percentage and Physiologic Age. J Trauma 19:864, 1979.</p>
+                <p>3. Juang HJ, Cesana M. Queimaduras. Sinopse de Pediatria, 1995;3:60-4.</p>
+                <p>4. Carvajal HF. A physiologic approach to fluid therapy in severely burn children. Surg Gynecol Obstet 1980;150:379-83.</p>
+                <p><strong>OBS:</strong> No cálculo de reposição, excetuando-se queimaduras elétricas e lesões inalatórias graves, considera-se SCQ máxima de 50%, para evitar hiperhidratação.</p>
+            </div>
+        </div>
+    </div> <!-- end wrap -->
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — Calculadora de queimaduras (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta calculadora organiza estimativas educativas de superfície queimada e reposição hídrica inicial. O conteúdo é informativo e não substitui avaliação clínica, protocolo institucional ou prescrição.</p>
+                
+                <h3>Regra dos Nove - Pediátrica</h3>
+                <div class="formula-box">
+                    <strong>Regra dos Nove Modificada para Crianças:</strong><br><br>
+                    <strong>Cabeça e Pescoço:</strong><br>
+                    - < 1 ano: 18%<br>
+                    - 1-4 anos: 17%<br>
+                    - 5-9 anos: 16%<br>
+                    - 10-14 anos: 15%<br>
+                    - > 14 anos: 9%<br><br>
+                    <strong>Braços:</strong><br>
+                    - < 1 ano: 8% cada<br>
+                    - 1-4 anos: 9% cada<br>
+                    - 5-9 anos: 10% cada<br>
+                    - 10-14 anos: 10% cada<br>
+                    - > 14 anos: 9% cada<br><br>
+                    <strong>Tronco:</strong><br>
+                    - Anterior: 18%<br>
+                    - Posterior: 18%<br><br>
+                    <strong>Pernas:</strong><br>
+                    - < 1 ano: 13% cada<br>
+                    - 1-4 anos: 13% cada<br>
+                    - 5-9 anos: 13% cada<br>
+                    - 10-14 anos: 14% cada<br>
+                    - > 14 anos: 18% cada<br><br>
+                    <strong>Genitália:</strong><br>
+                    - Todas as idades: 1%<br><br>
+                    <strong>Total: 100%</strong>
+                </div>
+
+                <h3>Parâmetros Avaliados</h3>
+                <ul>
+                    <li><strong>Idade:</strong> Anos</li>
+                    <li><strong>Peso:</strong> kg</li>
+                    <li><strong>Altura:</strong> cm</li>
+                    <li><strong>Áreas Queimadas:</strong> % por região</li>
+                    <li><strong>Total:</strong> % SCQ</li>
+                    <li><strong>Gravidade:</strong> Leve, moderada, grave</li>
+                    <li><strong>Prognóstico:</strong> Baseado na extensão</li>
+                    <li><strong>Conduta:</strong> Recomendada</li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Insira Dados:</strong> Idade, peso, altura</li>
+                    <li><strong>Selecione Áreas:</strong> Queimadas</li>
+                    <li><strong>Informe Percentual:</strong> Por região</li>
+                    <li><strong>Calcule:</strong> Sistema calcula automaticamente</li>
+                    <li><strong>Interprete:</strong> Gravidade e prognóstico</li>
+                    <li><strong>Monitore:</strong> Evolução</li>
+                </ol>
+
+                <h3>Classificação por Extensão</h3>
+                <ul>
+                    <li><strong>Queimadura Menor:</strong> < 10% SCQ</li>
+                    <li><strong>Queimadura Moderada:</strong> 10-20% SCQ</li>
+                    <li><strong>Queimadura Grave:</strong> 20-40% SCQ</li>
+                    <li><strong>Queimadura Crítica:</strong> > 40% SCQ</li>
+                    <li><strong>Adultos:</strong> + 10% para cada década</li>
+                    <li><strong>Crianças:</strong> + 5% para cada ano</li>
+                    <li><strong>Neonatos:</strong> + 3% para cada mês</li>
+                    <li><strong>Preditiva:</strong> Mortalidade</li>
+                </ul>
+
+                <h3>Classificação por Profundidade</h3>
+                <ul>
+                    <li><strong>1º Grau:</strong> Epiderme</li>
+                    <li><strong>2º Grau Superficial:</strong> Derme papilar</li>
+                    <li><strong>2º Grau Profundo:</strong> Derme reticular</li>
+                    <li><strong>3º Grau:</strong> Toda espessura</li>
+                    <li><strong>4º Grau:</strong> Músculo/osso</li>
+                    <li><strong>Eritema:</strong> 1º grau</li>
+                    <li><strong>Bolhas:</strong> 2º grau</li>
+                    <li><strong>Escara:</strong> 3º grau</li>
+                </ul>
+
+                <h3>Causas de Queimaduras</h3>
+                <ul>
+                    <li><strong>Térmicas:</strong> Fogo, líquidos</li>
+                    <li><strong>Químicas:</strong> Ácidos, bases</li>
+                    <li><strong>Elétricas:</strong> Corrente, raio</li>
+                    <li><strong>Fricção:</strong> Atrito</li>
+                    <li><strong>Radiação:</strong> UV, ionizante</li>
+                    <li><strong>Congelamento:</strong> Frio</li>
+                    <li><strong>Inalação:</strong> Fumaça</li>
+                    <li><strong>Abuso:</strong> Intencional</li>
+                </ul>
+
+                <h3>Fatores de Risco</h3>
+                <ul>
+                    <li><strong>Idade:</strong> Extremos</li>
+                    <li><strong>Comorbidades:</strong> Diabetes, cardiopatia</li>
+                    <li><strong>Medicamentos:</strong> Anticoagulantes</li>
+                    <li><strong>Álcool:</strong> Drogas</li>
+                    <li><strong>Pobreza:</strong> Condições</li>
+                    <li><strong>Deficiência:</strong> Mental/física</li>
+                    <li><strong>Histórico:</strong> Queimaduras</li>
+                    <li><strong>Ambiente:</strong> Perigoso</li>
+                </ul>
+
+                <h3>Complicações Imediatas</h3>
+                <ul>
+                    <li><strong>Choque:</strong> Hipovolêmico</li>
+                    <li><strong>Edema:</strong> Queimadura</li>
+                    <li><strong>Inalação:</strong> Lesão</li>
+                    <li><strong>Intoxicação:</strong> CO, cianeto</li>
+                    <li><strong>Rabdomiólise:</strong> Elétrica</li>
+                    <li><strong>Compartment:</strong> Syndrome</li>
+                    <li><strong>Arritmias:</strong> Elétrica</li>
+                    <li><strong>Parada:</strong> Cardiorrespiratória</li>
+                </ul>
+
+                <h3>Complicações Tardias</h3>
+                <ul>
+                    <li><strong>Infecção:</strong> Sepse</li>
+                    <li><strong>Contraturas:</strong> Cicatriciais</li>
+                    <li><strong>Queloides:</strong> Hipertróficas</li>
+                    <li><strong>Prurido:</strong> Crônico</li>
+                    <li><strong>Disfunção:</strong> Orgãos</li>
+                    <li><strong>Psicológicas:</strong> Trauma</li>
+                    <li><strong>Câncer:</strong> Pele</li>
+                    <li><strong>Morte:</strong> Alta mortalidade</li>
+                </ul>
+
+                <h3>Tratamento Inicial</h3>
+                <ul>
+                    <li><strong>ABC:</strong> Vias aéreas</li>
+                    <li><strong>Resfriamento:</strong> Água fria</li>
+                    <li><strong>Fluidoterapia:</strong> Parkland</li>
+                    <li><strong>Analgesia:</strong> Opioides</li>
+                    <li><strong>Tétano:</strong> Profilaxia</li>
+                    <li><strong>Desbridamento:</strong> Cirúrgico</li>
+                    <li><strong>Enxerto:</strong> Pele</li>
+                    <li><strong>Antibióticos:</strong> Tópicos</li>
+                </ul>
+
+                <h3>Fórmula de Parkland</h3>
+                <ul>
+                    <li><strong>Primeiras 24h:</strong> 4 mL × kg × %SCQ</li>
+                    <li><strong>Primeiras 8h:</strong> 50% do total</li>
+                    <li><strong>16h seguintes:</strong> 50% restante</li>
+                    <li><strong>Soro:</strong> Ringer lactato</li>
+                    <li><strong>Monitoramento:</strong> Diurese</li>
+                    <li><strong>Ajuste:</strong> Individual</li>
+                    <li><strong>Pediátrico:</strong> + manutenção</li>
+                    <li><strong>Neonatal:</strong> Cuidado especial</li>
+                </ul>
+
+                <h3>Prognóstico</h3>
+                <ul>
+                    <li><strong>Mortalidade:</strong> Baux Score</li>
+                    <li><strong>Idade + SCQ:</strong> Preditivo</li>
+                    <li><strong>< 50:</strong> Baixa mortalidade</li>
+                    <li><strong>50-80:</strong> Moderada</li>
+                    <li><strong>80-100:</strong> Alta</li>
+                    <li><strong>> 100:</strong> Muito alta</li>
+                    <li><strong>Comorbidades:</strong> Pioram</li>
+                    <li><strong>Inalação:</strong> Piora</li>
+                    <li><strong>Tratamento:</strong> Precoce</li>
+                </ul>
+
+                <h3>Prevenção</h3>
+                <ul>
+                    <li><strong>Educação:</strong> Pais/cuidadores</li>
+                    <li><strong>Segurança:</strong> Casa</li>
+                    <li><strong>Detectores:</strong> Fumaça</li>
+                    <li><strong>Extintores:</strong> Acessíveis</li>
+                    <li><strong>Supervisão:</strong> Crianças</li>
+                    <li><strong>Produtos:</strong> Seguros</li>
+                    <li><strong>Legislação:</strong> Proteção</li>
+                    <li><strong>Campanhas:</strong> Públicas</li>
+                </ul>
+
+                <h3>Limitações e Considerações</h3>
+                <ul>
+                    <li>Estimativa aproximada</li>
+                    <li>Variações individuais</li>
+                    <li>Fatores não incluídos</li>
+                    <li>Avaliação clínica</li>
+                    <li>Interpretação experiente</li>
+                    <li>Ajuste individual</li>
+                    <li>Protocolos institucionais</li>
+                    <li>Correlação clínica</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Sheridan RL. Burn care: results of technical and organizational progress. JAMA. 2003;290(6):719-722.<br>
+                    - Hettiaratchy S, Papini R. Initial management of a major burn: II--assessment and resuscitation. BMJ. 2004;329(7457):101-103.<br>
+                    - American Burn Association. Advanced Burn Life Support Course Provider Manual. 2018.
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Tabela de Lund-Browder com porcentagens por idade
+        const lundBrowder = [
+            {area: 'Cabeça', anterior: true, posterior: true, values: [19, 17, 13, 11, 9, 7]},
+            {area: 'Pescoço', anterior: true, posterior: true, values: [2, 2, 2, 2, 2, 2]},
+            {area: 'Tronco anterior', anterior: true, posterior: false, values: [13, 13, 13, 13, 13, 13]},
+            {area: 'Tronco posterior', anterior: false, posterior: true, values: [13, 13, 13, 13, 13, 13]},
+            {area: 'Nádega direita', anterior: false, posterior: true, values: [2.5, 2.5, 2.5, 2.5, 2.5, 2.5]},
+            {area: 'Nádega esquerda', anterior: false, posterior: true, values: [2.5, 2.5, 2.5, 2.5, 2.5, 2.5]},
+            {area: 'Genitália', anterior: true, posterior: false, values: [1, 1, 1, 1, 1, 2.5]},
+            {area: 'Braço direito', anterior: true, posterior: true, values: [4, 4, 4, 4, 4, 4]},
+            {area: 'Braço esquerdo', anterior: true, posterior: true, values: [4, 4, 4, 4, 4, 2.5]},
+            {area: 'Antebraço direito', anterior: true, posterior: true, values: [3, 3, 3, 3, 3, 3]},
+            {area: 'Antebraço esquerdo', anterior: true, posterior: true, values: [3, 3, 3, 3, 3, 3]},
+            {area: 'Mão direita', anterior: true, posterior: true, values: [2.5, 2.5, 2.5, 2.5, 2.5, 2.5]},
+            {area: 'Mão esquerda', anterior: true, posterior: true, values: [2.5, 2.5, 2.5, 2.5, 2.5, 2.5]},
+            {area: 'Coxa direita', anterior: true, posterior: true, values: [5.5, 6.5, 8, 8.5, 9, 9.5]},
+            {area: 'Coxa esquerda', anterior: true, posterior: true, values: [5.5, 6.5, 8, 8.5, 9, 9.5]},
+            {area: 'Perna direita', anterior: true, posterior: true, values: [5, 5, 5.5, 6, 6.5, 7]},
+            {area: 'Perna esquerda', anterior: true, posterior: true, values: [5, 5, 5.5, 6, 6.5, 7]},
+            {area: 'Pé direito', anterior: true, posterior: true, values: [3.5, 3.5, 3.5, 3.5, 3.5, 3.5]},
+            {area: 'Pé esquerdo', anterior: true, posterior: true, values: [3.5, 3.5, 3.5, 3.5, 3.5, 3.5]}
+        ];
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+                .toISOString()
+                .slice(0, 16);
+            document.getElementById('data').value = localDateTime;
+            
+            criarTabelaQueimadura();
+        });
+
+        function criarTabelaQueimadura() {
+            const tbody = document.getElementById('burnAreaTable');
+            tbody.innerHTML = '';
+            
+            lundBrowder.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${item.area}</strong></td>
+                    <td class="cell-center">
+                        ${item.anterior ? `<input type="checkbox" id="ant_${index}" onchange="calcular()">` : '-'}
+                    </td>
+                    <td class="cell-center">
+                        ${item.posterior ? `<input type="checkbox" id="post_${index}" onchange="calcular()">` : '-'}
+                    </td>
+                    <td class="area-value col-percent-0" style="display: none;">${item.values[0]}</td>
+                    <td class="area-value col-percent-1" style="display: none;">${item.values[1]}</td>
+                    <td class="area-value col-percent-2" style="display: none;">${item.values[2]}</td>
+                    <td class="area-value col-percent-3" style="display: none;">${item.values[3]}</td>
+                    <td class="area-value col-percent-4" style="display: none;">${item.values[4]}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function atualizarColunasVisiveis(faixaEtaria) {
+            // Esconder todos os headers e colunas
+            for (let i = 0; i < 5; i++) {
+                const header = document.getElementById(`colHeader${i}`);
+                if (header) header.style.display = 'none';
+                
+                const cols = document.querySelectorAll(`.col-percent-${i}`);
+                cols.forEach(col => col.style.display = 'none');
+            }
+            
+            // Mostrar apenas a coluna da faixa etária atual
+            const headerAtual = document.getElementById(`colHeader${faixaEtaria}`);
+            if (headerAtual) headerAtual.style.display = '';
+            
+            const colsAtuais = document.querySelectorAll(`.col-percent-${faixaEtaria}`);
+            colsAtuais.forEach(col => col.style.display = '');
+        }
+
+        function realizarTriagem(scq, idade) {
+            const triagemSection = document.getElementById('triagemSection');
+            const localEncaminhamento = document.getElementById('localEncaminhamento');
+            const criteriosTriagem = document.getElementById('criteriosTriagem');
+            
+            if (scq <= 0) {
+                triagemSection.style.display = 'none';
+                return;
+            }
+            
+            triagemSection.style.display = 'block';
+            
+            let local = '';
+            let criterios = '';
+            let cor = '';
+            
+            // Critérios baseados na tabela
+            // Verificar se é criança entre 10 e 50 anos
+            const crianca10a50 = idade >= 10 && idade <= 50;
+            
+            // UTQ (Unidade de Tratamento de Queimados)
+            if ((crianca10a50 && scq > 20) || (!crianca10a50 && scq > 20) || scq > 20) {
+                local = 'UTQ (Unidade de Tratamento de Queimados)';
+                cor = '#dc3545';
+                criterios = `
+                    <p><strong>Criterios para UTQ:</strong></p>
+                    <ul>
+                        <li>SCQ > 20% em pacientes entre 10-50 anos</li>
+                        <li>SCQ > 20% em outras faixas etárias</li>
+                        <li>Queimaduras de 3o grau > 5% SCQ em qualquer idade</li>
+                        <li>Queimaduras de 2o ou 3o grau com envolvimento de maos, face, pes ou perineo ("Preferir")</li>
+                        <li>Queimaduras elétricas ("Preferir")</li>
+                        <li>Queimaduras químicas ("Preferir")</li>
+                        <li>Congelamento ("Preferir")</li>
+                        <li>Associacao com patologias previas ("Preferir")</li>
+                        <li>Associado a fraturas e politrauma ("Preferir")</li>
+                    </ul>
+                    <p class="triage-warning triage-warning--red">ENCAMINHAMENTO PRIORITARIO PARA CENTRO ESPECIALIZADO</p>
+                `;
+            }
+            // Hospital Geral
+            else if ((crianca10a50 && scq > 10 && scq <= 20) || (!crianca10a50 && scq > 10 && scq <= 20)) {
+                local = 'HOSPITAL GERAL';
+                cor = '#fd7e14';
+                criterios = `
+                    <p><strong>Criterios para Hospital Geral:</strong></p>
+                    <ul>
+                        <li>SCQ entre 10-20% em pacientes entre 10-50 anos</li>
+                        <li>SCQ entre 10-20% em outras faixas etárias</li>
+                        <li>Queimaduras de 3o grau < 5% SCQ</li>
+                        <li>Queimaduras de 2o ou 3o grau com envolvimento de maos, face, pes ou perineo ("Evitar")</li>
+                        <li>Queimaduras elétricas ("Evitar")</li>
+                        <li>Queimaduras químicas ("Evitar")</li>
+                        <li>Congelamento ("Evitar")</li>
+                        <li>Associacao com patologias previas ("Evitar")</li>
+                        <li>Associado a fraturas e politrauma ("Evitar")</li>
+                    </ul>
+                    <p class="triage-warning triage-warning--orange">INTERNACAO EM HOSPITAL GERAL COM AVALIACAO PARA POSSIVEL TRANSFERENCIA</p>
+                `;
+            }
+            // Ambulatório
+            else if ((crianca10a50 && scq > 5 && scq <= 10) || (!crianca10a50 && scq > 5 && scq <= 10)) {
+                local = 'AMBULATORIO';
+                cor = '#ffc107';
+                criterios = `
+                    <p><strong>Criterios para Ambulatorio:</strong></p>
+                    <ul>
+                        <li>SCQ entre 5-10% em pacientes entre 10-50 anos</li>
+                        <li>SCQ entre 5-10% em outras faixas etárias</li>
+                        <li>Queimaduras de 3o grau: "Evitar" tratamento ambulatorial</li>
+                        <li>Queimaduras de 2o ou 3o grau com envolvimento de maos, face, pes ou perineo: "Nunca" tratamento ambulatorial</li>
+                        <li>Queimaduras elétricas: "Nunca"</li>
+                        <li>Queimaduras químicas: "Nunca"</li>
+                        <li>Congelamento: "Nunca"</li>
+                        <li>Associacao com patologias previas: "Nunca"</li>
+                        <li>Associado a fraturas e politrauma: "Nunca"</li>
+                    </ul>
+                    <p class="triage-warning triage-warning--yellow">TRATAMENTO AMBULATORIAL COM REAVALIACAO FREQUENTE</p>
+                `;
+            }
+            // Triagem
+            else if (scq <= 10) {
+                local = 'TRIAGEM / CUIDADOS INICIAIS';
+                cor = '#28a745';
+                criterios = `
+                    <p><strong>Criterios para Triagem:</strong></p>
+                    <ul>
+                        <li>SCQ < 10% em pacientes entre 10-50 anos</li>
+                        <li>SCQ < 5% em outras faixas etárias</li>
+                        <li>Avaliar criterios adicionais:</li>
+                        <li class="triage-subitem">- Queimaduras de 3o grau: "Evitar" tratamento em triagem</li>
+                        <li class="triage-subitem">- Areas criticas (maos, face, pes, perineo): Considerar encaminhamento</li>
+                        <li class="triage-subitem">- Queimaduras especiais (eletricas, quimicas): "Nunca" em triagem</li>
+                    </ul>
+                    <p class="triage-warning triage-warning--green">TRATAMENTO INICIAL COM ORIENTACOES E ACOMPANHAMENTO</p>
+                `;
+            }
+            
+            localEncaminhamento.textContent = local;
+            localEncaminhamento.style.color = cor;
+            criteriosTriagem.innerHTML = criterios;
+        }
+
+        function calcularIdadeAutomatica() {
+            const dataNascimento = document.getElementById('dataNascimento').value;
+            const dataAvaliacao = document.getElementById('data').value;
+            
+            if (dataNascimento && dataAvaliacao) {
+                const nascimento = new Date(dataNascimento);
+                const avaliacao = new Date(dataAvaliacao);
+                
+                // Calcular diferença em anos
+                let anos = avaliacao.getFullYear() - nascimento.getFullYear();
+                const mesNasc = nascimento.getMonth();
+                const mesAval = avaliacao.getMonth();
+                const diaNasc = nascimento.getDate();
+                const diaAval = avaliacao.getDate();
+                
+                // Ajustar se ainda não fez aniversário no ano
+                if (mesAval < mesNasc || (mesAval === mesNasc && diaAval < diaNasc)) {
+                    anos--;
+                }
+                
+                // Calcular meses adicionais
+                let meses = mesAval - mesNasc;
+                if (diaAval < diaNasc) {
+                    meses--;
+                }
+                if (meses < 0) {
+                    meses += 12;
+                }
+                
+                // Calcular dias adicionais
+                let dias = diaAval - diaNasc;
+                if (dias < 0) {
+                    // Pegar o último dia do mês anterior
+                    const mesAnterior = new Date(avaliacao.getFullYear(), avaliacao.getMonth(), 0);
+                    dias += mesAnterior.getDate();
+                }
+                
+                // Converter para anos decimais (para cálculos internos)
+                const idadeDecimal = anos + (meses / 12) + (dias / 365);
+                
+                // Atualizar campos
+                document.getElementById('idade').value = idadeDecimal.toFixed(3);
+                
+                // Mostrar idade detalhada
+                let textoIdade = '';
+                if (anos > 0) textoIdade += `${anos} ano${anos !== 1 ? 's' : ''}`;
+                if (meses > 0) textoIdade += (textoIdade ? ', ' : '') + `${meses} mes${meses !== 1 ? 'es' : ''}`;
+                if (dias > 0) textoIdade += (textoIdade ? ' e ' : '') + `${dias} dia${dias !== 1 ? 's' : ''}`;
+                
+                document.getElementById('idadeDetalhada').value = textoIdade || '0 dias';
+                
+                calcular();
+            }
+        }
+
+        function limparEstimado() {
+            // Limpa o dropdown de estimado quando digitar valores reais
+            document.getElementById('pesoEstimado').value = '';
+        }
+
+        function usarPesoEstimado() {
+            const valorSelecionado = document.getElementById('pesoEstimado').value;
+            if (valorSelecionado) {
+                const [peso, altura] = valorSelecionado.split('|');
+                if (peso && altura) {
+                    document.getElementById('peso').value = parseFloat(peso);
+                    document.getElementById('altura').value = parseFloat(altura);
+                    
+                    // Estimar idade baseado no peso selecionado (EXATO conforme dropdown)
+                    const pesoNum = parseFloat(peso);
+                    let idadeEstimada = 0;
+                    let textoIdadeOriginal = '';
+                    
+                    // Mapear EXATAMENTE conforme o dropdown de peso estimado
+                    if (pesoNum == 3.5) {
+                        idadeEstimada = 0.5 / 12; // 0-1 mês = 0.5 meses
+                        textoIdadeOriginal = 'RN (0-1 mes) (estimada)';
+                    }
+                    else if (pesoNum == 4.5) {
+                        idadeEstimada = 2 / 12; // 2 meses
+                        textoIdadeOriginal = '2 meses (estimada)';
+                    }
+                    else if (pesoNum == 5.5) {
+                        idadeEstimada = 3 / 12; // 3 meses
+                        textoIdadeOriginal = '3 meses (estimada)';
+                    }
+                    else if (pesoNum == 6.5) {
+                        idadeEstimada = 4 / 12; // 4 meses
+                        textoIdadeOriginal = '4 meses (estimada)';
+                    }
+                    else if (pesoNum == 7.0) {
+                        idadeEstimada = 5 / 12; // 5 meses
+                        textoIdadeOriginal = '5 meses (estimada)';
+                    }
+                    else if (pesoNum == 7.5) {
+                        idadeEstimada = 6 / 12; // 6 meses
+                        textoIdadeOriginal = '6 meses (estimada)';
+                    }
+                    else if (pesoNum == 8.0) {
+                        idadeEstimada = 7.5 / 12; // 7-8 meses
+                        textoIdadeOriginal = '7-8 meses (estimada)';
+                    }
+                    else if (pesoNum == 8.5) {
+                        idadeEstimada = 9.5 / 12; // 9-10 meses
+                        textoIdadeOriginal = '9-10 meses (estimada)';
+                    }
+                    else if (pesoNum == 9.0) {
+                        idadeEstimada = 11.5 / 12; // 11-12 meses
+                        textoIdadeOriginal = '11-12 meses (estimada)';
+                    }
+                    else if (pesoNum == 10.0) {
+                        idadeEstimada = 15 / 12; // 15 meses
+                        textoIdadeOriginal = '15 meses (estimada)';
+                    }
+                    else if (pesoNum == 11.0) {
+                        idadeEstimada = 18 / 12; // 18 meses
+                        textoIdadeOriginal = '18 meses (estimada)';
+                    }
+                    else if (pesoNum == 12.0) {
+                        idadeEstimada = 2; // 2 anos
+                        textoIdadeOriginal = '2 anos (estimada)';
+                    }
+                    else if (pesoNum == 14.0) {
+                        idadeEstimada = 3; // 3 anos
+                        textoIdadeOriginal = '3 anos (estimada)';
+                    }
+                    else if (pesoNum == 16.0) {
+                        idadeEstimada = 4; // 4 anos
+                        textoIdadeOriginal = '4 anos (estimada)';
+                    }
+                    else if (pesoNum == 18.0) {
+                        idadeEstimada = 5; // 5 anos
+                        textoIdadeOriginal = '5 anos (estimada)';
+                    }
+                    else if (pesoNum == 20.0) {
+                        idadeEstimada = 6; // 6 anos
+                        textoIdadeOriginal = '6 anos (estimada)';
+                    }
+                    else if (pesoNum == 22.0) {
+                        idadeEstimada = 7; // 7 anos
+                        textoIdadeOriginal = '7 anos (estimada)';
+                    }
+                    else if (pesoNum == 25.0) {
+                        idadeEstimada = 8; // 8 anos
+                        textoIdadeOriginal = '8 anos (estimada)';
+                    }
+                    else if (pesoNum == 28.0) {
+                        idadeEstimada = 9; // 9 anos
+                        textoIdadeOriginal = '9 anos (estimada)';
+                    }
+                    else if (pesoNum == 31.0) {
+                        idadeEstimada = 10; // 10 anos
+                        textoIdadeOriginal = '10 anos (estimada)';
+                    }
+                    else if (pesoNum == 35.0) {
+                        idadeEstimada = 11; // 11 anos
+                        textoIdadeOriginal = '11 anos (estimada)';
+                    }
+                    else if (pesoNum == 40.0) {
+                        idadeEstimada = 12; // 12 anos
+                        textoIdadeOriginal = '12 anos (estimada)';
+                    }
+                    else if (pesoNum == 45.0) {
+                        idadeEstimada = 13; // 13 anos
+                        textoIdadeOriginal = '13 anos (estimada)';
+                    }
+                    else if (pesoNum == 50.0) {
+                        idadeEstimada = 14; // 14 anos
+                        textoIdadeOriginal = '14 anos (estimada)';
+                    }
+                    else if (pesoNum == 55.0) {
+                        idadeEstimada = 15; // 15 anos
+                        textoIdadeOriginal = '15 anos (estimada)';
+                    }
+                    
+                    // Preencher idade oculta
+                    document.getElementById('idade').value = idadeEstimada.toFixed(3);
+                    
+                    // Mostrar idade estimada no campo visível usando o texto original
+                    document.getElementById('idadeDetalhada').value = textoIdadeOriginal;
+                    
+                    calcular();
+                }
+            }
+        }
+
+        function calcularBSA(peso, altura) {
+            // Fórmula de Mosteller
+            if (peso > 0 && altura > 0) {
+                return Math.sqrt((peso * altura) / 3600);
+            }
+            return 0;
+        }
+
+        function determinarFaixaEtaria(idade) {
+            if (idade < 1) return 0;
+            if (idade < 4) return 1;
+            if (idade < 9) return 2;
+            if (idade < 14) return 3;
+            if (idade < 15) return 4;
+            return 4;
+        }
+
+        function calcular() {
+            const idade = parseFloat(document.getElementById('idade').value) || 0;
+            const peso = parseFloat(document.getElementById('peso').value) || 0;
+            const altura = parseFloat(document.getElementById('altura').value) || 0;
+            
+            // Calcular BSA
+            const bsa = calcularBSA(peso, altura);
+            document.getElementById('bsa').value = bsa.toFixed(2);
+            
+            // Mostrar/ocultar seção de área queimada baseado na idade
+            const areaQueimadaSection = document.getElementById('areaQueimadaSection');
+            const avisoIdade = document.getElementById('avisoIdade');
+            
+            if (idade > 0) {
+                areaQueimadaSection.style.display = 'block';
+                avisoIdade.style.display = 'none';
+            } else {
+                areaQueimadaSection.style.display = 'none';
+                avisoIdade.style.display = 'block';
+                // Ocultar também a triagem se não há idade
+                document.getElementById('triagemSection').style.display = 'none';
+                return; // Não continuar cálculos sem idade
+            }
+            
+            // Determinar faixa etária
+            const faixaEtaria = determinarFaixaEtaria(idade);
+            
+            // Atualizar colunas visíveis
+            atualizarColunasVisiveis(faixaEtaria);
+            
+            // Calcular área queimada
+            let totalBurnArea = 0;
+            lundBrowder.forEach((item, index) => {
+                let areaValue = 0;
+                
+                if (item.anterior) {
+                    const antCheckbox = document.getElementById(`ant_${index}`);
+                    if (antCheckbox && antCheckbox.checked) {
+                        areaValue += item.values[faixaEtaria] / (item.posterior ? 2 : 1);
+                    }
+                }
+                
+                if (item.posterior) {
+                    const postCheckbox = document.getElementById(`post_${index}`);
+                    if (postCheckbox && postCheckbox.checked) {
+                        areaValue += item.values[faixaEtaria] / (item.anterior ? 2 : 1);
+                    }
+                }
+                
+                totalBurnArea += areaValue;
+            });
+            
+            // Limitar a 50% (exceto queimaduras elétricas e inalatórias graves)
+            const scqLimitada = Math.min(totalBurnArea, 50);
+            
+            document.getElementById('totalBurnArea').textContent = totalBurnArea.toFixed(1);
+            
+            // Realizar triagem
+            realizarTriagem(totalBurnArea, idade);
+            
+            // Fórmula de Parkland: 4 ml × peso (kg) × % SCQ
+            if (peso > 0 && totalBurnArea > 0) {
+                const parkland24h = 4 * peso * scqLimitada;
+                const parkland8h = parkland24h / 2;
+                const parkland8hRate = parkland8h / 8;
+                const parkland16h = parkland24h / 2;
+                const parkland16hRate = parkland16h / 16;
+                
+                document.getElementById('parkland24h').textContent = `${parkland24h.toFixed(1)} mL`;
+                document.getElementById('parkland8h').textContent = `${parkland8h.toFixed(1)} mL`;
+                document.getElementById('parkland8hRate').textContent = `${parkland8hRate.toFixed(1)} mL/h`;
+                document.getElementById('parkland16h').textContent = `${parkland16h.toFixed(1)} mL`;
+                document.getElementById('parkland16hRate').textContent = `${parkland16hRate.toFixed(1)} mL/h`;
+                
+                // Fórmula de Carvajal modificada (necessita BSA)
+                if (bsa > 0) {
+                    // Dia 1: (5000 ml/m² BSA × % SCQ) + (2000 ml/m² BSA)
+                    const carvajalDia1 = (5000 * bsa * (scqLimitada / 100)) + (2000 * bsa);
+                    const carvajal8h = carvajalDia1 / 2;
+                    const carvajal8hRate = carvajal8h / 8;
+                    const carvajal16h = carvajalDia1 / 2;
+                    const carvajal16hRate = carvajal16h / 16;
+                    
+                    // Dia 2: (3750 ml/m² BSA × % SCQ) + (1500 ml/m² BSA)
+                    const carvajalDia2 = (3750 * bsa * (scqLimitada / 100)) + (1500 * bsa);
+                    const carvajalDia2Rate = carvajalDia2 / 24;
+                    
+                    document.getElementById('carvajal24h').textContent = `${carvajalDia1.toFixed(1)} mL`;
+                    document.getElementById('carvajal8h').textContent = `${carvajal8h.toFixed(1)} mL`;
+                    document.getElementById('carvajal8hRate').textContent = `${carvajal8hRate.toFixed(1)} mL/h`;
+                    document.getElementById('carvajal16h').textContent = `${carvajal16h.toFixed(1)} mL`;
+                    document.getElementById('carvajal16hRate').textContent = `${carvajal16hRate.toFixed(1)} mL/h`;
+                    document.getElementById('carvajalDia2').textContent = `${carvajalDia2.toFixed(1)} mL`;
+                    document.getElementById('carvajalDia2Rate').textContent = `${carvajalDia2Rate.toFixed(1)} mL/h`;
+                } else {
+                    document.getElementById('carvajal24h').textContent = 'Calcular BSA';
+                    document.getElementById('carvajal8h').textContent = '-';
+                    document.getElementById('carvajal8hRate').textContent = '-';
+                    document.getElementById('carvajal16h').textContent = '-';
+                    document.getElementById('carvajal16hRate').textContent = '-';
+                    document.getElementById('carvajalDia2').textContent = '-';
+                    document.getElementById('carvajalDia2Rate').textContent = '-';
+                }
+            }
+        }
+
+        function gerarRelatorio() {
+            const nome = document.getElementById('nome').value || 'Nao informado';
+            const data = document.getElementById('data').value || 'Nao informada';
+            const dataNascimento = document.getElementById('dataNascimento').value;
+            const idade = parseFloat(document.getElementById('idade').value) || 0;
+            const idadeDetalhada = document.getElementById('idadeDetalhada').value;
+            const peso = parseFloat(document.getElementById('peso').value) || 0;
+            const altura = parseFloat(document.getElementById('altura').value) || 0;
+            const pesoEstimadoSelect = document.getElementById('pesoEstimado');
+            
+            // Verifica se usou valores estimados (dropdown tem valor selecionado)
+            const usouEstimativa = pesoEstimadoSelect.value !== '';
+            
+            const bsa = document.getElementById('bsa').value;
+            const totalBurnArea = document.getElementById('totalBurnArea').textContent;
+            
+            // Formatar data de avaliação
+            let dataFormatada = 'Nao informada';
+            if (data) {
+                const dt = new Date(data);
+                dataFormatada = dt.toLocaleString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+            
+            // Formatar data de nascimento
+            let dataNascFormatada = '';
+            if (dataNascimento) {
+                const dtNasc = new Date(dataNascimento + 'T00:00:00');
+                dataNascFormatada = dtNasc.toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+            }
+
+            // Coletar áreas queimadas
+            const faixaEtaria = determinarFaixaEtaria(idade);
+            let areasQueimadas = '';
+            lundBrowder.forEach((item, index) => {
+                let queimado = false;
+                let lado = '';
+                
+                if (item.anterior) {
+                    const antCheckbox = document.getElementById(`ant_${index}`);
+                    if (antCheckbox && antCheckbox.checked) {
+                        queimado = true;
+                        lado += 'Anterior';
+                    }
+                }
+                
+                if (item.posterior) {
+                    const postCheckbox = document.getElementById(`post_${index}`);
+                    if (postCheckbox && postCheckbox.checked) {
+                        queimado = true;
+                        if (lado) lado += ' + Posterior';
+                        else lado = 'Posterior';
+                    }
+                }
+                
+                if (queimado) {
+                    areasQueimadas += `${item.area} (${lado}): ${item.values[faixaEtaria]}%\n`;
+                }
+            });
+
+            const parkland24h = document.getElementById('parkland24h').textContent;
+            const parkland8h = document.getElementById('parkland8h').textContent;
+            const parkland8hRate = document.getElementById('parkland8hRate').textContent;
+            const parkland16h = document.getElementById('parkland16h').textContent;
+            const parkland16hRate = document.getElementById('parkland16hRate').textContent;
+
+            const carvajal24h = document.getElementById('carvajal24h').textContent;
+            const carvajal8h = document.getElementById('carvajal8h').textContent;
+            const carvajal8hRate = document.getElementById('carvajal8hRate').textContent;
+            const carvajal16h = document.getElementById('carvajal16h').textContent;
+            const carvajal16hRate = document.getElementById('carvajal16hRate').textContent;
+            const carvajalDia2 = document.getElementById('carvajalDia2').textContent;
+            const carvajalDia2Rate = document.getElementById('carvajalDia2Rate').textContent;
+
+            let relatorio = `RESUMO INFORMATIVO — CALCULADORA DE QUEIMADURAS PEDIATRICAS E NEONATAIS (EDUCATIVO)
+======================================================================
+
+DADOS DO PACIENTE
+-----------------
+Nome: ${nome}
+Data/Hora da Avaliacao: ${dataFormatada}${dataNascFormatada ? '\nData de Nascimento: ' + dataNascFormatada : ''}
+Idade: ${idadeDetalhada || (idade + ' anos')}${dataNascFormatada ? ' (calculada automaticamente)' : ''}
+Peso: ${peso} kg ${usouEstimativa ? '(ESTIMADO)' : ''}
+Altura: ${altura} cm ${usouEstimativa ? '(ESTIMADO)' : ''}
+BSA (Area de Superficie Corporal): ${bsa} m2
+
+AREA QUEIMADA (2o e 3o GRAU)
+-----------------------------
+${areasQueimadas || 'Nenhuma area selecionada'}
+AREA TOTAL QUEIMADA: ${totalBurnArea}%
+
+TRIAGEM E ENCAMINHAMENTO
+------------------------
+${document.getElementById('localEncaminhamento').textContent}
+
+CRITERIOS APLICADOS:
+${document.getElementById('criteriosTriagem').textContent.replace(/<[^>]*>/g, '')}
+
+FORMULA DE PARKLAND
+-------------------
+Volume total em 24 horas: ${parkland24h}
+  - Primeiras 8 horas: ${parkland8h}
+    Taxa horaria: ${parkland8hRate}
+  - 16 horas restantes: ${parkland16h}
+    Taxa horaria: ${parkland16hRate}
+
+FORMULA DE CARVAJAL MODIFICADA (JUANG)
+---------------------------------------
+DIA 1:
+  Volume total em 24 horas: ${carvajal24h}
+  - Primeiras 8 horas: ${carvajal8h}
+    Taxa horaria: ${carvajal8hRate}
+  - 16 horas restantes: ${carvajal16h}
+    Taxa horaria: ${carvajal16hRate}
+
+DIA 2:
+  Volume total em 24 horas: ${carvajalDia2}
+  Taxa horaria: ${carvajalDia2Rate}
+
+OBSERVACOES IMPORTANTES
+-----------------------
+- SCQ maxima considerada: 50% (exceto queimaduras eletricas e inalatorias graves)
+- Monitorar diurese: 0,5-1 ml/kg/h em criancas
+- Ajustar infusao conforme resposta clinica
+- Avaliar necessidade de albumina se hipoproteinemia
+- Considerar cateter vesical se SCQ > 20%
+- Reavaliar frequentemente e ajustar reposicao
+
+CLASSIFICACAO DAS QUEIMADURAS
+------------------------------
+I Grau (1o): Hiperemia, dor, sem vesiculas. Atinge epiderme.
+II Grau (2o): Muita dor, vesiculas, bolhas. Atinge epiderme e derme.
+III Grau (3o): Sem dor, branco anacarado. Atinge derme, epiderme e tecidos profundos.
+
+CRITERIOS DE INTERNACAO
+------------------------
+- SCQ > 10% em criancas
+- Queimaduras de 2o grau em face, maos, pes, genitalia, perineo, articulacoes
+- Queimaduras de 3o grau
+- Queimaduras eletricas
+- Queimaduras quimicas
+- Lesao inalatoria
+- Queimaduras circunferenciais
+- Comorbidades associadas
+
+REFERENCIAS
+-----------
+1. Baxter C. Problems and Complications in Burn Shock Resuscitation.
+   Surg Clin N Amer 58:1315, 1978.
+2. Baxter C. Fluid Resuscitation, Burn Percentage and Physiologic Age.
+   J Trauma 19:864, 1979.
+3. Juang HJ, Cesana M. Queimaduras. Sinopse de Pediatria, 1995;3:60-4.
+4. Carvajal HF. A physiologic approach to fluid therapy in severely burn children.
+   Surg Gynecol Obstet 1980;150:379-83.
+
+Data de Geracao: ${new Date().toLocaleString('pt-BR')}
+`;
+
+            relatorio = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorio;
+            const legalFoot = (typeof window.neopedLegalReportFooter === 'function')
+                ? '\n' + window.neopedLegalReportFooter().trim()
+                : '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            const relatorioFinal = (relatorio + legalFoot).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+            // Copiar para a area de transferencia
+            navigator.clipboard.writeText(relatorioFinal).then(() => {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(() => {
+                const textArea = document.createElement('textarea');
+                textArea.value = relatorioFinal;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

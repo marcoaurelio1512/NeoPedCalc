@@ -1,0 +1,14 @@
+{
+  "plotly-strict-4.1.2.min.js": {
+    "url": "https://cdn.jsdelivr.net/npm/plotly.js-strict-dist-min@4.1.2/plotly-strict.min.js",
+    "sha256": "1e7b7d8428f6e2b5e8e9ff11a576dd09c635ebae0b40906da9d49fc1cb6a2146"
+  },
+  "bootstrap-5.3.8.min.css": {
+    "url": "https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css",
+    "sha256": "d85327d99c7a3ee1f9b5d0500d1370acea3ad2db39c163c2f51f232baedbdede"
+  },
+  "bootstrap-5.3.8.bundle.min.js": {
+    "url": "https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js",
+    "sha256": "e4fd49181388c48ec5040bd3fe66f57c29c8e67fcd8502b3354b96ec7ab47cc7"
+  }
+}

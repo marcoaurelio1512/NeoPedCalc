@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — SSIADH / DI / sal cerebral (educativo)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1e293b;
+            background: #f8fafc;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .form-section {
+            padding: 25px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #6b7280;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-weight: 500;
+            color: #1e293b;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .form-input, .form-select {
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            width: 100%;
+            display: block;
+            box-sizing: border-box;
+        }
+        
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #6b7280;
+            box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+        }
+        
+        .urinary-output-display {
+            padding: 12px;
+            background-color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+            text-align: center;
+            min-height: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .age-display {
+            padding: 12px;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+            text-align: center;
+            min-height: 20px;
+        }
+        
+        .form-input:read-only {
+            background-color: #f8fafc;
+            color: #374151;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .result-item label {
+            font-weight: 500;
+            color: #1e293b;
+        }
+        
+        .result-value {
+            font-weight: 600;
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+        
+        .diagnosis-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 20px;
+            border: 2px solid #f59e0b;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            background: #fef3c7;
+            text-align: center;
+            resize: vertical;
+        }
+        
+        .reference-table {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .reference-category {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .reference-category h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 15px;
+            text-align: center;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .reference-category ul {
+            list-style: none;
+        }
+        
+        .reference-category li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.9rem;
+            color: #374151;
+        }
+        
+        .reference-category li:last-child {
+            border-bottom: none;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin: 5px;
+        }
+        
+        .btn-primary {
+            background-color: #6b7280;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #4b5563;
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background-color: #374151;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #475569;
+            transform: translateY(-1px);
+        }
+        
+        .btn-copy {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            width: 100%;
+            font-size: 1.1rem;
+            padding: 16px 24px;
+            margin: 0;
+        }
+        
+        .btn-copy:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            padding: 25px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .bibliography {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .bibliography ol {
+            list-style: decimal;
+            padding-left: 20px;
+        }
+        
+        .bibliography li {
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #374151;
+            line-height: 1.6;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .reference-table {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 5px; }
+            .header h1 { font-size: 1.4em; }
+            .header p { font-size: 0.9em; }
+            .content { padding: 15px; }
+            .section { padding: 12px; }
+            .section h3 { font-size: 1.1em; }
+            input, select { padding: 10px; font-size: 14px; }
+            button { padding: 10px; font-size: 14px; }
+            .results { padding: 12px; }
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-info:hover {
+            background: white;
+            color: #6b7280;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-body h3 {
+            color: #6b7280;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #374151;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #6b7280;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+
+            .modal-body {
+                padding: 20px;
+                max-height: 75vh;
+            }
+
+            .modal-header {
+                padding: 15px 20px;
+            }
+
+            .modal-header h2 {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 98%;
+                margin: 5% auto;
+            }
+
+            .modal-body {
+                padding: 15px;
+                max-height: 80vh;
+            }
+
+            .modal-header h2 {
+                font-size: 16px;
+            }
+
+            .modal-body h3 {
+                font-size: 16px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">NeoPedCalc</h1>
+            <h2 class="subtitle">Diferencial educativo: SIADH, diabetes insipidus e síndrome perdedora de sal cerebral (algoritmo do app)</h2>
+            <div class="header-actions">
+                <button type="button" class="btn-info" onclick="abrirModal()">Como usar</button>
+            </div>
+        </header>
+
+        <form id="ssiadh-form" onsubmit="return false;">
+            <!-- Dados do Paciente -->
+            <section class="form-section">
+                <h3 class="section-title">Dados do Paciente</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="patient-name">Nome:</label>
+                        <input type="text" id="patient-name" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="birth-date">Data de Nascimento:</label>
+                        <input type="date" id="birth-date" class="form-input">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="patient-age">Idade:</label>
+                        <div id="patient-age" class="age-display">-</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="patient-date">Data da Avaliação:</label>
+                        <input type="date" id="patient-date" class="form-input">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="patient-time">Hora:</label>
+                        <input type="time" id="patient-time" class="form-input">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dados Antropométricos -->
+            <section class="form-section">
+                <h3 class="section-title">Dados Antropométricos</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="weight">Peso (kg):</label>
+                        <input type="number" id="weight" step="0.001" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="height">Altura (cm):</label>
+                        <input type="number" id="height" step="0.1" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="body-surface">Superfície Corporal (m²):</label>
+                        <input type="number" id="body-surface" step="0.001" class="form-input" readonly>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Avaliação Clínica -->
+            <section class="form-section">
+                <h3 class="section-title">Avaliação Clínica</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="volemia">Volemia:</label>
+                        <select id="volemia" class="form-select" required>
+                            <option value="">Selecione...</option>
+                            <option value="Normal/aumentada">Normal/aumentada</option>
+                            <option value="Reduzida/choque">Reduzida/choque</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Débito Urinário:</label>
+                        <div id="urinary-output" class="urinary-output-display">-</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Exames Laboratoriais -->
+            <section class="form-section">
+                <h3 class="section-title">Exames Laboratoriais</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="urinary-density">Densidade Urinária:</label>
+                        <input type="number" id="urinary-density" step="0.001" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="total-diuresis">Total Diurese (ml):</label>
+                        <input type="number" id="total-diuresis" step="0.1" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="hours">Horas:</label>
+                        <input type="number" id="hours" step="0.01" class="form-input" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="plasma-glucose">Glicemia Plasmática (mg/dL):</label>
+                        <input type="number" id="plasma-glucose" step="0.1" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="plasma-urea">Uréia Plasmática (mg/dL):</label>
+                        <input type="number" id="plasma-urea" step="0.1" class="form-input" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="urinary-sodium">Sódio Urinário (mEq/L):</label>
+                        <input type="number" id="urinary-sodium" step="0.1" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="plasma-sodium">Sódio Plasmático (mEq/L):</label>
+                        <input type="number" id="plasma-sodium" step="0.1" class="form-input" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="urinary-creatinine">Creatinina Urinária (mg/dL):</label>
+                        <input type="number" id="urinary-creatinine" step="0.1" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="plasma-creatinine">Creatinina Plasmática (mg/dL):</label>
+                        <input type="number" id="plasma-creatinine" step="0.1" class="form-input" required>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Resultados Calculados -->
+            <section class="form-section">
+                <h3 class="section-title">Resultados Calculados</h3>
+                <div class="results-grid">
+                    <div class="result-item">
+                        <label>Diurese (ml/kg/h):</label>
+                        <span id="diuresis-kg-h" class="result-value">0.0</span>
+                    </div>
+                    <div class="result-item">
+                        <label>Diurese (ml/m²/h):</label>
+                        <span id="diuresis-m2-h" class="result-value">0.0</span>
+                    </div>
+                    <div class="result-item">
+                        <label>Osmolaridade Plasmática:</label>
+                        <span id="plasma-osmolality" class="result-value">0</span>
+                    </div>
+                    <div class="result-item">
+                        <label>Osmolaridade Urinária:</label>
+                        <span id="urinary-osmolality" class="result-value">0</span>
+                    </div>
+                    <div class="result-item">
+                        <label>FeNa (%):</label>
+                        <span id="fena" class="result-value">0.00</span>
+                    </div>
+                    <div class="result-item">
+                        <label>TRP (%):</label>
+                        <span id="trp" class="result-value">0.00</span>
+                    </div>
+                    <div class="result-item">
+                        <label>Sódio na Urina:</label>
+                        <span id="urinary-sodium-result" class="result-value">Normal</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Resumo algorítmico -->
+            <section class="form-section">
+                <h3 class="section-title">Resumo gerado pelo app (educativo — revisar clinicamente)</h3>
+                <label for="diagnosis" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;">Resumo algorítmico (educativo)</label>
+                <textarea id="diagnosis" class="diagnosis-textarea" readonly aria-label="Resumo algorítmico educativo gerado pelo app"></textarea>
+            </section>
+
+            <!-- Tabela de Referência -->
+            <section class="form-section">
+                <h3 class="section-title">Tabela de Referência</h3>
+                <div class="reference-table">
+                    <div class="reference-category">
+                        <h4>SSIADH</h4>
+                        <ul>
+                            <li>ADH aumentado</li>
+                            <li>Natremia &lt; 135 mEq/L</li>
+                            <li>Posm &lt; 270 mOsm/L</li>
+                            <li>Na urinário &gt; 20 mEq/L</li>
+                            <li>OLIGÚRIA</li>
+                            <li>Osm. urinária alta</li>
+                            <li>Volemia normal/aumentada</li>
+                            <li>Densidade urinária normal ou alta</li>
+                        </ul>
+                    </div>
+                    <div class="reference-category">
+                        <h4>Diabetes Insipidus</h4>
+                        <ul>
+                            <li>ADH diminuído</li>
+                            <li>Na &gt; 150 mEq/L</li>
+                            <li>Posm &gt; 290 mOsm/L</li>
+                            <li>Na urinário &lt; 15 mEq/L</li>
+                            <li>POLIÚRIA</li>
+                            <li>Osm. urinária baixa</li>
+                            <li>Volemia reduzida/choque</li>
+                            <li>Densidade urinária &lt; 1002</li>
+                        </ul>
+                    </div>
+                    <div class="reference-category">
+                        <h4>Síndrome Perdedora de Sal Cerebral</h4>
+                        <ul>
+                            <li>Fator cerebral natriurético</li>
+                            <li>Na &lt; 135 mEq/L</li>
+                            <li>Posm &lt; 270 mOsm/L</li>
+                            <li>Na urinário &gt; 50 mEq/L</li>
+                            <li>POLIÚRIA</li>
+                            <li>Osm. urinária alta</li>
+                            <li>Volemia reduzida</li>
+                            <li>Densidade urinária normal ou alta</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bibliografia -->
+            <section class="form-section">
+                <h3 class="section-title">Bibliografia</h3>
+                <div class="bibliography">
+                    <ol>
+                        <li>LEVEY, A.S.; CORESH, J.; BALK, E.; KAUSZ, A.T.; LEVIN, A.; STEFFES, M.W.; HOGG, R.J.; PERRONE, R.D.; LAU, J.; EKNOYAN, G. National Kidney Foundation practice guidelines for chronic kidney disease: evaluation, classification, and stratification. Ann. Intern. Med., v. 139, n. 2, p. 137-149, 2003.</li>
+                        <li>AKCAN-ARIKAN, A.; ZAPPITELLI, M.; WASHBURN, K.K; JEFFERSON,L.S.; GOLDSTEIN,S.L. Modified RIFLE criteria in critically ill children with acute kidney injury. Kidney International (2007) 1, 1028-1035</li>
+                        <li>Kher KK. Diagnostic Nephrology - Evaluation of renal functions. In: Kher KK, Makker SP (eds). Clinical Pediatric Nephrology, McGraw-Hill, 1992:8-15.</li>
+                        <li>Reynolds EL, Clark LC. Creatinine excretion, growth progress and body structure in normal children. Child Dev 1947;18:15.</li>
+                        <li>Schwartz GJ, Haycock GB, Spitzer A. Plasma creatinine and urea concentration in children: Normal values for age and Sex. J Pediatr 1976;88:828-30</li>
+                        <li>Oster JR et al. The polyuria of solute diuresis. Arch Intern Med. 1997 Apr 14;157(7):721-9. (Poliúria criança >= 2000ml/m²/24hs = 83,3ml/m²/h)</li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- Botão de Ação -->
+            <div class="form-actions">
+                <button type="button" id="copy-report-btn" class="btn btn-copy">Copiar texto informativo</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — SIADH / DI / sal cerebral (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta página organiza dados clínicos e laboratoriais para apoiar o <strong>estudo</strong> do diferencial entre hiponatremia/euvolemia (incluindo SIADH), diabetes insipidus e síndrome perdedora de sal cerebral. O texto gerado é <strong>algorítmico</strong> e não substitui julgamento clínico, exames adicionais nem protocolos da sua instituição.</p>
+
+                <h3>O que o app usa</h3>
+                <ul>
+                    <li>Antropometria, volemia percebida, diurese (volume, tempo, densidade urinária) e referências de poliúria pediátrica.</li>
+                    <li>Laboratório informado: glicemia, ureia, sódio e creatinina plasmáticos e urinários.</li>
+                    <li>Cálculos exibidos: osmolalidade plasmática e urinária estimadas, fração de excreção de sódio (FeNa), TRP e interpretação auxiliar do sódio urinário.</li>
+                    <li>Classificação exibida combina esses elementos com critérios programados para SIADH, DI, nefrogênico ou síndrome perdedora de sal cerebral — sempre como <strong>hipótese educativa</strong>.</li>
+                </ul>
+
+                <h3>Como usar</h3>
+                <ol>
+                    <li>Preencha identificação, data/hora e medidas antropométricas.</li>
+                    <li>Indique volemia e os dados de diurese; informe os exames laboratoriais disponíveis.</li>
+                    <li>Confira os resultados calculados e o quadro “Resumo gerado pelo app”.</li>
+                    <li>Use “Copiar texto informativo” apenas após revisar os dados; o conteúdo copiado inclui aviso legal quando o script NeoPedCalc estiver carregado.</li>
+                </ol>
+
+                <h3>Limitações</h3>
+                <ul>
+                    <li>Não prescreve tratamento nem define conduta terapêutica.</li>
+                    <li>Não valida sozinho diagnósticos: depende da qualidade dos dados inseridos e do contexto clínico.</li>
+                    <li>Casos limítrofes exigem correlação com história, exame físico, medicamentos, hidratação e critérios institucionais.</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Verbalis JG, et al. Diagnosis, evaluation, and treatment of hyponatremia: expert panel recommendations. Am J Med. 2013;126(10 Suppl 1):S1-S42.<br>
+                    - Robertson GL. Diabetes insipidus. Endocrinol Metab Clin North Am. 1995;24(3):549-572.<br>
+                    - Ellison DH, Berl T. Clinical practice. The syndrome of inappropriate antidiuresis. N Engl J Med. 2007;356(20):2064-2072.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        class SSIADHCalculator {
+            constructor() {
+                this.initializeEventListeners();
+                this.setCurrentDateTime();
+            }
+
+            initializeEventListeners() {
+                // Botão de copiar relatório
+                document.getElementById('copy-report-btn').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.copyReport();
+                });
+
+                // Campos de entrada - sem cálculo automático para evitar conflitos
+                const inputFields = [
+                    'weight', 'height', 'volemia', 'urinary-density', 'total-diuresis', 'hours',
+                    'plasma-glucose', 'plasma-urea', 'urinary-sodium', 'plasma-sodium',
+                    'urinary-creatinine', 'plasma-creatinine'
+                ];
+
+                inputFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (field) {
+                        // Remove event listeners conflitantes
+                        field.removeEventListener('input', this.calculate);
+                        field.removeEventListener('change', this.calculate);
+                        
+                        // Adiciona apenas um listener limpo
+                        field.addEventListener('blur', () => {
+                            setTimeout(() => this.calculate(), 100);
+                        });
+                    }
+                });
+
+                // Event listeners para cálculo de idade
+                document.getElementById('birth-date').addEventListener('change', () => this.updateAge());
+                document.getElementById('patient-date').addEventListener('change', () => this.updateAge());
+            }
+
+            setCurrentDateTime() {
+                const now = new Date();
+                const date = now.toISOString().split('T')[0];
+                const time = now.toTimeString().split(' ')[0].substring(0, 5);
+                
+                document.getElementById('patient-date').value = date;
+                document.getElementById('patient-time').value = time;
+            }
+
+            calculateAge(birthDate, currentDate) {
+                if (!birthDate || !currentDate) return null;
+                
+                const birth = new Date(birthDate);
+                const current = new Date(currentDate);
+                
+                if (birth > current) return null; // Data de nascimento no futuro
+                
+                let years = current.getFullYear() - birth.getFullYear();
+                let months = current.getMonth() - birth.getMonth();
+                let days = current.getDate() - birth.getDate();
+                
+                if (days < 0) {
+                    months--;
+                    const lastMonth = new Date(current.getFullYear(), current.getMonth(), 0);
+                    days += lastMonth.getDate();
+                }
+                
+                if (months < 0) {
+                    years--;
+                    months += 12;
+                }
+                
+                // Calcular total de dias
+                const totalDays = Math.floor((current - birth) / (1000 * 60 * 60 * 24));
+                
+                if (years === 0 && months === 0) {
+                    return `${days} dias`;
+                } else if (years === 0) {
+                    return `${months} meses e ${days} dias`;
+                } else if (months === 0) {
+                    return `${years} anos e ${days} dias`;
+                } else {
+                    return `${years} anos, ${months} meses e ${days} dias`;
+                }
+            }
+
+            updateAge() {
+                const birthDate = document.getElementById('birth-date').value;
+                const currentDate = document.getElementById('patient-date').value;
+                const ageElement = document.getElementById('patient-age');
+                
+                if (birthDate && currentDate) {
+                    const age = this.calculateAge(birthDate, currentDate);
+                    if (age !== null) {
+                        ageElement.textContent = age;
+                    } else {
+                        ageElement.textContent = 'Data inválida';
+                    }
+                } else {
+                    ageElement.textContent = '-';
+                }
+            }
+
+            calculateBodySurfaceArea(weight, height) {
+                if (!weight || !height || weight <= 0 || height <= 0) return 0;
+                return Math.sqrt((weight * height) / 3600);
+            }
+
+            calculatePlasmaOsmolality(sodium, glucose, urea) {
+                if (!sodium || !glucose || !urea) return 0;
+                return 2 * sodium + (glucose / 18) + (urea / 5.6);
+            }
+
+            calculateUrinaryOsmolality(density) {
+                if (!density || density < 1000) return 0;
+                return (density - 1000) * 30;
+            }
+
+            calculateFeNa(urinaryNa, plasmaNa, urinaryCreatinine, plasmaCreatinine) {
+                if (!urinaryNa || !plasmaNa || !urinaryCreatinine || !plasmaCreatinine) return 0;
+                if (plasmaNa === 0 || urinaryCreatinine === 0) return 0;
+                return (urinaryNa * plasmaCreatinine) / (plasmaNa * urinaryCreatinine);
+            }
+
+            calculateTRP(fena) {
+                return 1 - fena;
+            }
+
+            determineUrinaryOutput(diuresisKgH, diuresisM2H) {
+                if (diuresisKgH <= 1) return 'OLIGÚRIA';
+                if (diuresisM2H >= 83.3) return 'POLIÚRIA';
+                if (diuresisKgH > 1) return 'NORMAL';
+                return '';
+            }
+
+            evaluateUrinarySodium(urinaryNa) {
+                if (urinaryNa < 20) return 'Baixo';
+                if (urinaryNa > 40) return 'Alto';
+                return 'Normal';
+            }
+
+            calculateDiagnosis(data) {
+                const {
+                    volemia, urinaryDensity, plasmaOsmolality, urinaryOsmolality,
+                    urinaryNa, plasmaNa, urinaryOutput, urinarySodiumResult
+                } = data;
+
+                const ssiadhCriteria = {
+                    volemia: volemia === 'Normal/aumentada',
+                    natremia: plasmaNa < 135,
+                    posm: plasmaOsmolality < 270,
+                    urinaryNa: urinaryNa > 20,
+                    output: urinaryOutput === 'OLIGÚRIA',
+                    urinaryOsm: urinaryOsmolality > 400,
+                    density: urinaryDensity >= 1002
+                };
+
+                const diabetesInsipidusCriteria = {
+                    natremia: plasmaNa > 150,
+                    posm: plasmaOsmolality > 290,
+                    urinaryNa: urinaryNa < 15,
+                    output: urinaryOutput === 'POLIÚRIA',
+                    urinaryOsm: urinaryOsmolality < 400,
+                    density: urinaryDensity < 1002
+                };
+
+                const cerebralSaltWastingCriteria = {
+                    natremia: plasmaNa < 135,
+                    posm: plasmaOsmolality < 270,
+                    urinaryNa: urinaryNa > 50,
+                    output: urinaryOutput === 'POLIÚRIA',
+                    urinaryOsm: urinaryOsmolality > 400,
+                    density: urinaryDensity >= 1002
+                };
+
+                const ssiadhScore = Object.values(ssiadhCriteria).filter(Boolean).length;
+                const diabetesScore = Object.values(diabetesInsipidusCriteria).filter(Boolean).length;
+                const cerebralScore = Object.values(cerebralSaltWastingCriteria).filter(Boolean).length;
+
+                if (ssiadhScore >= 5) {
+                    return 'Provável Síndrome da Secreção Inapropriada de ADH (SSIADH)';
+                } else if (diabetesScore >= 4) {
+                    return 'Provável Diabetes Insipidus';
+                } else if (cerebralScore >= 4) {
+                    return 'Provável Síndrome Perdedora de Sal Cerebral';
+                } else if (urinarySodiumResult === 'Baixo') {
+                    return 'Hipovolemia';
+                } else if (urinarySodiumResult === 'Alto') {
+                    return 'Necrose Tubular Aguda';
+                } else {
+                    return 'Avaliação clínica adicional necessária';
+                }
+            }
+
+            calculate() {
+                try {
+                    const data = this.collectFormData();
+                    const results = this.performCalculations(data);
+                    this.updateResults(results);
+                    
+                } catch (error) {
+                    console.error('Erro no cálculo:', error);
+                    // Não mostra alerta, apenas calcula o que for possível
+                }
+            }
+
+            collectFormData() {
+                return {
+                    patientName: document.getElementById('patient-name').value,
+                    birthDate: document.getElementById('birth-date').value,
+                    patientDate: document.getElementById('patient-date').value,
+                    patientTime: document.getElementById('patient-time').value,
+                    weight: parseFloat(document.getElementById('weight').value) || 0,
+                    height: parseFloat(document.getElementById('height').value) || 0,
+                    volemia: document.getElementById('volemia').value,
+                    urinaryDensity: parseFloat(document.getElementById('urinary-density').value) || 0,
+                    totalDiuresis: parseFloat(document.getElementById('total-diuresis').value) || 0,
+                    hours: parseFloat(document.getElementById('hours').value) || 0,
+                    plasmaGlucose: parseFloat(document.getElementById('plasma-glucose').value) || 0,
+                    plasmaUrea: parseFloat(document.getElementById('plasma-urea').value) || 0,
+                    urinaryNa: parseFloat(document.getElementById('urinary-sodium').value) || 0,
+                    plasmaNa: parseFloat(document.getElementById('plasma-sodium').value) || 0,
+                    urinaryCreatinine: parseFloat(document.getElementById('urinary-creatinine').value) || 0,
+                    plasmaCreatinine: parseFloat(document.getElementById('plasma-creatinine').value) || 0
+                };
+            }
+
+            // Validação removida - permite preenchimento livre de todos os campos
+
+            performCalculations(data) {
+                const {
+                    weight, height, volemia, urinaryDensity, totalDiuresis, hours,
+                    plasmaGlucose, plasmaUrea, urinaryNa, plasmaNa,
+                    urinaryCreatinine, plasmaCreatinine
+                } = data;
+
+                // Cálculo da superfície corporal (sempre que tiver peso e altura)
+                const bodySurfaceArea = this.calculateBodySurfaceArea(weight, height);
+                
+                // Cálculos de diurese
+                let diuresisKgH = 0;
+                let diuresisM2H = 0;
+                let urinaryOutput = '';
+                
+                if (totalDiuresis > 0 && hours > 0 && weight > 0) {
+                    diuresisKgH = totalDiuresis / (weight * hours);
+                    if (bodySurfaceArea > 0) {
+                        diuresisM2H = totalDiuresis / (bodySurfaceArea * hours);
+                    }
+                    urinaryOutput = this.determineUrinaryOutput(diuresisKgH, diuresisM2H);
+                }
+                
+                // Cálculos de osmolaridade
+                let plasmaOsmolality = 0;
+                let urinaryOsmolality = 0;
+                
+                if (plasmaNa > 0 && plasmaGlucose >= 0 && plasmaUrea >= 0) {
+                    plasmaOsmolality = this.calculatePlasmaOsmolality(plasmaNa, plasmaGlucose, plasmaUrea);
+                }
+                
+                if (urinaryDensity > 0) {
+                    urinaryOsmolality = this.calculateUrinaryOsmolality(urinaryDensity);
+                }
+                
+                // Cálculos de FeNa e TRP
+                let fena = 0;
+                let trp = 0;
+                let urinarySodiumResult = 'Normal';
+                
+                if (urinaryNa > 0 && plasmaNa > 0 && urinaryCreatinine > 0 && plasmaCreatinine > 0) {
+                    fena = this.calculateFeNa(urinaryNa, plasmaNa, urinaryCreatinine, plasmaCreatinine);
+                    trp = this.calculateTRP(fena);
+                    urinarySodiumResult = this.evaluateUrinarySodium(urinaryNa);
+                }
+                
+                // Diagnóstico
+                let diagnosis = 'Preencha os dados para obter o resumo educativo';
+                
+                if (volemia && urinaryDensity > 0 && plasmaNa > 0 && urinaryNa > 0) {
+                    const diagnosisData = {
+                        volemia, urinaryDensity, plasmaOsmolality, urinaryOsmolality,
+                        urinaryNa, plasmaNa, urinaryOutput, urinarySodiumResult
+                    };
+                    diagnosis = this.calculateDiagnosis(diagnosisData);
+                }
+
+                return {
+                    bodySurfaceArea, diuresisKgH, diuresisM2H, plasmaOsmolality,
+                    urinaryOsmolality, fena, trp, urinaryOutput, urinarySodiumResult, diagnosis
+                };
+            }
+
+            updateResults(results) {
+                // Superfície corporal (sempre calculada se tiver peso e altura)
+                document.getElementById('body-surface').value = results.bodySurfaceArea > 0 ? results.bodySurfaceArea.toFixed(3) : '';
+                
+                // Débito urinário (com cores dinâmicas)
+                const urinaryOutputElement = document.getElementById('urinary-output');
+                if (results.urinaryOutput) {
+                    urinaryOutputElement.textContent = results.urinaryOutput;
+                    
+                    // Aplica cores dinâmicas
+                    if (results.urinaryOutput === 'OLIGÚRIA') {
+                        urinaryOutputElement.style.backgroundColor = '#fef2f2';
+                        urinaryOutputElement.style.color = '#dc2626';
+                    } else if (results.urinaryOutput === 'POLIÚRIA') {
+                        urinaryOutputElement.style.backgroundColor = '#fef3c7';
+                        urinaryOutputElement.style.color = '#d97706';
+                    } else if (results.urinaryOutput === 'NORMAL') {
+                        urinaryOutputElement.style.backgroundColor = '#f0f9ff';
+                        urinaryOutputElement.style.color = '#0c4a6e';
+                    } else {
+                        // Outros valores - cor padrão
+                        urinaryOutputElement.style.backgroundColor = '#f8fafc';
+                        urinaryOutputElement.style.color = '#1e293b';
+                    }
+                } else {
+                    urinaryOutputElement.textContent = '-';
+                    urinaryOutputElement.style.backgroundColor = '#f8fafc';
+                    urinaryOutputElement.style.color = '#1e293b';
+                }
+                
+                // Diurese
+                document.getElementById('diuresis-kg-h').textContent = results.diuresisKgH > 0 ? results.diuresisKgH.toFixed(1) : '0.0';
+                document.getElementById('diuresis-m2-h').textContent = results.diuresisM2H > 0 ? results.diuresisM2H.toFixed(1) : '0.0';
+                
+                // Osmolaridades
+                document.getElementById('plasma-osmolality').textContent = results.plasmaOsmolality > 0 ? Math.round(results.plasmaOsmolality) : '0';
+                document.getElementById('urinary-osmolality').textContent = results.urinaryOsmolality > 0 ? Math.round(results.urinaryOsmolality) : '0';
+                
+                // FeNa e TRP
+                document.getElementById('fena').textContent = results.fena > 0 ? (results.fena * 100).toFixed(2) : '0.00';
+                document.getElementById('trp').textContent = results.trp > 0 ? (results.trp * 100).toFixed(2) : '0.00';
+                
+                // Sódio urinário
+                document.getElementById('urinary-sodium-result').textContent = results.urinarySodiumResult || 'Normal';
+                
+                // Diagnóstico
+                document.getElementById('diagnosis').value = results.diagnosis || 'Preencha os dados para obter o resumo educativo';
+            }
+
+            reset() {
+                document.getElementById('ssiadh-form').reset();
+                this.setCurrentDateTime();
+                this.clearResults();
+            }
+
+            clearResults() {
+                document.getElementById('body-surface').value = '';
+                
+                // Limpa o débito urinário (restaura cores padrão)
+                const urinaryOutputElement = document.getElementById('urinary-output');
+                urinaryOutputElement.textContent = '-';
+                urinaryOutputElement.style.backgroundColor = '#f8fafc';
+                urinaryOutputElement.style.color = '#1e293b';
+                
+                // Limpa a idade
+                document.getElementById('patient-age').textContent = '-';
+                
+                document.getElementById('diuresis-kg-h').textContent = '0.0';
+                document.getElementById('diuresis-m2-h').textContent = '0.0';
+                document.getElementById('plasma-osmolality').textContent = '0';
+                document.getElementById('urinary-osmolality').textContent = '0';
+                document.getElementById('fena').textContent = '0.00';
+                document.getElementById('trp').textContent = '0.00';
+                document.getElementById('urinary-sodium-result').textContent = 'Normal';
+                document.getElementById('diagnosis').value = '';
+            }
+
+            copyReport() {
+                try {
+                    // Coleta todos os dados do formulário
+                    const data = this.collectFormData();
+                    const results = this.performCalculations(data);
+                    
+                    // Gera o relatório em texto simples
+                    const report = this.generateReport(data, results);
+                    
+                    // Copia para a área de transferência
+                    navigator.clipboard.writeText(report).then(() => {
+                        if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                    }).catch(() => {
+                        const textArea = document.createElement('textarea');
+                        textArea.value = report;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                        if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                    });
+                } catch (error) {
+                    console.error('Erro ao copiar relatório:', error);
+                    if (typeof window.neopedCopyFail === 'function') window.neopedCopyFail();
+                    else alert('Nao foi possivel copiar automaticamente. Revise o texto e copie manualmente para uso informativo.');
+                }
+            }
+
+            generateReport(data, results) {
+                let report = `RESUMO INFORMATIVO — SIADH / DIABETES INSIPIDUS / SAL CEREBRAL (EDUCATIVO)\n`;
+                report += `NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n`;
+                report += `==========================================\n\n`;
+                
+                // Dados do Paciente
+                report += `DADOS DO PACIENTE:\n`;
+                report += `Nome: ${data.patientName || 'Nao informado'}\n`;
+                report += `Data de Nascimento: ${data.birthDate || 'Nao informado'}\n`;
+                report += `Idade: ${this.calculateAge(data.birthDate, data.patientDate) || 'Nao calculada'}\n`;
+                report += `Data da Avaliacao: ${data.patientDate || 'Nao informado'}\n`;
+                report += `Hora: ${data.patientTime || 'Nao informado'}\n\n`;
+                
+                // Dados Antropometricos
+                report += `DADOS ANTROPOMETRICOS:\n`;
+                report += `Peso: ${data.weight || 'Nao informado'} kg\n`;
+                report += `Altura: ${data.height || 'Nao informado'} cm\n`;
+                report += `Superficie Corporal: ${results.bodySurfaceArea > 0 ? results.bodySurfaceArea.toFixed(3) : 'Nao calculada'} m2\n`;
+                report += `Volemia: ${data.volemia || 'Nao informado'}\n\n`;
+                
+                // Dados de Diurese
+                report += `DADOS DE DIURESE:\n`;
+                report += `Densidade Urinaria: ${data.urinaryDensity || 'Nao informado'}\n`;
+                report += `Total Diurese: ${data.totalDiuresis || 'Nao informado'} ml\n`;
+                report += `Horas: ${data.hours || 'Nao informado'}\n`;
+                report += `Debito Urinario: ${results.urinaryOutput || 'Nao calculado'}\n`;
+                report += `Diurese (kg/h): ${results.diuresisKgH > 0 ? results.diuresisKgH.toFixed(1) : 'Nao calculada'}\n`;
+                report += `Diurese (m2/h): ${results.diuresisM2H > 0 ? results.diuresisM2H.toFixed(1) : 'Nao calculada'}\n\n`;
+                
+                // Exames Laboratoriais
+                report += `EXAMES LABORATORIAIS:\n`;
+                report += `Glicemia Plasmatica: ${data.plasmaGlucose || 'Nao informado'} mg/dl\n`;
+                report += `Ureia Plasmatica: ${data.plasmaUrea || 'Nao informado'} mg/dl\n`;
+                report += `Sodio Urinario: ${data.urinaryNa || 'Nao informado'} mEq/L\n`;
+                report += `Sodio Plasmatico: ${data.plasmaNa || 'Nao informado'} mEq/L\n`;
+                report += `Creatinina Urinaria: ${data.urinaryCreatinine || 'Nao informado'} mg/dl\n`;
+                report += `Creatinina Plasmatica: ${data.plasmaCreatinine || 'Nao informado'} mg/dl\n\n`;
+                
+                // Resultados Calculados
+                report += `RESULTADOS CALCULADOS:\n`;
+                report += `Osmolaridade Plasmatica: ${results.plasmaOsmolality > 0 ? Math.round(results.plasmaOsmolality) : 'Nao calculada'} mOsm/kg\n`;
+                report += `Osmolaridade Urinaria: ${results.urinaryOsmolality > 0 ? Math.round(results.urinaryOsmolality) : 'Nao calculada'} mOsm/kg\n`;
+                report += `FeNa: ${results.fena > 0 ? (results.fena * 100).toFixed(2) : 'Nao calculado'}%\n`;
+                report += `TRP: ${results.trp > 0 ? (results.trp * 100).toFixed(2) : 'Nao calculado'}%\n`;
+                report += `Sodio Urinario: ${results.urinarySodiumResult || 'Normal'}\n\n`;
+                
+                // Hipotese algoritmica (nao diagnostico)
+                report += `TEXTO GERADO PELO APP (HIPOTESE ALGORITMICA — NAO DIAGNOSTICO):\n`;
+                report += `${results.diagnosis || 'Preencha os dados para obter o resumo'}\n\n`;
+                
+                // Bibliografia
+                report += `BIBLIOGRAFIA:\n`;
+                report += `1- LEVEY, A.S.; CORESH, J.; BALK, E.; KAUSZ, A.T.; LEVIN, A.; STEFFES, M.W.; HOGG, R.J.; PERRONE, R.D.; LAU, J.; EKNOYAN, G. National Kidney Foundation practice guidelines for chronic kidney disease: evaluation, classification, and strafication. Ann. Intern. Med., v. 139, n. 2, p. 137-149, 2003.\n`;
+                report += `2- AKCAN-ARIKAN, A.; ZAPPITELLI, M.; WASHBURN, K.K; JEFFERSON,L.S.; GOLDSTEIN,S.L. Modified RIFLE criteria in critically ill children with acute kidney injury. Kidney International (2007) 1, 1028-1035\n`;
+                report += `3- Kher KK. Diagnostic Nephrology - Evaluation of renal functions. In: Kher KK, Makker SP (eds). Clinical Pediatric Nephrology, McGraw-Hill, 1992:8-15.\n`;
+                report += `4- Reynolds EL, Clark LC. Creatinine excretion, growth progress and body structure in normal children. Child Dev 1947;18:15.\n`;
+                report += `5- Schwartz GJ, Haycock GB, Spitzer A. Plasma creatinine and urea concentration in children: Normal values for age and Sex. J Pediatr 1976;88:828-30\n`;
+                report += `6- Oster JR et al. The polyuria of solute diuresis. Arch Intern Med. 1997 Apr 14;157(7):721-9. (Poliuria crianca >= 2000ml/m2/24hs = 83,3ml/m2/h)\n`;
+
+                const foot = (typeof window.neopedLegalReportFooter === 'function')
+                    ? '\n' + window.neopedLegalReportFooter().trim()
+                    : '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+                report += foot;
+
+                return report;
+            }
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            // Aguarda um pouco para garantir que todos os elementos estejam carregados
+            setTimeout(() => {
+                new SSIADHCalculator();
+            }, 100);
+        });
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

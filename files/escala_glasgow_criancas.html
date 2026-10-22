@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>NeoPedCalc — Escala de Glasgow pediátrica (educativo)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            touch-action: pan-y;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .app-viewport {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+        .app-shell {
+            width: 100%;
+            max-width: 1200px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .patient-info {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #d1d5db;
+        }
+
+        .patient-info h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #d1d5db;
+        }
+
+        .age-selection {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: none;
+        }
+
+        .age-selection h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+
+        .age-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .age-btn {
+            padding: 12px 24px;
+            border: 2px solid #6b7280;
+            background: white;
+            color: #6b7280;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .age-btn.active {
+            background: #6b7280;
+            color: white;
+        }
+
+        .age-btn:hover {
+            background: #6b7280;
+            color: white;
+        }
+
+        .glasgow-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #d1d5db;
+        }
+
+        .glasgow-section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .glasgow-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 30px;
+        }
+
+        .glasgow-category {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+
+        .glasgow-category h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .glasgow-option {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .glasgow-option:hover {
+            background: #f8f9fa;
+        }
+
+        .glasgow-option.selected {
+            background: #d4edda;
+            border-color: #d1d5db;
+        }
+
+        .glasgow-option input[type="radio"] {
+            margin-right: 10px;
+            accent-color: #28a745;
+        }
+
+        .glasgow-option label {
+            cursor: pointer;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .score-number {
+            font-size: 4em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .score-interpretation {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .calculate-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 20px 0;
+            width: 100%;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .results {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 30px;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #d1d5db;
+        }
+
+        .result-card h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .result-card p {
+            color: #374151;
+            line-height: 1.6;
+        }
+
+        .generate-report-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .generate-report-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(40, 167, 69, 0.3);
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .footer p {
+            margin-bottom: 5px;
+        }
+
+        .reference-table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .reference-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .reference-table th {
+            background: #ff6b6b;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .reference-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .reference-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .reference-table tr:hover {
+            background: #e9ecef;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .glasgow-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .age-buttons {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 { font-size: 1.4em; }
+            .header p { font-size: 0.9em; }
+            .content { padding: 15px; }
+            .section { padding: 12px; }
+            .section h3 { font-size: 1.1em; }
+            select { padding: 10px; font-size: 14px; }
+            button { padding: 10px; font-size: 14px; }
+            .results { padding: 12px; }
+            .score-display { font-size: 2.5em; }
+        }
+
+        @media (max-width: 640px) {
+            .app-viewport { padding: 12px; }
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-info {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-info:hover {
+            background: white;
+            color: #2c3e50;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
+            box-sizing: border-box;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 720px;
+            max-height: 86vh;
+            overflow: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #2c3e50;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .modal-header {
+                padding: 15px 20px;
+            }
+
+            .modal-header h2 {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 98%;
+            }
+
+            .modal-body {
+                padding: 15px;
+            }
+
+            .modal-header h2 {
+                font-size: 16px;
+            }
+
+            .modal-body h3 {
+                font-size: 16px;
+            }
+        }
+
+        .score-hidden {
+            display: none;
+        }
+
+        .lactente-hidden {
+            display: none;
+        }
+
+        .reference-title {
+            padding: 20px;
+            margin: 0;
+            background: #f8f9fa;
+            color: #2c3e50;
+        }
+
+        .card, .panel, .box {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        label {
+            display: block;
+        }
+
+        input, select, textarea, button {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        input, select, textarea {
+            width: 100%;
+        }
+
+        .table-wrap {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        th, td {
+            word-wrap: break-word;
+            overflow-wrap: anywhere;
+        }
+
+        body {
+            overscroll-behavior-x: none;
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <div class="app-viewport">
+        <div class="app-shell">
+            <div class="container">
+                <div class="header">
+                    <h1>Escala de Coma de Glasgow</h1>
+                    <p>Modificada para Criancas e Lactentes - AHA 1997/1999</p>
+                    <div class="header-actions">
+                        <button class="btn-info" onclick="abrirModal()">
+                            Como usar                        </button>
+                    </div>
+                </div>
+
+        <div class="content">
+            <div class="patient-info">
+                <h3>Dados do Paciente</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome">Nome do Paciente:</label>
+                        <input type="text" id="nome" placeholder="Digite o nome do paciente">
+                    </div>
+                    <div class="form-group">
+                        <label for="idade">Idade:</label>
+                        <input type="number" id="idade" placeholder="Idade em anos" min="0" max="18" step="0.1">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="data">Data/Hora:</label>
+                        <input type="datetime-local" id="data">
+                    </div>
+                    <div class="form-group">
+                        <label for="avaliador">Avaliador:</label>
+                        <input type="text" id="avaliador" placeholder="Nome do médico avaliador">
+                    </div>
+                </div>
+            </div>
+
+            <div class="age-selection">
+                <h3>Selecione a Categoria do Paciente</h3>
+                <div class="age-buttons">
+                    <button type="button" class="age-btn active" onclick="selecionarCategoria('crianca')">Criança (2-5 anos)</button>
+                    <button type="button" class="age-btn" onclick="selecionarCategoria('lactente')">Lactente (0-2 anos)</button>
+                </div>
+                <p id="categoriaInfo">Criança (2-5 anos): Use os critérios da coluna "Criança" na tabela abaixo.</p>
+            </div>
+
+            <div class="glasgow-section">
+                <h3>Avaliação da Escala de Glasgow</h3>
+                <div class="glasgow-grid">
+                    <div class="glasgow-category">
+                        <h4>Abertura Ocular</h4>
+                        <div class="glasgow-option" onclick="selecionarOpcao('abertura', 4, this)">
+                            <input type="radio" name="abertura" value="4" id="abertura4">
+                            <label for="abertura4">
+                                <span class="crianca-text">Espontanea</span>
+                                <span class="lactente-text lactente-hidden">Espontanea</span>
+                                <strong> (4 pontos)</strong>
+                            </label>
+                        </div>
+                        <div class="glasgow-option" onclick="selecionarOpcao('abertura', 3, this)">
+                            <input type="radio" name="abertura" value="3" id="abertura3">
+                            <label for="abertura3">
+                                <span class="crianca-text">Estimulo verbal</span>
+                                <span class="lactente-text lactente-hidden">Estimulo verbal</span>
+                                <strong> (3 pontos)</strong>
+                            </label>
+                        </div>
+                        <div class="glasgow-option" onclick="selecionarOpcao('abertura', 2, this)">
+                            <input type="radio" name="abertura" value="2" id="abertura2">
+                            <label for="abertura2">
+                                <span class="crianca-text">Somente a dor</span>
+                                <span class="lactente-text lactente-hidden">Somente a dor</span>
+                                <strong> (2 pontos)</strong>
+                            </label>
+                        </div>
+                        <div class="glasgow-option" onclick="selecionarOpcao('abertura', 1, this)">
+                            <input type="radio" name="abertura" value="1" id="abertura1">
+                            <label for="abertura1">
+                                <span class="crianca-text">Sem resposta</span>
+                                <span class="lactente-text lactente-hidden">Sem resposta</span>
+                                <strong> (1 ponto)</strong>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="glasgow-category">
+                        <h4>Resposta Verbal</h4>
+                        <div class="glasgow-option" onclick="selecionarOpcao('verbal', 5, this)">
+                            <input type="radio" name="verbal" value="5" id="verbal5">
+                            <label for="verbal5">
+                                <span class="crianca-text">Apropriada, orientada</span>
+                                <span class="lactente-text lactente-hidden">Balbucio, emissao da voz</span>
+                                <strong> (5 pontos)</strong>
+                            </label>
+                        </div>
+                        <div class="glasgow-option" onclick="selecionarOpcao('verbal', 4, this)">
+                            <input type="radio" name="verbal" value="4" id="verbal4">
+                            <label for="verbal4">
+                                <span class="crianca-text">Confusa</span>
+                                <span class="lactente-text lactente-hidden">Choro irritado</span>
+                                <strong> (4 pontos)</strong>
+                            </label>
+                        </div>
+                        <div class="glasgow-option" onclick="selecionarOpcao('verbal', 3, this)">
+                            <input type="radio" name="verbal" value="3" id="verbal3">
+                            <label for="verbal3">
+                                <span class="crianca-text">Palavras improprias</span>
+                                <span class="lactente-text lactente-hidden">Choro de dor</span>
+                                <strong> (3 pontos)</strong>
+                            </label>
+                        </div>
+                        <div class="glasgow-option" onclick="selecionarOpcao('verbal', 2, this)">
+                            <input type="radio" name="verbal" value="2" id="verbal2">
+                            <label for="verbal2">
+                                <span class="crianca-text">Palavras incompreensiveis</span>
+                                <span class="lactente-text lactente-hidden">Gemidos de dor</span>
+                                <strong> (2 pontos)</strong>
+                            </label>
+                        </div>
+                        <div class="glasgow-option" onclick="selecionarOpcao('verbal', 1, this)">
+                            <input type="radio" name="verbal" value="1" id="verbal1">
+                            <label for="verbal1">
+                                <span class="crianca-text">Sem resposta</span>
+                                <span class="lactente-text lactente-hidden">Sem resposta</span>
+                                <strong> (1 ponto)</strong>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="glasgow-category">
+                        <h4>Resposta Motora</h4>
+                        <div class="glasgow-option" onclick="selecionarOpcao('motora', 6, this)">
+                            <input type="radio" name="motora" value="6" id="motora6">
+                            <label for="motora6">
+                                <span class="crianca-text">Obedece comando</span>
+                                <span class="lactente-text lactente-hidden">Movimentos espontaneos</span>
+                                <strong> (6 pontos)</strong>
+                            </label>
+                        </div>
+                        <div class="glasgow-option" onclick="selecionarOpcao('motora', 5, this)">
+                            <input type="radio" name="motora" value="5" id="motora5">
+                            <label for="motora5">
+                                <span class="crianca-text">Localiza o estimulo doloroso</span>
+                                <span class="lactente-text lactente-hidden">Retirada ao toque</span>
+                                <strong> (5 pontos)</strong>
+                            </label>
+                        </div>
+                        <div class="glasgow-option" onclick="selecionarOpcao('motora', 4, this)">
+                            <input type="radio" name="motora" value="4" id="motora4">
+                            <label for="motora4">
+                                <span class="crianca-text">Retirada em resposta a dor</span>
+                                <span class="lactente-text lactente-hidden">Retirada em resposta a dor</span>
+                                <strong> (4 pontos)</strong>
+                            </label>
+                        </div>
+                        <div class="glasgow-option" onclick="selecionarOpcao('motora', 3, this)">
+                            <input type="radio" name="motora" value="3" id="motora3">
+                            <label for="motora3">
+                                <span class="crianca-text">Flexao em resposta a dor</span>
+                                <span class="lactente-text lactente-hidden">Postura decorticacao (flexao)</span>
+                                <strong> (3 pontos)</strong>
+                            </label>
+                        </div>
+                        <div class="glasgow-option" onclick="selecionarOpcao('motora', 2, this)">
+                            <input type="radio" name="motora" value="2" id="motora2">
+                            <label for="motora2">
+                                <span class="crianca-text">Extensao a dor</span>
+                                <span class="lactente-text lactente-hidden">Postura descerebracao (extensao)</span>
+                                <strong> (2 pontos)</strong>
+                            </label>
+                        </div>
+                        <div class="glasgow-option" onclick="selecionarOpcao('motora', 1, this)">
+                            <input type="radio" name="motora" value="1" id="motora1">
+                            <label for="motora1">
+                                <span class="crianca-text">Sem resposta</span>
+                                <span class="lactente-text lactente-hidden">Sem resposta</span>
+                                <strong> (1 ponto)</strong>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="score-display score-hidden" id="scoreDisplay">
+                <div class="score-number" id="scoreNumber">0</div>
+                <div class="score-interpretation" id="scoreInterpretation">Pontuacao Total</div>
+            </div>
+
+            <button class="calculate-btn" onclick="calcularGlasgow()">Calcular Escala de Glasgow</button>
+
+            <div class="results" id="results">
+                <div class="result-card" id="resultado">
+                    <h4>Resultado da Avaliação</h4>
+                    <p id="resultadoTexto">Clique em "Calcular Escala de Glasgow" para ver o resultado.</p>
+                </div>
+
+                <div class="result-card" id="detalhes">
+                    <h4>Detalhes da Avaliação</h4>
+                    <p id="detalhesTexto">Aguarde o cálculo da escala.</p>
+                </div>
+
+                <button type="button" class="generate-report-btn" onclick="gerarRelatorio()">Copiar texto informativo</button>
+            </div>
+
+            <div class="reference-table">
+                <h3 class="reference-title">Tabela de Referencia - Escala de Coma de Glasgow Modificada</h3>
+                <div class="table-wrap">
+                    <table>
+                    <thead>
+                        <tr>
+                            <th>Critério</th>
+                            <th>Criança (2-5 anos)</th>
+                            <th>Lactente (0-2 anos)</th>
+                            <th>Pontuação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td rowspan="4"><strong>Abertura Ocular</strong></td>
+                            <td>Espontânea</td>
+                            <td>Espontânea</td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td>Estímulo verbal</td>
+                            <td>Estímulo verbal</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>Somente a dor</td>
+                            <td>Somente a dor</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>Sem resposta</td>
+                            <td>Sem resposta</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="5"><strong>Resposta Verbal</strong></td>
+                            <td>Apropriada, orientada</td>
+                            <td>Balbucio, emissão da voz</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td>Confusa</td>
+                            <td>Choro irritado</td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td>Palavras impróprias</td>
+                            <td>Choro de dor</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>Palavras incompreensíveis</td>
+                            <td>Gemidos de dor</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>Sem resposta</td>
+                            <td>Sem resposta</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="6"><strong>Resposta Motora</strong></td>
+                            <td>Obedece comando</td>
+                            <td>Movimentos espontâneos</td>
+                            <td>6</td>
+                        </tr>
+                        <tr>
+                            <td>Localiza o estímulo doloroso</td>
+                            <td>Retirada ao toque</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td>Retirada em resposta a dor</td>
+                            <td>Retirada em resposta a dor</td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td>Flexão em resposta a dor</td>
+                            <td>Postura decorticação (flexão)</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>Extensão a dor</td>
+                            <td>Postura descerebração (extensão)</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>Sem resposta</td>
+                            <td>Sem resposta</td>
+                            <td>1</td>
+                        </tr>
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="footer">
+                <p><strong>Escala de Coma de Glasgow</strong> - Modificada para Crianças e Lactentes</p>
+                <p>Desenvolvido para uso clínico | Baseado em evidências científicas AHA 1997/1999</p>
+                <p><strong>Importante:</strong> Esta ferramenta é auxiliar e não substitui a avaliação clínica completa.</p>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — Escala de Glasgow pediátrica (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>A Escala de Coma de Glasgow Pediátrica é uma ferramenta padronizada para avaliar o nível de consciência em crianças e lactentes, sendo essencial para o monitoramento neurológico e prognóstico de pacientes com trauma craniano ou outras condições neurológicas.</p>
+                
+                <h3>Fórmula da Escala de Glasgow</h3>
+                <div class="formula-box">
+                    <strong>Escala de Glasgow = Abertura Ocular + Resposta Verbal + Resposta Motora</strong><br><br>
+                    <strong>Crianças:</strong><br>
+                    • Abertura Ocular: 1-4 pontos<br>
+                    • Resposta Verbal: 1-5 pontos<br>
+                    • Resposta Motora: 1-6 pontos<br><br>
+                    <strong>Lactentes:</strong><br>
+                    • Abertura Ocular: 1-4 pontos<br>
+                    • Choro/Fala: 1-5 pontos<br>
+                    • Resposta Motora: 1-6 pontos<br><br>
+                    <strong>Escala Total:</strong> 3-15 pontos (quanto menor, pior prognóstico)
+                </div>
+
+                <h3>Componentes da Escala</h3>
+                <ul>
+                    <li><strong>Abertura Ocular:</strong> Espontânea (4), à voz (3), à dor (2), nenhuma (1)</li>
+                    <li><strong>Resposta Verbal (Crianças):</strong> Orientada (5), confusa (4), palavras inadequadas (3), sons incompreensíveis (2), nenhuma (1)</li>
+                    <li><strong>Choro/Fala (Lactentes):</strong> Sorriso social (5), choro consolável (4), choro inconsistente (3), gemidos (2), nenhuma (1)</li>
+                    <li><strong>Resposta Motora:</strong> Obedece comandos (6), localiza dor (5), retira da dor (4), flexão anormal (3), extensão anormal (2), nenhuma (1)</li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Selecione a Categoria:</strong> Criança ou Lactente</li>
+                    <li><strong>Abertura Ocular:</strong> Avalie a resposta à estimulação</li>
+                    <li><strong>Resposta Verbal/Choro:</strong> Avalie a comunicação</li>
+                    <li><strong>Resposta Motora:</strong> Avalie os movimentos</li>
+                    <li>Clique em <strong>"Calcular Glasgow"</strong> para obter o escore</li>
+                </ol>
+
+                <h3>Interpretação dos Resultados</h3>
+                <ul>
+                    <li><strong>13-15 pontos:</strong> Lesão leve (boa recuperação esperada)</li>
+                    <li><strong>9-12 pontos:</strong> Lesão moderada (recuperação possível com sequelas)</li>
+                    <li><strong>3-8 pontos:</strong> Lesão grave (alta morbimortalidade)</li>
+                    <li><strong>Mudança no escore:</strong> Indica melhora ou piora neurológica</li>
+                </ul>
+
+                <h3>Considerações Importantes</h3>
+                <ul>
+                    <li>Avalie antes da sedação ou intubação</li>
+                    <li>Use estimulação consistente e padronizada</li>
+                    <li>Documente o escore e o tempo da avaliação</li>
+                    <li>Reavalie periodicamente para monitorar evolução</li>
+                    <li>Considerar fatores que podem interferir (medicamentos, hipotermia)</li>
+                    <li>Complementar com outros exames neurológicos</li>
+                    <li>Comunicar mudanças significativas imediatamente</li>
+                </ul>
+
+                <h3>Aplicações Clínicas</h3>
+                <ul>
+                    <li><strong>Trauma Craniano:</strong> Avaliação inicial e seguimento</li>
+                    <li><strong>Monitoramento Neurológico:</strong> Evolução de lesões</li>
+                    <li><strong>Prognóstico:</strong> Estimativa de recuperação</li>
+                    <li><strong>Comunicação:</strong> Padronização entre equipes</li>
+                    <li><strong>Pesquisa:</strong> Classificação de gravidade</li>
+                </ul>
+
+                <h3>Limitações</h3>
+                <ul>
+                    <li>Não avalia função cognitiva específica</li>
+                    <li>Pode ser influenciada por sedação</li>
+                    <li>Menos sensível para lesões focais</li>
+                    <li>Interpretação pode variar entre avaliadores</li>
+                    <li>Não substitui avaliação neurológica completa</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Teasdale G, Jennett B. Assessment of coma and impaired consciousness. A practical scale. Lancet. 1974;2(7872):81-4.<br>
+                    - Simpson DA, Cockington RA, Hanieh A, Raftos J, Reilly PL. Head injuries in infants and young children: the value of the Paediatric Coma Scale. Review of literature and report on a study. Childs Nerv Syst. 1991;7(4):183-90.<br>
+                    - Reilly PL, Simpson DA, Sprod R, Thomas L. Assessing the conscious level in infants and young children: a paediatric version of the Glasgow Coma Scale. Childs Nerv Syst. 1988;4(1):30-3.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formatarNumero(valor) {
+            const numero = Number(valor);
+            if (Number.isNaN(numero)) {
+                return valor;
+            }
+            return numero.toFixed(1);
+        }
+
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        let categoriaAtual = 'crianca';
+
+        // Definir data atual
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const dateTimeString = now.toISOString().slice(0, 16);
+            document.getElementById('data').value = dateTimeString;
+        });
+
+        function selecionarCategoria(categoria) {
+            categoriaAtual = categoria;
+            
+            // Atualizar botões
+            document.querySelectorAll('.age-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Atualizar texto das opções
+            if (categoria === 'crianca') {
+                document.querySelectorAll('.crianca-text').forEach(el => el.style.display = 'inline');
+                document.querySelectorAll('.lactente-text').forEach(el => el.style.display = 'none');
+                document.getElementById('categoriaInfo').textContent = 'Criança (2-5 anos): Use os critérios da coluna "Criança" na tabela abaixo.';
+            } else {
+                document.querySelectorAll('.crianca-text').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.lactente-text').forEach(el => el.style.display = 'inline');
+                document.getElementById('categoriaInfo').textContent = 'Lactente (0-2 anos): Use os critérios da coluna "Lactente" na tabela abaixo.';
+            }
+            
+            // Limpar seleções
+            document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+            document.querySelectorAll('.glasgow-option').forEach(option => option.classList.remove('selected'));
+            document.getElementById('scoreDisplay').style.display = 'none';
+            document.getElementById('results').classList.remove('show');
+        }
+
+        function selecionarOpcao(categoria, valor, elemento) {
+            // Remover seleção anterior da mesma categoria
+            document.querySelectorAll(`input[name="${categoria}"]`).forEach(radio => {
+                radio.checked = false;
+                radio.closest('.glasgow-option').classList.remove('selected');
+            });
+            
+            // Selecionar nova opção
+            elemento.querySelector('input').checked = true;
+            elemento.classList.add('selected');
+            
+            // Calcular automaticamente
+            calcularGlasgow();
+        }
+
+        function calcularGlasgow() {
+            const abertura = parseInt(document.querySelector('input[name="abertura"]:checked')?.value || 0);
+            const verbal = parseInt(document.querySelector('input[name="verbal"]:checked')?.value || 0);
+            const motora = parseInt(document.querySelector('input[name="motora"]:checked')?.value || 0);
+            
+            const total = abertura + verbal + motora;
+            
+            if (total > 0) {
+                document.getElementById('scoreNumber').textContent = formatarNumero(total);
+                document.getElementById('scoreDisplay').style.display = 'block';
+                
+                let interpretacao = '';
+                if (total >= 13) {
+                    interpretacao = 'Lesão Cerebral Leve';
+                } else if (total >= 9) {
+                    interpretacao = 'Lesão Cerebral Moderada';
+                } else {
+                    interpretacao = 'Lesão Cerebral Grave';
+                }
+                
+                document.getElementById('scoreInterpretation').textContent = interpretacao;
+                
+                // Exibir resultados
+                document.getElementById('resultadoTexto').innerHTML = `
+                    <strong>Pontuacao Total: ${formatarNumero(total)}</strong><br>
+                    <strong>Interpretacao: ${interpretacao}</strong>
+                `;
+                
+                const categoriaTexto = categoriaAtual === 'crianca' ? 'Criança (2-5 anos)' : 'Lactente (0-2 anos)';
+                const aberturaTexto = document.querySelector('input[name="abertura"]:checked')?.closest('.glasgow-option').querySelector('label').textContent.trim();
+                const verbalTexto = document.querySelector('input[name="verbal"]:checked')?.closest('.glasgow-option').querySelector('label').textContent.trim();
+                const motoraTexto = document.querySelector('input[name="motora"]:checked')?.closest('.glasgow-option').querySelector('label').textContent.trim();
+                
+                document.getElementById('detalhesTexto').innerHTML = `
+                    <strong>Categoria:</strong> ${categoriaTexto}<br>
+                    <strong>Abertura Ocular:</strong> ${aberturaTexto}<br>
+                    <strong>Resposta Verbal:</strong> ${verbalTexto}<br>
+                    <strong>Resposta Motora:</strong> ${motoraTexto}
+                `;
+                
+                // Adicionar interpretação clínica
+                let interpretacaoClinica = '';
+                if (total >= 13) {
+                    interpretacaoClinica = `
+                        <strong>LESÃO CEREBRAL LEVE (13-15 pontos):</strong><br>
+                        • Paciente acordado e responsivo<br>
+                        • Funções cognitivas preservadas<br>
+                        • Prognóstico geralmente favorável<br>
+                        • Monitorização clínica adequada<br>
+                        • Considerar exames complementares se necessário
+                    `;
+                } else if (total >= 9) {
+                    interpretacaoClinica = `
+                        <strong>LESÃO CEREBRAL MODERADA (9-12 pontos):</strong><br>
+                        • Paciente com alteração do nível de consciência<br>
+                        • Necessita monitorização neurológica intensiva<br>
+                        • Considerar exames de imagem (TC/RM)<br>
+                        • Avaliação neurológica seriada<br>
+                        • Prognóstico variável, requer seguimento
+                    `;
+                } else {
+                    interpretacaoClinica = `
+                        <strong>LESÃO CEREBRAL GRAVE (3-8 pontos):</strong><br>
+                        • Paciente em coma ou estado vegetativo<br>
+                        • Necessita suporte ventilatório<br>
+                        • Monitorização neurológica contínua<br>
+                        • Exames de imagem urgentes<br>
+                        • Prognóstico reservado<br>
+                        • Considerar medidas de suporte avançado
+                    `;
+                }
+                
+                // Remover seções de interpretação clínica anteriores
+                const resultsDiv = document.getElementById('results');
+                const interpretacoesAnteriores = resultsDiv.querySelectorAll('.result-card');
+                interpretacoesAnteriores.forEach(card => {
+                    const titulo = card.querySelector('h4');
+                    if (titulo && titulo.textContent === 'Interpretação Clínica') {
+                        card.remove();
+                    }
+                });
+                
+                // Adicionar nova seção de interpretação clínica
+                const interpretacaoCard = document.createElement('div');
+                interpretacaoCard.className = 'result-card';
+                interpretacaoCard.innerHTML = `
+                    <h4>Interpretação Clínica</h4>
+                    <p>${interpretacaoClinica}</p>
+                `;
+                
+                // Inserir antes do botão de gerar relatório
+                const generateBtn = resultsDiv.querySelector('.generate-report-btn');
+                resultsDiv.insertBefore(interpretacaoCard, generateBtn);
+                
+                document.getElementById('results').classList.add('show');
+                
+                // Salvar dados para relatório
+                window.currentGlasgow = {
+                    total: total,
+                    interpretacao: interpretacao,
+                    categoria: categoriaTexto,
+                    abertura: abertura,
+                    verbal: verbal,
+                    motora: motora,
+                    aberturaTexto: aberturaTexto,
+                    verbalTexto: verbalTexto,
+                    motoraTexto: motoraTexto,
+                    nome: document.getElementById('nome').value,
+                    idade: document.getElementById('idade').value,
+                    data: document.getElementById('data').value,
+                    avaliador: document.getElementById('avaliador').value
+                };
+            } else {
+                document.getElementById('scoreDisplay').style.display = 'none';
+                document.getElementById('results').classList.remove('show');
+            }
+        }
+
+        function gerarRelatorio() {
+            if (!window.currentGlasgow) {
+                alert('Por favor, calcule a escala de Glasgow primeiro.');
+                return;
+            }
+
+            const data = new Date(window.currentGlasgow.data);
+            const dataFormatada = data.toLocaleString('pt-BR');
+
+            let relatorio = `RESUMO INFORMATIVO — ESCALA DE COMA DE GLASGOW (EDUCATIVO)
+========================================
+
+DADOS DO PACIENTE
+-----------------
+Data/Hora: ${dataFormatada}
+Nome: ${window.currentGlasgow.nome || 'Nao informado'}
+Idade: ${window.currentGlasgow.idade || 'Nao informada'} anos
+Avaliador: ${window.currentGlasgow.avaliador || 'Nao informado'}
+
+AVALIACAO GLASGOW
+-----------------
+Categoria: ${window.currentGlasgow.categoria}
+Pontuacao Total: ${formatarNumero(window.currentGlasgow.total)}
+Interpretacao: ${window.currentGlasgow.interpretacao}
+
+DETALHES DA AVALIACAO
+---------------------
+Abertura Ocular: ${window.currentGlasgow.abertura} pontos - ${window.currentGlasgow.aberturaTexto}
+Resposta Verbal: ${window.currentGlasgow.verbal} pontos - ${window.currentGlasgow.verbalTexto}
+Resposta Motora: ${window.currentGlasgow.motora} pontos - ${window.currentGlasgow.motoraTexto}
+
+INTERPRETACAO CLINICA
+---------------------
+`;
+
+            if (window.currentGlasgow.total >= 13) {
+                relatorio += `LESAO CEREBRAL LEVE (13-15 pontos):
+- Paciente acordado e responsivo
+- Funcoes cognitivas preservadas
+- Prognostico geralmente favoravel
+- Monitorizacao clinica adequada
+- Considerar exames complementares se necessario
+`;
+            } else if (window.currentGlasgow.total >= 9) {
+                relatorio += `LESAO CEREBRAL MODERADA (9-12 pontos):
+- Paciente com alteracao do nivel de consciencia
+- Necessita monitorizacao neurologica intensiva
+- Considerar exames de imagem (TC/RM)
+- Avaliacao neurologica seriada
+- Prognostico variavel, requer seguimento
+`;
+            } else {
+                relatorio += `LESAO CEREBRAL GRAVE (3-8 pontos):
+- Paciente em coma ou estado vegetativo
+- Necessita suporte ventilatorio
+- Monitorizacao neurologica continua
+- Exames de imagem urgentes
+- Prognostico reservado
+- Considerar medidas de suporte avancado
+`;
+            }
+
+            relatorio += `
+DETALHES TECNICOS
+-----------------
+Escala Utilizada: Glasgow Modificada para Criancas e Lactentes
+Referencia: AHA 1997/1999
+Data de Geracao: ${new Date().toLocaleString('pt-BR')}
+
+OBSERVACOES IMPORTANTES
+-----------------------
+- A Escala de Glasgow e uma ferramenta auxiliar de avaliacao
+- Nao substitui a avaliacao clinica completa
+- Deve ser reavaliada periodicamente
+- Considerar fatores que podem influenciar a pontuacao
+- A interpretacao deve ser contextualizada com o quadro clinico
+- Para criancas < 2 anos, usar criterios especificos para lactentes
+- Para criancas 2-5 anos, usar criterios especificos para criancas
+
+REFERENCIAS
+-----------
+- American Heart Association. Pediatric Advanced Life Support.
+  Dallas, TX: American Heart Association; 1997.
+- Teasdale G, Jennett B. Assessment of coma and impaired consciousness.
+  Lancet. 1974;2(7872):81-84.
+- Escala de Coma de Glasgow Modificada para Criancas - Protocolos Clinicos
+`;
+
+            relatorio = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorio;
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorio += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                relatorio += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            // Copiar para área de transferência
+            navigator.clipboard.writeText(relatorio).then(function() {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(function() {
+                // Fallback para navegadores mais antigos
+                const textArea = document.createElement('textarea');
+                textArea.value = relatorio;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

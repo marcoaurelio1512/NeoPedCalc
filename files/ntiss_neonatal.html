@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — NTISS neonatal (educativo)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            margin: 0 0 15px 0;
+            color: #111;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .results-section {
+            background: #f0f4ff;
+            border: 1px solid #b4cfff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .result-item {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .result-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 700;
+        }
+
+        .result-value {
+            font-size: 18px;
+            font-weight: 900;
+            color: #111;
+        }
+
+        .action-btn {
+            background: #111;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .secondary-btn {
+            background: #eee;
+            color: #111;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .copy-btn {
+            background: #27ae60;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .info-section {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .info-section ul {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+
+        .interventions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .intervention-category {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .category-title {
+            font-size: 13px;
+            color: #111;
+            font-weight: 800;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .category-score {
+            font-size: 11px;
+            background: #111;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+        .intervention-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .intervention-item input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .item-content {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .item-points {
+            font-size: 10px;
+            color: #374151;
+            font-weight: 800;
+        }
+
+        .filter-section {
+            margin-bottom: 15px;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #374151;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        /* Modal Styles */
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(17, 17, 17, 0.1);
+            color: #111;
+            border: 2px solid #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-info:hover {
+            background: #111;
+            color: #fff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 { margin: 0; font-size: 22px; }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover { transform: rotate(90deg); }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child { margin-top: 0; }
+        .modal-body p { line-height: 1.6; margin-bottom: 15px; color: #34495e; }
+        .modal-body ul, .modal-body ol { margin: 10px 0; padding-left: 25px; }
+        .modal-body li { margin-bottom: 8px; line-height: 1.5; }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong { color: #2c3e50; }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong { color: #27ae60; }
+
+        @media (max-width: 768px) {
+            .modal { padding: 10px; }
+            .modal-content { width: 95%; max-height: 95vh; }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <header>
+        <h1>🧪 NTISS</h1>
+        <p>Neonatal Therapeutic Intervention Scoring System — apoio educativo para estimar intensidade de cuidados nas últimas 24h</p>
+        <div class="header-actions">
+            <button type="button" class="btn-info" onclick="abrirModal()">
+                Como usar
+            </button>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="card">
+            <div class="content">
+            <div class="info-section">
+                <h3>Instruções de Uso</h3>
+                <ul>
+                    <li><strong>Quando usar:</strong> Avaliação do consumo de recursos e intensidade terapêutica</li>
+                    <li><strong>Janela:</strong> Últimas 24 horas</li>
+                    <li><strong>Objetivo:</strong> Medir a intensidade de cuidados terapêuticos prestados</li>
+                    <li><strong>Uso:</strong> Marque todas as intervenções realizadas nas últimas 24 horas</li>
+                    <li><strong>Interpretação:</strong> Maior pontuação indica maior intensidade terapêutica</li>
+                </ul>
+            </div>
+
+            <!-- Dados do Paciente -->
+            <div class="form-grid">
+                <div class="form-section">
+                    <h2 class="section-title">Dados do Paciente</h2>
+                    
+                    <div class="form-group">
+                        <label for="nome">Nome do Paciente</label>
+                        <input type="text" id="nome" placeholder="Nome completo">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="data_nascimento">Data de Nascimento</label>
+                        <input type="date" id="data_nascimento">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="idade_gestacional_nascimento">Idade Gestacional no Nascimento</label>
+                        <input type="number" id="idade_gestacional_nascimento" min="22" max="44" step="0.1" placeholder="Ex.: 32.5">
+                        <span class="unit">semanas</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="data_avaliacao">Data da Avaliação</label>
+                        <input type="date" id="data_avaliacao">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="hora_avaliacao">Hora da Avaliação</label>
+                        <input type="time" id="hora_avaliacao">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="idade_dias">Idade em Dias (Calculada)</label>
+                        <input type="number" id="idade_dias" readonly>
+                        <span class="unit">dias</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="idade_gestacional_corrigida">Idade Gestacional Corrigida</label>
+                        <input type="text" id="idade_gestacional_corrigida" readonly>
+                        <span class="unit">semanas e dias</span>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2 class="section-title">Identificação da Avaliação</h2>
+                    
+                    <div class="form-group">
+                        <label for="identificacao">Identificação (opcional)</label>
+                        <input type="text" id="identificacao" placeholder="ID do paciente ou prontuário">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dia_score">Dia do Score</label>
+                        <input type="number" id="dia_score" min="1" max="90" placeholder="Ex.: 3">
+                        <span class="unit">dia de vida</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="obs">Observações</label>
+                        <input type="text" id="obs" placeholder="Contexto clínico (opcional)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="filtro">Filtrar Intervenções</label>
+                        <input type="text" id="filtro" placeholder="Ex.: cateter, VM, heparina...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filtro -->
+            <div class="filter-section">
+                <h3>Intervenções Terapêuticas (Últimas 24 horas)</h3>
+                <p style="color: #374151; margin-bottom: 15px;">Marque todas as intervenções realizadas nas últimas 24 horas. Use o filtro para encontrar rapidamente intervenções específicas.</p>
+            </div>
+
+            <!-- Intervenções -->
+            <div id="interventions-container" class="interventions-grid">
+                <!-- Categorias serão renderizadas via JavaScript -->
+            </div>
+
+            <!-- Botões de Ação -->
+            <div style="text-align: center; margin: 30px 0;">
+                <button class="action-btn" onclick="calcularNTISS()">
+                    Calcular NTISS
+                </button>
+                <button class="secondary-btn" onclick="limparTudo()">
+                    Limpar Tudo
+                </button>
+            </div>
+
+            <!-- Resultados -->
+            <div class="results-section">
+                <h2 class="section-title">Resultado NTISS</h2>
+                <div class="results-grid">
+                    <div class="result-item">
+                        <div class="label">Pontuação Total NTISS</div>
+                        <div class="value" id="ntiss-total">0</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="label">Intervenções Selecionadas</div>
+                        <div class="value" id="interventions-count">0</div>
+                    </div>
+                </div>
+                <div id="detailed-results" style="margin-top: 20px; font-size: 0.9rem; opacity: 0.9;"></div>
+            </div>
+
+            <!-- Texto informativo -->
+            <div class="report-section">
+                <h2 class="section-title">Texto informativo para prontuário eletrônico (revisar)</h2>
+                <button type="button" class="copy-btn" onclick="gerarECopiarRelatorio()">
+                    Gerar e copiar texto informativo
+                </button>
+            </div>
+
+    </div>
+</div>
+
+    <div class="footer">
+        <p>NTISS - Neonatal Therapeutic Intervention Scoring System</p>
+        <p><strong>Referências:</strong> Protocolos de Terapia Intensiva Pediátrica e Neonatal.</p>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — NTISS (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>O NTISS organiza a intensidade das intervenções terapêuticas registradas nas últimas 24h em recém-nascidos internados. O uso aqui é informativo/educacional e não substitui avaliação clínica, protocolos institucionais ou prescrição.</p>
+                
+                <h3>Fórmula do NTISS</h3>
+                <div class="formula-box">
+                    <strong>NTISS = Soma de pontos de todas as intervenções terapêuticas ativas</strong><br><br>
+                    Cada intervenção recebe pontos baseados na complexidade e risco:<br>
+                    • Intervenções básicas: 1-3 pontos<br>
+                    • Intervenções moderadas: 4-6 pontos<br>
+                    • Intervenções complexas: 7-10 pontos<br>
+                    • Intervenções críticas: 11+ pontos<br><br>
+                    <strong>Escala Total:</strong> 0-100+ pontos (quanto maior, mais intensivos os cuidados)
+                </div>
+
+                <h3>Categorias de Intervenções</h3>
+                <ul>
+                    <li><strong>Suporte Respiratório:</strong> Oxigenoterapia, CPAP, ventilação mecânica</li>
+                    <li><strong>Suporte Cardiovascular:</strong> Vasopressores, antiarrítmicos</li>
+                    <li><strong>Suporte Renal:</strong> Diálise, ultrafiltração</li>
+                    <li><strong>Suporte Gastrointestinal:</strong> Nutrição parenteral, sondas</li>
+                    <li><strong>Intervenções Cirúrgicas:</strong> Procedimentos invasivos</li>
+                    <li><strong>Medicamentos Específicos:</strong> Antibióticos, anticonvulsivantes</li>
+                    <li><strong>Monitorização:</strong> Cateteres, monitores invasivos</li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Suporte Respiratório:</strong> Marque todas as modalidades ativas</li>
+                    <li><strong>Suporte Cardiovascular:</strong> Indique uso de medicamentos</li>
+                    <li><strong>Suporte Renal:</strong> Marque se houver terapia renal substitutiva</li>
+                    <li><strong>Nutrição:</strong> Indique tipo de suporte nutricional</li>
+                    <li><strong>Procedimentos:</strong> Marque procedimentos invasivos realizados</li>
+                    <li><strong>Medicamentos:</strong> Indique medicamentos específicos em uso</li>
+                    <li><strong>Monitorização:</strong> Marque cateteres e monitores invasivos</li>
+                    <li>Clique em <strong>"Calcular NTISS"</strong> para obter o escore</li>
+                </ol>
+
+                <h3>Interpretação dos Resultados</h3>
+                <ul>
+                    <li><strong>0-20 pontos:</strong> Cuidados de baixa intensidade</li>
+                    <li><strong>21-40 pontos:</strong> Cuidados de intensidade moderada</li>
+                    <li><strong>41-60 pontos:</strong> Cuidados de alta intensidade</li>
+                    <li><strong>61-80 pontos:</strong> Cuidados de muito alta intensidade</li>
+                    <li><strong>81+ pontos:</strong> Cuidados de intensidade extrema</li>
+                </ul>
+
+                <h3>Considerações Importantes</h3>
+                <ul>
+                    <li>Conte apenas intervenções ativas no momento</li>
+                    <li>Não conte procedimentos já finalizados</li>
+                    <li>Útil para comparar intensidade entre UTINs</li>
+                    <li>Complementar à avaliação clínica</li>
+                    <li>Reflete a complexidade dos cuidados</li>
+                    <li>Pode ser calculado diariamente</li>
+                    <li>Considerar recursos disponíveis</li>
+                </ul>
+
+                <h3>Aplicações Clínicas</h3>
+                <ul>
+                    <li><strong>Comparação entre UTINs:</strong> Ajuste por intensidade de cuidados</li>
+                    <li><strong>Alocação de Recursos:</strong> Planejamento de pessoal e equipamentos</li>
+                    <li><strong>Pesquisa:</strong> Classificação de gravidade</li>
+                    <li><strong>Qualidade:</strong> Monitoramento de práticas</li>
+                    <li><strong>Custos:</strong> Correlação com gastos hospitalares</li>
+                </ul>
+
+                <h3>Limitações</h3>
+                <ul>
+                    <li>Não reflete necessariamente a gravidade do paciente</li>
+                    <li>Depende da disponibilidade de recursos</li>
+                    <li>Pode variar entre diferentes centros</li>
+                    <li>Não considera qualidade dos cuidados</li>
+                    <li>Pode ser influenciado por práticas locais</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Gray JE, et al. Neonatal Therapeutic Intervention Scoring System: a therapy-based severity-of-illness index. Pediatrics. 1992;90(4):561-7.<br>
+                    - Pollack MM, et al. The Pediatric Risk of Mortality (PRISM) score. Crit Care Med. 1988;16(11):1110-6.<br>
+                    - Richardson DK, et al. Score for Neonatal Acute Physiology: a physiologic severity index for neonatal intensive care. Pediatrics. 1993;91(3):617-23.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Configuração NTISS baseada na literatura
+        const NTISS_CFG = [
+            {
+                cat: "Respiratório",
+                items: [
+                    { k: "O2_baixo_fluxo", label: "Oxigenoterapia baixo fluxo", pts: 1 },
+                    { k: "CPAP_VNI", label: "CPAP / VNI", pts: 2 },
+                    { k: "VM_convencional", label: "Ventilação mecânica (convencional)", pts: 3 },
+                    { k: "VM_alta_freq", label: "Ventilação de alta frequência", pts: 4 },
+                    { k: "Surfactante", label: "Administração de surfactante", pts: 2 },
+                    { k: "NO_inalatorio", label: "Óxido nítrico inalatório", pts: 4 }
+                ]
+            },
+            {
+                cat: "Cardiovascular / Acesso",
+                items: [
+                    { k: "UVC_UVA", label: "Cateter umbilical (veia/arterial)", pts: 2 },
+                    { k: "CVC_periferico", label: "Cateter venoso central periférico (PICC)", pts: 2 },
+                    { k: "Acesso_arterial_periferico", label: "Acesso arterial periférico", pts: 2 },
+                    { k: "ECG_continuo", label: "Monitorização ECG contínua", pts: 1 },
+                    { k: "Drogas_vasoativas", label: "Infusão de drogas vasoativas", pts: 3 }
+                ]
+            },
+            {
+                cat: "Procedimentos / Terapias",
+                items: [
+                    { k: "Transfusao_CH", label: "Transfusão de concentrado de hemácias", pts: 3 },
+                    { k: "Transfusao_PFC_Plaquetas", label: "Transfusão de PFC/Plaquetas", pts: 2 },
+                    { k: "DVE_drenagem", label: "Drenagem / punção torácica / DVE", pts: 4 },
+                    { k: "Fototerapia", label: "Fototerapia", pts: 1 },
+                    { k: "Dialise_peritoneal", label: "Diálise peritoneal", pts: 4 }
+                ]
+            },
+            {
+                cat: "Nutrição / Metabólico",
+                items: [
+                    { k: "NPT", label: "Nutrição parenteral total", pts: 3 },
+                    { k: "NE_sonda", label: "Nutrição enteral via sonda", pts: 1 },
+                    { k: "Hipoglicemia_trat", label: "Tratamento de hipoglicemia (infusão glicosada)", pts: 1 }
+                ]
+            },
+            {
+                cat: "Medicações / Infecções",
+                items: [
+                    { k: "ATB_IV", label: "Antibiótico IV", pts: 2 },
+                    { k: "Antifungico", label: "Antifúngico sistêmico", pts: 3 },
+                    { k: "Anticonvulsivante", label: "Anticonvulsivante", pts: 2 },
+                    { k: "Corticosteroide", label: "Corticosteroide sistêmico", pts: 2 }
+                ]
+            },
+            {
+                cat: "Monitorização Avançada",
+                items: [
+                    { k: "Gaso_arterial_seriada", label: "Gasometrias arteriais seriadas", pts: 1 },
+                    { k: "US_cerebral_rotina", label: "US transfontanela seriada", pts: 1 },
+                    { k: "EEG_aEEG", label: "EEG/aEEG contínuo", pts: 3 }
+                ]
+            }
+        ];
+
+        function renderInterventions(filterText = "") {
+            const container = document.getElementById('interventions-container');
+            container.innerHTML = '';
+
+            NTISS_CFG.forEach((group, gi) => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'intervention-category';
+
+                // Título da categoria
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'category-title';
+                titleDiv.innerHTML = `
+                    <span>${group.cat}</span>
+                    <span class="category-score" id="score-${gi}">0 pts</span>
+                `;
+
+                // Botões de ação da categoria
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'category-actions';
+                actionsDiv.innerHTML = `
+                    <button class="category-btn" onclick="marcarTodos('${gi}')">Marcar Todos</button>
+                    <button class="category-btn" onclick="desmarcarTodos('${gi}')">Desmarcar</button>
+                `;
+
+                categoryDiv.appendChild(titleDiv);
+                categoryDiv.appendChild(actionsDiv);
+
+                // Itens da categoria
+                group.items.forEach((item, ii) => {
+                    const match = (item.label.toLowerCase().includes(filterText) || 
+                                 item.k.toLowerCase().includes(filterText));
+                    if (filterText && !match) return;
+
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'intervention-item';
+                    itemDiv.innerHTML = `
+                        <input type="checkbox" data-gi="${gi}" data-ii="${ii}" onchange="atualizarResultados()">
+                        <div class="item-content">
+                            <span class="item-label">${item.label}</span>
+                            <span class="item-points">+${item.pts}</span>
+                        </div>
+                    `;
+
+                    categoryDiv.appendChild(itemDiv);
+                });
+
+                container.appendChild(categoryDiv);
+            });
+
+            atualizarResultados();
+        }
+
+        function marcarTodos(gi) {
+            const checkboxes = document.querySelectorAll(`input[data-gi="${gi}"]`);
+            checkboxes.forEach(cb => cb.checked = true);
+            atualizarResultados();
+        }
+
+        function desmarcarTodos(gi) {
+            const checkboxes = document.querySelectorAll(`input[data-gi="${gi}"]`);
+            checkboxes.forEach(cb => cb.checked = false);
+            atualizarResultados();
+        }
+
+        function calcularNTISS() {
+            atualizarResultados();
+        }
+
+        function atualizarResultados() {
+            const selecionados = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'));
+            let total = 0;
+            const porCategoria = new Map();
+
+            // Calcular pontuação total e por categoria
+            selecionados.forEach(cb => {
+                const gi = parseInt(cb.dataset.gi);
+                const ii = parseInt(cb.dataset.ii);
+                const pts = NTISS_CFG[gi].items[ii].pts;
+                total += pts;
+
+                const categoria = NTISS_CFG[gi].cat;
+                porCategoria.set(categoria, (porCategoria.get(categoria) || 0) + pts);
+            });
+
+            // Atualizar pontuação por categoria
+            NTISS_CFG.forEach((group, gi) => {
+                const scoreElement = document.getElementById(`score-${gi}`);
+                if (scoreElement) {
+                    const pontosCategoria = porCategoria.get(group.cat) || 0;
+                    scoreElement.textContent = `${pontosCategoria} pts`;
+                }
+            });
+
+            // Atualizar resultados principais
+            document.getElementById('ntiss-total').textContent = total;
+            document.getElementById('interventions-count').textContent = selecionados.length;
+
+            // Detalhamento
+            const detalhesDiv = document.getElementById('detailed-results');
+            if (total === 0) {
+                detalhesDiv.innerHTML = 'Nenhuma intervenção selecionada.';
+            } else {
+                const partes = Array.from(porCategoria.entries())
+                    .map(([categoria, pontos]) => `${categoria}: ${pontos}`)
+                    .join(' • ');
+                detalhesDiv.innerHTML = `<strong>Por categoria:</strong> ${partes}`;
+            }
+        }
+
+        function limparTudo() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            ['nome', 'data_nascimento', 'idade_gestacional_nascimento', 'data_avaliacao', 
+             'hora_avaliacao', 'idade_dias', 'idade_gestacional_corrigida', 'identificacao', 
+             'dia_score', 'obs', 'filtro'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            atualizarResultados();
+            renderInterventions('');
+        }
+
+        function calcularIdade() {
+            const dataNascimento = document.getElementById('data_nascimento').value;
+            const dataAvaliacao = document.getElementById('data_avaliacao').value;
+            const idadeGestacionalNascimento = parseFloat(document.getElementById('idade_gestacional_nascimento').value);
+
+            if (dataNascimento && dataAvaliacao) {
+                const nascimento = new Date(dataNascimento);
+                const avaliacao = new Date(dataAvaliacao);
+
+                const diffTime = Math.abs(avaliacao - nascimento);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                document.getElementById('idade_dias').value = diffDays;
+
+                if (idadeGestacionalNascimento && !isNaN(idadeGestacionalNascimento)) {
+                    const semanasAdicionais = Math.floor(diffDays / 7);
+                    const diasAdicionais = diffDays % 7;
+
+                    const idadeGestacionalCorrigida = idadeGestacionalNascimento + semanasAdicionais + (diasAdicionais / 7);
+                    const semanasCorrigidas = Math.floor(idadeGestacionalCorrigida);
+                    const diasCorrigidos = Math.round((idadeGestacionalCorrigida - semanasCorrigidas) * 7);
+
+                    document.getElementById('idade_gestacional_corrigida').value =
+                        `${semanasCorrigidas} sem ${diasCorrigidos} dias`;
+                }
+            }
+        }
+
+        function preencherDataAtual() {
+            const hoje = new Date();
+            const dataAtual = hoje.toISOString().split('T')[0];
+            const horaAtual = hoje.toTimeString().slice(0, 5);
+
+            if (!document.getElementById('data_avaliacao').value) {
+                document.getElementById('data_avaliacao').value = dataAtual;
+            }
+            if (!document.getElementById('hora_avaliacao').value) {
+                document.getElementById('hora_avaliacao').value = horaAtual;
+            }
+        }
+
+        function gerarECopiarRelatorio() {
+            const ntissTotal = document.getElementById('ntiss-total').textContent;
+            const interventionsCount = document.getElementById('interventions-count').textContent;
+
+            if (ntissTotal === '0') {
+                alert('Selecione pelo menos uma intervenção antes de gerar o texto informativo.');
+                return;
+            }
+
+            // Obter dados do paciente
+            const nome = document.getElementById('nome').value;
+            const dataNascimento = document.getElementById('data_nascimento').value;
+            const idadeGestacionalNascimento = document.getElementById('idade_gestacional_nascimento').value;
+            const dataAvaliacao = document.getElementById('data_avaliacao').value;
+            const horaAvaliacao = document.getElementById('hora_avaliacao').value;
+            const idadeDias = document.getElementById('idade_dias').value;
+            const idadeGestacionalCorrigida = document.getElementById('idade_gestacional_corrigida').value;
+            const identificacao = document.getElementById('identificacao').value;
+            const diaScore = document.getElementById('dia_score').value;
+            const obs = document.getElementById('obs').value;
+
+            // Obter intervenções selecionadas
+            const selecionados = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'));
+            const intervencoes = selecionados.map(cb => {
+                const gi = parseInt(cb.dataset.gi);
+                const ii = parseInt(cb.dataset.ii);
+                const item = NTISS_CFG[gi].items[ii];
+                return `${item.label} (${item.pts}pts)`;
+            });
+
+            // Calcular por categoria
+            const porCategoria = new Map();
+            selecionados.forEach(cb => {
+                const gi = parseInt(cb.dataset.gi);
+                const ii = parseInt(cb.dataset.ii);
+                const pts = NTISS_CFG[gi].items[ii].pts;
+                const categoria = NTISS_CFG[gi].cat;
+                porCategoria.set(categoria, (porCategoria.get(categoria) || 0) + pts);
+            });
+
+            let relatorioTexto = `RESUMO INFORMATIVO — NTISS (EDUCATIVO)
+${nome ? `Paciente: ${nome}` : ''}
+${identificacao ? `Identificação: ${identificacao}` : ''}
+${dataAvaliacao ? `Data da Avaliação: ${dataAvaliacao}` : ''}${horaAvaliacao ? ` - Hora: ${horaAvaliacao}` : ''}
+${diaScore ? `Dia de Vida: ${diaScore}` : ''}
+
+DADOS DO PACIENTE:
+${dataNascimento ? `- Data de Nascimento: ${dataNascimento}` : ''}
+${idadeGestacionalNascimento ? `- Idade Gestacional no Nascimento: ${idadeGestacionalNascimento} semanas` : ''}
+${idadeDias ? `- Idade em Dias: ${idadeDias} dias` : ''}
+${idadeGestacionalCorrigida ? `- Idade Gestacional Corrigida: ${idadeGestacionalCorrigida}` : ''}
+
+INTERVENÇÕES SELECIONADAS (Últimas 24h):
+${intervencoes.map(interv => `- ${interv}`).join('\n')}
+
+RESULTADOS NTISS:
+- Total de Intervenções: ${interventionsCount}
+- Pontuação Total NTISS: ${ntissTotal} pontos
+
+PONTUAÇÃO POR CATEGORIA:
+${Array.from(porCategoria.entries()).map(([categoria, pontos]) => `- ${categoria}: ${pontos} pontos`).join('\n')}
+
+INTERPRETAÇÃO:
+O NTISS avalia a intensidade de intervenções terapêuticas nas últimas 24 horas.
+Maior pontuação indica maior consumo de recursos e intensidade terapêutica.
+Uso educativo para comparação entre pacientes e acompanhamento temporal; não define conduta de forma automática.
+
+CRITÉRIOS NTISS (Exemplos):
+Respiratório: O₂ baixo fluxo=1pt, CPAP/VNI=2pts, VM=3pts, VM alta freq=4pts
+Cardiovascular: Cateter umbilical=2pts, PICC=2pts, Drogas vasoativas=3pts
+Procedimentos: Transfusão CH=3pts, DVE=4pts, Diálise peritoneal=4pts
+Nutrição: NPT=3pts, NE sonda=1pt
+Medicações: ATB IV=2pts, Antifúngico=3pts
+Monitorização: Gasometrias=1pt, EEG/aEEG=3pts
+
+${obs ? `Observações: ${obs}` : ''}
+
+Referência: NTISS - Neonatal Therapeutic Intervention Scoring System para avaliação de intensidade terapêutica neonatal.`;
+
+            relatorioTexto = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorioTexto;
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorioTexto += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                relatorioTexto += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            // Copiar para área de transferência
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(relatorioTexto).then(() => {
+                    if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                }).catch(err => {
+                    copiarTextoFallback(relatorioTexto);
+                });
+            } else {
+                copiarTextoFallback(relatorioTexto);
+            }
+        }
+
+        function copiarTextoFallback(texto) {
+            const textArea = document.createElement('textarea');
+            textArea.value = texto;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                document.execCommand('copy');
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            } catch (err) {
+                if (typeof window.neopedCopyFail === 'function') window.neopedCopyFail(); else alert('Nao foi possivel copiar automaticamente. Revise o texto e copie manualmente para uso informativo.');
+            }
+
+            document.body.removeChild(textArea);
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function () {
+            preencherDataAtual();
+            renderInterventions('');
+
+            ['data_nascimento', 'data_avaliacao', 'idade_gestacional_nascimento'].forEach(id => {
+                var el = document.getElementById(id);
+                if (el) el.addEventListener('input', calcularIdade);
+            });
+
+            var filtro = document.getElementById('filtro');
+            if (filtro) filtro.addEventListener('input', function(e) {
+                renderInterventions(e.target.value.toLowerCase());
+            });
+        });
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

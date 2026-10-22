@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>NeoPedCalc — Emergência Pediátrica (educativo)</title>
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --panel: #ffffff;
+      --soft: #f8fafc;
+      --line: #e2e8f0;
+      --text: #1f2937;
+      --muted: #374151;
+      --accent: #2563eb;
+      --accent-2: #3b82f6;
+      --ok: #059669;
+      --shadow: 0 4px 18px rgba(15, 23, 42, 0.07);
+      --radius: 12px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; min-width: 0; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(37, 99, 235, 0.06), transparent 32%),
+        linear-gradient(160deg, #f1f5f9 0%, #e8eef5 45%, #f1f5f9 100%);
+      color: var(--text);
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      touch-action: pan-y;
+      position: relative;
+      overflow-x: hidden !important;
+    }
+
+    /* Hardening contra vazamento horizontal em mobile */
+    img, svg, canvas, video, iframe {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 16px;
+      overflow-x: hidden;
+      overscroll-behavior-x: contain;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      min-width: 0;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .title {
+      min-width: 0;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      line-height: 1.1;
+      overflow-wrap: anywhere;
+    }
+
+    .title p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      line-height: 1.5;
+      max-width: 980px;
+      overflow-wrap: anywhere;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      width: 100%;
+      max-width: 260px;
+      overflow-x: hidden;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+      overscroll-behavior-x: contain;
+    }
+
+    .section-title {
+      margin: 0 0 12px;
+      font-size: 1.08rem;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .grid {
+      display: grid;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
+
+    .field {
+      min-width: 0;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: .9rem;
+      font-weight: 600;
+      overflow-wrap: anywhere;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      max-width: 100%;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    /* Destaque visual para navegação principal do app */
+    .field.section-highlight label {
+      color: #1d4ed8;
+      font-weight: 800;
+    }
+
+    .field.section-highlight select {
+      background: #eff6ff;
+      border-color: #93c5fd;
+      box-shadow: inset 0 0 0 1px rgba(147, 197, 253, 0.5);
+      color: #1e3a8a;
+    }
+
+    .field.section-highlight select option {
+      background: #ffffff;
+      color: #1e3a8a;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    .row-single {
+      display: flex;
+      justify-content: flex-start;
+      width: 100%;
+    }
+
+    .btn {
+      appearance: none;
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: .96rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .12s ease, opacity .12s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary { background: var(--accent); color: #ffffff; }
+    .btn-soft {
+      background: var(--soft);
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+    .btn-ok { background: var(--ok); color: #ffffff; }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+      width: 100%;
+    }
+
+    .stat-card {
+      background: linear-gradient(180deg, rgba(37, 99, 235, 0.06), rgba(255,255,255,0));
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      min-width: 0;
+    }
+
+    .stat-card .label {
+      color: var(--muted);
+      font-size: .84rem;
+      margin-bottom: 6px;
+      overflow-wrap: anywhere;
+    }
+
+    .stat-card .value {
+      font-size: 1rem;
+      font-weight: 800;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+
+    .result-box {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      white-space: pre-wrap;
+      line-height: 1.58;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      max-width: 100%;
+    }
+
+    .ciatox-contact {
+      text-align: center;
+      white-space: normal;
+    }
+    .ciatox-contact a {
+      display: inline-block;
+      margin: 6px 0 4px;
+      font-size: 1.08rem;
+    }
+    .ciatox-contact .ciatox-hint {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .drug-card {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      min-width: 0;
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    .drug-name {
+      font-size: 1rem;
+      font-weight: 900;
+      margin-bottom: 6px;
+      overflow-wrap: anywhere;
+    }
+
+    .table-wrap {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+    }
+
+    .tabs {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 900px;
+      background: #ffffff;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: .82rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      background: #f1f5f9;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .ref-list {
+      margin: 0;
+      padding-left: 18px;
+      line-height: 1.6;
+    }
+
+    .footer {
+      color: var(--muted);
+      font-size: .84rem;
+      padding-bottom: 24px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .hidden-section {
+      display: none;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      overscroll-behavior-x: contain;
+    }
+
+    .hidden-section.active {
+      display: block;
+    }
+
+    /* Modais internos/externos da área de seções:
+       sem borda e com fundo mais claro para diferenciar */
+    .hidden-section .card,
+    .hidden-section .drug-card,
+    .hidden-section .result-box,
+    .hidden-section .table-wrap {
+      border: 0;
+      background: #f1f5f9;
+    }
+
+    .card.modal-like {
+      border: 0;
+      background: #f1f5f9;
+    }
+
+    @media (max-width: 980px) {
+      .hero-stats { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+
+    @media (max-width: 860px) {
+      .grid-2, .grid-3, .grid-4, .hero-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .title h1 { font-size: 1.35rem; }
+      .container { padding: 10px 8px; }
+      .card { padding: 14px; border-radius: 16px; }
+      .btn { width: 100%; }
+      .top-actions { width: 100%; max-width: none; }
+      .top-actions .btn { width: 100%; }
+      .row-single .btn { width: 100%; }
+      .title p { max-width: 100%; }
+
+      .hidden-section .card,
+      .hidden-section .drug-card,
+      .hidden-section .result-box,
+      .hidden-section .table-wrap {
+        border-radius: 12px;
+      }
+
+      table {
+        min-width: 760px;
+      }
+    }
+
+    .header-actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 12px 0 4px;
+    }
+    .header-actions .btn-info {
+      width: auto;
+      max-width: 100%;
+    }
+    #modalInfo {
+      display: none;
+      position: fixed;
+      z-index: 10000;
+      inset: 0;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      box-sizing: border-box;
+      background: rgba(15, 23, 42, 0.5);
+      overflow: auto;
+    }
+    #modalInfo .modal-content {
+      background: #fff;
+      border-radius: 14px;
+      width: 100%;
+      max-height: 86vh;
+      overflow: auto;
+      padding: 0;
+    }
+    #modalInfo .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: #f8fafc;
+      border-radius: 14px 14px 0 0;
+    }
+    #modalInfo .modal-header h2 {
+      margin: 0;
+      font-size: 1.15rem;
+      color: #1e293b;
+    }
+    #modalInfo .modal-body {
+      padding: 18px 20px 22px;
+      line-height: 1.55;
+      color: #334155;
+    }
+    #modalInfo .modal-body h3 {
+      margin: 1.1em 0 0.5em;
+      font-size: 1rem;
+      color: #0f172a;
+    }
+    #modalInfo .modal-body h3:first-child { margin-top: 0; }
+    #modalInfo .modal-body ul, #modalInfo .modal-body ol {
+      margin: 0.4em 0 0.8em 1.2em;
+      padding: 0;
+    }
+    #modalInfo .modal-body li { margin-bottom: 0.35em; }
+    #modalInfo .close {
+      cursor: pointer;
+      font-size: 1.5rem;
+      line-height: 1;
+      color: #64748b;
+      border: none;
+      background: none;
+      padding: 4px 8px;
+    }
+    #modalInfo .close:hover { color: #0f172a; }
+  </style>
+  <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">
+        <div class="title">
+          <h1>NeoPedCalc — Emergência Pediátrica</h1>
+          <p>Ferramenta <strong>educativa e informativa</strong> baseada no card de urgência/emergência e no material Emergências Pediátricas 2026 (drogas, infusões, sinais vitais, Glasgow, equipamentos, toxíndromes). <strong>Não prescreve</strong> — confirme sempre dose, via e cenário clínico.</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button type="button" class="btn btn-soft" onclick="carregarExemplo()">Carregar exemplo</button>
+        <button type="button" class="btn btn-soft" onclick="limparTudo()">Limpar</button>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="btn-info" onclick="abrirModalComoUsar()">Como usar</button>
+    </div>
+
+    <div class="card modal-like">
+      <h2 class="section-title">Dados base do paciente</h2>
+      <div class="grid grid-4">
+        <div class="field">
+          <label>Paciente</label>
+          <input id="paciente" placeholder="Ex.: Leito 4 / RN / Criança" />
+        </div>
+        <div class="field">
+          <label>Peso (kg)</label>
+          <input id="peso" type="number" step="0.01" min="0.3" max="200" placeholder="Ex.: 12" />
+        </div>
+        <div class="field">
+          <label>Faixa etária do resumo</label>
+          <select id="faixaEtaria">
+            <option value="neonato">Neonato 96h</option>
+            <option value="lactente">Lactente</option>
+            <option value="criancaPequena">Criança pequena</option>
+            <option value="preEscolar">Pré-escolar</option>
+            <option value="escolar">Escolar</option>
+            <option value="preAdolescente">Pré-adolescente</option>
+            <option value="adolescente">Adolescente</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Idade em anos, se necessária</label>
+          <input id="idadeAnos" type="number" step="0.01" min="0" max="18" placeholder="Ex.: 2.5" />
+        </div>
+      </div>
+
+      <div class="grid grid-3" style="margin-top:12px;">
+        <div class="field section-highlight">
+          <label>Seção do app</label>
+          <select id="sectionSelect">
+            <option value="calc">Calculadora</option>
+            <option value="emergencia">Drogas da emergência</option>
+            <option value="infusao">Infusão contínua</option>
+            <option value="sinais">Sinais vitais e Glasgow</option>
+            <option value="equipamentos">Equipamentos</option>
+            <option value="tox">Toxíndromes e antídotos</option>
+          </select>
+        </div>
+        <div class="field">
+          <label id="drugSelectLabel">Droga para cálculo rápido</label>
+          <select id="drugSelect"></select>
+        </div>
+      </div>
+    </div>
+
+    <div id="panel-calc" class="hidden-section active">
+      <div class="card">
+        <h2 class="section-title">Cálculo rápido da droga selecionada</h2>
+        <div id="selectedDrugResult" class="result-box">Selecione uma droga e informe o peso.</div>
+        <div class="row" style="margin-top:12px;">
+          <button type="button" class="btn btn-ok" onclick="copiarResultadoRapido()">Copiar trecho (revisar)</button>
+          <button type="button" class="btn btn-soft" onclick="exportarTextoInformativo()">Baixar texto .txt informativo</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">Resumo clínico rápido</h2>
+        <div class="grid grid-3">
+          <div class="drug-card">
+            <div class="drug-name">Pressão arterial normal</div>
+            <div class="small" id="paResumo"></div>
+          </div>
+          <div class="drug-card">
+            <div class="drug-name">Frequência cardíaca normal</div>
+            <div class="small" id="fcResumo"></div>
+          </div>
+          <div class="drug-card">
+            <div class="drug-name">Frequência respiratória normal</div>
+            <div class="small" id="frResumo"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="panel-emergencia" class="hidden-section">
+      <div class="card">
+        <h2 class="section-title">Drogas utilizadas na emergência</h2>
+        <div class="small">Conteúdo espelhado do card. Revisar via, máximo, contraindicações e observações antes do uso.</div>
+        <div id="emergencyList" class="grid grid-2" style="margin-top:12px;"></div>
+      </div>
+    </div>
+
+    <div id="panel-infusao" class="hidden-section">
+      <div class="card">
+        <h2 class="section-title">Drogas de infusão contínua</h2>
+        <div id="infusionList" class="grid grid-2"></div>
+      </div>
+    </div>
+
+    <div id="panel-sinais" class="hidden-section">
+      <div class="card">
+        <h2 class="section-title">Pressão arterial normal</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Idade</th>
+                <th>Pressão sistólica (mm Hg)</th>
+                <th>Pressão diastólica (mm Hg)</th>
+                <th>Pressão arterial média (mm Hg)</th>
+              </tr>
+            </thead>
+            <tbody id="paTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">Frequência cardíaca normal e frequência respiratória normal</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Idade</th>
+                <th>Frequência acordado</th>
+                <th>Frequência dormindo</th>
+                <th>Frequência respiratória</th>
+              </tr>
+            </thead>
+            <tbody id="vitalsTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">Escala de Coma de Glasgow Modificada para Lactentes e Crianças</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Criança</th>
+                <th>Lactente</th>
+                <th>Escore</th>
+              </tr>
+            </thead>
+            <tbody id="glasgowTable"></tbody>
+          </table>
+        </div>
+
+        <div class="grid grid-3" style="margin-top:12px;">
+          <div class="field">
+            <label>Abertura ocular</label>
+            <select id="glasgowOcular"></select>
+          </div>
+          <div class="field">
+            <label>Resposta verbal</label>
+            <select id="glasgowVerbal"></select>
+          </div>
+          <div class="field">
+            <label>Resposta motora</label>
+            <select id="glasgowMotora"></select>
+          </div>
+        </div>
+
+        <div id="glasgowResult" class="result-box" style="margin-top:12px;"></div>
+      </div>
+    </div>
+
+    <div id="panel-equipamentos" class="hidden-section">
+      <div class="card">
+        <h2 class="section-title">Equipamentos utilizados na emergência</h2>
+        <div id="equipmentResult" class="result-box"></div>
+        <div class="table-wrap" style="margin-top:12px;">
+          <table>
+            <thead>
+              <tr>
+                <th>Equipamento / faixa</th>
+                <th>Neonato ou lactente jovem 3-5 kg</th>
+                <th>Lactente jovem 6-7 kg</th>
+                <th>Lactente 8-9 kg</th>
+                <th>Criança pequena 10-11 kg</th>
+                <th>Criança pequena 12-14 kg</th>
+                <th>Criança 15-18 kg</th>
+                <th>Criança 19-23 kg</th>
+                <th>Criança grande 24-29 kg</th>
+                <th>Adulto 30-36 kg</th>
+              </tr>
+            </thead>
+            <tbody id="equipmentTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="panel-tox" class="hidden-section">
+      <div class="card">
+        <h2 class="section-title">Síndromes comuns de intoxicações</h2>
+        <div class="small">Use o dropdown superior "Item para cálculo rápido" para escolher a toxíndrome.</div>
+        <div id="toxList" class="grid grid-2" style="margin-top:12px;"></div>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">Tóxicos comuns e antídotos</h2>
+        <div class="result-box ciatox-contact" style="margin-bottom:12px;">
+          <div>CIATox UNICAMP (orientação toxicológica 24h)</div>
+          <a href="tel:+551935215555" style="color:#8fd3ff; font-weight:800; text-decoration:none;">+55 19 3521-5555</a>
+          <div class="ciatox-hint">Clique no número para ligar.</div>
+        </div>
+        <div class="field" style="margin-bottom:12px;">
+          <label>Selecionar tipo de intoxicação</label>
+          <select id="toxSelect"></select>
+        </div>
+        <div id="antidoteList" class="grid grid-2"></div>
+      </div>
+    </div>
+
+    <div class="card modal-like">
+      <h2 class="section-title">Referências da aplicação</h2>
+      <div class="result-box">Esta aplicação foi estruturada a partir do card de urgência e emergência e do material do evento Emergências Pediátricas 2026.</div>
+      <ol class="ref-list small" style="margin-top:12px;">
+        <li>Emergências Pediátricas 2026. Portal oficial: https://emergenciaspediatricas2026.com.br/</li>
+        <li>SBP - Sociedade Brasileira de Pediatria. www.sbp.com.br</li>
+        <li>SPSP - Sociedade de Pediatria de São Paulo. www.spsp.org.br</li>
+        <li>Responsáveis técnicos: Hany Simon Jr, Graziela de Almeida Sukys, Joelma Gonçalves Martin e Sulim Abramovici.</li>
+        <li>Equipamentos adaptados de Broselow Pediatric Emergency Tape.</li>
+      </ol>
+    </div>
+
+    <div class="card modal-like">
+      <h2 class="section-title">Advertência</h2>
+      <div class="result-box">As dosagens dos medicamentos descritas no apêndice foram baseadas na literatura disponível no momento em que foi escrito. Para medicações com início de uso recente na Pediatria, ajustes e/ou modificações nas doses podem ser necessários. Para maior segurança, o prescritor deve sempre decidir a dose após cuidadosa avaliação do paciente.</div>
+    </div>
+
+    <div class="footer">Uso educacional. Não substitui prescrição, bulário institucional nem prontuário oficial.</div>
+  </div>
+
+  <div id="modalInfo" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalComoUsarTitulo" onclick="if(event.target===this)fecharModalComoUsar()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h2 id="modalComoUsarTitulo">Como usar — Emergência Pediátrica</h2>
+        <button type="button" class="close" onclick="fecharModalComoUsar()" aria-label="Fechar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h3>Fluxo geral</h3>
+        <ol>
+          <li>Preencha <strong>paciente</strong>, <strong>peso (kg)</strong>, <strong>faixa etária</strong> do resumo e, quando necessário, <strong>idade em anos</strong>.</li>
+          <li>Em <strong>Seção do app</strong>, escolha o módulo: calculadora rápida, drogas de emergência, infusão contínua, sinais vitais e Glasgow, equipamentos ou toxíndromes/antídotos.</li>
+          <li>No modo calculadora, selecione a <strong>droga</strong> na lista; o resultado atualiza conforme o peso e a faixa.</li>
+          <li><strong>Copiar trecho</strong> cola só o bloco do cálculo rápido, com aviso educativo; <strong>Baixar texto .txt</strong> gera arquivo para revisão — confira antes de arquivar em qualquer sistema.</li>
+          <li><strong>Carregar exemplo</strong> e <strong>Limpar</strong> ajudam a testar ou reiniciar o formulário.</li>
+        </ol>
+        <h3>Módulos</h3>
+        <ul>
+          <li><strong>Drogas da emergência / infusão:</strong> fichas com dose, máximo e notas do card de referência.</li>
+          <li><strong>Sinais vitais e Glasgow:</strong> tabelas e seletores para escore.</li>
+          <li><strong>Equipamentos:</strong> referência por faixa de peso (inspirado em fita tipo Broselow).</li>
+          <li><strong>Toxíndromes:</strong> resumo e antídotos; há contato da CIATox na própria tela.</li>
+        </ul>
+        <h3>Advertência</h3>
+        <p>As doses seguem o material de referência do evento/card; o profissional deve sempre confirmar dose, via, interações e contraindicações no paciente real. Arquivos exportados ou copiados <strong>não são documento oficial</strong> de prescrição.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function abrirModalComoUsar() {
+      document.getElementById('modalInfo').style.display = 'flex';
+    }
+    function fecharModalComoUsar() {
+      document.getElementById('modalInfo').style.display = 'none';
+    }
+
+    const emergencyDrugs = [
+      {name:'Adenosina', presentation:'Adenocard® · 3mg/ml', dose:'0,1mg/kg e depois 0,2 mg/kg s/n', max:'Max: 12mg', notes:'Infundir bolo rápido de 3 a 5ml de SF após a droga', calc:(w)=>`1ª dose: ${(0.1*w).toFixed(2)} mg (${((0.1*w)/3).toFixed(2)} ml)\n2ª dose: ${(0.2*w).toFixed(2)} mg (${((0.2*w)/3).toFixed(2)} ml)`},
+      {name:'Amiodarona', presentation:'Atlansil® · 50mg/ml', dose:'5 mg/kg', max:'Máx: 300mg', notes:'Diluir em SG5%, na concentração máx 2mg/ml', calc:(w)=>`${(5*w).toFixed(2)} mg (${((5*w)/50).toFixed(2)} ml)`},
+      {name:'Amlodipina (uso oral)', presentation:'Norvasc® · Comp 5mg e 10mg', dose:'0,1 a 0,3mg/kg · 6-17 anos: 2,5 a 5 mg/dia', max:'—', notes:'Efeitos colaterais relacionados a dosagem', calc:(w,a)=>{ const base = `${(0.1*w).toFixed(2)} a ${(0.3*w).toFixed(2)} mg`; return (a!==null && a>=6 && a<=17) ? `${base}\nFaixa 6-17 anos: 2,5 a 5 mg/dia` : base; }},
+      {name:'Atenolol (uso oral)', presentation:'Atenol® · Comp 25mg, 50mg e 100mg', dose:'1 a 2mg/kg', max:'Máx: 200mg/dia', notes:'Contraindicado em edema pulmonar e choque cardiogênico', calc:(w)=>`${(1*w).toFixed(2)} a ${(2*w).toFixed(2)} mg`},
+      {name:'Atropina', presentation:'Pasmodex® · 0,25mg/ml', dose:'0,02 mg/kg', max:'Máx criança: 0,5mg · Máx adolescente: 1,0 mg', notes:'Pode ser feito IO', calc:(w)=>`${(0.02*w).toFixed(3)} mg (${((0.02*w)/0.25).toFixed(2)} ml)`},
+      {name:'Bicarbonato de sódio', presentation:'Bicarbonato sódio 8,4% · 1mEq/ml', dose:'1 mEq/kg', max:'Veloc máx: 1mEq/kg/h', notes:'RN usar 4,2% · Lactente e crianças 8,4%', calc:(w)=>`${(1*w).toFixed(2)} mEq ≈ ${(1*w).toFixed(2)} ml`},
+      {name:'Brometo de ipratrópio (uso inalatório)', presentation:'Atrovent® · Sol. nebulização 250mcg/ml', dose:'Nebulização 250 a 500 mcg a cada 20 minutos, 3 vezes', max:'—', notes:'Deve ser usado como medicação de resgate e não de manutenção', calc:()=>`Dose por nebulização: 250 a 500 mcg (1 a 2 ml)`},
+      {name:'Carvão ativado (uso oral)', presentation:'De manipulação', dose:'1,0 g/kg/dose VO ou SNG', max:'Máx: 100g/dose', notes:'Diluição 1:10 · Em doses repetidas associar laxativo', calc:(w)=>`${(1*w).toFixed(2)} g por dose`},
+      {name:'Cetoprofeno', presentation:'Profenid® · 50mg/ml', dose:'1 mg/kg/dose EV ou VO', max:'Máx: 300mg/dia', notes:'Hemorragia digestiva · Nefrotoxicidade', calc:(w)=>`${(1*w).toFixed(2)} mg (${((1*w)/50).toFixed(2)} ml se solução 50mg/ml)`},
+      {name:'Cetorolaco', presentation:'Toradol®', dose:'0,2 a 1 mg/kg', max:'Máx: 120mg/dia', notes:'Hemorragia digestiva · Nefrotoxicidade', calc:(w)=>`${(0.2*w).toFixed(2)} a ${(1*w).toFixed(2)} mg`},
+      {name:'Choque - Cardioversão', presentation:'Cardioversão', dose:'0,5 a 2 J/kg', max:'—', notes:'Iniciar 0,5 a 1J/kg', calc:(w)=>`${(0.5*w).toFixed(1)} a ${(2*w).toFixed(1)} J`},
+      {name:'Choque - Desfibrilação', presentation:'Desfibrilação', dose:'2 a 10J/kg (subir de 2 em 2 J/kg)', max:'—', notes:'Primeira: 2J/kg e seguintes: acrescentar 2 J/kg', calc:(w)=>`Primeira: ${(2*w).toFixed(1)} J\nAté ${(10*w).toFixed(1)} J`},
+      {name:'Clonidina', presentation:'Atensina® · 150mcg/ml', dose:'2 a 5 mcg/kg/dose', max:'—', notes:'Observar hipotensão e bradicardia', calc:(w)=>`${(2*w).toFixed(1)} a ${(5*w).toFixed(1)} mcg (${((2*w)/150).toFixed(2)} a ${((5*w)/150).toFixed(2)} ml)`},
+      {name:'Cloreto de cálcio', presentation:'Cloreto cálcio 10% · 100mg/ml', dose:'20 mg/kg', max:'Máx: 1g', notes:'Não usar IM ou SC · Extravasamento pode causar necrose', calc:(w)=>`${(20*w).toFixed(0)} mg (${((20*w)/100).toFixed(2)} ml)`},
+      {name:'Codeína (uso oral)', presentation:'Codein® · Solução oral 3mg/ml · Comp 30 e 60mg', dose:'0,5-1,0 mg/kg/dose', max:'Máximo: 60mg', notes:'Hipotensão e depressão respiratória', calc:(w)=>`${(0.5*w).toFixed(2)} a ${(1*w).toFixed(2)} mg por dose`},
+      {name:'Dexametasona', presentation:'Decadron® · 4mg/2,5ml · 2mg/ml', dose:'Laringite aguda · 0,6mg/kg/dia IM ou EV', max:'Max: 16mg', notes:'Pode ser usado na mesma dose por via oral', calc:(w)=>`${(0.6*w).toFixed(2)} mg (${((0.6*w)/2).toFixed(2)} ml)`},
+      {name:'Dexmedetomidina', presentation:'Precedex® · 100mcg/ml', dose:'0,2 a 1mcg/kg em 10 min · IN: 1-3 mcg/kg', max:'—', notes:'Pode ser usado por via intranasal', calc:(w)=>`EV: ${(0.2*w).toFixed(1)} a ${(1*w).toFixed(1)} mcg (${((0.2*w)/100).toFixed(2)} a ${((1*w)/100).toFixed(2)} ml)\nIN: ${(1*w).toFixed(1)} a ${(3*w).toFixed(1)} mcg`},
+      {name:'Diazepam', presentation:'Dienpax® · 5mg/ml', dose:'0,2 a 0,5 mg/kg', max:'Máx: 0,6mg/kg', notes:'Pode ser EV, IO ou VR · Pode causar hipotensão e depressão respiratória', calc:(w)=>`${(0.2*w).toFixed(2)} a ${(0.5*w).toFixed(2)} mg (${((0.2*w)/5).toFixed(2)} a ${((0.5*w)/5).toFixed(2)} ml)`},
+      {name:'Difenidramina', presentation:'Benadryl® · 50mg/ml', dose:'1 a 2 mg/kg', max:'Máx: 50mg/dose', notes:'Contraindicado uso em crise asmática aguda · Pode causar excitação paradoxal', calc:(w)=>`${(1*w).toFixed(2)} a ${(2*w).toFixed(2)} mg (${((1*w)/50).toFixed(2)} a ${((2*w)/50).toFixed(2)} ml)`},
+      {name:'Dipirona', presentation:'Novalgina®', dose:'10 a 25mg/kg/dose', max:'Máx: 1g/dose', notes:'Pode ser feita a mesma dose por via oral ou intramuscular', calc:(w)=>`${(10*w).toFixed(0)} a ${(25*w).toFixed(0)} mg`},
+      {name:'Enalapril', presentation:'Renitec®', dose:'Em bolus 5 a 10 mcg/kg/dose · Dose oral 0,1 a 0,5mg/kg/dia', max:'Máx (HA): 5 mg/dia · Máx (ICC): 40mg/dia', notes:'—', calc:(w)=>`Bolus: ${(5*w).toFixed(0)} a ${(10*w).toFixed(0)} mcg\nVO/dia: ${(0.1*w).toFixed(2)} a ${(0.5*w).toFixed(2)} mg`},
+      {name:'Epinefrina', presentation:'Adrenalina® · 1:1000 – 1mg/ml', dose:'EV/IO 0,01mg/kg (0,1ml/kg 1:10.000) · Endotraqueal 0,1mg/kg · Anafilaxia IM 0,01mg/kg', max:'Máx EV/IO: 1mg · Máx ET: 2,5mg · Máx IM: 0,5mg', notes:'Laringite: inalatório 3 a 5 ampolas (1:1000)', calc:(w)=>`EV/IO: ${(0.01*w).toFixed(3)} mg = ${(0.1*w).toFixed(2)} ml da 1:10.000\nET: ${(0.1*w).toFixed(2)} mg = ${(0.1*w).toFixed(2)} ml da 1:1000\nIM anafilaxia: ${(0.01*w).toFixed(3)} mg = ${(0.01*w).toFixed(2)} ml da 1:1000`},
+      {name:'Etomidato', presentation:'Hypnomidate® · 2mg/ml', dose:'0,2 a 0,4mg/kg', max:'—', notes:'Indicado na IOT em politrauma · Não utilizar em choque séptico', calc:(w)=>`${(0.2*w).toFixed(2)} a ${(0.4*w).toFixed(2)} mg (${((0.2*w)/2).toFixed(2)} a ${((0.4*w)/2).toFixed(2)} ml)`},
+      {name:'Fenitoína', presentation:'Hidantal® · 50mg/ml', dose:'15 a 30mg/kg', max:'Max: 1500mg · Vel máx: 1mg/kg/min', notes:'Não diluir em glicose · Utilizar 25 a 50ml de SF para 100mg de fenitoína', calc:(w)=>`${(15*w).toFixed(0)} a ${(30*w).toFixed(0)} mg (${((15*w)/50).toFixed(2)} a ${((30*w)/50).toFixed(2)} ml)`},
+      {name:'Fenobarbital sódico', presentation:'Fenocris® · 100mg/ml', dose:'15 a 20 mg/kg', max:'Máx: 800mg', notes:'Evitar administração > 30mg/min em criança', calc:(w)=>`${(15*w).toFixed(0)} a ${(20*w).toFixed(0)} mg (${((15*w)/100).toFixed(2)} a ${((20*w)/100).toFixed(2)} ml)`},
+      {name:'Fentanila', presentation:'Fentanil® · 50 mcg/ml', dose:'1 a 4 mcg/kg', max:'Máx: 100mcg', notes:'Risco rigidez torácica: infundir lentamente, iniciar com dose intermediária', calc:(w)=>`${(1*w).toFixed(1)} a ${(4*w).toFixed(1)} mcg (${((1*w)/50).toFixed(2)} a ${((4*w)/50).toFixed(2)} ml)`},
+      {name:'Flumazenil', presentation:'Lanexat® · 0,1mg/ml', dose:'0,01 a 0,05 mg/kg', max:'Máx: 0,2mg dose', notes:'Não reverte efeito de narcóticos · Pode precipitar convulsões', calc:(w)=>`${(0.01*w).toFixed(3)} a ${(0.05*w).toFixed(3)} mg (${((0.01*w)/0.1).toFixed(2)} a ${((0.05*w)/0.1).toFixed(2)} ml)`},
+      {name:'Furosemida', presentation:'Lasix® · 10mg/ml', dose:'0,5 a 6mg/kg/dose', max:'—', notes:'Pode causar hipocalemia e alcalose metabólica', calc:(w)=>`${(0.5*w).toFixed(2)} a ${(6*w).toFixed(2)} mg (${((0.5*w)/10).toFixed(2)} a ${((6*w)/10).toFixed(2)} ml)`},
+      {name:'Glicose', presentation:'10%: 1ml: 0,10 g · 25%: 1 ml: 0,25 g', dose:'0,5 a 1,0 g/kg', max:'—', notes:'10%: 5 a 10ml/kg · 25%: 2 a 4 ml/kg', calc:(w)=>`10%: ${(5*w).toFixed(1)} a ${(10*w).toFixed(1)} ml\n25%: ${(2*w).toFixed(1)} a ${(4*w).toFixed(1)} ml`},
+      {name:'Gluconato de cálcio', presentation:'Gluconato cálcio 10% · 100mg/ml', dose:'60 a 100 mg/kg', max:'Vel máx: 100mg/min', notes:'Não administrar IM ou SC · Evitar veias periféricas e escalpes', calc:(w)=>`${(60*w).toFixed(0)} a ${(100*w).toFixed(0)} mg (${((60*w)/100).toFixed(2)} a ${((100*w)/100).toFixed(2)} ml)`},
+      {name:'Haloperidol (intramuscular)', presentation:'Haldol® · 5mg/ml', dose:'6 a 12 anos: 1 a 3mg/dose · >12 anos: 5mg/dose', max:'Máx: 0,15mg/kg/dia', notes:'Pode ser repetido a cada 4 a 8 horas · Não usar por via endovenosa', calc:(w,a)=>{ if(a===null) return 'Informe a idade para definir a faixa correta'; if(a<6) return 'O card não traz dose para menores de 6 anos'; return a<=12 ? 'Dose usual: 1 a 3mg/dose' : 'Dose usual: 5mg/dose'; }},
+      {name:'Hidralazina', presentation:'Apresolina® · 20 mg/ml', dose:'0,2 a 1,0mg/kg/dia · Em 2 a 4 doses/dia', max:'Máx: 25mg/dose', notes:'Taquicardia reflexa · Uso com cuidado em pacientes com doença renal ou cardíaca grave', calc:(w)=>`Total diário: ${(0.2*w).toFixed(2)} a ${(1*w).toFixed(2)} mg/dia`},
+      {name:'Hidrato de cloral (uso oral ou retal)', presentation:'Xarope a 10% · 500mg/5ml', dose:'25 a 100 mg/kg', max:'Máx: 2g/dose', notes:'Depressão de SNC · Contraindicado em pacientes com doença renal ou hepática', calc:(w)=>`${(25*w).toFixed(0)} a ${(100*w).toFixed(0)} mg`},
+      {name:'Hidrocortisona', presentation:'Solu-Cortef® · 500mg/4ml', dose:'4 a 10 mg/kg', max:'Máx: 500mg/dose (ataque) · Máx: 300 mg outras doses - 6/6 hs', notes:'Crise adrenal · Ataque: 50 mg/m2', calc:(w)=>`${(4*w).toFixed(0)} a ${(10*w).toFixed(0)} mg`},
+      {name:'Ketamina', presentation:'Ketamin S® · 50mg/ml', dose:'0,5 a 2 mg/kg (EV/IO) · 2-4 mg/kg IM', max:'Max: 4mg/kg ou 50mg', notes:'Associar atropina e midazolam · Vel máx: 0,5mg/kg/min · Conc máx: 2mg/ml', calc:(w)=>`EV/IO: ${(0.5*w).toFixed(2)} a ${(2*w).toFixed(2)} mg (${((0.5*w)/50).toFixed(2)} a ${((2*w)/50).toFixed(2)} ml)\nIM: ${(2*w).toFixed(2)} a ${(4*w).toFixed(2)} mg`},
+      {name:'Lidocaína', presentation:'Xylestesin® 2% (sem vasoconstritor) · 20mg/ml', dose:'1 a 2 mg/kg', max:'Máx: 100mg', notes:'Indicação: IOT em pacientes com risco de aumento PIC', calc:(w)=>`${(1*w).toFixed(2)} a ${(2*w).toFixed(2)} mg (${((1*w)/20).toFixed(2)} a ${((2*w)/20).toFixed(2)} ml)`},
+      {name:'Manitol', presentation:'20% · 0,2g/ml · Solução injetável', dose:'0,5 a 1,0 g/kg', max:'Infusão lenta: 20 a 30min', notes:'Contraindicado em desidratação e doença renal grave', calc:(w)=>`${(0.5*w).toFixed(2)} a ${(1*w).toFixed(2)} g (${((0.5*w)/0.2).toFixed(2)} a ${((1*w)/0.2).toFixed(2)} ml)`},
+      {name:'Metilprednisolona', presentation:'Solumedrol® · 125mg/2ml', dose:'0,5 a 1 mg/kg', max:'Máx: 125 mg/dose', notes:'Asma · Dose ataque: 2 mg/kg', calc:(w)=>`Usual: ${(0.5*w).toFixed(2)} a ${(1*w).toFixed(2)} mg\nAtaque asma: ${(2*w).toFixed(2)} mg`},
+      {name:'Midazolam', presentation:'Dormonid® · 5mg/ml', dose:'0,1 a 0,4 mg/kg · IN: 0,3-0,5 mg/kg/dose', max:'Max: <5 anos: 5mg · >5 anos: 10 mg', notes:'Também IM ou intranasal · Contraindicado em choque e glaucoma. Antídoto: Flumazenil', calc:(w,a)=>`IV: ${(0.1*w).toFixed(2)} a ${(0.4*w).toFixed(2)} mg (${((0.1*w)/5).toFixed(2)} a ${((0.4*w)/5).toFixed(2)} ml)\nIN: ${(0.3*w).toFixed(2)} a ${(0.5*w).toFixed(2)} mg\nMáximo etário: ${a!==null && a<5 ? '5mg' : '>5 anos: 10 mg'}`},
+      {name:'Morfina', presentation:'Dimorf® · 1mg/ml', dose:'0,1 a 0,2 mg/kg', max:'Máx: 15mg/dose', notes:'Depressão respiratória e SNC · Secreção histamina. Antídoto: Naloxone', calc:(w)=>`${(0.1*w).toFixed(2)} a ${(0.2*w).toFixed(2)} mg (${(0.1*w).toFixed(2)} a ${(0.2*w).toFixed(2)} ml)`},
+      {name:'Morfina (uso oral)', presentation:'Dimorf® · Comp 10mg e 30mg', dose:'3 a 6 meses: 0,1mg/kg/dose · > 6 meses: 0,2 – 0,5mg/kg/dose', max:'Max: 15-20mg', notes:'Intervalo de doses 3/3 ou 4/4 horas', calc:(w,a)=>{ if(a===null) return 'Informe a idade para aplicar fielmente o card'; if(a<0.25) return 'O card não especifica dose para menores de 3 meses'; return a<=0.5 ? `${(0.1*w).toFixed(2)} mg por dose` : `${(0.2*w).toFixed(2)} a ${(0.5*w).toFixed(2)} mg por dose`; }},
+      {name:'Naloxona', presentation:'Narcan® · 0,4mg/ml', dose:'0,01 mg/kg/dose cd 3 min · Antídoto: 0,1 mg/kg/dose cd 5 min', max:'Max: 0,2mg · Antídoto max: 2 mg', notes:'Pode ser usado EV, SC, IM, ET', calc:(w)=>`Dose usual: ${(0.01*w).toFixed(3)} mg (${((0.01*w)/0.4).toFixed(2)} ml)\nAntídoto: ${(0.1*w).toFixed(3)} mg (${((0.1*w)/0.4).toFixed(2)} ml)`},
+      {name:'Oxicodona (uso oral)', presentation:'Oxycontin® · 10, 20 e 40mg Comp', dose:'0,05 a 0,15 mg/kg', max:'—', notes:'Devem ser deglutidos inteiros · Não podem ser fracionados ou triturados', calc:(w)=>`${(0.05*w).toFixed(2)} a ${(0.15*w).toFixed(2)} mg`},
+      {name:'Propofol', presentation:'Diprivan® · 10mg/ml', dose:'1 a 3 mg/kg · Pode repetir 0,5 mg/kg a cada 3-5 min', max:'—', notes:'Insolúvel em água · Não usar com hipotensão ou choque · Cuidado com síndrome da infusão do propofol', calc:(w)=>`Ataque: ${(1*w).toFixed(2)} a ${(3*w).toFixed(2)} mg (${((1*w)/10).toFixed(2)} a ${((3*w)/10).toFixed(2)} ml)\nRepetição: ${(0.5*w).toFixed(2)} mg`},
+      {name:'Propranolol (uso oral)', presentation:'Inderal® · Comp 10mg, 40mg e 80mg', dose:'1 a 3 mg/kg/dose', max:'Máx: 60mg/dia', notes:'Contraindicado em asma, ICC e bloqueio cardíaco', calc:(w)=>`${(1*w).toFixed(2)} a ${(3*w).toFixed(2)} mg`},
+      {name:'Rocurônio', presentation:'Esmeron® · 10mg/ml', dose:'0,6 a 1,2 mg/kg', max:'—', notes:'Associar sedação · Pode causar hipotensão ou hipertensão, arritmia e broncoespasmo', calc:(w)=>`${(0.6*w).toFixed(2)} a ${(1.2*w).toFixed(2)} mg (${((0.6*w)/10).toFixed(2)} a ${((1.2*w)/10).toFixed(2)} ml)`},
+      {name:'Salbutamol (uso inalatório)', presentation:'Aerolin® · Spray: 100mcg · Sol. nebulização: 5mg/ml · Nebules: 2,5mg/flaconete', dose:'Nebulização 0,15 mg/kg (mínimo: 2,5mg) a cada 20 minutos, 3 vezes · Aerossol 4 a 10 borrifadas (mínimo de 4)', max:'—', notes:'A cada 20 minutos, 3 vezes', calc:(w)=>`Nebulização: ${Math.max(0.15*w,2.5).toFixed(2)} mg\nAerossol: 4 a 10 borrifadas`},
+      {name:'Succinilcolina', presentation:'Succinil-Colin® · 100mg', dose:'1 a 2 mg/kg EV/IO. IM: 2 a 4 mg/kg', max:'Máx: 150mg/dose', notes:'Realizar pré tratamento com atropina · Aumento PIC · Não utilizar em politrauma, queimadura e distrofia muscular', calc:(w)=>`EV/IO: ${(1*w).toFixed(2)} a ${(2*w).toFixed(2)} mg\nIM: ${(2*w).toFixed(2)} a ${(4*w).toFixed(2)} mg`},
+      {name:'Sugamadex', presentation:'Bridion® · 100mg/ml', dose:'< 5 Kg: 2-4 mg/kg · >5 kg: 4 mg/kg', max:'—', notes:'Reversor do Rocurônio', calc:(w)=> w < 5 ? `${(2*w).toFixed(2)} a ${(4*w).toFixed(2)} mg (${((2*w)/100).toFixed(2)} a ${((4*w)/100).toFixed(2)} ml)` : `${(4*w).toFixed(2)} mg (${((4*w)/100).toFixed(2)} ml)`},
+      {name:'Sulfato de magnésio', presentation:'Sulfato Magnésio 50% · 500 mg/ml', dose:'25 a 100 mg/kg', max:'Máx: 2g/dose', notes:'Risco bloqueio cardíaco completo, hipotensão e depressão respiratória · Antídoto: gluconato cálcio', calc:(w)=>`${(25*w).toFixed(0)} a ${(100*w).toFixed(0)} mg (${((25*w)/500).toFixed(2)} a ${((100*w)/500).toFixed(2)} ml)`},
+      {name:'Terbutalina', presentation:'Terbutil® · 0,5mg/ml', dose:'10 mcg/kg', max:'Máx: 500mcg', notes:'Infusão: 10 min · Pode causar agitação, arritmias e palpitação', calc:(w)=>`${(10*w).toFixed(0)} mcg (${((10*w)/500).toFixed(2)} ml)`},
+      {name:'Tiopental', presentation:'Thiopentax® · 1,0g pó para diluição', dose:'3 a 5 mg/kg', max:'—', notes:'Instabilidade hemodinâmica e respiratória', calc:(w)=>`${(3*w).toFixed(0)} a ${(5*w).toFixed(0)} mg`},
+      {name:'Tramadol', presentation:'Tramal® · 50mg/ml', dose:'1 a 2 mg/kg', max:'Máx:100 mg', notes:'Boa tolerância hemodinâmica e respiratória', calc:(w)=>`${(1*w).toFixed(2)} a ${(2*w).toFixed(2)} mg (${((1*w)/50).toFixed(2)} a ${((2*w)/50).toFixed(2)} ml)`}
+    ];
+
+    const infusionDrugs = [
+      {name:'Amiodarona infusão', presentation:'Atlansil® · 50mg/ml', dose:'Ataque: 5mg/kg · Manutenção: 5 a 10mcg/kg/min', max:'—', notes:'Diluir em SG5%, na concentração máx 2mg/ml · Meia vida longa: 40 a 55 dias', calc:(w)=>`Ataque: ${(5*w).toFixed(2)} mg\nManutenção: ${(5*w).toFixed(1)} a ${(10*w).toFixed(1)} mcg/kg/min`},
+      {name:'Amrinona', presentation:'Inocor® · 5mg/ml', dose:'Ataque: 0,75 a 1mg/kg · Manutenção 5 a 10mcg/kg/min', max:'—', notes:'Inodilatador · Pode ser feito IO · Não diluir em solução glicosada', calc:(w)=>`Ataque: ${(0.75*w).toFixed(2)} a ${(1*w).toFixed(2)} mg\nManutenção: ${(5*w).toFixed(1)} a ${(10*w).toFixed(1)} mcg/min`},
+      {name:'Clonidina infusão', presentation:'Atensina® · 150mcg/ml', dose:'0,1 a 3 microgramas/kg/h', max:'—', notes:'Observar hipotensão e bradicardia', calc:(w)=>`${(0.1*w).toFixed(1)} a ${(3*w).toFixed(1)} mcg/h`},
+      {name:'Dexmedetomidina infusão', presentation:'Precedex® · 100mcg/ml', dose:'0,2 a 1,0 microgramas/kg/h', max:'—', notes:'Náuseas e vômitos · Depressão respiratória e hipotensão', calc:(w)=>`${(0.2*w).toFixed(1)} a ${(1*w).toFixed(1)} mcg/h`},
+      {name:'Dobutamina', presentation:'Dobutrex® · 12,5mg/ml', dose:'2 a 20 mcg/kg/min', max:'—', notes:'Inotrópico; vasodilatador · Evitar usar em pacientes hipotensos · Pode ser feito IO', calc:(w)=>`${(2*w).toFixed(1)} a ${(20*w).toFixed(1)} mcg/min`},
+      {name:'Dopamina', presentation:'Revivan® · 5mg/ml', dose:'5 a 10 mcg/kg/min', max:'—', notes:'Inotrópico; vasodilatador renal e esplâncnico em doses baixas e em doses altas vasopressor · Pode ser feito IO', calc:(w)=>`${(5*w).toFixed(1)} a ${(10*w).toFixed(1)} mcg/min`},
+      {name:'Epinefrina infusão', presentation:'Adrenalina® · 1mg/ml', dose:'0,1 a 0,3 mcg/kg/min', max:'—', notes:'Inotrópico; vasodilatador em baixas doses e em doses altas cronotrópico e vasopressor · Pode ser feito IO', calc:(w)=>`${(0.1*w).toFixed(2)} a ${(0.3*w).toFixed(2)} mcg/min`},
+      {name:'Fentanila infusão', presentation:'Fentanyl® · 50mcg/ml', dose:'Ataque: 2 a 7mcg/kg · Manutenção: 1 a 10mcg/kg/hora', max:'—', notes:'Pode causar rigidez torácica. Se isso ocorrer usar bloqueador neuromuscular', calc:(w)=>`Ataque: ${(2*w).toFixed(1)} a ${(7*w).toFixed(1)} mcg\nManutenção: ${(1*w).toFixed(1)} a ${(10*w).toFixed(1)} mcg/h`},
+      {name:'Fenoldopan', presentation:'Corlopam® · 10mg/ml', dose:'0,1 a 0,8mcg/kg/min', max:'—', notes:'Vasodilatador renal · Aumenta PIC e pressão intraocular', calc:(w)=>`${(0.1*w).toFixed(2)} a ${(0.8*w).toFixed(2)} mcg/min`},
+      {name:'Ketamina infusão', presentation:'Ketamin S® · 50mg/ml', dose:'Ataque: 1 a 4mg/kg · Manutenção: 5 a 30 mcg/kg/min', max:'—', notes:'Associar midazolam', calc:(w)=>`Ataque: ${(1*w).toFixed(2)} a ${(4*w).toFixed(2)} mg\nManutenção: ${(5*w).toFixed(1)} a ${(30*w).toFixed(1)} mcg/min`},
+      {name:'Labetalol', presentation:'Trandate® · 5mg/ml', dose:'Ataque: 0,2 a 1mg/kg · Manutenção: 0,25 a 3mg/kg/hora', max:'—', notes:'Contraindicado em asma, DPOC, choque cardiogênico', calc:(w)=>`Ataque: ${(0.2*w).toFixed(2)} a ${(1*w).toFixed(2)} mg\nManutenção: ${(0.25*w).toFixed(2)} a ${(3*w).toFixed(2)} mg/h`},
+      {name:'Levosimendan', presentation:'Simdax® · 2,5mg/ml', dose:'Ataque: 6 a 12mcg/kg em 10 min · Manutenção: 0,05 a 0,2mcg/kg/min', max:'—', notes:'Inodilatador · Contraindicado na insuficiência renal', calc:(w)=>`Ataque: ${(6*w).toFixed(1)} a ${(12*w).toFixed(1)} mcg\nManutenção: ${(0.05*w).toFixed(2)} a ${(0.2*w).toFixed(2)} mcg/min`},
+      {name:'Lidocaína infusão', presentation:'Xylocaína 2%® · 20mg/ml', dose:'Ataque: 1mg/kg/dose · Manutenção: 20 a 50mcg/kg/min', max:'—', notes:'Efeitos colaterais incluem hipotensão, assistolia, convulsões e parada respiratória', calc:(w)=>`Ataque: ${(1*w).toFixed(2)} mg\nManutenção: ${(20*w).toFixed(0)} a ${(50*w).toFixed(0)} mcg/min`},
+      {name:'Midazolam infusão', presentation:'Dormonid® · 5mg/ml', dose:'Ataque: 0,2 a 0,4mg/kg · Sedação: 0,1 a 0,6 mg/kg/hora · Mal convulsivo 1 a 18 mcg/Kg/min', max:'—', notes:'—', calc:(w)=>`Ataque: ${(0.2*w).toFixed(2)} a ${(0.4*w).toFixed(2)} mg\nSedação: ${(0.1*w).toFixed(2)} a ${(0.6*w).toFixed(2)} mg/h\nMal convulsivo: ${(1*w).toFixed(1)} a ${(18*w).toFixed(1)} mcg/min`},
+      {name:'Milrinona', presentation:'Primacor® · 1mg/ml', dose:'Ataque: 50 a 75mcg/kg em até 1 hora · Manutenção: 0,25 a 0,75mcg/kg/min', max:'—', notes:'Inodilatador', calc:(w)=>`Ataque: ${(50*w).toFixed(0)} a ${(75*w).toFixed(0)} mcg\nManutenção: ${(0.25*w).toFixed(2)} a ${(0.75*w).toFixed(2)} mcg/min`},
+      {name:'Morfina infusão', presentation:'Dimorf® · 1mg/ml', dose:'Ataque: 0,1 a 0,2mg/kg · Manutenção: 10-60 mcg/kg/hora', max:'—', notes:'Depressão respiratória e SNC · Secreção histamina. Antídoto: Naloxone', calc:(w)=>`Ataque: ${(0.1*w).toFixed(2)} a ${(0.2*w).toFixed(2)} mg\nManutenção: ${(10*w).toFixed(0)} a ${(60*w).toFixed(0)} mcg/h`},
+      {name:'Nicardipina', presentation:'Cardene® · 5mg/ml', dose:'0,5 a 3mcg/kg/min', max:'—', notes:'Bloqueador de canal de cálcio · Diminui fluxo cerebral e coronariano', calc:(w)=>`${(0.5*w).toFixed(1)} a ${(3*w).toFixed(1)} mcg/min`},
+      {name:'Nitroglicerina', presentation:'Tridil® · 5mg/ml', dose:'0,3 a 1mcg/kg/min · Até 5mcg/kg/min', max:'—', notes:'Pode causar hipotensão', calc:(w)=>`Usual: ${(0.3*w).toFixed(1)} a ${(1*w).toFixed(1)} mcg/min\nAté ${(5*w).toFixed(1)} mcg/min`},
+      {name:'Nitroprussiato de sódio', presentation:'Nipride® · 25mg/ml', dose:'0,5 a 1 mcg/kg/min · Até 8mcg/kg/min IV/IO', max:'—', notes:'Diluir em solução glicosada · Necessita fotoproteção · Risco de intoxicação em insuficiência renal ou hepática', calc:(w)=>`Usual: ${(0.5*w).toFixed(1)} a ${(1*w).toFixed(1)} mcg/min\nAté ${(8*w).toFixed(1)} mcg/min`},
+      {name:'Norepinefrina', presentation:'Norepine® · 1mg/ml', dose:'0,1 a 2,0 mcg/kg/min', max:'—', notes:'Vasopressora · Não é recomendada a diluição em SF.', calc:(w)=>`${(0.1*w).toFixed(1)} a ${(2*w).toFixed(1)} mcg/min`},
+      {name:'Octeotride', presentation:'Sandostatin® · Ampolas: 0,05mg, 0,1mg, 0,5mg', dose:'Ataque: 1mcg/kg · Máx: 50 mcg/h · Manutenção: 1 a 2mcg/kg/hora', max:'—', notes:'Monitorizar glicemia e PA', calc:(w)=>`Ataque: ${(1*w).toFixed(1)} mcg\nManutenção: ${(1*w).toFixed(1)} a ${(2*w).toFixed(1)} mcg/h`},
+      {name:'Propofol infusão', presentation:'Diprivan® · 10mg/ml', dose:'Ataque 1 a 2mg/kg · Manutenção 25 a 300 mcg/kg/min · 0,6 a 4 mg/kg/hora', max:'—', notes:'Insolúvel em água', calc:(w)=>`Ataque: ${(1*w).toFixed(2)} a ${(2*w).toFixed(2)} mg\nManutenção: ${(25*w).toFixed(0)} a ${(300*w).toFixed(0)} mcg/min\nOu ${(0.6*w).toFixed(2)} a ${(4*w).toFixed(2)} mg/h`},
+      {name:'Rocurônio infusão', presentation:'Esmeron® · 10mg/ml', dose:'Ataque: 0,6 a 1,2mg/kg · Manutenção: 6 a 10 mcg/kg/min', max:'—', notes:'Associar sedação', calc:(w)=>`Ataque: ${(0.6*w).toFixed(2)} a ${(1.2*w).toFixed(2)} mg\nManutenção: ${(6*w).toFixed(1)} a ${(10*w).toFixed(1)} mcg/min`},
+      {name:'Prostaglandina E1', presentation:'Alprostadil® · 500mcg/ml', dose:'0,01 a 0,1mcg/kg/min', max:'—', notes:'Monitorizar apneia, hipotensão e hipoglicemia', calc:(w)=>`${(0.01*w).toFixed(2)} a ${(0.1*w).toFixed(2)} mcg/min`},
+      {name:'Salbutamol infusão', presentation:'Aerolin® · 500mcg/ml', dose:'Ataque: 15mcg/kg (até 500mcg) (Infundir em 10min) · Manutenção: 0,5-15 mcg/kg/min', max:'—', notes:'Monitorizar ritmo cardíaco, potássio sérico e glicemia', calc:(w)=>`Ataque: ${Math.min(15*w,500).toFixed(0)} mcg\nManutenção: ${(0.5*w).toFixed(1)} a ${(15*w).toFixed(1)} mcg/min`},
+      {name:'Somatostatina', presentation:'Stilamin® · 3mg', dose:'Ataque: 1 a 5mcg/kg · Manutenção: 3 a 10 mcg/kg/hora', max:'—', notes:'Monitorização hemodinâmica e de glicemia', calc:(w)=>`Ataque: ${(1*w).toFixed(1)} a ${(5*w).toFixed(1)} mcg\nManutenção: ${(3*w).toFixed(1)} a ${(10*w).toFixed(1)} mcg/h`},
+      {name:'Terbutalina infusão', presentation:'Terbutil® · 0,5mg/ml', dose:'Ataque: 10mcg/kg (Infundir em 10 min) · Manutenção: 0,1 a 10 mcg/kg/min', max:'—', notes:'Monitorizar ritmo cardíaco, potássio sérico e glicemia. A diluição com SF pode aumentar o risco de edema pulmonar.', calc:(w)=>`Ataque: ${(10*w).toFixed(0)} mcg\nManutenção: ${(0.1*w).toFixed(1)} a ${(10*w).toFixed(1)} mcg/min`},
+      {name:'Tiopental infusão', presentation:'Thionembutal® · Frascos: 0,5 e 1,0g', dose:'Ataque 2 a 5mg/kg · Manutenção 10 a 100mcg/kg/min · 1 a 5 mg/kg/h', max:'—', notes:'Monitorização hemodinâmica', calc:(w)=>`Ataque: ${(2*w).toFixed(2)} a ${(5*w).toFixed(2)} mg\nManutenção: ${(10*w).toFixed(0)} a ${(100*w).toFixed(0)} mcg/min\nOu ${(1*w).toFixed(2)} a ${(5*w).toFixed(2)} mg/h`},
+      {name:'Vasopressina', presentation:'Encrise® · 20U/ml', dose:'Ataque: 0,4 a 1U/kg · Manutenção: 0,00002 a 0,002U/kg/min', max:'Dose máx bolus: 40U', notes:'Uso em PCR e hipotensão resistente às catecolaminas', calc:(w)=>`Ataque: ${(0.4*w).toFixed(2)} a ${(1*w).toFixed(2)} U\nManutenção: ${(0.00002*w).toFixed(5)} a ${(0.002*w).toFixed(4)} U/min`}
+    ];
+
+    const bpTableData = [
+      {idade:'Nascimento 12h, < 1000g', sistolica:'39-59', diastolica:'16-36', media:'28-42'},
+      {idade:'Nascimento 12h, 3kg', sistolica:'60-67', diastolica:'31-45', media:'48-57'},
+      {idade:'Neonato 96h', sistolica:'67-84', diastolica:'35-53', media:'45-60'},
+      {idade:'Lactente 1 a 12 meses', sistolica:'72-104', diastolica:'37-56', media:'50-62'},
+      {idade:'Criança pequena 1 a 2 anos', sistolica:'86-106', diastolica:'42-63', media:'49-62'},
+      {idade:'Pré escolar 3 a 5 anos', sistolica:'89-112', diastolica:'46-72', media:'58-69'},
+      {idade:'Escolar 6 a 9 anos', sistolica:'97-115', diastolica:'57-76', media:'66-72'},
+      {idade:'Pré adolescente 10 a 12 anos', sistolica:'102-120', diastolica:'61-80', media:'71-79'},
+      {idade:'Adolescente 12 a 15 anos', sistolica:'110-131', diastolica:'64-83', media:'73-84'}
+    ];
+
+    const vitals = {
+      neonato: {label:'Neonato', fcAwake:'100-205', fcSleep:'90-160', fr:'Não separado no quadro de FR do card'},
+      lactente: {label:'Lactente', fcAwake:'100-180', fcSleep:'90-160', fr:'30-53'},
+      criancaPequena: {label:'Criança pequena', fcAwake:'98-140', fcSleep:'80-120', fr:'22-37'},
+      preEscolar: {label:'Pré escolar', fcAwake:'80-120', fcSleep:'65-100', fr:'20-28'},
+      escolar: {label:'Escolar', fcAwake:'75-118', fcSleep:'58-90', fr:'18-25'},
+      preAdolescente: {label:'Pré adolescente', fcAwake:'Não separado no quadro', fcSleep:'Não separado no quadro', fr:'Não separado no quadro'},
+      adolescente: {label:'Adolescente', fcAwake:'60-100', fcSleep:'50-90', fr:'12-20'}
+    };
+
+    const vitalsTableRows = [
+      {idade:'Neonato', acordado:'100-205', dormindo:'90-160', fr:'—'},
+      {idade:'Lactente', acordado:'100-180', dormindo:'90-160', fr:'30-53'},
+      {idade:'Criança pequena', acordado:'98-140', dormindo:'80-120', fr:'22-37'},
+      {idade:'Pré escolar', acordado:'80-120', dormindo:'65-100', fr:'20-28'},
+      {idade:'Escolar', acordado:'75-118', dormindo:'58-90', fr:'18-25'},
+      {idade:'Adolescente', acordado:'60-100', dormindo:'50-90', fr:'12-20'}
+    ];
+
+    const glasgowRows = [
+      ['Abertura ocular','Espontânea','Espontânea','4'],
+      ['Abertura ocular','A estímulo verbal','A estímulo verbal','3'],
+      ['Abertura ocular','A estímulo doloroso','A estímulo doloroso','2'],
+      ['Abertura ocular','Sem resposta','Sem resposta','1'],
+      ['Resposta verbal','Orientado, apropriado','Balbucia e lalação','5'],
+      ['Resposta verbal','Confuso','Choro irritado','4'],
+      ['Resposta verbal','Palavras inapropriadas','Choro após estímulo doloroso','3'],
+      ['Resposta verbal','Sons incompreensíveis','Geme após estímulo doloroso','2'],
+      ['Resposta verbal','Sem resposta','Sem resposta','1'],
+      ['Resposta motora','Obedece a comandos','Movimentos espontâneos e intencionais','6'],
+      ['Resposta motora','Localiza estímulo doloroso','Retirada ao toque','5'],
+      ['Resposta motora','Retirada em resposta a dor','Retirada em resposta a dor','4'],
+      ['Resposta motora','Flexão em resposta a dor','Postura de flexão anormal a dor','3'],
+      ['Resposta motora','Extensão em resposta a dor','Postura de extensão anormal a dor','2'],
+      ['Resposta motora','Sem resposta','Sem resposta','1']
+    ];
+
+    const glasgowSelectData = {
+      ocular:[['Espontânea',4],['A estímulo verbal',3],['A estímulo doloroso',2],['Sem resposta',1]],
+      verbal:[['Orientado, apropriado / Balbucia e lalação',5],['Confuso / Choro irritado',4],['Palavras inapropriadas / Choro após estímulo doloroso',3],['Sons incompreensíveis / Geme após estímulo doloroso',2],['Sem resposta',1]],
+      motora:[['Obedece a comandos / Movimentos espontâneos e intencionais',6],['Localiza estímulo doloroso / Retirada ao toque',5],['Retirada em resposta a dor',4],['Flexão em resposta a dor / Postura de flexão anormal a dor',3],['Extensão em resposta a dor / Postura de extensão anormal a dor',2],['Sem resposta',1]]
+    };
+
+    const equipmentRows = [
+      ['Bolsa-valva de ressuscitação','Lactente','Lactente/criança','Lactente/criança','Criança','Criança','Criança','Criança','Criança/adulto','Adulto'],
+      ['Máscara de O2','Neonatal','Neonatal','Neonatal','Pediátrica','Pediátrica','Pediátrica','Pediátrica','Adulto','Adulto'],
+      ['Cânula oro-faríngea','0','0-1','1','1','1-2','2','2','2-3','3 ou +'],
+      ['Lâmina de laringoscópio','Reta 0-1','Reta 1','Reta 1','Reta 1','Reta 2','Reta 2','Reta 2 ou curva','Reta 2-3 ou curva','Reta 3 ou curva'],
+      ['Cânula traqueal (mm)','Prematuro 2,5 / Termo 3,0-3,5 sem cuff','3,5 sem cuff / 3,0 com cuff','3,5 sem cuff / 3,0 com cuff','4,0 sem cuff / 3,5 com cuff','4,5 sem cuff / 4,0 com cuff','5,0 sem cuff / 4,5 com cuff','5,5 sem cuff / 5,0 com cuff','6,0 com cuff','6,5 com cuff'],
+      ['Comprimento da cânula traqueal (cm do lábio)','3kg: 9-9,5 / 4kg: 9,5-10 / 5kg:10-10,5','10,5-11','10,5-11','11-12','12,5-13,5','14-15','15,5-16,5','17-18','18,5-19,5'],
+      ['Fio guia (F)','6','6','6','6','6','6','14','14','14'],
+      ['Sonda de aspiração (F)','6-8','6-8','8','8-10','10','10','10','10','12'],
+      ['Manguito de PA','Neonato/lactente','Neonato/lactente','Neonato/lactente','Lactente/criança','Criança','Criança','Criança','Criança','Pequeno adulto'],
+      ['Catéter EV (ga)','22-24','22-24','22-24','20-24','18-22','18-22','18-20','18-20','16-20'],
+      ['Intra-óssea (ga)','18/15','18/15','18/15','15','15','15','15','15','15'],
+      ['Sonda nasogástrica (F)','5-8','5-8','5-8','8-10','10','10','12-14','14-18','16-18'],
+      ['Sonda urinária (F)','5','5-8','5-8','8-10','10','10','12-14','14-18','16-18'],
+      ['Pás de desfibrilação/cardioversão','Pás de lactente <1 ano','Pás de lactente <1 ano','Pás de lactente <1 ano ou 10kg','Pás de adulto quando ≥1 ano ou ≥10 kg','Pás de adulto','Pás de adulto','Pás de adulto','Pás de adulto','Pás de adulto'],
+      ['Dreno torácico (F)','10','10-12','10-12','16-20','20-24','20-24','24-32','28-32','32-38'],
+      ['Máscara laríngea','1','1-1,5','1,5','1,5','2','2','2-2,5','2,5','3']
+    ];
+
+    const toxidromes = [
+      {name:'Simpatomimética', mental:'Agitação · Estado hiperalerta · Alucinação · Paranoia', pupils:'Midríase', vitals:'Hipertermia · Taquicardia · Hipertensão · Pressão de pulso alargada · Taquipneia · Hiperpneia', other:'Sudorese · Tremor · Hiperreflexia · Convulsões', agents:'Cocaína · Anfetamina · Catinona · Efedrina · Pseudoefedrina · Fenilpropanolamina · Teofilina · Salbutamol · Cafeína'},
+      {name:'Anticolinérgica', mental:'Hipervigilância · Agitação · Alucinação · Delírio · Fala não articulada · Coma', pupils:'Midríase (tricíclicos: midríase ou miose)', vitals:'Hipertermia · Taquicardia · Hipertensão · Taquipneia', other:'Pele seca · Mucosas secas · Ruídos abdominais diminuídos · Retenção urinária · Mioclonia · Coreoatetose · Alteração de comportamento · Convulsão (raro)', agents:'Anti-histamínicos · Antidepressivos tricíclicos · Ciclobenzaprina · Orfenadrina · Antiparkinsonianos · Antiespasmódicos · Fenotiazina · Atropina · Escopolamina · Beladona · Alcaloides'},
+      {name:'Alucinogênica', mental:'Alucinação · Percepção distorcida · Despersonalização · Agitação · Cinestesia', pupils:'Midríase (usualmente)', vitals:'Hipertermia · Taquicardia · Hipertensão · Taquipneia', other:'Nistagmo', agents:'Fenciclidina · LSD · Mescalina · Canabinoide · Psilocibina · Anfetaminas (Ecstasy)'},
+      {name:'Opioide-narcótica', mental:'Depressão SNC · Coma', pupils:'Miose', vitals:'Bradipneia · Apneia (característica) · Hipotermia · Bradicardia · Hipotensão', other:'Hiporreflexia · Edema pulmonar · Marcas de agulha', agents:'Opioides (heroína, morfina, metadona, oxicodona, hidromorfona) · Difenoxilato · Propoxifeno'},
+      {name:'Sedativo-hipnótica', mental:'Depressão SNC · Confusão · Estupor · Coma', pupils:'Variável', vitals:'Frequentemente normais · Pode apresentar: Hipotermia · Bradicardia · Hipotensão · Apneia · Bradipneia', other:'Hiporreflexia', agents:'Benzodiazepínicos · Barbitúricos · Anticonvulsivantes · Carisoprodol · Meprobamato · Glutetiomida · Álcool (Etanol) · Zolpidem'},
+      {name:'Colinérgica', mental:'Confusão · Coma', pupils:'Miose', vitals:'Bradicardia · Hipotensão ou hipertensão · Taquipneia ou bradipneia', other:'Salivação · Incontinência fecal · Incontinência urinária · Diarreia · Vômitos · Lacrimejamento · Cólica abdominal · Broncoconstrição · Fasciculação muscular · Fraqueza muscular · Convulsões', agents:'Inseticidas organofosforados · Inseticidas carbamatos · Nicotina · Pilocarpina · Fisostigmina · Edrofônio · Betanecol'},
+      {name:'Serotoninérgica', mental:'Confusão · Agitação · Coma', pupils:'Midríase', vitals:'Hipertermia · Taquicardia · Hipertensão · Taquipneia', other:'Tremor · Mioclonia · Hiperreflexia · Clônus · Sudorese · Rubor · Trismo · Rigidez · Diarreia', agents:'Inibidor monoaminoxidase · Meperidina · Dextrometorfano · Antidepressivos tricíclicos · Triptofano'}
+    ];
+
+    const antidotes = [
+      ['Anestésico local','Emulsão lipídica endovenosa'],
+      ['Anfetamina','Benzodiazepínicos: convulsão; Ciproeptadina: síndrome colinérgica'],
+      ['Anticolinesterásicos','Cloreto de pralidoxima + atropina'],
+      ['Anticonvulsivantes','Bicarbonato de sódio se arritmia ventricular de complexo amplo; Dantrolene; Hemodiálise; Ácido valproico: Carnitina, naloxone'],
+      ['Antidepressivos tricíclicos com QRS largo','Bicarbonato de sódio; Emulsão lipídica endovenosa.'],
+      ['Aspirina com QRS largo','Bicarbonato de sódio'],
+      ['Betabloqueador','Insulina + glucagon; Catecolaminas; Emulsão lipídica endovenosa; Inibidores da fosfodiesterase'],
+      ['Benzodiazepínicos','Flumazenil *cuidado com precipitação de convulsão'],
+      ['Bloqueador de canal de cálcio','Cálcio endovenoso; Insulina + glucagon; Catecolaminas; Atropina; Emulsão lipídica endovenosa; Marcapasso'],
+      ['Chumbo','Ácido dimercaptosuccínico'],
+      ['Cianeto','Oxigênio a 100% e hidroxicobalamina'],
+      ['Cocaína','Benzodiazepínicos: convulsão; Alfa bloqueador, bloqueadores de canal de cálcio, nitroglicerina: hipertensão'],
+      ['Digoxina','Lidocaína se arritmia ventricular; Digoxina anticorpo Fab imune (Digibind)'],
+      ['Etilenoglicol','Etanol a 100% ou Fomepizole'],
+      ['Ferro','Deferoxamina'],
+      ['Heparina','Sulfato de protamina'],
+      ['Hidralazina','Piridoxina'],
+      ['Hipoglicemiantes orais','Octreotide'],
+      ['Inseticidas organofosforados','Cloreto de pralidoxima + atropina'],
+      ['Isoniazida','Piridoxina'],
+      ['Mercúrio','Ácido dimercaptosuccínico'],
+      ['Metemoglobinemia adquirida','Azul de metileno +/- ácido ascórbico'],
+      ['Metais pesados','Quelantes: EDTA; Dimercaprol; Penicilamina; Ácido dimercaptosuccínico'],
+      ['Metanol','Etanol a 100% ou Fomepizole'],
+      ['Metotrexato','Leucovorin'],
+      ['Monóxido de carbono','Oxigênio a 100% ou terapia hiperbárica de oxigênio'],
+      ['Neurolépticos','Bicarbonato de sódio se arritmia ventricular de complexo amplo. Dantrolene: síndrome maligna por neuroléptico. Evitar: Dopamina, Dobutamina e Adrenalina'],
+      ['Opioides','Naloxone: pode ser repetido a cada 2 a 3 min'],
+      ['Paracetamol (acetaminofen)','N-Acetilcisteína'],
+      ['Pirimetamina','Leucovorin'],
+      ['Reações extrapiramidais associadas a antipsicóticos','Difenidramina e benztropina'],
+      ['Síndrome anticolinérgica','Sulfato de fisostigmina'],
+      ['Síndrome colinérgica','Drogas antimuscarínicas (p.e: atropina)'],
+      ['Síndrome serotoninérgica','Ciproeptadina'],
+      ['Solventes orgânicos e hidrocarbonetos halogenados','Beta bloqueadores: arritmias · Hepatotoxicidade: hepatotoxicidade'],
+      ['Teofilina','Benzodiazepínicos para convulsão + cloreto de potássio'],
+      ['Toxinas orais (várias)','Carvão ativado com sorbitol'],
+      ['Trimetoprim','Leucovorin'],
+      ['Warfarin','Vitamina K'],
+      ['Rocurônio','Sugammadex']
+    ];
+
+    function byId(id){ return document.getElementById(id); }
+    function num(id){
+      const el = byId(id);
+      if(!el) return null;
+      const x = parseFloat(el.value);
+      return Number.isFinite(x) ? x : null;
+    }
+    function text(id){
+      const el = byId(id);
+      return el ? el.value.trim() : '';
+    }
+    function ageYears(){
+      const x = num('idadeAnos');
+      return x === null ? null : x;
+    }
+    function normalize(s){
+      return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+    }
+    function allDrugs(){
+      return [...emergencyDrugs, ...infusionDrugs];
+    }
+
+    function drugsForSection(section){
+      if(section === 'emergencia') return emergencyDrugs;
+      if(section === 'infusao') return infusionDrugs;
+      if(section === 'calc') return allDrugs();
+      if(section === 'tox') return toxidromes.map(t => ({ name: t.name }));
+      return [];
+    }
+
+    function drugLabelForSection(section){
+      if(section === 'emergencia') return 'Droga da emergência';
+      if(section === 'infusao') return 'Droga de infusão contínua';
+      if(section === 'calc') return 'Droga para cálculo rápido';
+      if(section === 'tox') return 'Item para cálculo rápido';
+      return 'Item para cálculo rápido';
+    }
+
+    function showSection(section){
+      document.querySelectorAll('.hidden-section').forEach(el => el.classList.remove('active'));
+      const panel = byId('panel-' + section);
+      if(panel) panel.classList.add('active');
+      byId('sectionSelect').value = section;
+    }
+
+    function calcDrug(drug){
+      const w = num('peso');
+      const a = ageYears();
+      if(!w) return 'Informe o peso em kg para calcular.';
+      let out = `Droga: ${drug.name}\nApresentação: ${drug.presentation}\nDose do card: ${drug.dose}\n\nCálculo para ${w.toFixed(2)} kg:\n${drug.calc(w, a)}`;
+      if(drug.max && drug.max !== '—') out += `\n\n${drug.max}`;
+      if(drug.notes && drug.notes !== '—') out += `\n\nObservações: ${drug.notes}`;
+      return out;
+    }
+
+    function renderDrugSelector(section, resetSelection){
+      const select = byId('drugSelect');
+      const label = byId('drugSelectLabel');
+      const currentSection = section || byId('sectionSelect').value;
+      const items = drugsForSection(currentSection).slice().sort((a,b)=>a.name.localeCompare(b.name,'pt-BR'));
+      if(label) label.textContent = drugLabelForSection(currentSection);
+
+      if(!items.length){
+        select.innerHTML = '<option value="">Sem itens nesta seção</option>';
+        select.disabled = true;
+        byId('selectedDrugResult').textContent = 'Selecione uma seção com drogas para cálculo rápido.';
+        return;
+      }
+
+      select.disabled = false;
+      const options = ['<option value="">-- selecione um item --</option>', ...items.map(d => `<option value="${d.name}">${d.name}</option>`)].join('');
+      select.innerHTML = options;
+
+      if(resetSelection){
+        select.selectedIndex = 0;
+        byId('selectedDrugResult').textContent = 'Selecione uma droga e informe o peso.';
+      }
+    }
+
+    function renderSelectedDrug(){
+      const section = byId('sectionSelect').value;
+      if(section === 'tox'){
+        renderTox();
+        atualizarCardsTopo();
+        return;
+      }
+      if(section === 'emergencia' || section === 'infusao'){
+        renderDrugLists();
+        atualizarCardsTopo();
+        return;
+      }
+      const name = byId('drugSelect').value;
+      if(!name){
+        byId('selectedDrugResult').textContent = 'Selecione "Seção do app" e "Item para cálculo rápido" para visualizar o cálculo.';
+        atualizarCardsTopo();
+        return;
+      }
+      const currentSection = byId('sectionSelect').value;
+      const allowed = drugsForSection(currentSection);
+      const fallback = allowed[0] || allDrugs()[0];
+      const drug = allowed.find(d => d.name === name) || fallback;
+      if(!drug){
+        byId('selectedDrugResult').textContent = 'Nenhuma droga disponível para esta seção.';
+        atualizarCardsTopo();
+        return;
+      }
+      byId('selectedDrugResult').textContent = calcDrug(drug);
+      renderSummary();
+      renderEquipmentResult();
+      atualizarCardsTopo();
+    }
+
+    function handleSectionChange(section){
+      showSection(section);
+      renderDrugSelector(section, true);
+      renderSelectedDrug();
+    }
+
+    function drugCardHTML(drug){
+      return `<div class="drug-card">
+        <div class="drug-name">${drug.name}</div>
+        <div class="small"><strong>Apresentação:</strong> ${drug.presentation}</div>
+        <div class="small"><strong>Dose:</strong> ${drug.dose}</div>
+        <div class="small"><strong>${drug.max && drug.max !== '—' ? drug.max : 'Sem máximo descrito'}</strong></div>
+        <div class="result-box" style="margin-top:10px;">${calcDrug(drug)}</div>
+      </div>`;
+    }
+
+    function renderDrugLists(){
+      const section = byId('sectionSelect').value;
+      const selected = byId('drugSelect').value;
+
+      if(section === 'emergencia'){
+        if(!selected){
+          byId('emergencyList').innerHTML = '<div class="result-box">Selecione um item no dropdown "Item para cálculo rápido" para visualizar.</div>';
+        } else {
+          const items = emergencyDrugs.filter(d => d.name === selected);
+          byId('emergencyList').innerHTML =
+            items.map(drugCardHTML).join('') || '<div class="result-box">Item não encontrado nesta seção.</div>';
+        }
+      } else {
+        byId('emergencyList').innerHTML = '';
+      }
+
+      if(section === 'infusao'){
+        if(!selected){
+          byId('infusionList').innerHTML = '<div class="result-box">Selecione um item no dropdown "Item para cálculo rápido" para visualizar.</div>';
+        } else {
+          const items = infusionDrugs.filter(d => d.name === selected);
+          byId('infusionList').innerHTML =
+            items.map(drugCardHTML).join('') || '<div class="result-box">Item não encontrado nesta seção.</div>';
+        }
+      } else {
+        byId('infusionList').innerHTML = '';
+      }
+    }
+
+    function renderSummary(){
+      const faixa = byId('faixaEtaria').value;
+      const bpMap = {
+        neonato:'Neonato 96h: PAS 67-84 / PAD 35-53 / PAM 45-60 mmHg',
+        lactente:'Lactente 1 a 12 meses: PAS 72-104 / PAD 37-56 / PAM 50-62 mmHg',
+        criancaPequena:'Criança pequena 1 a 2 anos: PAS 86-106 / PAD 42-63 / PAM 49-62 mmHg',
+        preEscolar:'Pré-escolar 3 a 5 anos: PAS 89-112 / PAD 46-72 / PAM 58-69 mmHg',
+        escolar:'Escolar 6 a 9 anos: PAS 97-115 / PAD 57-76 / PAM 66-72 mmHg',
+        preAdolescente:'Pré-adolescente 10 a 12 anos: PAS 102-120 / PAD 61-80 / PAM 71-79 mmHg',
+        adolescente:'Adolescente 12 a 15 anos: PAS 110-131 / PAD 64-83 / PAM 73-84 mmHg'
+      };
+      const v = vitals[faixa];
+      if(!v){
+        byId('paResumo').textContent = '—';
+        byId('fcResumo').textContent = '—';
+        byId('frResumo').textContent = '—';
+        return;
+      }
+      byId('paResumo').textContent = bpMap[faixa];
+      byId('fcResumo').textContent = `${v.fcAwake} bpm acordado / ${v.fcSleep} bpm dormindo`;
+      byId('frResumo').textContent = `${v.fr} ipm`;
+    }
+
+    function renderPATable(){
+      byId('paTable').innerHTML = bpTableData.map(r =>
+        `<tr><td>${r.idade}</td><td>${r.sistolica}</td><td>${r.diastolica}</td><td>${r.media}</td></tr>`
+      ).join('');
+    }
+
+    function renderVitalsTable(){
+      byId('vitalsTable').innerHTML = vitalsTableRows.map(r =>
+        `<tr><td>${r.idade}</td><td>${r.acordado}</td><td>${r.dormindo}</td><td>${r.fr}</td></tr>`
+      ).join('');
+    }
+
+    function renderGlasgowTable(){
+      byId('glasgowTable').innerHTML = glasgowRows.map(r =>
+        `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`
+      ).join('');
+    }
+
+    function renderGlasgowSelectors(){
+      byId('glasgowOcular').innerHTML = glasgowSelectData.ocular.map(([l,v]) => `<option value="${v}">${l} (${v})</option>`).join('');
+      byId('glasgowVerbal').innerHTML = glasgowSelectData.verbal.map(([l,v]) => `<option value="${v}">${l} (${v})</option>`).join('');
+      byId('glasgowMotora').innerHTML = glasgowSelectData.motora.map(([l,v]) => `<option value="${v}">${l} (${v})</option>`).join('');
+      renderGlasgow();
+    }
+
+    function renderGlasgow(){
+      const total =
+        parseInt(byId('glasgowOcular').value || '0', 10) +
+        parseInt(byId('glasgowVerbal').value || '0', 10) +
+        parseInt(byId('glasgowMotora').value || '0', 10);
+
+      let interp = 'Grave';
+      if(total >= 13) interp = 'Leve';
+      else if(total >= 9) interp = 'Moderado';
+
+      byId('glasgowResult').textContent = `Glasgow total: ${total}\nInterpretação prática: ${interp}.`;
+      atualizarCardsTopo();
+    }
+
+    function renderEquipmentTable(){
+      byId('equipmentTable').innerHTML = equipmentRows.map(r =>
+        `<tr>${r.map((c, idx) => idx === 0 ? `<td><strong>${c}</strong></td>` : `<td>${c}</td>`).join('')}</tr>`
+      ).join('');
+    }
+
+    function renderEquipmentResult(){
+      const w = num('peso');
+      if(!w){
+        byId('equipmentResult').textContent = 'Informe o peso em kg para sugerir os equipamentos da faixa correspondente.';
+        return;
+      }
+
+      const ranges = [
+        {label:'Neonato ou lactente jovem 3-5 kg', idx:1, min:0, max:5},
+        {label:'Lactente jovem 6-7 kg', idx:2, min:5.01, max:7},
+        {label:'Lactente 8-9 kg', idx:3, min:7.01, max:9},
+        {label:'Criança pequena 10-11 kg', idx:4, min:9.01, max:11},
+        {label:'Criança pequena 12-14 kg', idx:5, min:11.01, max:14},
+        {label:'Criança 15-18 kg', idx:6, min:14.01, max:18},
+        {label:'Criança 19-23 kg', idx:7, min:18.01, max:23},
+        {label:'Criança grande 24-29 kg', idx:8, min:23.01, max:29},
+        {label:'Adulto 30-36 kg', idx:9, min:29.01, max:36}
+      ];
+
+      const chosen = ranges.find(r => w >= r.min && w <= r.max) || ranges[ranges.length - 1];
+      const lines = equipmentRows.map(r => `${r[0]}: ${r[chosen.idx]}`);
+      byId('equipmentResult').textContent = `Faixa de peso selecionada: ${chosen.label}\n\n${lines.join('\n')}`;
+    }
+
+    function renderTox(){
+      const selected = normalize(byId('drugSelect')?.value || '');
+      const listEl = byId('toxList');
+      if(!selected){
+        listEl.innerHTML = '';
+        return;
+      }
+      const items = toxidromes.filter(t => normalize(t.name) === selected);
+      listEl.innerHTML =
+        items.map(t => `
+        <div class="drug-card">
+          <div class="drug-name">${t.name}</div>
+          <div class="small"><strong>Estado mental:</strong> ${t.mental}</div>
+          <div class="small"><strong>Pupilas:</strong> ${t.pupils}</div>
+          <div class="small"><strong>Sinais vitais:</strong> ${t.vitals}</div>
+          <div class="small"><strong>Outras manifestações:</strong> ${t.other}</div>
+          <div class="small"><strong>Agentes tóxicos:</strong> ${t.agents}</div>
+        </div>
+      `).join('') || '<div class="result-box">Item não encontrado nesta seção.</div>';
+    }
+
+    function renderAntidoteDropdown(){
+      const select = byId('toxSelect');
+      const options = [['', 'Selecione um tipo de intoxicação'], ...antidotes.map(([a]) => [a, a])];
+      select.innerHTML = options.map(([value, label]) => `<option value="${value}">${label}</option>`).join('');
+    }
+
+    function renderAntidotes(){
+      const selected = normalize(byId('toxSelect').value);
+      if(!selected){
+        byId('antidoteList').innerHTML = '<div class="result-box">Selecione um tipo de intoxicação para visualizar o antídoto.</div>';
+        return;
+      }
+      const items = antidotes.filter(([a]) => normalize(a) === selected);
+
+      byId('antidoteList').innerHTML =
+        items.map(([a,b]) => `
+          <div class="drug-card">
+            <div class="drug-name">${a}</div>
+            <div class="small"><strong>Antídoto:</strong> ${b}</div>
+          </div>
+        `).join('') || '<div class="result-box">Nenhum item encontrado.</div>';
+    }
+
+    function atualizarCardsTopo(){
+      if(!byId('statDrug') || !byId('statPeso') || !byId('statFaixa') || !byId('statGlasgow')) return;
+      const drugName = byId('drugSelect').value || '—';
+      const peso = num('peso');
+      const faixa = byId('faixaEtaria').selectedOptions[0]?.textContent || '—';
+      const glasgow =
+        parseInt(byId('glasgowOcular').value || '0',10) +
+        parseInt(byId('glasgowVerbal').value || '0',10) +
+        parseInt(byId('glasgowMotora').value || '0',10);
+
+      byId('statDrug').textContent = drugName;
+      byId('statPeso').textContent = peso ? `${peso.toFixed(2)} kg` : '—';
+      byId('statFaixa').textContent = faixa;
+      byId('statGlasgow').textContent = glasgow || '—';
+    }
+
+    function copiarResultadoRapido(){
+      const corpo = (byId('selectedDrugResult').textContent || '').trim();
+      const pre = 'NeoPedCalc — trecho informativo (cálculo rápido). Não prescreve. Conferir paciente, dose e protocolo local.\n\n';
+      const foot = (typeof window.neopedLegalReportFooter === 'function') ? window.neopedLegalReportFooter() : '';
+      navigator.clipboard.writeText(pre + corpo + foot)
+        .then(() => { if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.'); })
+        .catch(() => { if (typeof window.neopedCopyFail === 'function') window.neopedCopyFail(); else alert('Nao foi possivel copiar automaticamente. Revise o texto e copie manualmente para uso informativo.'); });
+    }
+
+    function exportarTextoInformativo(){
+      const dataHora = new Date().toLocaleString('pt-BR');
+      const paciente = text('paciente') || 'Nao informado';
+      const peso = num('peso');
+      const faixa = byId('faixaEtaria').selectedOptions[0]?.textContent || 'Nao informado';
+      const idade = num('idadeAnos');
+      const droga = byId('drugSelect').value || 'Nao selecionada';
+      const glasgow =
+        parseInt(byId('glasgowOcular').value || '0',10) +
+        parseInt(byId('glasgowVerbal').value || '0',10) +
+        parseInt(byId('glasgowMotora').value || '0',10);
+
+      const linhas = [
+        'RESUMO INFORMATIVO — EMERGENCIA PEDIATRICA (NEOPEDCALC, EDUCATIVO)',
+        'NOTA: Arquivo para revisao. Nao e prescricao nem prontuario oficial.',
+        `Data/hora de geracao: ${dataHora}`,
+        '',
+        `Identificacao (campo livre): ${paciente}`,
+        `Peso: ${peso ? `${peso.toFixed(2)} kg` : 'Nao informado'}`,
+        `Faixa etaria: ${faixa}`,
+        `Idade (anos): ${idade !== null ? idade.toFixed(2) : 'Nao informada'}`,
+        `Droga selecionada na lista: ${droga}`,
+        `Glasgow (se preenchido): ${glasgow || 'Nao informado'}`,
+        '',
+        'CALCULO RAPIDO (TELA)',
+        byId('selectedDrugResult').textContent,
+        '',
+        'REFERENCIA DE SINAIS (RESUMO NA TELA)',
+        `PA: ${byId('paResumo').textContent}`,
+        `FC: ${byId('fcResumo').textContent}`,
+        `FR: ${byId('frResumo').textContent}`
+      ];
+      if (typeof window.neopedLegalReportFooter === 'function') {
+        linhas.push(window.neopedLegalReportFooter().trim());
+      }
+      const conteudo = linhas.join('\n');
+
+      const nomeBase = (paciente || 'paciente').replace(/[^\w\-]+/g, '_').slice(0, 40);
+      const nomeArquivo = `neoped_emerg_ped_resumo_${nomeBase || 'paciente'}.txt`;
+      const blob = new Blob([conteudo], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = nomeArquivo;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function carregarExemplo(){
+      byId('paciente').value = 'Paciente exemplo';
+      byId('peso').value = '12';
+      byId('faixaEtaria').value = 'criancaPequena';
+      byId('idadeAnos').value = '2';
+      byId('drugSelect').value = 'Epinefrina';
+      byId('toxSelect').value = '';
+      byId('sectionSelect').value = 'calc';
+      renderAll();
+      showSection('calc');
+    }
+
+    function limparTudo(){
+      byId('paciente').value = '';
+      byId('peso').value = '';
+      byId('faixaEtaria').selectedIndex = -1;
+      byId('idadeAnos').value = '';
+      byId('drugSelect').selectedIndex = -1;
+      byId('toxSelect').selectedIndex = 0;
+      byId('glasgowOcular').selectedIndex = -1;
+      byId('glasgowVerbal').selectedIndex = -1;
+      byId('glasgowMotora').selectedIndex = -1;
+      byId('sectionSelect').value = 'calc';
+      renderAll();
+      showSection('calc');
+    }
+
+    function renderAll(){
+      renderDrugLists();
+      if(byId('sectionSelect').value === 'tox') renderTox();
+      else renderSelectedDrug();
+      renderSummary();
+      renderPATable();
+      renderVitalsTable();
+      renderGlasgowTable();
+      renderEquipmentTable();
+      renderEquipmentResult();
+      renderTox();
+      renderAntidotes();
+      atualizarCardsTopo();
+    }
+
+    document.addEventListener('DOMContentLoaded', function(){
+      renderDrugSelector(byId('sectionSelect').value, true);
+      renderGlasgowSelectors();
+      renderAntidoteDropdown();
+      renderAll();
+
+      byId('peso').addEventListener('input', renderAll);
+      byId('idadeAnos').addEventListener('input', renderAll);
+      byId('faixaEtaria').addEventListener('change', renderAll);
+      byId('drugSelect').addEventListener('change', renderSelectedDrug);
+      byId('toxSelect').addEventListener('change', renderAntidotes);
+      byId('glasgowOcular').addEventListener('change', renderGlasgow);
+      byId('glasgowVerbal').addEventListener('change', renderGlasgow);
+      byId('glasgowMotora').addEventListener('change', renderGlasgow);
+      byId('sectionSelect').addEventListener('change', (e) => handleSectionChange(e.target.value));
+    });
+  </script>
+  <script src="../js/neoped-nav.js"></script>
+</body>
+</html>

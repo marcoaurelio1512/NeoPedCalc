@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>NeoPedCalc — Score de dor no neonato (educativo)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            touch-action: pan-y;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .app-viewport {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+        .app-shell {
+            width: 100%;
+            max-width: 980px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 980px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        input[type="text"], input[type="date"], input[type="time"] {
+            width: 100%;
+            max-width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="date"]:focus, input[type="time"]:focus {
+            outline: none;
+            border-color: #111827;
+        }
+
+        .radio-group {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .radio-option:hover {
+            border-color: #111827;
+            background: #e8f2ff;
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        .radio-option.selected {
+            border-color: #111827;
+            background: #e8f2ff;
+        }
+
+        .nfcs-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .nfcs-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .nfcs-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .nfcs-item:last-child {
+            border-bottom: none;
+        }
+
+        .nfcs-item label {
+            flex: 1;
+            margin-bottom: 0;
+            font-weight: normal;
+        }
+
+        .nfcs-radio {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nfcs-radio input[type="radio"] {
+            margin: 0;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .result-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .result-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 5px;
+        }
+
+        .result-description {
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .classification {
+            background: #fff3cd;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .classification h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .classification-text {
+            font-size: 18px;
+            font-weight: bold;
+            color: #856404;
+            text-align: center;
+            padding: 15px;
+            background: #fff;
+            border-radius: 8px;
+        }
+
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: none;
+        }
+
+        .info strong {
+            color: #1976d2;
+        }
+
+        @media (max-width: 768px) {
+            .form-row, .radio-group {
+                grid-template-columns: 1fr;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+            
+            .btn {
+                font-size: 14px;
+                padding: 12px 20px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .app-viewport {
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.4em;
+            }
+
+            .header p {
+                font-size: 0.9em;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .section {
+                padding: 12px;
+            }
+
+            .section h3 {
+                font-size: 1.1em;
+            }
+
+            button {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+
+            .results {
+                padding: 12px;
+            }
+
+            .score-display {
+                font-size: 2.5em;
+            }
+
+            .pain-level {
+                font-size: 13px;
+            }
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-info {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-info:hover {
+            background: white;
+            color: #111827;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
+            box-sizing: border-box;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 720px;
+            max-height: 86vh;
+            overflow: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-body h3 {
+            color: #111827;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #374151;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #111827;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .modal-header {
+                padding: 15px 20px;
+            }
+
+            .modal-header h2 {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 98%;
+            }
+
+            .modal-body {
+                padding: 15px;
+            }
+
+            .modal-header h2 {
+                font-size: 16px;
+            }
+
+            .modal-body h3 {
+                font-size: 16px;
+            }
+        }
+        .btn-report {
+            margin-top: 20px;
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .nfcs-hint {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #374151;
+        }
+
+        .prematuro-warning {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .card, .panel, .box {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        label {
+            display: block;
+        }
+
+        input, select, textarea, button {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        input, select, textarea {
+            width: 100%;
+        }
+
+        .table-wrap {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        th, td {
+            word-wrap: break-word;
+            overflow-wrap: anywhere;
+        }
+
+        body {
+            overscroll-behavior-x: none;
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <div class="app-viewport">
+        <div class="app-shell">
+            <div class="container">
+                <div class="header">
+                    <h1>Score de Dor no Neonato</h1>
+                    <p>NeoPedCalc - Neonatal Facial Coding System (NFCS) para Neonato a Termo</p>
+                    <div class="header-actions">
+                        <button class="btn-info" onclick="abrirModal()">
+                            Como usar                        </button>
+                    </div>
+                </div>
+
+                <div class="form-container">
+                    <form id="dorForm">
+                        <div class="form-group">
+                            <label for="nome">Nome do Paciente:</label>
+                            <input type="text" id="nome" placeholder="Ex: Joao Silva">
+                        </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dataAvaliacao">Data da Avaliação:</label>
+                        <input type="date" id="dataAvaliacao" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="horaAvaliacao">Horário da Avaliação:</label>
+                        <input type="time" id="horaAvaliacao" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Você mesmo avaliou o RN?</label>
+                    <div class="radio-group">
+                        <div class="radio-option" data-value="sim">
+                            <input type="radio" name="avaliador" value="sim" id="avaliador_sim">
+                            <label for="avaliador_sim">Sim</label>
+                        </div>
+                        <div class="radio-option" data-value="nao">
+                            <input type="radio" name="avaliador" value="nao" id="avaliador_nao">
+                            <label for="avaliador_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>O RN é prematuro?</label>
+                    <div class="radio-group">
+                        <div class="radio-option" data-value="sim">
+                            <input type="radio" name="prematuro" value="sim" id="prematuro_sim">
+                            <label for="prematuro_sim">Sim</label>
+                        </div>
+                        <div class="radio-option" data-value="nao">
+                            <input type="radio" name="prematuro" value="nao" id="prematuro_nao">
+                            <label for="prematuro_nao">Não</label>
+                        </div>
+                    </div>
+                    <div id="avisoPrematuro" class="warning prematuro-warning">
+                        <strong>Atenção:</strong> Esta calculadora é adequada para avaliação de bebes <strong>a termo</strong>. Para prematuros, utilize escalas específicas como NIPS ou PIPP.
+                    </div>
+                </div>
+
+                <div class="nfcs-section">
+                    <h3>Neonatal Facial Coding System (NFCS)</h3>
+                    <p class="nfcs-hint">
+                        Avalie cada item observando o comportamento facial do neonato
+                    </p>
+                    
+                    <div class="nfcs-item">
+                        <label>Testa abaixa ou protrai?</label>
+                        <div class="nfcs-radio">
+                            <input type="radio" name="testa" value="sim" id="testa_sim">
+                            <label for="testa_sim">Sim</label>
+                            <input type="radio" name="testa" value="nao" id="testa_nao">
+                            <label for="testa_nao">Não</label>
+                        </div>
+                    </div>
+
+                    <div class="nfcs-item">
+                        <label>Olhos fechados, espremidos?</label>
+                        <div class="nfcs-radio">
+                            <input type="radio" name="olhos" value="sim" id="olhos_sim">
+                            <label for="olhos_sim">Sim</label>
+                            <input type="radio" name="olhos" value="nao" id="olhos_nao">
+                            <label for="olhos_nao">Não</label>
+                        </div>
+                    </div>
+
+                    <div class="nfcs-item">
+                        <label>Dobra nasolabial aprofundada?</label>
+                        <div class="nfcs-radio">
+                            <input type="radio" name="dobra" value="sim" id="dobra_sim">
+                            <label for="dobra_sim">Sim</label>
+                            <input type="radio" name="dobra" value="nao" id="dobra_nao">
+                            <label for="dobra_nao">Não</label>
+                        </div>
+                    </div>
+
+                    <div class="nfcs-item">
+                        <label>Alguma separação dos lábios?</label>
+                        <div class="nfcs-radio">
+                            <input type="radio" name="separacao" value="sim" id="separacao_sim">
+                            <label for="separacao_sim">Sim</label>
+                            <input type="radio" name="separacao" value="nao" id="separacao_nao">
+                            <label for="separacao_nao">Não</label>
+                        </div>
+                    </div>
+
+                    <div class="nfcs-item">
+                        <label>Boca estica na vertical?</label>
+                        <div class="nfcs-radio">
+                            <input type="radio" name="bocaVertical" value="sim" id="bocaVertical_sim">
+                            <label for="bocaVertical_sim">Sim</label>
+                            <input type="radio" name="bocaVertical" value="nao" id="bocaVertical_nao">
+                            <label for="bocaVertical_nao">Não</label>
+                        </div>
+                    </div>
+
+                    <div class="nfcs-item">
+                        <label>Boca estica na horizontal?</label>
+                        <div class="nfcs-radio">
+                            <input type="radio" name="bocaHorizontal" value="sim" id="bocaHorizontal_sim">
+                            <label for="bocaHorizontal_sim">Sim</label>
+                            <input type="radio" name="bocaHorizontal" value="nao" id="bocaHorizontal_nao">
+                            <label for="bocaHorizontal_nao">Não</label>
+                        </div>
+                    </div>
+
+                    <div class="nfcs-item">
+                        <label>Língua aparece?</label>
+                        <div class="nfcs-radio">
+                            <input type="radio" name="lingua" value="sim" id="lingua_sim">
+                            <label for="lingua_sim">Sim</label>
+                            <input type="radio" name="lingua" value="nao" id="lingua_nao">
+                            <label for="lingua_nao">Não</label>
+                        </div>
+                    </div>
+
+                    <div class="nfcs-item">
+                        <label>Queixo contraído sobre a maxila?</label>
+                        <div class="nfcs-radio">
+                            <input type="radio" name="queixo" value="sim" id="queixo_sim">
+                            <label for="queixo_sim">Sim</label>
+                            <input type="radio" name="queixo" value="nao" id="queixo_nao">
+                            <label for="queixo_nao">Não</label>
+                        </div>
+                    </div>
+
+                    <div class="nfcs-item">
+                        <label>Lábios cerrados?</label>
+                        <div class="nfcs-radio">
+                            <input type="radio" name="labios" value="sim" id="labios_sim">
+                            <label for="labios_sim">Sim</label>
+                            <input type="radio" name="labios" value="nao" id="labios_nao">
+                            <label for="labios_nao">Não</label>
+                        </div>
+                    </div>
+
+                    <div class="nfcs-item">
+                        <label>Protrusão da língua?</label>
+                        <div class="nfcs-radio">
+                            <input type="radio" name="protusao" value="sim" id="protusao_sim">
+                            <label for="protusao_sim">Sim</label>
+                            <input type="radio" name="protusao" value="nao" id="protusao_nao">
+                            <label for="protusao_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="submit" class="btn">Calcular Score de Dor</button>
+                    <button type="button" id="limparDados" class="btn btn-secondary">Limpar Dados</button>
+                </div>
+            </form>
+
+            <div id="results" class="results">
+                <div class="result-card">
+                    <h3>Score NFCS</h3>
+                    <div class="result-value" id="scoreNFCS">0.0</div>
+                    <div class="result-description">pontos (maximo 9)</div>
+                </div>
+
+                <div class="classification" id="classification">
+                    <h3>Interpretação do Score</h3>
+                    <div class="classification-text" id="classificationText"></div>
+                </div>
+
+                <button type="button" id="gerarRelatorio" class="btn btn-report">
+                    Gerar Relatorio para Prontuario
+                </button>
+            </div>
+
+                    <div class="info">
+                        <strong>Neonatal Facial Coding System (NFCS):</strong><br>
+                        • Sistema de avaliacao da dor baseado em expressoes faciais<br>
+                        • Desenvolvido por Grunau et al. para neonatos a termo<br>
+                        • Score maximo: 9 pontos<br>
+                        • Cada item avaliado recebe 1 ponto se presente<br>
+                        • Score ≥ 3 pontos sugere presenca de dor significativa
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — Score de dor no neonato (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta calculadora auxilia na avaliação da dor neonatal utilizando escalas validadas como NFCS (Neonatal Facial Coding System), NIPS, CRIES e FLACC, fornecendo pontuações para orientar o manejo analgésico baseadas em protocolos de neonatologia e pediatria estabelecidos.</p>
+                
+                <h3>Escalas de Dor Neonatal</h3>
+                <div class="formula-box">
+                    <strong>NFCS (Neonatal Facial Coding System):</strong><br>
+                    • Testa: 0-1 ponto<br>
+                    • Olhos: 0-1 ponto<br>
+                    • Dobra nasolabial: 0-1 ponto<br>
+                    • Separação dos lábios: 0-1 ponto<br>
+                    • Boca vertical: 0-1 ponto<br>
+                    • Língua tensa: 0-1 ponto<br>
+                    • Queixo tenso: 0-1 ponto<br>
+                    • Total: 0-7 pontos<br><br>
+                    <strong>NIPS (Neonatal Infant Pain Scale):</strong><br>
+                    • Expressão facial: 0-1 ponto<br>
+                    • Choro: 0-1 ponto<br>
+                    • Respiração: 0-1 ponto<br>
+                    • Braços: 0-1 ponto<br>
+                    • Pernas: 0-1 ponto<br>
+                    • Estado de alerta: 0-1 ponto<br>
+                    • Total: 0-7 pontos
+                </div>
+
+                <h3>Parâmetros Avaliados</h3>
+                <ul>
+                    <li><strong>Expressão Facial:</strong> Relaxada vs tensa</li>
+                    <li><strong>Olhos:</strong> Fechados vs abertos</li>
+                    <li><strong>Dobra Nasolabial:</strong> Ausente vs presente</li>
+                    <li><strong>Lábios:</strong> Fechados vs separados</li>
+                    <li><strong>Boca:</strong> Horizontal vs vertical</li>
+                    <li><strong>Língua:</strong> Relaxada vs tensa</li>
+                    <li><strong>Queixo:</strong> Relaxado vs tenso</li>
+                    <li><strong>Movimentos:</strong> Braços e pernas</li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Selecione Escala:</strong> NFCS, NIPS, CRIES ou FLACC</li>
+                    <li><strong>Observe Neonato:</strong> Durante procedimento</li>
+                    <li><strong>Marque Parâmetros:</strong> Presentes</li>
+                    <li><strong>Calcule:</strong> Sistema calcula automaticamente</li>
+                    <li><strong>Interprete:</strong> Gravidade da dor</li>
+                    <li><strong>Intervenha:</strong> Se necessário</li>
+                </ol>
+
+                <h3>Interpretação das Escalas</h3>
+                <ul>
+                    <li><strong>NFCS 0-2:</strong> Dor ausente/leve</li>
+                    <li><strong>NFCS 3-4:</strong> Dor moderada</li>
+                    <li><strong>NFCS 5-7:</strong> Dor severa</li>
+                    <li><strong>NIPS 0-2:</strong> Dor ausente/leve</li>
+                    <li><strong>NIPS 3-4:</strong> Dor moderada</li>
+                    <li><strong>NIPS 5-7:</strong> Dor severa</li>
+                    <li><strong>CRIES 0-3:</strong> Dor leve</li>
+                    <li><strong>CRIES 4-6:</strong> Dor moderada</li>
+                    <li><strong>CRIES 7-10:</strong> Dor severa</li>
+                </ul>
+
+                <h3>Tipos de Dor Neonatal</h3>
+                <ul>
+                    <li><strong>Aguda:</strong> Procedimentos</li>
+                    <li><strong>Crônica:</strong> Doença prolongada</li>
+                    <li><strong>Procedural:</strong> Invasivos</li>
+                    <li><strong>Post-operatória:</strong> Cirúrgica</li>
+                    <li><strong>Traumática:</strong> Lesões</li>
+                    <li><strong>Inflamatória:</strong> Infecções</li>
+                    <li><strong>Isquêmica:</strong> Vascular</li>
+                    <li><strong>Neuropática:</strong> Nervos</li>
+                </ul>
+
+                <h3>Fatores que Influenciam Dor</h3>
+                <ul>
+                    <li><strong>Idade Gestacional:</strong> Prematuridade</li>
+                    <li><strong>Idade Cronológica:</strong> Dias/semanas</li>
+                    <li><strong>Peso:</strong> Ao nascer</li>
+                    <li><strong>Doenças:</strong> Comorbidades</li>
+                    <li><strong>Medicamentos:</strong> Sedativos</li>
+                    <li><strong>Ambiente:</strong> NICU</li>
+                    <li><strong>Experiências:</strong> Prévias</li>
+                    <li><strong>Genética:</strong> Suscetibilidade</li>
+                </ul>
+
+                <h3>Consequências da Dor</h3>
+                <ul>
+                    <li><strong>Fisiológicas:</strong> Taquicardia, hipertensão</li>
+                    <li><strong>Metabólicas:</strong> Hiperglicemia</li>
+                    <li><strong>Respiratórias:</strong> Apneia, dessaturação</li>
+                    <li><strong>Neurológicas:</strong> Convulsões</li>
+                    <li><strong>Comportamentais:</strong> Irritabilidade</li>
+                    <li><strong>Cognitivas:</strong> Atraso desenvolvimento</li>
+                    <li><strong>Emocionais:</strong> Ansiedade</li>
+                    <li><strong>Sociais:</strong> Isolamento</li>
+                </ul>
+
+                <h3>Tratamento da Dor</h3>
+                <ul>
+                    <li><strong>Farmacológico:</strong> Analgésicos</li>
+                    <li><strong>Não-farmacológico:</strong> Técnicas</li>
+                    <li><strong>Multimodal:</strong> Combinado</li>
+                    <li><strong>Preventivo:</strong> Antecipatório</li>
+                    <li><strong>Individualizado:</strong> Personalizado</li>
+                    <li><strong>Monitorizado:</strong> Contínuo</li>
+                    <li><strong>Documentado:</strong> Registrado</li>
+                    <li><strong>Multidisciplinar:</strong> Equipe</li>
+                </ul>
+
+                <h3>Intervenções Não-Farmacológicas</h3>
+                <ul>
+                    <li><strong>Contato:</strong> Pele a pele</li>
+                    <li><strong>Amamentação:</strong> Leite materno</li>
+                    <li><strong>Sucção:</strong> Chupeta</li>
+                    <li><strong>Posicionamento:</strong> Confortável</li>
+                    <li><strong>Ambiente:</strong> Calmo</li>
+                    <li><strong>Ruído:</strong> Reduzido</li>
+                    <li><strong>Luz:</strong> Diminuída</li>
+                    <li><strong>Música:</strong> Suave</li>
+                </ul>
+
+                <h3>Medicamentos Analgésicos</h3>
+                <ul>
+                    <li><strong>Paracetamol:</strong> Leve a moderada</li>
+                    <li><strong>Ibuprofeno:</strong> Inflamatória</li>
+                    <li><strong>Morfina:</strong> Severa</li>
+                    <li><strong>Fentanil:</strong> Procedimentos</li>
+                    <li><strong>Midazolam:</strong> Sedação</li>
+                    <li><strong>Lidocaína:</strong> Tópica</li>
+                    <li><strong>EMLA:</strong> Anestesia local</li>
+                    <li><strong>Sucrose:</strong> 24% oral</li>
+                </ul>
+
+                <h3>Prevenção da Dor</h3>
+                <ul>
+                    <li><strong>Protocolos:</strong> Institucionais</li>
+                    <li><strong>Treinamento:</strong> Equipe</li>
+                    <li><strong>Antecipação:</strong> Procedimentos</li>
+                    <li><strong>Preparação:</strong> Adequada</li>
+                    <li><strong>Técnica:</strong> Minimamente invasiva</li>
+                    <li><strong>Ambiente:</strong> Confortável</li>
+                    <li><strong>Suporte:</strong> Familiar</li>
+                    <li><strong>Documentação:</strong> Sistemática</li>
+                </ul>
+
+                <h3>Limitações e Considerações</h3>
+                <ul>
+                    <li>Escalas subjetivas</li>
+                    <li>Variações individuais</li>
+                    <li>Fatores não incluídos</li>
+                    <li>Observação experiente</li>
+                    <li>Interpretação clínica</li>
+                    <li>Ajuste individual</li>
+                    <li>Protocolos institucionais</li>
+                    <li>Correlação clínica</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Grunau RV, Craig KD. Pain expression in neonates: facial action and cry. Pain. 1987;28(3):395-410.<br>
+                    - Lawrence J, et al. The development of a tool to assess neonatal pain. Neonatal Netw. 1993;12(6):59-66.<br>
+                    - Krechel SW, Bildner J. CRIES: a new neonatal postoperative pain measurement score. Initial testing of validity and reliability. Paediatr Anaesth. 1995;5(1):53-61.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Função para calcular o score NFCS
+        function calcularScoreNFCS() {
+            const itens = [
+                'testa', 'olhos', 'dobra', 'separacao', 'bocaVertical',
+                'bocaHorizontal', 'lingua', 'queixo', 'labios', 'protusao'
+            ];
+            
+            let score = 0;
+            itens.forEach(item => {
+                const valor = document.querySelector(`input[name="${item}"]:checked`)?.value;
+                if (valor === 'sim') {
+                    score++;
+                }
+            });
+            
+            return score;
+        }
+
+        // Função para interpretar o score
+        function interpretarScore(score) {
+            if (score === 0) {
+                return {
+                    classificacao: 'Sem dor',
+                    classificacaoPlain: 'Sem dor',
+                    descricao: 'Nenhum sinal de dor observado',
+                    descricaoPlain: 'Nenhum sinal de dor observado',
+                    cor: '#28a745'
+                };
+            } else if (score <= 2) {
+                return {
+                    classificacao: 'Dor leve',
+                    classificacaoPlain: 'Dor leve',
+                    descricao: 'Poucos sinais de dor observados',
+                    descricaoPlain: 'Poucos sinais de dor observados',
+                    cor: '#ffc107'
+                };
+            } else if (score <= 5) {
+                return {
+                    classificacao: 'Dor moderada',
+                    classificacaoPlain: 'Dor moderada',
+                    descricao: 'Sinais moderados de dor observados',
+                    descricaoPlain: 'Sinais moderados de dor observados',
+                    cor: '#fd7e14'
+                };
+            } else {
+                return {
+                    classificacao: 'Dor intensa',
+                    classificacaoPlain: 'Dor intensa',
+                    descricao: 'Múltiplos sinais de dor observados',
+                    descricaoPlain: 'Multiplos sinais de dor observados',
+                    cor: '#dc3545'
+                };
+            }
+        }
+
+        // Função para avaliar dor
+        function avaliarDor() {
+            console.log('Iniciando avaliação de dor...');
+            
+            const nome = document.getElementById('nome').value;
+            const dataAvaliacao = new Date(document.getElementById('dataAvaliacao').value);
+            const horaAvaliacao = document.getElementById('horaAvaliacao').value;
+            const avaliador = document.querySelector('input[name="avaliador"]:checked')?.value;
+            const prematuro = document.querySelector('input[name="prematuro"]:checked')?.value;
+
+            console.log('Dados coletados:', {
+                nome, dataAvaliacao, horaAvaliacao, avaliador, prematuro
+            });
+
+            if (!dataAvaliacao || !horaAvaliacao || !avaliador || !prematuro) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                console.log('Campos obrigatórios não preenchidos');
+                return;
+            }
+
+            // Verificar se todos os itens NFCS foram avaliados
+            const itens = [
+                'testa', 'olhos', 'dobra', 'separacao', 'bocaVertical',
+                'bocaHorizontal', 'lingua', 'queixo', 'labios', 'protusao'
+            ];
+            
+            let itensNaoAvaliados = [];
+            itens.forEach(item => {
+                const valor = document.querySelector(`input[name="${item}"]:checked`)?.value;
+                if (!valor) {
+                    itensNaoAvaliados.push(item);
+                }
+            });
+
+            if (itensNaoAvaliados.length > 0) {
+                alert('Por favor, avalie todos os itens do NFCS.');
+                console.log('Itens não avaliados:', itensNaoAvaliados);
+                return;
+            }
+
+            // Calcular score
+            const score = calcularScoreNFCS();
+            const interpretacao = interpretarScore(score);
+
+            console.log('Score calculado:', score);
+            console.log('Interpretação:', interpretacao);
+
+            // Exibir resultados
+            document.getElementById('scoreNFCS').textContent = Number(score).toFixed(1);
+            document.getElementById('classificationText').textContent = interpretacao.classificacao;
+            document.getElementById('classificationText').style.color = interpretacao.cor;
+            document.getElementById('classification').style.borderColor = interpretacao.cor;
+
+            // Mostrar resultados
+            document.getElementById('results').style.display = 'block';
+            
+            console.log('Resultados exibidos com sucesso');
+        }
+
+        // Função para limpar todos os dados
+        function limparDados() {
+            console.log('Limpando todos os dados...');
+            
+            // Limpar campos de texto
+            document.getElementById('nome').value = '';
+            
+            // Limpar radio buttons
+            const radioGroups = ['avaliador', 'prematuro', 'testa', 'olhos', 'dobra', 'separacao', 
+                               'bocaVertical', 'bocaHorizontal', 'lingua', 'queixo', 'labios', 'protusao'];
+            
+            radioGroups.forEach(group => {
+                const radios = document.querySelectorAll(`input[name="${group}"]`);
+                radios.forEach(radio => {
+                    radio.checked = false;
+                });
+                // Remover classe selected das opções
+                const options = document.querySelectorAll(`input[name="${group}"]`);
+                options.forEach(option => {
+                    option.closest('.radio-option')?.classList.remove('selected');
+                });
+            });
+            
+            // Ocultar resultados
+            document.getElementById('results').style.display = 'none';
+            
+            // Ocultar aviso de prematuro
+            document.getElementById('avisoPrematuro').style.display = 'none';
+            
+            // Resetar data e hora para agora
+            const agora = new Date();
+            const hoje = agora.toISOString().split('T')[0];
+            const horaAtual = agora.toTimeString().slice(0, 5);
+            document.getElementById('dataAvaliacao').value = hoje;
+            document.getElementById('horaAvaliacao').value = horaAtual;
+            
+            console.log('Dados limpos com sucesso');
+            alert('Dados limpos! Pronto para nova avaliação.');
+        }
+
+        // Função para gerar relatório
+        function gerarRelatorio() {
+            console.log('Iniciando geração de relatório...');
+            
+            const nome = document.getElementById('nome').value;
+            const dataAvaliacao = new Date(document.getElementById('dataAvaliacao').value);
+            const horaAvaliacao = document.getElementById('horaAvaliacao').value;
+            const avaliador = document.querySelector('input[name="avaliador"]:checked')?.value;
+            const prematuro = document.querySelector('input[name="prematuro"]:checked')?.value;
+
+            console.log('Dados para relatório:', {
+                nome, dataAvaliacao, horaAvaliacao, avaliador, prematuro
+            });
+
+            if (!dataAvaliacao || !horaAvaliacao || !avaliador || !prematuro) {
+                alert('Erro: Campos obrigatórios não encontrados. Execute a avaliação primeiro.');
+                console.log('Campos obrigatórios não preenchidos para relatório');
+                return;
+            }
+
+            // Verificar se todos os itens NFCS foram avaliados
+            const itens = [
+                'testa', 'olhos', 'dobra', 'separacao', 'bocaVertical',
+                'bocaHorizontal', 'lingua', 'queixo', 'labios', 'protusao'
+            ];
+            
+            let itensNaoAvaliados = [];
+            itens.forEach(item => {
+                const valor = document.querySelector(`input[name="${item}"]:checked`)?.value;
+                if (!valor) {
+                    itensNaoAvaliados.push(item);
+                }
+            });
+
+            if (itensNaoAvaliados.length > 0) {
+                alert('Por favor, avalie todos os itens do NFCS antes de gerar o relatorio.');
+                return;
+            }
+
+            // Recalcular valores
+            const score = calcularScoreNFCS();
+            const interpretacao = interpretarScore(score);
+
+            console.log('Dados calculados para relatório:', {score, interpretacao});
+
+            // Gerar relatório em texto simples
+            const relatorio = `RELATORIO DE AVALIACAO DE DOR NO NEONATO
+=========================================
+
+DADOS DO PACIENTE:
+- Nome: ${nome || 'Nao informado'}
+- Data da avaliacao: ${dataAvaliacao.toLocaleDateString('pt-BR')}
+- Horario da avaliacao: ${horaAvaliacao}
+
+DADOS DA AVALIACAO:
+- Avaliador: ${avaliador === 'sim' ? 'Proprio avaliador' : 'Outro profissional'}
+- RN prematuro: ${prematuro === 'sim' ? 'Sim' : 'Nao'}
+
+AVALIACAO NFCS (Neonatal Facial Coding System):
+- Testa abaixa ou protrai: ${document.querySelector('input[name="testa"]:checked')?.value === 'sim' ? 'Sim' : 'Nao'}
+- Olhos fechados, espremidos: ${document.querySelector('input[name="olhos"]:checked')?.value === 'sim' ? 'Sim' : 'Nao'}
+- Dobra nasolabial aprofundada: ${document.querySelector('input[name="dobra"]:checked')?.value === 'sim' ? 'Sim' : 'Nao'}
+- Separacao dos labios: ${document.querySelector('input[name="separacao"]:checked')?.value === 'sim' ? 'Sim' : 'Nao'}
+- Boca estica na vertical: ${document.querySelector('input[name="bocaVertical"]:checked')?.value === 'sim' ? 'Sim' : 'Nao'}
+- Boca estica na horizontal: ${document.querySelector('input[name="bocaHorizontal"]:checked')?.value === 'sim' ? 'Sim' : 'Nao'}
+- Lingua aparece: ${document.querySelector('input[name="lingua"]:checked')?.value === 'sim' ? 'Sim' : 'Nao'}
+- Queixo contraido sobre a maxila: ${document.querySelector('input[name="queixo"]:checked')?.value === 'sim' ? 'Sim' : 'Nao'}
+- Labios cerrados: ${document.querySelector('input[name="labios"]:checked')?.value === 'sim' ? 'Sim' : 'Nao'}
+- Protusao da lingua: ${document.querySelector('input[name="protusao"]:checked')?.value === 'sim' ? 'Sim' : 'Nao'}
+
+RESULTADO:
+- Score NFCS: ${Number(score).toFixed(1)} pontos (maximo 9)
+- Interpretacao: ${interpretacao.classificacaoPlain || interpretacao.classificacao}
+- Descricao: ${interpretacao.descricaoPlain || interpretacao.descricao}
+
+OBSERVACOES:
+- Sistema baseado em Grunau et al. para neonatos a termo
+- Score >= 3 pontos sugere presenca de dor significativa
+- Avaliacao deve ser realizada por profissional treinado
+- Considerar contexto clinico e outros sinais de dor
+- Reavaliar conforme necessario
+
+REFERENCIA:
+- Grunau RE, Craig KD. Pain expression in neonates: facial action and cry. Pain. 1987;28(3):395-410.
+
+Data: ${new Date().toLocaleDateString('pt-BR')}
+Hora: ${new Date().toLocaleTimeString('pt-BR')}`;
+
+            console.log('Relatório gerado:', relatorio);
+
+            // Copiar para área de transferência
+            navigator.clipboard.writeText(relatorio).then(() => {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                console.log('Relatório copiado com sucesso');
+            }).catch((err) => {
+                console.error('Erro ao copiar relatório:', err);
+                // Fallback para navegadores mais antigos
+                const textArea = document.createElement('textarea');
+                textArea.value = relatorio;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+
+        // Event listener para o formulário
+        document.addEventListener('DOMContentLoaded', function() {
+            // Definir data e hora atuais como padrão
+            const agora = new Date();
+            const hoje = agora.toISOString().split('T')[0];
+            const horaAtual = agora.toTimeString().slice(0, 5);
+            document.getElementById('dataAvaliacao').value = hoje;
+            document.getElementById('horaAvaliacao').value = horaAtual;
+
+            // Event listener para o formulário
+            const form = document.getElementById('dorForm');
+            if (form) {
+                console.log('Formulário encontrado, adicionando event listener');
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    console.log('Formulário submetido');
+                    avaliarDor();
+                });
+            } else {
+                console.log('Formulário não encontrado');
+            }
+
+            // Event listener para o botão de relatório
+            const botaoRelatorio = document.getElementById('gerarRelatorio');
+            if (botaoRelatorio) {
+                console.log('Botão de relatório encontrado, adicionando event listener');
+                botaoRelatorio.addEventListener('click', function() {
+                    console.log('Botão de relatório clicado');
+                    gerarRelatorio();
+                });
+            } else {
+                console.log('Botão de relatório não encontrado');
+            }
+
+            // Event listener para o botão de limpar dados
+            const botaoLimpar = document.getElementById('limparDados');
+            if (botaoLimpar) {
+                console.log('Botão de limpar dados encontrado, adicionando event listener');
+                botaoLimpar.addEventListener('click', function() {
+                    console.log('Botão de limpar dados clicado');
+                    limparDados();
+                });
+            } else {
+                console.log('Botão de limpar dados não encontrado');
+            }
+        });
+
+        // Event listener para radio buttons - tornar toda a área clicável
+        document.addEventListener('change', function(e) {
+            if (e.target.type === 'radio') {
+                console.log('Radio button clicado:', e.target.name, e.target.value);
+                const radioGroup = e.target.name;
+                const allOptions = document.querySelectorAll(`input[name="${radioGroup}"]`);
+                allOptions.forEach(option => {
+                    option.closest('.radio-option').classList.remove('selected');
+                });
+                e.target.closest('.radio-option').classList.add('selected');
+                
+                // Mostrar aviso se prematuro for selecionado
+                if (e.target.name === 'prematuro' && e.target.value === 'sim') {
+                    document.getElementById('avisoPrematuro').style.display = 'block';
+                } else if (e.target.name === 'prematuro' && e.target.value === 'nao') {
+                    document.getElementById('avisoPrematuro').style.display = 'none';
+                }
+            }
+        });
+
+        // Event listener para cliques nas opções de radio
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.radio-option')) {
+                const radioOption = e.target.closest('.radio-option');
+                const radioInput = radioOption.querySelector('input[type="radio"]');
+                if (radioInput) {
+                    radioInput.checked = true;
+                    radioInput.dispatchEvent(new Event('change'));
+                }
+            }
+        });
+
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

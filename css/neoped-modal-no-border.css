@@ -1,0 +1,39 @@
+/**
+ * NeoPedCalc — modais (overlay): cascas externas sem borda, contorno nem sombra.
+ * Blocos internos (.modal-header / .modal-body / .modal-footer) mantêm separadores locais.
+ * Importado por neoped-datetime-mobile.css.
+ */
+.modal,
+.modal.show,
+.modal.hidden,
+.modal-backdrop,
+.modal-overlay,
+.modal-content,
+.modal-dialog,
+.modal-inner,
+.modal-window,
+.lus-modal,
+.lus-modal-dialog,
+.lus-modal-head,
+.lus-modal-frame,
+[role="dialog"][aria-modal="true"],
+dialog {
+    border: none !important;
+    border-width: 0 !important;
+    border-style: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Tema global usa [class*="modal"] com sombra — retira do miolo do modal */
+.modal-header,
+.modal-body,
+.modal-footer,
+.modal-title {
+    box-shadow: none !important;
+}
+
+dialog::backdrop {
+    border: none !important;
+    box-shadow: none !important;
+}

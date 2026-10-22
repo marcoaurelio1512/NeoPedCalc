@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — Score de Finnegan (educativo)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .section h2, .section h3 {
+            font-size: 16px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-weight: 700;
+            border-bottom: 1px solid #f0f0f5;
+            padding-bottom: 8px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .criteria-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .alert-box {
+            background: #fffbe6;
+            border: 1px solid #e5e7eb;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .alert-box h3 {
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #856404;
+        }
+
+        .score-display {
+            background: #e8fff0;
+            border: 1px solid #b4ffcf;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .score-value {
+            font-size: 48px;
+            font-weight: 900;
+            margin: 10px 0;
+            color: #111;
+        }
+
+        .score-interpretation {
+            font-size: 14px;
+            font-weight: 700;
+            color: #28a745;
+            margin-top: 8px;
+        }
+
+        .report-btn {
+            background: #111;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 15px;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .report-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .reference-info {
+            background: #fffbe6;
+            border: 1px solid #e5e7eb;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-top: 15px;
+        }
+
+        .reference-info h3 {
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        /* Modal Styles */
+        .btn-info {
+            background: rgba(17, 17, 17, 0.1);
+            color: #111;
+            border: 2px solid #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 { margin: 0; font-size: 20px; }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: 4px solid #111;
+            padding: 12px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .wrap { padding: 12px; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <header>
+        <h1>👶 Score de Finnegan</h1>
+        <p>Avaliação da Síndrome de Abstinência Neonatal</p>
+        <div class="header-actions">
+            <button class="btn-info" onclick="abrirModal()">
+                Como usar
+            </button>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <!-- Alert Box -->
+        <div class="card">
+            <div class="alert-box">
+                <h3>ℹ️ Informações Importantes</h3>
+                <p><strong>Protocolo:</strong> Avaliação a cada 6 horas por 72 horas após retirada da droga.</p>
+                <p><strong>Síndrome de Abstinência:</strong> Escore ≥ 8 durante a avaliação.</p>
+            </div>
+        </div>
+
+        <!-- Dados do Paciente -->
+        <div class="card">
+            <div class="section">
+                <h2>👤 Dados do Paciente</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome">Nome do Neonato:</label>
+                        <input type="text" id="nome" placeholder="Digite o nome">
+                    </div>
+                    <div class="form-group">
+                        <label for="data">Data/Hora da Avaliação:</label>
+                        <input type="datetime-local" id="data">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <!-- Critérios de Avaliação - Sistema Nervoso Central -->
+            <div class="section">
+                <h3>📋 Sistema Nervoso Central</h3>
+                <div class="criteria-grid">
+                    <div class="form-group">
+                        <label for="choro">1. Choro:</label>
+                        <select id="choro" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Não excessivo (0)</option>
+                            <option value="2">Excessivo agudo (2)</option>
+                            <option value="3">Contínuo agudo (3)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sono">2. Dormir após alimentação:</label>
+                        <select id="sono" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">> 3 horas (0)</option>
+                            <option value="1">2-3 horas (1)</option>
+                            <option value="2">1-2 horas (2)</option>
+                            <option value="3">< 1 hora (3)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="moro">3. Reflexo de Moro:</label>
+                        <select id="moro" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Normal (0)</option>
+                            <option value="2">Hiperativo (2)</option>
+                            <option value="3">Marcadamente hiperativo (3)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tremores">4. Tremores:</label>
+                        <select id="tremores" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Sem tremor (0)</option>
+                            <option value="1">Leves quando perturbado (1)</option>
+                            <option value="2">Moderados/Severos quando perturbado (2)</option>
+                            <option value="3">Leves quando não perturbado (3)</option>
+                            <option value="4">Moderados/Severos quando não perturbado (4)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tonus">5. Aumento do tônus muscular:</label>
+                        <select id="tonus" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Não (0)</option>
+                            <option value="2">Sim (2)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bocejos">6. Bocejos frequentes:</label>
+                        <select id="bocejos" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Não (0)</option>
+                            <option value="1">Sim (1)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="escoriacao">7. Escoriação (lesões cutâneas):</label>
+                        <select id="escoriacao" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Não (0)</option>
+                            <option value="1">Sim (1)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="convulsoes">8. Convulsões:</label>
+                        <select id="convulsoes" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Não (0)</option>
+                            <option value="5">Sim (5)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <!-- Critérios Metabólicos/Vasomotores/Respiratórios -->
+            <div class="section">
+                <h3>🌡️ Distúrbios Metabólicos, Vasomotores e Respiratórios</h3>
+                <div class="criteria-grid">
+                    <div class="form-group">
+                        <label for="suor">9. Suor:</label>
+                        <select id="suor" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Não (0)</option>
+                            <option value="1">Sim (1)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="febre">10. Febre:</label>
+                        <select id="febre" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">< 37,8°C (0)</option>
+                            <option value="1">37,8-38,2°C (1)</option>
+                            <option value="2">> 38,2°C (2)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cutis">11. Cútis marmórea:</label>
+                        <select id="cutis" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Não (0)</option>
+                            <option value="1">Sim (1)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="espirros">12. Espirros frequentes:</label>
+                        <select id="espirros" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Não (0)</option>
+                            <option value="1">Sim (1)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prurido">13. Prurido nasal:</label>
+                        <select id="prurido" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Não (0)</option>
+                            <option value="1">Sim (1)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="batimento">14. Batimento de asa de nariz:</label>
+                        <select id="batimento" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Não (0)</option>
+                            <option value="2">Sim (2)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fr">15. Frequência respiratória:</label>
+                        <select id="fr" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">< 60 rpm sem retrações (0)</option>
+                            <option value="1">> 60 rpm (1)</option>
+                            <option value="2">> 60 rpm com retrações (2)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <!-- Critérios Gastrointestinais -->
+            <div class="section">
+                <h3>🍼 Distúrbios Gastrointestinais</h3>
+                <div class="criteria-grid">
+                    <div class="form-group">
+                        <label for="succao">16. Sucção excessiva:</label>
+                        <select id="succao" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Não (0)</option>
+                            <option value="1">Sim (1)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="alimentacao">17. Come pouco (má alimentação):</label>
+                        <select id="alimentacao" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Não (0)</option>
+                            <option value="2">Sim (2)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regurgitacao">18. Regurgitação:</label>
+                        <select id="regurgitacao" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Não (0)</option>
+                            <option value="2">Sim (2)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vomitos">19. Vômitos em jato:</label>
+                        <select id="vomitos" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Não (0)</option>
+                            <option value="3">Sim (3)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fezes">20. Fezes:</label>
+                        <select id="fezes" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Normais (0)</option>
+                            <option value="2">Líquidas/Explosivas (2)</option>
+                            <option value="3">Líquidas E Explosivas (3)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <!-- Resultado -->
+            <div class="section" id="scoreDisplay" style="display: none;">
+                <h2>SCORE TOTAL</h2>
+                <div class="score-value" id="scoreValue">0</div>
+                <div class="score-interpretation" id="scoreInterpretation"></div>
+            </div>
+
+            <!-- Botão Gerar Relatório -->
+            <button type="button" class="report-btn" onclick="gerarRelatorio()" id="reportBtn" disabled>
+                📋 Copiar texto informativo
+            </button>
+        </div>
+
+        <div class="card">
+            <!-- Referências -->
+            <div class="section">
+                <h3>📚 Referências</h3>
+                <p><strong>Finnegan LP, Connaughton JF Jr, Kron RE, et al.</strong> Neonatal abstinence syndrome: Assessment and management. Addict Dis. 1975;1:141-158.</p>
+                <p><strong>Interpretação:</strong></p>
+                <ul>
+                    <li>Escore < 8: Sem síndrome de abstinência</li>
+                    <li>Escore ≥ 8: Síndrome de abstinência presente - considerar tratamento farmacológico</li>
+                    <li>Monitoramento: A cada 6 horas por 72 horas após retirada da droga</li>
+                </ul>
+            </div>
+        </div>
+    </div> <!-- end wrap -->
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — Score de Finnegan (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta calculadora organiza critérios para estimativa educativa de sinais de abstinência neonatal. O conteúdo é informativo e não substitui avaliação clínica, protocolo institucional ou prescrição.</p>
+                
+                <h3>Fórmula do Score de Finnegan</h3>
+                <div class="formula-box">
+                    <strong>Score de Finnegan = Soma de pontos de todos os sinais presentes</strong><br><br>
+                    <strong>Principais Categorias:</strong><br>
+                    • <strong>Sistema Nervoso Central:</strong> Tremores, irritabilidade, choro excessivo, reflexos hiperativos<br>
+                    • <strong>Sistema Respiratório:</strong> Taquipneia, apneia, espirros<br>
+                    • <strong>Sistema Gastrointestinal:</strong> Vômitos, diarreia, sucção excessiva<br>
+                    • <strong>Sistema Autônomo:</strong> Sudorese, febre, bocejos, espirros<br>
+                    • <strong>Outros:</strong> Despertar excessivo, reflexo de Moro exagerado<br><br>
+                    <strong>Pontuação por Item:</strong><br>
+                    • 1-2 pontos: Sintomas leves<br>
+                    • 3-4 pontos: Sintomas moderados<br>
+                    • 5+ pontos: Sintomas graves<br><br>
+                    <strong>Escala Total:</strong> 0-25+ pontos
+                </div>
+
+                <h3>Critérios de Avaliação</h3>
+                <ul>
+                    <li><strong>Tremores:</strong> Intensidade e frequência</li>
+                    <li><strong>Irritabilidade:</strong> Choro excessivo, dificuldade de consolo</li>
+                    <li><strong>Reflexos:</strong> Hiperreflexia, Moro exagerado</li>
+                    <li><strong>Respiração:</strong> Taquipneia, apneia, espirros</li>
+                    <li><strong>Gastrointestinal:</strong> Vômitos, diarreia, sucção excessiva</li>
+                    <li><strong>Autônomo:</strong> Sudorese, febre, bocejos</li>
+                    <li><strong>Sono:</strong> Despertar excessivo, sono fragmentado</li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Observe o Recém-nascido:</strong> Avalie todos os sistemas</li>
+                    <li><strong>Marque os Sinais Presentes:</strong> Selecione cada sintoma observado</li>
+                    <li><strong>Atribua Pontos:</strong> Cada item tem pontuação específica</li>
+                    <li><strong>Some os Pontos:</strong> Totalize a pontuação</li>
+                    <li>Clique em <strong>"Calcular Score"</strong> para obter o resultado</li>
+                </ol>
+
+                <h3>Interpretação dos Resultados</h3>
+                <ul>
+                    <li><strong>0-7 pontos:</strong> Abstinência leve (observação)</li>
+                    <li><strong>8-12 pontos:</strong> Abstinência moderada (considerar tratamento)</li>
+                    <li><strong>13+ pontos:</strong> Abstinência grave (tratamento farmacológico)</li>
+                    <li><strong>Score ≥8 em 3 avaliações:</strong> Iniciar tratamento</li>
+                    <li><strong>Score <8 por 48h:</strong> Considerar desmame</li>
+                </ul>
+
+                <h3>Condutas por Escore</h3>
+                <ul>
+                    <li><strong>0-7 pontos:</strong> Cuidados de suporte, observação</li>
+                    <li><strong>8-12 pontos:</strong> Cuidados de suporte, considerar tratamento</li>
+                    <li><strong>13+ pontos:</strong> Tratamento farmacológico (metadona/morfina)</li>
+                    <li><strong>Monitoramento:</strong> Avaliar a cada 4-6 horas</li>
+                </ul>
+
+                <h3>Considerações Importantes</h3>
+                <ul>
+                    <li>Avalie regularmente (a cada 4-6 horas)</li>
+                    <li>Use estímulos consistentes para avaliação</li>
+                    <li>Documente o score e horário da avaliação</li>
+                    <li>Considere histórico materno de substâncias</li>
+                    <li>Reavalie após mudanças no tratamento</li>
+                    <li>Comunique mudanças significativas</li>
+                    <li>Use em conjunto com avaliação clínica</li>
+                </ul>
+
+                <h3>Aplicações Clínicas</h3>
+                <ul>
+                    <li><strong>Triagem:</strong> Identificar recém-nascidos em risco</li>
+                    <li><strong>Diagnóstico:</strong> Confirmar síndrome de abstinência</li>
+                    <li><strong>Tratamento:</strong> Orientar necessidade de medicação</li>
+                    <li><strong>Monitoramento:</strong> Acompanhar resposta ao tratamento</li>
+                    <li><strong>Desmame:</strong> Guiar redução gradual da medicação</li>
+                </ul>
+
+                <h3>Substâncias Associadas</h3>
+                <ul>
+                    <li><strong>Opioides:</strong> Heroína, metadona, oxicodona</li>
+                    <li><strong>Benzodiazepínicos:</strong> Diazepam, lorazepam</li>
+                    <li><strong>Antidepressivos:</strong> SSRIs, tricíclicos</li>
+                    <li><strong>Outros:</strong> Álcool, cocaína, nicotina</li>
+                </ul>
+
+                <h3>Limitações</h3>
+                <ul>
+                    <li>Subjetividade na avaliação de alguns parâmetros</li>
+                    <li>Pode variar entre avaliadores</li>
+                    <li>Não considera todas as substâncias</li>
+                    <li>Pode ser influenciado por outros fatores</li>
+                    <li>Não substitui avaliação clínica completa</li>
+                    <li>Requer treinamento adequado</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Finnegan LP, Connaughton JF Jr, Kron RE, Emich JP. Neonatal abstinence syndrome: assessment and management. Addict Dis. 1975;2(1-2):141-58.<br>
+                    - Hudak ML, Tan RC. Neonatal drug withdrawal. Pediatrics. 2012;129(2):e540-60.<br>
+                    - Jansson LM, Velez M. Neonatal abstinence syndrome. Curr Opin Pediatr. 2012;24(2):252-8.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Inicializar data atual
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+                .toISOString()
+                .slice(0, 16);
+            document.getElementById('data').value = localDateTime;
+        });
+
+        function calcularScore() {
+            const criterios = [
+                'choro', 'sono', 'moro', 'tremores', 'tonus', 'bocejos', 'escoriacao', 'convulsoes',
+                'suor', 'febre', 'cutis', 'espirros', 'prurido', 'batimento', 'fr',
+                'succao', 'alimentacao', 'regurgitacao', 'vomitos', 'fezes'
+            ];
+
+            let scoreTotal = 0;
+            let criteriosPreenchidos = 0;
+
+            criterios.forEach(criterio => {
+                const elemento = document.getElementById(criterio);
+                if (elemento && elemento.value !== '') {
+                    scoreTotal += parseInt(elemento.value);
+                    criteriosPreenchidos++;
+                }
+            });
+
+            // Atualizar display do score
+            document.getElementById('scoreValue').textContent = scoreTotal;
+
+            // Interpretação
+            let interpretacao = '';
+            if (scoreTotal < 8) {
+                interpretacao = 'Sem Síndrome de Abstinência';
+            } else if (scoreTotal >= 8 && scoreTotal <= 12) {
+                interpretacao = 'Síndrome de Abstinência Leve - Monitorar e considerar tratamento';
+            } else if (scoreTotal > 12) {
+                interpretacao = 'Síndrome de Abstinência Moderada/Grave - Iniciar tratamento farmacológico';
+            }
+
+            document.getElementById('scoreInterpretation').textContent = interpretacao;
+
+            // Mostrar resultado se pelo menos alguns critérios foram preenchidos
+            if (criteriosPreenchidos > 0) {
+                document.getElementById('scoreDisplay').style.display = 'block';
+                document.getElementById('reportBtn').disabled = false;
+            } else {
+                document.getElementById('scoreDisplay').style.display = 'none';
+                document.getElementById('reportBtn').disabled = true;
+            }
+        }
+
+        function gerarRelatorio() {
+            const nome = document.getElementById('nome').value || 'Nao informado';
+            const data = document.getElementById('data').value || 'Nao informada';
+            
+            // Formatar data
+            let dataFormatada = 'Nao informada';
+            if (data) {
+                const dt = new Date(data);
+                dataFormatada = dt.toLocaleString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+
+            const scoreTotal = parseInt(document.getElementById('scoreValue').textContent);
+            const interpretacao = document.getElementById('scoreInterpretation').textContent;
+
+            // Coletar todos os critérios selecionados
+            const criteriosNomes = {
+                'choro': 'Choro',
+                'sono': 'Dormir apos alimentacao',
+                'moro': 'Reflexo de Moro',
+                'tremores': 'Tremores',
+                'tonus': 'Aumento do tonus muscular',
+                'bocejos': 'Bocejos frequentes',
+                'escoriacao': 'Escoriacao',
+                'convulsoes': 'Convulsoes',
+                'suor': 'Suor',
+                'febre': 'Febre',
+                'cutis': 'Cutis marmorea',
+                'espirros': 'Espirros frequentes',
+                'prurido': 'Prurido nasal',
+                'batimento': 'Batimento de asa de nariz',
+                'fr': 'Frequencia respiratoria',
+                'succao': 'Succao excessiva',
+                'alimentacao': 'Come pouco',
+                'regurgitacao': 'Regurgitacao',
+                'vomitos': 'Vomitos em jato',
+                'fezes': 'Fezes'
+            };
+
+            let detalhes = '';
+            Object.keys(criteriosNomes).forEach(key => {
+                const elemento = document.getElementById(key);
+                if (elemento && elemento.value !== '') {
+                    const texto = elemento.options[elemento.selectedIndex].text;
+                    detalhes += `${criteriosNomes[key]}: ${texto}\n`;
+                }
+            });
+
+            let relatorio = `RESUMO INFORMATIVO — SCORE DE FINNEGAN (EDUCATIVO)
+========================================
+
+DADOS DO PACIENTE
+-----------------
+Nome: ${nome}
+Data/Hora da Avaliacao: ${dataFormatada}
+
+CRITERIOS AVALIADOS
+-------------------
+${detalhes}
+
+RESULTADO
+---------
+SCORE TOTAL: ${scoreTotal}
+Interpretacao: ${interpretacao}
+
+RECOMENDACOES
+-------------
+${scoreTotal < 8 ? 
+    '- Continuar monitoramento a cada 6 horas\n- Medidas de suporte nao farmacologicas' : 
+    '- ATENCAO: Considerar tratamento farmacologico\n- Avaliar necessidade de morfina ou metadona\n- Monitoramento intensivo\n- Suporte nutricional adequado'}
+
+PROTOCOLO
+---------
+- Avaliar a cada 6 horas durante 72 horas apos retirada da droga
+- Sindrome de abstinencia: Escore >= 8
+- Registrar todas as avaliacoes para acompanhamento da evolucao
+
+REFERENCIAS
+-----------
+Finnegan LP, Connaughton JF Jr, Kron RE, et al.
+Neonatal abstinence syndrome: Assessment and management.
+Addict Dis. 1975;1:141-158.
+
+Data de Geracao: ${new Date().toLocaleString('pt-BR')}
+`;
+
+            relatorio = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorio;
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorio += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                relatorio += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            // Copiar para a área de transferência
+            navigator.clipboard.writeText(relatorio).then(() => {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(() => {
+                const textArea = document.createElement('textarea');
+                textArea.value = relatorio;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

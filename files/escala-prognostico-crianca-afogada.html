@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>NeoPedCalc — Escala de Orlowski (educativo)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            touch-action: pan-y;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .app-viewport {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+        .app-shell {
+            width: 100%;
+            max-width: 1200px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .patient-info {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #e5e7eb;
+        }
+
+        .patient-info h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #111827;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .glasgow-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #d1d5db;
+        }
+
+        .glasgow-section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .glasgow-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 30px;
+        }
+
+        .glasgow-category {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+
+        .glasgow-category h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .glasgow-option {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .glasgow-option:hover {
+            background: #f8f9fa;
+        }
+
+        .glasgow-option.selected {
+            background: #d4edda;
+            border-color: #d1d5db;
+        }
+
+        .glasgow-option input[type="radio"] {
+            margin-right: 10px;
+            accent-color: #28a745;
+        }
+
+        .glasgow-option label {
+            cursor: pointer;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .age-selection {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: none;
+        }
+
+        .age-selection h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+
+        .age-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .age-btn {
+            padding: 12px 24px;
+            border: 2px solid #374151;
+            background: white;
+            color: #374151;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .age-btn.active {
+            background: #374151;
+            color: white;
+        }
+
+        .age-btn:hover {
+            background: #374151;
+            color: white;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .generate-report-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .generate-report-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(40, 167, 69, 0.3);
+        }
+
+        .result-container {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+
+        .result-favorable {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            color: white;
+        }
+
+        .result-intermediate {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .result-unfavorable {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+        }
+
+        .score-display {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .prognosis-text {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        .interpretation {
+            font-size: 1rem;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .results {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 30px;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #e5e7eb;
+        }
+
+        .result-card h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .result-card p {
+            color: #374151;
+            line-height: 1.6;
+        }
+
+        .references {
+            margin-top: 40px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .references h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .references ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .references li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+            color: #374151;
+            line-height: 1.4;
+        }
+
+        .references li:before {
+            content: "•";
+            color: #111827;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #e5e7eb;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .orlowski-info {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #d1d5db;
+        }
+
+        .orlowski-info h3 {
+            color: #155724;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .orlowski-info p {
+            color: #155724;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+            font-size: 0.85em;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+
+            .glasgow-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .age-buttons {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 5px; }
+            .header h1 { font-size: 1.4em; }
+            .header p { font-size: 0.9em; }
+            .content { padding: 15px; }
+            .section { padding: 12px; }
+            .section h3 { font-size: 1.1em; }
+            select { padding: 10px; font-size: 14px; }
+            button { padding: 10px; font-size: 14px; }
+            .results { padding: 12px; }
+            .score-display { font-size: 2.5em; }
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-info {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-info:hover {
+            background: white;
+            color: #2c3e50;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
+            box-sizing: border-box;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 720px;
+            max-height: 86vh;
+            overflow: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #2c3e50;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .modal-header {
+                padding: 15px 20px;
+            }
+
+            .modal-header h2 {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 98%;
+            }
+
+            .modal-body {
+                padding: 15px;
+            }
+
+            .modal-header h2 {
+                font-size: 16px;
+            }
+
+            .modal-body h3 {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .app-viewport { padding: 12px; }
+        }
+
+        .infant-hidden {
+            display: none;
+        }
+
+        .input-readonly {
+            background-color: #f8f9fa;
+            border-color: #d1d5db;
+        }
+
+        .auto-note {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .card, .panel, .box {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        label {
+            display: block;
+        }
+
+        input, select, textarea, button {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        input, select, textarea {
+            width: 100%;
+        }
+
+        body {
+            overscroll-behavior-x: none;
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <div class="app-viewport">
+        <div class="app-shell">
+            <div class="container">
+                <div class="header">
+                    <h1>Escala de Orlowski</h1>
+                    <p>Prognostico Neurologico em Criancas Afogadas</p>
+                    <div class="header-actions">
+                        <button type="button" class="btn-info" onclick="abrirModal()">
+                            Como usar                        </button>
+                    </div>
+                </div>
+
+        <div class="form-container">
+            <div class="warning">
+                <strong>Atenção:</strong> Esta ferramenta é destinada apenas para fins educacionais e de pesquisa. Não substitui a avaliação clínica especializada e não deve ser utilizada para decisões terapêuticas.
+            </div>
+
+            <div class="patient-info">
+                <h3>Dados do Paciente</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="patientName">Nome da Criança:</label>
+                        <input type="text" id="patientName" placeholder="Digite o nome da criança">
+                    </div>
+                    <div class="form-group">
+                        <label for="birthDate">Data de Nascimento:</label>
+                        <input type="date" id="birthDate" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="evaluationDate">Data/Hora da Avaliação:</label>
+                        <input type="datetime-local" id="evaluationDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="evaluator">Avaliador:</label>
+                        <input type="text" id="evaluator" placeholder="Nome do médico avaliador">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="idadeCalculada">Idade na data da avaliação (calculada):</label>
+                    <input type="text" id="idadeCalculada" readonly placeholder="Informe nascimento e data/hora da avaliação" style="background:#e8f4fd;font-weight:600;color:#1a5276;">
+                </div>
+            </div>
+
+            <div class="age-selection">
+                <h3>Categoria do Paciente</h3>
+                <div class="age-buttons">
+                    <button type="button" class="age-btn active" data-cat="child" onclick="selectCategory('child', this)">Criança (2-5 anos)</button>
+                    <button type="button" class="age-btn" data-cat="infant" onclick="selectCategory('infant', this)">Lactente (0-2 anos)</button>
+                </div>
+                <p id="categoryInfo">Informe a data de nascimento e a data da avaliação para definir a categoria automaticamente pela idade.</p>
+            </div>
+
+            <div class="glasgow-section">
+                <h3>Escala de Coma de Glasgow - Modificada para Crianças</h3>
+                <div class="glasgow-grid">
+                    <div class="glasgow-category">
+                        <h4>Abertura Ocular</h4>
+                        <div class="glasgow-option" onclick="selectGlasgowOption('eye', 4, this)">
+                            <input type="radio" name="eye" value="4" id="eye4">
+                            <label for="eye4">
+                                <span class="child-text">Espontânea</span>
+                                <span class="infant-text infant-hidden">Espontanea</span>
+                                <strong> (4 pontos)</strong>
+                            </label>
+                        </div>
+                        <div class="glasgow-option" onclick="selectGlasgowOption('eye', 3, this)">
+                            <input type="radio" name="eye" value="3" id="eye3">
+                            <label for="eye3">
+                                <span class="child-text">Estimulo verbal</span>
+                                <span class="infant-text infant-hidden">Estimulo verbal</span>
+                                <strong> (3 pontos)</strong>
+                            </label>
+                        </div>
+                        <div class="glasgow-option" onclick="selectGlasgowOption('eye', 2, this)">
+                            <input type="radio" name="eye" value="2" id="eye2">
+                            <label for="eye2">
+                                <span class="child-text">Somente a dor</span>
+                                <span class="infant-text infant-hidden">Somente a dor</span>
+                                <strong> (2 pontos)</strong>
+                            </label>
+                        </div>
+                        <div class="glasgow-option" onclick="selectGlasgowOption('eye', 1, this)">
+                            <input type="radio" name="eye" value="1" id="eye1">
+                            <label for="eye1">
+                                <span class="child-text">Sem resposta</span>
+                                <span class="infant-text infant-hidden">Sem resposta</span>
+                                <strong> (1 ponto)</strong>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="glasgow-category">
+                        <h4>Resposta Verbal</h4>
+                        <div class="glasgow-option" onclick="selectGlasgowOption('verbal', 5, this)">
+                            <input type="radio" name="verbal" value="5" id="verbal5">
+                            <label for="verbal5">
+                                <span class="child-text">Apropriada, orientada</span>
+                                <span class="infant-text infant-hidden">Balbucio, emissao da voz</span>
+                                <strong> (5 pontos)</strong>
+                            </label>
+                        </div>
+                        <div class="glasgow-option" onclick="selectGlasgowOption('verbal', 4, this)">
+                            <input type="radio" name="verbal" value="4" id="verbal4">
+                            <label for="verbal4">
+                                <span class="child-text">Confusa</span>
+                                <span class="infant-text infant-hidden">Choro irritado</span>
+                                <strong> (4 pontos)</strong>
+                            </label>
+                        </div>
+                        <div class="glasgow-option" onclick="selectGlasgowOption('verbal', 3, this)">
+                            <input type="radio" name="verbal" value="3" id="verbal3">
+                            <label for="verbal3">
+                                <span class="child-text">Palavras improprias</span>
+                                <span class="infant-text infant-hidden">Choro de dor</span>
+                                <strong> (3 pontos)</strong>
+                            </label>
+                        </div>
+                        <div class="glasgow-option" onclick="selectGlasgowOption('verbal', 2, this)">
+                            <input type="radio" name="verbal" value="2" id="verbal2">
+                            <label for="verbal2">
+                                <span class="child-text">Palavras incompreensiveis</span>
+                                <span class="infant-text infant-hidden">Gemidos de dor</span>
+                                <strong> (2 pontos)</strong>
+                            </label>
+                        </div>
+                        <div class="glasgow-option" onclick="selectGlasgowOption('verbal', 1, this)">
+                            <input type="radio" name="verbal" value="1" id="verbal1">
+                            <label for="verbal1">
+                                <span class="child-text">Sem resposta</span>
+                                <span class="infant-text infant-hidden">Sem resposta</span>
+                                <strong> (1 ponto)</strong>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="glasgow-category">
+                        <h4>Resposta Motora</h4>
+                        <div class="glasgow-option" onclick="selectGlasgowOption('motor', 6, this)">
+                            <input type="radio" name="motor" value="6" id="motor6">
+                            <label for="motor6">
+                                <span class="child-text">Obedece comando</span>
+                                <span class="infant-text infant-hidden">Movimentos espontaneos</span>
+                                <strong> (6 pontos)</strong>
+                            </label>
+                        </div>
+                        <div class="glasgow-option" onclick="selectGlasgowOption('motor', 5, this)">
+                            <input type="radio" name="motor" value="5" id="motor5">
+                            <label for="motor5">
+                                <span class="child-text">Localiza o estimulo doloroso</span>
+                                <span class="infant-text infant-hidden">Retirada ao toque</span>
+                                <strong> (5 pontos)</strong>
+                            </label>
+                        </div>
+                        <div class="glasgow-option" onclick="selectGlasgowOption('motor', 4, this)">
+                            <input type="radio" name="motor" value="4" id="motor4">
+                            <label for="motor4">
+                                <span class="child-text">Retirada em resposta a dor</span>
+                                <span class="infant-text infant-hidden">Retirada em resposta a dor</span>
+                                <strong> (4 pontos)</strong>
+                            </label>
+                        </div>
+                        <div class="glasgow-option" onclick="selectGlasgowOption('motor', 3, this)">
+                            <input type="radio" name="motor" value="3" id="motor3">
+                            <label for="motor3">
+                                <span class="child-text">Flexao em resposta a dor</span>
+                                <span class="infant-text infant-hidden">Postura decorticacao (flexao)</span>
+                                <strong> (3 pontos)</strong>
+                            </label>
+                        </div>
+                        <div class="glasgow-option" onclick="selectGlasgowOption('motor', 2, this)">
+                            <input type="radio" name="motor" value="2" id="motor2">
+                            <label for="motor2">
+                                <span class="child-text">Extensao a dor</span>
+                                <span class="infant-text infant-hidden">Postura descerebracao (extensao)</span>
+                                <strong> (2 pontos)</strong>
+                            </label>
+                        </div>
+                        <div class="glasgow-option" onclick="selectGlasgowOption('motor', 1, this)">
+                            <input type="radio" name="motor" value="1" id="motor1">
+                            <label for="motor1">
+                                <span class="child-text">Sem resposta</span>
+                                <span class="infant-text infant-hidden">Sem resposta</span>
+                                <strong> (1 ponto)</strong>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="orlowski-info">
+                <h3>Critérios da Escala de Orlowski (1987)</h3>
+                <p><strong>Escala validada cientificamente</strong> para prognóstico neurológico em crianças afogadas. Cada critério vale 1 ponto (total: 0-5 pontos).</p>
+            </div>
+
+            <form id="prognosisForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="submersionTime">1. Tempo de Submersão > 5 minutos</label>
+                        <select id="submersionTime" name="submersionTime" required>
+                            <option value="">Selecione...</option>
+                            <option value="no">≤ 5 minutos (0 pontos)</option>
+                            <option value="yes">> 5 minutos (1 ponto)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="resuscitationDelay">2. Tempo até início da RCP > 10 minutos</label>
+                        <select id="resuscitationDelay" name="resuscitationDelay" required>
+                            <option value="">Selecione...</option>
+                            <option value="no">≤ 10 minutos (0 pontos)</option>
+                            <option value="yes">> 10 minutos (1 ponto)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="noVitalSigns">3. Paciente encontrado sem sinais de vida</label>
+                        <select id="noVitalSigns" name="noVitalSigns" required>
+                            <option value="">Selecione...</option>
+                            <option value="no">Com sinais de vida (0 pontos)</option>
+                            <option value="yes">Sem sinais de vida (1 ponto)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="deepComa">4. Coma profundo na admissão</label>
+                        <select id="deepComa" name="deepComa" required>
+                            <option value="">Selecione...</option>
+                            <option value="no">Resposta motora presente (0 pontos)</option>
+                            <option value="yes">Sem resposta motora (1 ponto)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="arterialPH">5. pH Arterial < 7,10 na admissão</label>
+                        <input type="number" id="arterialPH" name="arterialPH" min="6.5" max="7.5" step="0.01" placeholder="Ex: 7.15" required>
+                        <small>pH < 7,10 = 1 ponto | pH ≥ 7,10 = 0 pontos</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="glasgowScore">Escala de Glasgow (para referência)</label>
+                        <input type="number" id="glasgowScore" name="glasgowScore" min="3" max="15" placeholder="Pontuacao Glasgow" readonly class="input-readonly">
+                        <small class="auto-note">Preenchido automaticamente pela avaliacao acima</small>
+                    </div>
+                </div>
+
+                <button type="button" class="calculate-btn" onclick="calculateOrlowski()">
+                    Calcular Escala de Orlowski
+                </button>
+            </form>
+
+            <div id="resultContainer" class="result-container">
+                <div class="score-display" id="scoreDisplay"></div>
+                <div class="prognosis-text" id="prognosisText"></div>
+                <div class="interpretation" id="interpretation"></div>
+            </div>
+
+            <div class="results" id="results">
+                <div class="result-card" id="resultado">
+                    <h4>Resultado da Avaliação</h4>
+                    <p id="resultadoTexto">Clique em "Calcular Prognóstico" para ver o resultado.</p>
+                </div>
+
+                <div class="result-card" id="detalhes">
+                    <h4>Detalhes da Avaliação</h4>
+                    <p id="detalhesTexto">Aguarde o cálculo da escala.</p>
+                </div>
+
+                <button type="button" class="generate-report-btn" onclick="generateReport()">Copiar texto informativo</button>
+            </div>
+
+            <div class="references">
+                <h3>Referências Bibliográficas</h3>
+                <ul>
+                    <li>Orlowski JP. Prognostic factors in pediatric cases of drowning and near-drowning. JAMA. 1987;257(21):3039-3041.</li>
+                    <li>Teasdale G, Jennett B. Assessment of coma and impaired consciousness. Lancet. 1974;2(7872):81-84.</li>
+                    <li>American Heart Association. Pediatric Advanced Life Support. Dallas, TX: American Heart Association; 1997.</li>
+                    <li>Szpilman D, Bierens JJ, Handley AJ, Orlowski JP. Drowning. N Engl J Med. 2012;366(22):2102-2110.</li>
+                    <li>Escala de Coma de Glasgow Modificada para Lactentes e Crianças. Manual MSD para Profissionais de Saúde.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — Escala de Orlowski (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta calculadora organiza critérios para estimativa educativa de prognóstico neurológico em criança afogada. O conteúdo é informativo e não substitui avaliação clínica, protocolo institucional ou prescrição.</p>
+                
+                <h3>Fórmula da Escala</h3>
+                <div class="formula-box">
+                    <strong>Score Total = Soma dos pontos de cada critério</strong><br><br>
+                    <strong>Critérios de Avaliação:</strong><br>
+                    • <strong>Tempo de Submersão:</strong> 0-5 pontos<br>
+                    • <strong>Tempo até RCP:</strong> 0-5 pontos<br>
+                    • <strong>Tempo até Respiração Espontânea:</strong> 0-5 pontos<br>
+                    • <strong>Temperatura da Água:</strong> 0-3 pontos<br>
+                    • <strong>Idade da Criança:</strong> 0-2 pontos<br>
+                    • <strong>pH Arterial:</strong> 0-5 pontos<br>
+                    • <strong>Glasgow Coma Scale:</strong> 0-5 pontos<br><br>
+                    <strong>Score Máximo:</strong> 30 pontos
+                </div>
+
+                <h3>Critérios de Avaliação</h3>
+                <ul>
+                    <li><strong>Tempo de Submersão:</strong> Duração da imersão</li>
+                    <li><strong>Tempo até RCP:</strong> Início da ressuscitação</li>
+                    <li><strong>Tempo até Respiração Espontânea:</strong> Recuperação respiratória</li>
+                    <li><strong>Temperatura da Água:</strong> Frio vs. temperatura ambiente</li>
+                    <li><strong>Idade da Criança:</strong> Fatores de risco por idade</li>
+                    <li><strong>pH Arterial:</strong> Acidose metabólica</li>
+                    <li><strong>Glasgow Coma Scale:</strong> Nível de consciência</li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Insira os Dados:</strong> Tempo de submersão, RCP, respiração</li>
+                    <li><strong>Informe Características:</strong> Temperatura da água, idade</li>
+                    <li><strong>Insira Parâmetros:</strong> pH arterial, Glasgow</li>
+                    <li><strong>Calcule o Score:</strong> Sistema calcula automaticamente</li>
+                    <li><strong>Interprete o Resultado:</strong> Prognóstico neurológico</li>
+                    <li><strong>Considere Contexto:</strong> Clínica do paciente</li>
+                </ol>
+
+                <h3>Interpretação do Score</h3>
+                <ul>
+                    <li><strong>Score 0-5:</strong> Prognóstico excelente</li>
+                    <li><strong>Score 6-10:</strong> Prognóstico bom</li>
+                    <li><strong>Score 11-15:</strong> Prognóstico moderado</li>
+                    <li><strong>Score 16-20:</strong> Prognóstico reservado</li>
+                    <li><strong>Score 21-25:</strong> Prognóstico ruim</li>
+                    <li><strong>Score 26-30:</strong> Prognóstico muito ruim</li>
+                    <li><strong>Contexto:</strong> Clínico e laboratorial</li>
+                    <li><strong>Monitoramento:</strong> Contínuo</li>
+                </ul>
+
+                <h3>Condutas Baseadas no Score</h3>
+                <ul>
+                    <li><strong>Score Baixo (0-10):</strong> Suporte básico, monitoramento</li>
+                    <li><strong>Score Moderado (11-20):</strong> Suporte avançado, observação</li>
+                    <li><strong>Score Alto (21-30):</strong> Suporte intensivo, prognóstico reservado</li>
+                    <li><strong>Tratamento:</strong> Específico por score</li>
+                    <li><strong>Monitoramento:</strong> Neurológico contínuo</li>
+                    <li><strong>Reavaliação:</strong> Periódica</li>
+                </ul>
+
+                <h3>Fatores de Risco</h3>
+                <ul>
+                    <li><strong>Tempo de Submersão:</strong> > 5 minutos</li>
+                    <li><strong>RCP Tardio:</strong> > 10 minutos</li>
+                    <li><strong>Respiração Tardia:</strong> > 20 minutos</li>
+                    <li><strong>Água Fria:</strong> < 15°C</li>
+                    <li><strong>Idade:</strong> < 3 anos</li>
+                    <li><strong>Acidose:</strong> pH < 7.0</li>
+                    <li><strong>Coma:</strong> GCS < 8</li>
+                </ul>
+
+                <h3>Limitações e Considerações</h3>
+                <ul>
+                    <li>Não substitui avaliação clínica</li>
+                    <li>Requer contexto clínico</li>
+                    <li>Variações individuais</li>
+                    <li>Fatores não incluídos</li>
+                    <li>Evolução clínica</li>
+                    <li>Tratamento precoce</li>
+                    <li>Monitoramento contínuo</li>
+                    <li>Interpretação experiente</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Orlowski JP. Prognostic factors in pediatric cases of drowning and near-drowning. JACEP. 1979;8(5):176-179.<br>
+                    - Bierens JJ, et al. Drowning. N Engl J Med. 2012;366(22):2102-2110.<br>
+                    - Quan L, et al. Predicting outcome in pediatric submersion victims. Ann Emerg Med. 1990;19(12):1394-1398.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formatarNumero(valor) {
+            const numero = Number(valor);
+            if (Number.isNaN(numero)) {
+                return valor;
+            }
+            return numero.toFixed(1);
+        }
+
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        let currentCategory = 'child';
+        let currentPrognosis = null;
+
+        /** Data só com YYYY-MM-DD em fuso local (evita erro de idade com UTC). */
+        function parseDataNascimento(isoDate) {
+            if (!isoDate || !/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) return null;
+            var p = isoDate.split('-');
+            var y = parseInt(p[0], 10), m = parseInt(p[1], 10) - 1, d = parseInt(p[2], 10);
+            if (isNaN(y) || isNaN(m) || isNaN(d)) return null;
+            return new Date(y, m, d, 12, 0, 0, 0);
+        }
+
+        function obterDataReferenciaAvaliacao() {
+            var el = document.getElementById('evaluationDate');
+            var v = el && el.value;
+            if (v) {
+                var t = new Date(v);
+                return isNaN(t.getTime()) ? new Date() : t;
+            }
+            return new Date();
+        }
+
+        /** Anos, meses e dias completos entre duas datas locais. */
+        function idadeAnosMesesDias(nascimento, referencia) {
+            if (!nascimento || !referencia || nascimento > referencia) {
+                return { anos: 0, meses: 0, dias: 0, valida: false };
+            }
+            var y = referencia.getFullYear() - nascimento.getFullYear();
+            var m = referencia.getMonth() - nascimento.getMonth();
+            var d = referencia.getDate() - nascimento.getDate();
+            if (d < 0) {
+                m--;
+                var ultimoDiaMesAnterior = new Date(referencia.getFullYear(), referencia.getMonth(), 0).getDate();
+                d += ultimoDiaMesAnterior;
+            }
+            if (m < 0) {
+                y--;
+                m += 12;
+            }
+            var ms = referencia.getTime() - nascimento.getTime();
+            var decimalAnos = ms / (365.25 * 24 * 60 * 60 * 1000);
+            return { anos: y, meses: m, dias: d, decimalAnos: decimalAnos, valida: true };
+        }
+
+        function formatarIdadeTexto(id) {
+            if (!id || !id.valida) return '';
+            var partes = [];
+            if (id.anos > 0) partes.push(id.anos + (id.anos === 1 ? ' ano' : ' anos'));
+            if (id.meses > 0) partes.push(id.meses + (id.meses === 1 ? ' mês' : ' meses'));
+            if (id.dias > 0 || partes.length === 0) partes.push(id.dias + (id.dias === 1 ? ' dia' : ' dias'));
+            return partes.join(', ');
+        }
+
+        function definirCategoriaPorIdade(id) {
+            if (!id || !id.valida) return;
+            var cat = id.decimalAnos < 2 ? 'infant' : 'child';
+            var btns = document.querySelectorAll('.age-btn');
+            var btn = cat === 'infant' ? btns[1] : btns[0];
+            var avisoMaior5 = id.decimalAnos >= 5 ? ' <strong>Atenção:</strong> idade acima de 5 anos — a escala refere-se à faixa pediátrica; interprete com cautela.' : '';
+            if (cat !== currentCategory) {
+                selectCategory(cat, btn, { fromAge: true, ageExtra: avisoMaior5 });
+            } else {
+                atualizarTextoCategoriaAutomatica(cat, avisoMaior5);
+            }
+        }
+
+        function atualizarTextoCategoriaAutomatica(category, extra) {
+            extra = extra || '';
+            var el = document.getElementById('categoryInfo');
+            if (!el) return;
+            if (category === 'child') {
+                el.innerHTML = '<strong>Criança (2–5 anos)</strong> — categoria definida <strong>automaticamente</strong> pela idade na data da avaliação. Use os critérios da coluna &quot;Criança&quot; na tabela abaixo.' + extra;
+            } else {
+                el.innerHTML = '<strong>Lactente (0–2 anos)</strong> — categoria definida <strong>automaticamente</strong> pela idade na data da avaliação. Use os critérios da coluna &quot;Lactente&quot; na tabela abaixo.' + extra;
+            }
+        }
+
+        function atualizarIdadeCalculada() {
+            var birth = parseDataNascimento(document.getElementById('birthDate').value);
+            var ref = obterDataReferenciaAvaliacao();
+            var out = document.getElementById('idadeCalculada');
+            if (!out) return;
+            if (!birth) {
+                out.value = '';
+                out.placeholder = 'Informe a data de nascimento';
+                document.getElementById('categoryInfo').textContent = 'Informe a data de nascimento e a data da avaliação para definir a categoria automaticamente pela idade.';
+                return;
+            }
+            var id = idadeAnosMesesDias(birth, ref);
+            if (!id.valida) {
+                out.value = 'Data de nascimento posterior à avaliação — verifique as datas.';
+                return;
+            }
+            var txt = formatarIdadeTexto(id);
+            var aprox = id.decimalAnos.toFixed(2).replace('.', ',');
+            out.value = txt + ' (' + aprox + ' anos aprox.)';
+            definirCategoriaPorIdade(id);
+        }
+
+        // Definir data atual e listeners de idade
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const dateTimeString = now.toISOString().slice(0, 16);
+            document.getElementById('evaluationDate').value = dateTimeString;
+            document.getElementById('birthDate').addEventListener('change', atualizarIdadeCalculada);
+            document.getElementById('birthDate').addEventListener('input', atualizarIdadeCalculada);
+            document.getElementById('evaluationDate').addEventListener('change', atualizarIdadeCalculada);
+            document.getElementById('evaluationDate').addEventListener('input', atualizarIdadeCalculada);
+            atualizarIdadeCalculada();
+        });
+
+        function selectCategory(category, btn, opts) {
+            opts = opts || {};
+            currentCategory = category;
+            
+            document.querySelectorAll('.age-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            
+            if (category === 'child') {
+                document.querySelectorAll('.child-text').forEach(el => el.style.display = 'inline');
+                document.querySelectorAll('.infant-text').forEach(el => el.style.display = 'none');
+            } else {
+                document.querySelectorAll('.child-text').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.infant-text').forEach(el => el.style.display = 'inline');
+            }
+            
+            var extra = opts.ageExtra || '';
+            if (opts.fromAge) {
+                atualizarTextoCategoriaAutomatica(category, extra);
+            } else {
+                var el = document.getElementById('categoryInfo');
+                if (category === 'child') {
+                    el.innerHTML = '<strong>Criança (2–5 anos)</strong> — selecionada manualmente. Use os critérios da coluna &quot;Criança&quot; na tabela abaixo.' + extra;
+                } else {
+                    el.innerHTML = '<strong>Lactente (0–2 anos)</strong> — selecionada manualmente. Use os critérios da coluna &quot;Lactente&quot; na tabela abaixo.' + extra;
+                }
+            }
+            
+            document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+            document.querySelectorAll('.glasgow-option').forEach(option => option.classList.remove('selected'));
+            document.getElementById('glasgowScore').value = '';
+        }
+
+        function selectGlasgowOption(category, value, element) {
+            // Remover seleção anterior da mesma categoria
+            document.querySelectorAll(`input[name="${category}"]`).forEach(radio => {
+                radio.checked = false;
+                radio.closest('.glasgow-option').classList.remove('selected');
+            });
+            
+            // Selecionar nova opção
+            element.querySelector('input').checked = true;
+            element.classList.add('selected');
+            
+            // Calcular e atualizar Glasgow automaticamente
+            updateGlasgowScore();
+        }
+
+        function updateGlasgowScore() {
+            const eyeScore = parseInt(document.querySelector('input[name="eye"]:checked')?.value || 0);
+            const verbalScore = parseInt(document.querySelector('input[name="verbal"]:checked')?.value || 0);
+            const motorScore = parseInt(document.querySelector('input[name="motor"]:checked')?.value || 0);
+            const glasgowTotal = eyeScore + verbalScore + motorScore;
+            
+            // Atualizar o campo Glasgow
+            const glasgowField = document.getElementById('glasgowScore');
+            if (glasgowTotal > 0) {
+                glasgowField.value = glasgowTotal;
+                
+                // Adicionar efeito visual de atualização
+                glasgowField.style.backgroundColor = '#d4edda';
+                glasgowField.style.borderColor = '#d1d5db';
+                glasgowField.style.boxShadow = '0 0 0 0.2rem rgba(40, 167, 69, 0.25)';
+                
+                // Remover efeito após 1 segundo
+                setTimeout(() => {
+                    glasgowField.style.backgroundColor = '#f8f9fa';
+                    glasgowField.style.boxShadow = 'none';
+                }, 1000);
+            } else {
+                glasgowField.value = '';
+                glasgowField.style.backgroundColor = '#f8f9fa';
+                glasgowField.style.borderColor = '#d1d5db';
+                glasgowField.style.boxShadow = 'none';
+            }
+        }
+
+        function calculateOrlowski() {
+            // Coleta dos dados do formulário
+            const patientName = document.getElementById('patientName').value;
+            const birthDate = document.getElementById('birthDate').value;
+            const evaluationDate = document.getElementById('evaluationDate').value;
+            const evaluator = document.getElementById('evaluator').value;
+            
+            // Critérios da Escala de Orlowski
+            const submersionTime = document.getElementById('submersionTime').value;
+            const resuscitationDelay = document.getElementById('resuscitationDelay').value;
+            const noVitalSigns = document.getElementById('noVitalSigns').value;
+            const deepComa = document.getElementById('deepComa').value;
+            const arterialPH = parseFloat(document.getElementById('arterialPH').value);
+
+            // Calcular Glasgow
+            const eyeScore = parseInt(document.querySelector('input[name="eye"]:checked')?.value || 0);
+            const verbalScore = parseInt(document.querySelector('input[name="verbal"]:checked')?.value || 0);
+            const motorScore = parseInt(document.querySelector('input[name="motor"]:checked')?.value || 0);
+            const glasgowTotal = eyeScore + verbalScore + motorScore;
+
+            // Atualizar campo Glasgow
+            document.getElementById('glasgowScore').value = formatarNumero(glasgowTotal);
+
+            if (!birthDate || !birthDate.trim()) {
+                alert('Informe a data de nascimento da criança para calcular a idade.');
+                document.getElementById('birthDate').focus();
+                return;
+            }
+            var birthParsed = parseDataNascimento(birthDate);
+            var refAval = evaluationDate ? new Date(evaluationDate) : new Date();
+            if (birthParsed && !isNaN(refAval.getTime()) && birthParsed > refAval) {
+                alert('A data de nascimento não pode ser posterior à data/hora da avaliação.');
+                return;
+            }
+            var idObj = birthParsed ? idadeAnosMesesDias(birthParsed, refAval) : { valida: false, decimalAnos: 0 };
+            var age = idObj.valida ? idObj.decimalAnos : 0;
+            var ageTexto = idObj.valida ? formatarIdadeTexto(idObj) : '';
+
+            // Validação dos dados
+            if (!validateOrlowskiInputs()) {
+                return;
+            }
+
+            // Cálculo da Escala de Orlowski (0-5 pontos)
+            let orlowskiScore = 0;
+
+            // 1. Tempo de submersão > 5 minutos
+            if (submersionTime === 'yes') {
+                orlowskiScore += 1;
+            }
+
+            // 2. Tempo até início da RCP > 10 minutos
+            if (resuscitationDelay === 'yes') {
+                orlowskiScore += 1;
+            }
+
+            // 3. Paciente encontrado sem sinais de vida
+            if (noVitalSigns === 'yes') {
+                orlowskiScore += 1;
+            }
+
+            // 4. Coma profundo na admissão (sem resposta motora)
+            if (deepComa === 'yes') {
+                orlowskiScore += 1;
+            }
+
+            // 5. pH arterial < 7,10
+            if (arterialPH < 7.10) {
+                orlowskiScore += 1;
+            }
+
+            // Determinação do prognóstico baseado na Escala de Orlowski
+            let prognosis, interpretation, resultClass;
+
+            if (orlowskiScore <= 2) {
+                prognosis = "EXCELENTE";
+                interpretation = "Alta probabilidade de recuperacao neurologica completa (>90% dos casos). Prognostico favoravel.";
+                resultClass = "result-favorable";
+            } else {
+                prognosis = "RUIM";
+                interpretation = "Alto risco de sequelas neurologicas graves ou obito. Prognostico reservado.";
+                resultClass = "result-unfavorable";
+            }
+
+            // Salvar dados para relatório
+            currentPrognosis = {
+                patientName,
+                birthDate,
+                evaluationDate,
+                evaluator,
+                age,
+                ageTexto,
+                orlowskiScore,
+                submersionTime,
+                resuscitationDelay,
+                noVitalSigns,
+                deepComa,
+                arterialPH,
+                glasgowTotal,
+                eyeScore,
+                verbalScore,
+                motorScore,
+                prognosis,
+                interpretation,
+                category: currentCategory === 'child' ? 'Crianca (2-5 anos)' : 'Lactente (0-2 anos)'
+            };
+
+            // Exibição do resultado
+            displayOrlowskiResult(orlowskiScore, prognosis, interpretation, resultClass);
+            displayDetailedResults();
+        }
+
+        function validateOrlowskiInputs() {
+            const requiredFields = ['submersionTime', 'resuscitationDelay', 'noVitalSigns', 'deepComa', 'arterialPH'];
+            
+            for (let field of requiredFields) {
+                const element = document.getElementById(field);
+                if (!element.value || element.value.trim() === '') {
+                    alert(`Por favor, preencha o campo: ${element.previousElementSibling.textContent}`);
+                    element.focus();
+                    return false;
+                }
+            }
+
+            // Validação do Glasgow
+            const eyeScore = parseInt(document.querySelector('input[name="eye"]:checked')?.value || 0);
+            const verbalScore = parseInt(document.querySelector('input[name="verbal"]:checked')?.value || 0);
+            const motorScore = parseInt(document.querySelector('input[name="motor"]:checked')?.value || 0);
+            const glasgowTotal = eyeScore + verbalScore + motorScore;
+
+            if (glasgowTotal === 0) {
+                alert('Por favor, complete a avaliação da Escala de Glasgow');
+                return false;
+            }
+
+            const arterialPH = parseFloat(document.getElementById('arterialPH').value);
+            if (arterialPH < 6.5 || arterialPH > 7.5) {
+                alert('O pH arterial deve estar entre 6.5 e 7.5');
+                return false;
+            }
+
+            return true;
+        }
+
+        function displayOrlowskiResult(score, prognosis, interpretation, resultClass) {
+            const resultContainer = document.getElementById('resultContainer');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const prognosisText = document.getElementById('prognosisText');
+            const interpretationElement = document.getElementById('interpretation');
+
+            // Remove classes anteriores
+            resultContainer.className = 'result-container';
+            resultContainer.classList.add(resultClass);
+
+            scoreDisplay.textContent = `${formatarNumero(score)}/5 pontos`;
+            prognosisText.textContent = `Prognostico: ${prognosis}`;
+            interpretationElement.textContent = interpretation;
+
+            resultContainer.style.display = 'block';
+            resultContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function displayDetailedResults() {
+            if (!currentPrognosis) return;
+
+            const categoryText = currentPrognosis.category;
+            const eyeText = document.querySelector('input[name="eye"]:checked')?.closest('.glasgow-option').querySelector('label').textContent.trim();
+            const verbalText = document.querySelector('input[name="verbal"]:checked')?.closest('.glasgow-option').querySelector('label').textContent.trim();
+            const motorText = document.querySelector('input[name="motor"]:checked')?.closest('.glasgow-option').querySelector('label').textContent.trim();
+
+            document.getElementById('resultadoTexto').innerHTML = `
+                <strong>Escala de Orlowski: ${formatarNumero(currentPrognosis.orlowskiScore)}/5 pontos</strong><br>
+                <strong>Prognostico: ${currentPrognosis.prognosis}</strong>
+            `;
+
+            document.getElementById('detalhesTexto').innerHTML = `
+                <strong>Idade na avaliação:</strong> ${currentPrognosis.ageTexto || formatarNumero(currentPrognosis.age) + ' anos (aprox.)'}<br>
+                <strong>Categoria:</strong> ${categoryText}<br>
+                <strong>Escala de Glasgow:</strong> ${formatarNumero(currentPrognosis.glasgowTotal)} pontos<br>
+                <strong>Abertura Ocular:</strong> ${currentPrognosis.eyeScore} pontos - ${eyeText}<br>
+                <strong>Resposta Verbal:</strong> ${currentPrognosis.verbalScore} pontos - ${verbalText}<br>
+                <strong>Resposta Motora:</strong> ${currentPrognosis.motorScore} pontos - ${motorText}<br><br>
+                <strong>Critérios Orlowski:</strong><br>
+                • Tempo de submersão > 5 min: ${currentPrognosis.submersionTime === 'yes' ? 'Sim (1 ponto)' : 'Não (0 pontos)'}<br>
+                • RCP > 10 min: ${currentPrognosis.resuscitationDelay === 'yes' ? 'Sim (1 ponto)' : 'Não (0 pontos)'}<br>
+                • Sem sinais de vida: ${currentPrognosis.noVitalSigns === 'yes' ? 'Sim (1 ponto)' : 'Não (0 pontos)'}<br>
+                • Coma profundo: ${currentPrognosis.deepComa === 'yes' ? 'Sim (1 ponto)' : 'Não (0 pontos)'}<br>
+                • pH < 7,10: ${currentPrognosis.arterialPH < 7.10 ? 'Sim (1 ponto)' : 'Não (0 pontos)'}<br>
+                <strong>pH Arterial:</strong> ${currentPrognosis.arterialPH}
+            `;
+
+            document.getElementById('results').classList.add('show');
+        }
+
+        function generateReport() {
+            if (!currentPrognosis) {
+                alert('Por favor, calcule o prognostico primeiro.');
+                return;
+            }
+
+            const evaluationDate = new Date(currentPrognosis.evaluationDate);
+            const evaluationDateFormatted = evaluationDate.toLocaleString('pt-BR');
+
+            let report = `RESUMO INFORMATIVO — ESCALA DE ORLOWSKI PARA CRIANCAS AFOGADAS (EDUCATIVO)
+===============================================================
+
+DADOS DO PACIENTE
+-----------------
+Data/Hora da Avaliacao: ${evaluationDateFormatted}
+Nome: ${currentPrognosis.patientName || 'Nao informado'}
+Data de Nascimento: ${currentPrognosis.birthDate || 'Nao informada'}
+Idade na data da avaliacao: ${currentPrognosis.ageTexto || 'Nao calculada'} (${formatarNumero(currentPrognosis.age)} anos aprox.)
+Avaliador: ${currentPrognosis.evaluator || 'Nao informado'}
+
+AVALIACAO GLASGOW
+-----------------
+Categoria: ${currentPrognosis.category}
+Pontuacao Total: ${formatarNumero(currentPrognosis.glasgowTotal)}
+Abertura Ocular: ${currentPrognosis.eyeScore} pontos
+Resposta Verbal: ${currentPrognosis.verbalScore} pontos
+Resposta Motora: ${currentPrognosis.motorScore} pontos
+
+CRITERIOS ESCALA DE ORLOWSKI
+----------------------------
+1. Tempo de submersao > 5 min: ${currentPrognosis.submersionTime === 'yes' ? 'Sim (1 ponto)' : 'Nao (0 pontos)'}
+2. RCP > 10 min: ${currentPrognosis.resuscitationDelay === 'yes' ? 'Sim (1 ponto)' : 'Nao (0 pontos)'}
+3. Sem sinais de vida: ${currentPrognosis.noVitalSigns === 'yes' ? 'Sim (1 ponto)' : 'Nao (0 pontos)'}
+4. Coma profundo: ${currentPrognosis.deepComa === 'yes' ? 'Sim (1 ponto)' : 'Nao (0 pontos)'}
+5. pH < 7,10: ${currentPrognosis.arterialPH < 7.10 ? 'Sim (1 ponto)' : 'Nao (0 pontos)'}
+
+RESULTADO ESCALA DE ORLOWSKI
+----------------------------
+Escore: ${currentPrognosis.orlowskiScore}/5 pontos
+Prognostico: ${currentPrognosis.prognosis}
+Interpretacao: ${currentPrognosis.interpretation}
+
+INTERPRETACAO CLINICA
+---------------------
+`;
+
+            if (currentPrognosis.orlowskiScore <= 2) {
+                report += `PROGNOSTICO EXCELENTE (0-2 pontos):
+- Alta probabilidade de recuperacao neurologica completa (>90% dos casos)
+- Prognostico favoravel com baixo risco de sequelas
+- Monitorizacao clinica adequada
+- Considerar exames complementares se necessario
+- Acompanhamento ambulatorial
+- Sobrevivencia sem sequelas em mais de 90% dos casos
+`;
+            } else {
+                report += `PROGNOSTICO RUIM (3-5 pontos):
+- Alto risco de sequelas neurologicas graves ou obito
+- Prognostico neurologico reservado
+- Necessario suporte intensivo
+- Monitorizacao neurologica continua
+- Exames de imagem urgentes
+- Considerar medidas de suporte avancado
+- Prognostico reservado com alta probabilidade de sequelas
+`;
+            }
+
+            report += `
+DETALHES TECNICOS
+-----------------
+Escala Utilizada: Escala de Orlowski (1987) + Glasgow Modificada para Criancas
+Referencia: Orlowski JP. Prognostic factors in pediatric cases of drowning and near-drowning. JAMA. 1987
+Data de Geracao: ${new Date().toLocaleString('pt-BR')}
+
+OBSERVACOES IMPORTANTES
+-----------------------
+- A Escala de Orlowski e uma ferramenta validada cientificamente
+- Nao substitui a avaliacao clinica completa
+- Deve ser reavaliada periodicamente
+- Considerar fatores que podem influenciar a pontuacao
+- A interpretacao deve ser contextualizada com o quadro clinico
+- Para criancas < 2 anos, usar criterios especificos para lactentes
+- Para criancas 2-5 anos, usar criterios especificos para criancas
+- Fatores como hipotermia podem ter efeito neuroprotetor
+- Tempo de submersao e fator prognostico crucial
+- Escore ≤ 2: prognostico excelente (>90% recuperacao)
+- Escore ≥ 3: prognostico ruim (alto risco de sequelas)
+
+REFERENCIAS
+-----------
+- Orlowski JP. Prognostic factors in pediatric cases of drowning and near-drowning.
+  JAMA. 1987;257(21):3039-3041.
+- Teasdale G, Jennett B. Assessment of coma and impaired consciousness.
+  Lancet. 1974;2(7872):81-84.
+- American Heart Association. Pediatric Advanced Life Support.
+  Dallas, TX: American Heart Association; 1997.
+- Szpilman D, Bierens JJ, Handley AJ, Orlowski JP. Drowning.
+  N Engl J Med. 2012;366(22):2102-2110.
+`;
+
+            report = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + report;
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                report += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                report += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            // Copiar para área de transferência
+            navigator.clipboard.writeText(report).then(function() {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(function() {
+                // Fallback para navegadores mais antigos
+                const textArea = document.createElement('textarea');
+                textArea.value = report;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+
+        // Adicionar validação em tempo real
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('blur', function() {
+                    if (this.hasAttribute('required') && !this.value) {
+                        this.style.borderColor = '#e74c3c';
+                    } else {
+                        this.style.borderColor = '#e1e8ed';
+                    }
+                });
+            });
+        });
+
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

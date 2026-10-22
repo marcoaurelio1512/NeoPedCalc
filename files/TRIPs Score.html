@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>NeoPedCalc — California TRIPS (educativo)</title>
+  <style>
+    :root{
+      --bg:#f3f6fb;
+      --card:#ffffff;
+      --text:#172033;
+      --muted:#374151;
+      --primary:#0f4c81;
+      --primary-dark:#0b3e69;
+      --primary-soft:#eef4fb;
+      --border:#d9e2ef;
+      --ok-bg:#e8f7ee;
+      --ok-text:#126b38;
+      --warn-bg:#fff7e8;
+      --warn-text:#8a5a00;
+      --danger-bg:#fdeeee;
+      --danger-text:#a12222;
+      --info-bg:#f8fbff;
+      --info-border:#d9e6f2;
+      --shadow:0 10px 30px rgba(16,38,74,.08);
+      --radius:18px;
+      --radius-sm:14px;
+      --gap:14px;
+    }
+
+    *,
+    *::before,
+    *::after { box-sizing:border-box; }
+
+    html, body {
+      margin:0;
+      padding:0;
+      width:100%;
+      max-width:100%;
+      overflow-x:hidden;
+      background:var(--bg);
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    }
+
+    body { padding:10px; }
+
+    .app {
+      width:100%;
+      max-width:1040px;
+      margin:0 auto;
+      min-width:0;
+    }
+
+    .header-card,
+    .card,
+    .result-card,
+    .report-card {
+      width:100%;
+      max-width:100%;
+      min-width:0;
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      margin-bottom:16px;
+    }
+
+    .header-card { padding:18px 16px; }
+    .card,
+    .result-card,
+    .report-card { padding:16px; }
+
+    h1 {
+      margin:0 0 8px;
+      font-size:clamp(1.35rem,4vw,2rem);
+      line-height:1.15;
+      color:var(--primary);
+    }
+
+    h2 {
+      margin:0 0 10px;
+      font-size:1.05rem;
+      color:var(--primary);
+    }
+
+    h3 {
+      margin:0 0 8px;
+      font-size:1rem;
+      color:var(--primary);
+    }
+
+    p { margin:0; }
+
+    .subtitle {
+      color:var(--muted);
+      font-size:.96rem;
+      line-height:1.55;
+    }
+
+    .section-title {
+      margin:0 0 12px;
+      font-size:1rem;
+      font-weight:800;
+      color:var(--primary);
+      letter-spacing:.01em;
+    }
+
+    .grid {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:var(--gap);
+      width:100%;
+      min-width:0;
+    }
+
+    .field {
+      width:100%;
+      min-width:0;
+    }
+
+    label {
+      display:block;
+      margin-bottom:7px;
+      font-size:.93rem;
+      font-weight:700;
+      color:var(--text);
+      overflow-wrap:break-word;
+    }
+
+    input,
+    select,
+    textarea,
+    button {
+      font:inherit;
+      width:100%;
+      max-width:100%;
+      min-width:0;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:#fff;
+      color:var(--text);
+      box-sizing:border-box;
+      background-clip:padding-box;
+      -webkit-background-clip:padding-box;
+    }
+
+    input,
+    select,
+    textarea {
+      min-height:48px;
+      padding:13px 14px;
+      outline:none;
+      -webkit-appearance:none;
+      appearance:none;
+    }
+
+    input[type="date"],
+    input[type="time"],
+    input[type="datetime-local"] {
+      border-radius:14px !important;
+      overflow:hidden !important;
+      -webkit-appearance:none !important;
+      appearance:none !important;
+    }
+
+    textarea {
+      min-height:110px;
+      resize:vertical;
+      line-height:1.5;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color:#1f6fb2;
+      box-shadow:0 0 0 3px rgba(31,111,178,.12);
+    }
+
+    .help {
+      margin-top:6px;
+      font-size:.82rem;
+      line-height:1.45;
+      color:var(--muted);
+    }
+
+    .actions {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .actions.small {
+      margin-top:0;
+    }
+
+    button {
+      min-height:46px;
+      padding:12px 14px;
+      font-weight:800;
+      cursor:pointer;
+      transition:background .2s ease, transform .05s ease;
+    }
+
+    button:active { transform:scale(.99); }
+
+    .btn-primary {
+      background:var(--primary);
+      border-color:var(--primary);
+      color:#fff;
+    }
+
+    .btn-primary:hover { background:var(--primary-dark); }
+
+    .btn-secondary {
+      background:#fff;
+      color:var(--primary);
+      border-color:var(--primary);
+    }
+
+    .btn-muted {
+      background:var(--primary-soft);
+      color:var(--primary);
+      border-color:#d5e5f7;
+    }
+
+    .btn-danger {
+      background:#fff4f4;
+      color:#a12222;
+      border-color:#f0caca;
+    }
+
+    .info-box {
+      background:var(--info-bg);
+      border:1px solid var(--info-border);
+      border-radius:var(--radius-sm);
+      padding:14px;
+      margin-bottom:12px;
+    }
+
+    .info-box p,
+    .info-box li {
+      font-size:.94rem;
+      line-height:1.58;
+    }
+
+    .info-box ul,
+    .reference-list {
+      margin:0;
+      padding-left:18px;
+    }
+
+    .reference-list li {
+      margin-bottom:8px;
+      line-height:1.5;
+      word-break:break-word;
+    }
+
+    .highlight-box {
+      background:#fff8e8;
+      border:1px solid #f3dd9d;
+      color:#6d5600;
+      border-radius:14px;
+      padding:14px;
+      margin-top:12px;
+      font-size:.9rem;
+      line-height:1.55;
+    }
+
+    .mini-stats {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .mini-card {
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:#fbfdff;
+      padding:12px;
+    }
+
+    .mini-card .label {
+      font-size:.82rem;
+      color:var(--muted);
+      margin-bottom:4px;
+    }
+
+    .mini-card .value {
+      font-size:1.05rem;
+      font-weight:900;
+      color:var(--text);
+    }
+
+    .result-card,
+    .report-card { display:none; }
+
+    .result-header {
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-bottom:14px;
+    }
+
+    .score-box {
+      background:#f5f9ff;
+      border:1px solid #dbe9f8;
+      border-radius:14px;
+      padding:14px;
+    }
+
+    .score-title {
+      font-size:.86rem;
+      color:var(--muted);
+      margin-bottom:4px;
+    }
+
+    .score-value {
+      font-size:clamp(1.9rem,8vw,2.7rem);
+      line-height:1;
+      font-weight:900;
+      color:var(--primary);
+    }
+
+    .risk-chip {
+      display:inline-block;
+      width:fit-content;
+      max-width:100%;
+      padding:10px 12px;
+      border-radius:999px;
+      font-size:.92rem;
+      font-weight:800;
+      line-height:1.25;
+    }
+
+    .risk-ok { background:var(--ok-bg); color:var(--ok-text); }
+    .risk-warn { background:var(--warn-bg); color:var(--warn-text); }
+    .risk-danger { background:var(--danger-bg); color:var(--danger-text); }
+
+    .breakdown {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+      margin:14px 0;
+    }
+
+    .break-item {
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:12px;
+      background:#fbfdff;
+    }
+
+    .break-label {
+      font-size:.86rem;
+      color:var(--muted);
+      margin-bottom:4px;
+    }
+
+    .break-points {
+      font-size:1.05rem;
+      font-weight:900;
+      color:var(--text);
+    }
+
+    .result-text {
+      font-size:.95rem;
+      line-height:1.6;
+    }
+
+    .warning-box,
+    .source-box {
+      margin-top:12px;
+      padding:12px;
+      border-radius:12px;
+      font-size:.88rem;
+      line-height:1.5;
+    }
+
+    .warning-box {
+      background:#fff8e8;
+      border:1px solid #f3dd9d;
+      color:#6d5600;
+    }
+
+    .source-box {
+      background:#f6f8fb;
+      border:1px solid var(--border);
+      color:var(--muted);
+    }
+
+    .report-label {
+      display:block;
+      margin-bottom:8px;
+      font-weight:800;
+      color:var(--primary);
+    }
+
+    .report-textarea {
+      min-height:420px;
+      white-space:pre-wrap;
+    }
+
+    .modal-backdrop {
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      background:rgba(7,18,38,.45);
+      z-index:9999;
+    }
+
+    /* neoped-responsive zera borda/sombra de .modal; restaurar só neste overlay */
+    #modalBackdrop .modal {
+      border:1px solid var(--border) !important;
+      box-shadow:0 20px 50px rgba(7,18,38,.18) !important;
+    }
+
+    .modal {
+      width:100%;
+      max-width:760px;
+      max-height:86vh;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:18px;
+      box-shadow:0 20px 50px rgba(7,18,38,.18);
+      padding:0;
+    }
+
+    .modal .modal-header {
+      flex-shrink:0;
+      margin:0;
+      padding:12px 14px;
+      border-bottom:1px solid var(--border);
+      background:#f8fafc;
+    }
+
+    .modal .modal-header h2 {
+      margin:0;
+      font-size:1.05rem;
+      line-height:1.3;
+      color:var(--primary);
+      font-weight:800;
+      padding-right:8px;
+    }
+
+    .modal .modal-body {
+      overflow:auto;
+      padding:18px;
+      padding-bottom:calc(var(--neoped-nav-inset, 72px) + 20px);
+      -webkit-overflow-scrolling:touch;
+    }
+
+    .modal .modal-body p,
+    .modal .modal-body li {
+      font-size:.94rem;
+      line-height:1.6;
+    }
+
+    .modal .modal-body ul {
+      margin:8px 0 0;
+      padding-left:18px;
+    }
+
+    .footer-note {
+      margin-top:8px;
+      font-size:.83rem;
+      line-height:1.5;
+      color:var(--muted);
+    }
+
+    .saved-list-note {
+      font-size:.84rem;
+      color:var(--muted);
+      line-height:1.45;
+      margin-top:6px;
+    }
+
+    @media (min-width: 720px) {
+      .grid { grid-template-columns:1fr 1fr; }
+      .actions { grid-template-columns:repeat(3,1fr); }
+      .mini-stats { grid-template-columns:repeat(3,1fr); }
+      .breakdown { grid-template-columns:repeat(3,1fr); }
+      .result-header {
+        flex-direction:row;
+        align-items:center;
+        justify-content:space-between;
+      }
+    }
+
+    @media print {
+      body {
+        background:#fff;
+        padding:0;
+      }
+      .header-card,
+      .card:not(.printable),
+      .result-card,
+      .report-card {
+        box-shadow:none;
+        border:0;
+      }
+      .header-card,
+      .card:not(.printable),
+      .result-card {
+        display:none !important;
+      }
+      .report-card.printing {
+        display:block !important;
+      }
+      textarea.report-textarea {
+        border:0;
+        min-height:auto;
+        padding:0;
+        white-space:pre-wrap;
+      }
+      .actions {
+        display:none !important;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="../css/neoped-responsive.css" />
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+  <div class="app">
+    <section class="header-card">
+      <h1>California TRIPS Score</h1>
+      <p class="subtitle">
+        Ferramenta educativa: California TRIPS Score, cadastro local opcional, cálculo de idades e
+        <strong>texto informativo</strong> para revisão — não prescreve transporte, destino nem conduta.
+      </p>
+      <div class="header-actions">
+        <button class="btn-info" id="btnHow" type="button">Como usar</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-title">Cadastro persistente de pacientes</div>
+      <div class="grid">
+        <div class="field">
+          <label for="savedPatients">Pacientes salvos</label>
+          <select id="savedPatients">
+            <option value="">Selecione um paciente salvo</option>
+          </select>
+          <div class="saved-list-note">
+            Os dados ficam salvos localmente neste aparelho ou navegador.
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="patientKey">Chave do cadastro</label>
+          <input id="patientKey" type="text" placeholder="Ex.: prontuário, ID interno ou nome curto">
+          <div class="help">Use uma chave única para atualizar o mesmo paciente depois.</div>
+        </div>
+      </div>
+
+      <div class="actions small">
+        <button class="btn-primary" id="btnSavePatient" type="button">Salvar paciente</button>
+        <button class="btn-secondary" id="btnNewPatient" type="button">Novo cadastro</button>
+        <button class="btn-danger" id="btnDeletePatient" type="button">Excluir paciente salvo</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-title">Identificação e encaminhamento</div>
+      <div class="grid">
+        <div class="field">
+          <label for="rnNome">RN</label>
+          <input id="rnNome" type="text" placeholder="Nome ou identificação do RN">
+        </div>
+
+        <div class="field">
+          <label for="rnProntuario">Identificação hospitalar / ID (opcional)</label>
+          <input id="rnProntuario" type="text" placeholder="Ex.: prontuário, registro ou ID interno">
+        </div>
+
+        <div class="field">
+          <label for="dataNascimento">Data de nascimento</label>
+          <input id="dataNascimento" type="date">
+        </div>
+
+        <div class="field">
+          <label for="horaNascimento">Hora de nascimento</label>
+          <input id="horaNascimento" type="time">
+        </div>
+
+        <div class="field">
+          <label for="igNascSemanas">IG ao nascimento - semanas</label>
+          <input id="igNascSemanas" type="number" inputmode="numeric" min="20" max="45" placeholder="Ex.: 30">
+        </div>
+
+        <div class="field">
+          <label for="igNascDias">IG ao nascimento - dias</label>
+          <input id="igNascDias" type="number" inputmode="numeric" min="0" max="6" placeholder="Ex.: 4">
+        </div>
+
+        <div class="field">
+          <label for="idadeGestacional">Idade gestacional (texto livre opcional)</label>
+          <input id="idadeGestacional" type="text" placeholder="Ex.: 30 semanas e 4 dias">
+        </div>
+
+        <div class="field">
+          <label for="peso">Peso atual do recém-nascido em gramas (g)</label>
+          <input id="peso" type="number" inputmode="numeric" min="0" step="1" placeholder="Ex.: 1250">
+          <div class="help">Informar somente o número em gramas. Exemplo: 1250 = 1250 g.</div>
+        </div>
+
+        <div class="field">
+          <label for="hospitalOrigem">Serviço de origem</label>
+          <input id="hospitalOrigem" type="text" placeholder="Hospital de origem">
+        </div>
+
+        <div class="field">
+          <label for="hospitalDestino">Serviço de destino</label>
+          <input id="hospitalDestino" type="text" placeholder="Hospital de destino">
+        </div>
+
+        <div class="field">
+          <label for="medicoOrigem">Médico da origem</label>
+          <input id="medicoOrigem" type="text" placeholder="Nome do médico da origem">
+        </div>
+
+        <div class="field">
+          <label for="medicoDestino">Médico do destino</label>
+          <input id="medicoDestino" type="text" placeholder="Nome do médico do destino">
+        </div>
+
+        <div class="field">
+          <label for="dataHoraSaida">Data e hora da saída</label>
+          <input id="dataHoraSaida" type="datetime-local">
+        </div>
+
+        <div class="field">
+          <label for="dataHoraChegada">Data e hora da chegada</label>
+          <input id="dataHoraChegada" type="datetime-local">
+        </div>
+
+        <div class="field">
+          <label for="diagnostico">Registro clínico / hipótese (texto livre do assistente — não gera diagnóstico automático)</label>
+          <textarea id="diagnostico" placeholder="Anotações clínicas ou hipóteses de trabalho (responsabilidade do profissional)"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="motivoTransferencia">Motivo da transferência</label>
+          <textarea id="motivoTransferencia" placeholder="Motivo do encaminhamento"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="intervencoes">Estabilização e intervenções antes do transporte</label>
+          <textarea id="intervencoes" placeholder="Oxigênio, VM, acesso venoso, drogas, glicose, antibióticos etc."></textarea>
+        </div>
+
+        <div class="field">
+          <label for="observacoesTransporte">Intercorrências / observações do transporte</label>
+          <textarea id="observacoesTransporte" placeholder="Intercorrências, estabilidade, checagens"></textarea>
+        </div>
+      </div>
+
+      <div class="mini-stats">
+        <div class="mini-card">
+          <div class="label">Idade cronológica em dias</div>
+          <div class="value" id="idadeDiasValue">-</div>
+        </div>
+        <div class="mini-card">
+          <div class="label">Idade gestacional corrigida</div>
+          <div class="value" id="igCorrigidaValue">-</div>
+        </div>
+        <div class="mini-card">
+          <div class="label">Momento usado no cálculo</div>
+          <div class="value" id="momentoCalculoValue">Agora</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-title">Dados do California TRIPS</div>
+      <div class="grid">
+        <div class="field">
+          <label for="responsiveness">Responsividade</label>
+          <select id="responsiveness">
+            <option value="">Selecione</option>
+            <option value="vigorous">Retirada vigorosa ao estímulo, choro</option>
+            <option value="lethargic">Letárgico, sem choro</option>
+            <option value="none">Sem resposta, convulsão ou sob relaxante muscular</option>
+          </select>
+          <div class="help">Pontuação oficial: 0 / 10 / 14.</div>
+        </div>
+
+        <div class="field">
+          <label for="respStatus">Estado respiratório</label>
+          <select id="respStatus">
+            <option value="">Selecione</option>
+            <option value="other">Outro / sem sintomas respiratórios ou desconforto leve</option>
+            <option value="moderate">Moderado: apneia, gasping, não está em respirador</option>
+            <option value="severe">Grave: em respirador</option>
+          </select>
+          <div class="help">Pontuação oficial: 0 / 21 / 15-18-20 conforme FiO₂.</div>
+        </div>
+
+        <div class="field">
+          <label for="fio2">FiO₂</label>
+          <select id="fio2">
+            <option value="">Selecione</option>
+            <option value="na">Não se aplica</option>
+            <option value="lt50">&lt; 50%</option>
+            <option value="50to74">50% a &lt; 75%</option>
+            <option value="75to100">75% a 100%</option>
+          </select>
+          <div class="help">Se o estado respiratório for “Outro”, pode usar “Não se aplica”.</div>
+        </div>
+
+        <div class="field">
+          <label for="temperature">Temperatura</label>
+          <select id="temperature">
+            <option value="">Selecione</option>
+            <option value="normal">36,1 a 37,6 °C</option>
+            <option value="abnormal">&lt; 36,1 °C ou &gt; 37,6 °C</option>
+          </select>
+          <div class="help">Pontuação oficial: 0 ou 6.</div>
+        </div>
+
+        <div class="field">
+          <label for="sbp">Pressão arterial sistólica</label>
+          <select id="sbp">
+            <option value="">Selecione</option>
+            <option value="lt20">&lt; 20 mmHg</option>
+            <option value="20to30">20 a 30 mmHg</option>
+            <option value="30to40">30 a 40 mmHg</option>
+            <option value="gt40">&gt; 40 mmHg</option>
+          </select>
+          <div class="help">Pontuação oficial: 24 / 19 / 8 / 0.</div>
+        </div>
+
+        <div class="field">
+          <label for="pressors">Uso de drogas vasoativas</label>
+          <select id="pressors">
+            <option value="">Selecione</option>
+            <option value="no">Não</option>
+            <option value="yes">Sim</option>
+          </select>
+          <div class="help">Pontuação oficial: 0 ou 5.</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-primary" id="btnCalculate" type="button">Calcular</button>
+        <button class="btn-secondary" id="btnClear" type="button">Limpar tela</button>
+        <button class="btn-muted" id="btnTransferencia" type="button">Gerar texto e copiar</button>
+        <button class="btn-muted" id="btnPrint" type="button">Imprimir texto</button>
+      </div>
+
+      <div class="footer-note">
+        Uso educacional e informativo. Não substitui avaliação clínica, equipe de transporte nem decisão de encaminhamento.
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="info-box">
+        <h3>Resumo da calculadora</h3>
+        <p>
+          O California TRIPS Score resume achados fisiológicos no contexto de transporte neonatal e
+          <strong>correlaciona</strong> o total a faixas de mortalidade descritas na publicação original — dado
+          <strong>populacional</strong>, não probabilidade individual.
+        </p>
+      </div>
+
+      <div class="highlight-box">
+        <strong>Importante:</strong> o risco exibido é uma faixa por banda de escore, e não uma probabilidade individual exata.
+      </div>
+    </section>
+
+    <section class="result-card" id="resultCard">
+      <div class="result-header">
+        <div class="score-box">
+          <div class="score-title">TRIPS Score total</div>
+          <div class="score-value" id="totalScore">0</div>
+        </div>
+        <div class="risk-chip risk-ok" id="riskChip">Faixa publicada (mortalidade ≤7 dias pós-transporte): -</div>
+      </div>
+
+      <div class="breakdown">
+        <div class="break-item">
+          <div class="break-label">Responsividade</div>
+          <div class="break-points" id="pointsResponsiveness">0</div>
+        </div>
+
+        <div class="break-item">
+          <div class="break-label">Respiratório + FiO₂</div>
+          <div class="break-points" id="pointsResp">0</div>
+        </div>
+
+        <div class="break-item">
+          <div class="break-label">Temperatura</div>
+          <div class="break-points" id="pointsTemp">0</div>
+        </div>
+
+        <div class="break-item">
+          <div class="break-label">Pressão sistólica</div>
+          <div class="break-points" id="pointsSbp">0</div>
+        </div>
+
+        <div class="break-item">
+          <div class="break-label">Drogas vasoativas</div>
+          <div class="break-points" id="pointsPressors">0</div>
+        </div>
+      </div>
+
+      <div class="result-text" id="resultText"></div>
+
+      <div class="warning-box">
+        Os intervalos percentuais são os da tabela TRIPS por faixa de escore (literatura) — não substituem prognóstico clínico nem decisão de transporte.
+      </div>
+    </section>
+
+    <section class="report-card printable" id="reportTransferenciaCard">
+      <label class="report-label" for="reportTransferenciaText">Texto informativo — conferir antes de arquivar</label>
+      <textarea id="reportTransferenciaText" class="report-textarea" readonly></textarea>
+      <div class="actions">
+        <button class="btn-secondary" id="btnCopyTransfer" type="button">Copiar texto</button>
+        <button class="btn-secondary" id="btnShareTransfer" type="button">Compartilhar</button>
+        <button class="btn-secondary" id="btnEmailTransfer" type="button">Enviar por e-mail</button>
+        <button class="btn-secondary" id="btnWhatsTransfer" type="button">Enviar por WhatsApp</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="tripsModalComoUsarTitulo">
+      <div class="modal-header">
+        <h2 id="tripsModalComoUsarTitulo">Como usar — California TRIPS (educativo)</h2>
+        <button type="button" class="close" id="btnCloseModal" aria-label="Fechar">&times;</button>
+      </div>
+      <div class="modal-body">
+      <p>
+        Ferramenta educativa para registrar dados de contexto e calcular o California TRIPS Score, gerando
+        <strong>texto informativo</strong> a partir do que foi digitado — sem automatizar decisão de transporte ou tratamento.
+      </p>
+
+      <h3>1. Cadastro e persistência dos dados</h3>
+      <p>
+        Os dados do paciente podem ser salvos localmente neste aparelho ou navegador. Isso permite recuperar
+        o cadastro mesmo se a aplicação for fechada acidentalmente.
+      </p>
+      <ul>
+        <li>Use uma chave de cadastro, prontuário ou identificação do RN para salvar.</li>
+        <li>O botão “Salvar paciente” grava os dados localmente.</li>
+        <li>O campo “Pacientes salvos” permite reabrir um cadastro já existente.</li>
+        <li>O sistema também salva automaticamente um rascunho enquanto você digita.</li>
+      </ul>
+
+      <h3>2. Dados neonatais automáticos</h3>
+      <p>
+        A calculadora usa a data e a hora de nascimento, junto com a idade gestacional ao nascimento,
+        para calcular automaticamente:
+      </p>
+      <ul>
+        <li>idade cronológica em dias</li>
+        <li>idade gestacional corrigida em semanas + dias</li>
+      </ul>
+      <p>
+        A idade cronológica é calculada comparando a data e hora de nascimento com a data e hora de referência.
+        Se a data e hora da saída estiverem preenchidas, elas são usadas como referência. Caso contrário, usa-se o momento atual.
+      </p>
+      <p>
+        A idade gestacional corrigida é obtida somando a idade gestacional de nascimento ao número de dias de vida transcorridos.
+      </p>
+
+      <h3>3. Como preencher o peso</h3>
+      <p>
+        O peso deve ser informado em gramas. Não é necessário digitar a letra “g”.
+      </p>
+      <ul>
+        <li>Exemplo: 980 significa 980 g</li>
+        <li>Exemplo: 1250 significa 1250 g</li>
+        <li>Exemplo: 3025 significa 3025 g</li>
+      </ul>
+
+      <h3>4. Variáveis do California TRIPS</h3>
+      <p>
+        O escore California TRIPS considera:
+      </p>
+      <ul>
+        <li><strong>Responsividade:</strong> resposta neurológica do recém-nascido ao estímulo.</li>
+        <li><strong>Estado respiratório:</strong> gravidade do comprometimento respiratório.</li>
+        <li><strong>FiO₂:</strong> usada junto com o estado respiratório.</li>
+        <li><strong>Temperatura:</strong> identifica estabilidade térmica ou alteração.</li>
+        <li><strong>Pressão arterial sistólica:</strong> representa estabilidade hemodinâmica.</li>
+        <li><strong>Uso de drogas vasoativas:</strong> identifica necessidade de suporte circulatório.</li>
+      </ul>
+
+      <h3>5. Como a pontuação é calculada</h3>
+      <p>
+        Cada variável recebe uma pontuação conforme a tabela oficial. A soma final gera o TRIPS Score total.
+      </p>
+      <ul>
+        <li>Quanto maior o escore, maior a instabilidade fisiológica.</li>
+        <li>O componente respiratório depende da combinação entre estado respiratório e FiO₂.</li>
+        <li>O resultado final é correlacionado, na publicação de referência, a uma faixa de mortalidade em até 7 dias após o transporte (dado populacional, não predição individual).</li>
+      </ul>
+
+      <h3>6. Interpretação correta do risco</h3>
+      <p>
+        O risco mostrado na tela não representa uma probabilidade individual exata para um paciente específico.
+        Ele representa uma faixa de risco por banda de escore, conforme a tabela oficial.
+      </p>
+      <p>
+        Por isso, nas faixas mais altas, o intervalo pode ser amplo. Esse dado deve ser interpretado como
+        marcador orientativo de gravidade, e não como previsão individual precisa.
+      </p>
+
+      <h3>7. Texto gerado</h3>
+      <p>
+        A aplicação monta um bloco de texto com os campos preenchidos e o TRIPS. Você pode copiar, imprimir ou
+        compartilhar — <strong>sempre revisando</strong> antes de inserir em prontuário ou mensagem clínica.
+      </p>
+      <ul>
+        <li>copiar para a área de transferência (conferir antes de arquivar)</li>
+        <li>enviar por e-mail ou WhatsApp (o conteúdo é de sua responsabilidade)</li>
+        <li>compartilhar pelo menu nativo do aparelho, quando disponível</li>
+        <li>imprimir, se fizer sentido no fluxo local</li>
+      </ul>
+
+      <h3>8. Fluxo prático sugerido</h3>
+      <ul>
+        <li>Selecionar ou cadastrar o paciente.</li>
+        <li>Preencher dados de nascimento, IG e peso em gramas.</li>
+        <li>Preencher origem, destino e dados clínicos.</li>
+        <li>Preencher os campos do California TRIPS.</li>
+        <li>Clicar em “Calcular”.</li>
+        <li>Revisar escore, risco e interpretação.</li>
+        <li>Gerar o texto, revisar e só então usar ou compartilhar conforme protocolo institucional.</li>
+      </ul>
+
+      <h3>9. Limitações importantes</h3>
+      <ul>
+        <li>Não substitui julgamento clínico.</li>
+        <li>Não substitui protocolo institucional.</li>
+        <li>Não substitui discussão entre a equipe da origem, transporte e destino.</li>
+        <li>O risco apresentado é orientativo e baseado em bandas populacionais.</li>
+      </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEYS = {
+      patients: "neopedcalc_trips_patients_v2",
+      draft: "neopedcalc_trips_draft_v2"
+    };
+
+    const CONFIG = {
+      responsiveness: { vigorous: 0, lethargic: 10, none: 14 },
+      temperature: { normal: 0, abnormal: 6 },
+      sbp: { lt20: 24, "20to30": 19, "30to40": 8, gt40: 0 },
+      pressors: { no: 0, yes: 5 },
+      respiratoryMatrix: {
+        other: { na: 0, lt50: 0, "50to74": 0, "75to100": 0 },
+        moderate: { lt50: 21, "50to74": 21, "75to100": 21 },
+        severe: { lt50: 15, "50to74": 18, "75to100": 20 }
+      },
+      riskBands: [
+        { min: 0,  max: 8,  text: "0,4% a 0,9%", css: "risk-ok" },
+        { min: 9,  max: 16, text: "0,9% a 1,9%", css: "risk-ok" },
+        { min: 17, max: 24, text: "2,1% a 4,0%", css: "risk-warn" },
+        { min: 25, max: 34, text: "4,4% a 10,2%", css: "risk-warn" },
+        { min: 35, max: 44, text: "11,1% a 23,4%", css: "risk-danger" },
+        { min: 45, max: 70, text: "25,2% a 80,1%", css: "risk-danger" }
+      ]
+    };
+
+    const FIELDS = [
+      "patientKey","rnNome","rnProntuario","dataNascimento","horaNascimento","igNascSemanas","igNascDias",
+      "idadeGestacional","peso","hospitalOrigem","hospitalDestino","medicoOrigem","medicoDestino",
+      "dataHoraSaida","dataHoraChegada","diagnostico","motivoTransferencia","intervencoes","observacoesTransporte",
+      "responsiveness","respStatus","fio2","temperature","sbp","pressors"
+    ];
+
+    const el = {};
+    FIELDS.forEach(id => el[id] = document.getElementById(id));
+
+    el.savedPatients = document.getElementById("savedPatients");
+    el.idadeDiasValue = document.getElementById("idadeDiasValue");
+    el.igCorrigidaValue = document.getElementById("igCorrigidaValue");
+    el.momentoCalculoValue = document.getElementById("momentoCalculoValue");
+
+    el.btnSavePatient = document.getElementById("btnSavePatient");
+    el.btnNewPatient = document.getElementById("btnNewPatient");
+    el.btnDeletePatient = document.getElementById("btnDeletePatient");
+
+    el.btnCalculate = document.getElementById("btnCalculate");
+    el.btnClear = document.getElementById("btnClear");
+    el.btnHow = document.getElementById("btnHow");
+    el.btnTransferencia = document.getElementById("btnTransferencia");
+    el.btnPrint = document.getElementById("btnPrint");
+    el.btnCloseModal = document.getElementById("btnCloseModal");
+
+    el.resultCard = document.getElementById("resultCard");
+    el.totalScore = document.getElementById("totalScore");
+    el.riskChip = document.getElementById("riskChip");
+    el.resultText = document.getElementById("resultText");
+    el.pointsResponsiveness = document.getElementById("pointsResponsiveness");
+    el.pointsResp = document.getElementById("pointsResp");
+    el.pointsTemp = document.getElementById("pointsTemp");
+    el.pointsSbp = document.getElementById("pointsSbp");
+    el.pointsPressors = document.getElementById("pointsPressors");
+
+    el.reportTransferenciaCard = document.getElementById("reportTransferenciaCard");
+    el.reportTransferenciaText = document.getElementById("reportTransferenciaText");
+
+    el.btnCopyTransfer = document.getElementById("btnCopyTransfer");
+    el.btnEmailTransfer = document.getElementById("btnEmailTransfer");
+    el.btnWhatsTransfer = document.getElementById("btnWhatsTransfer");
+    el.btnShareTransfer = document.getElementById("btnShareTransfer");
+
+    el.modalBackdrop = document.getElementById("modalBackdrop");
+
+    let lastCalculation = null;
+
+    function loadPatients() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.patients) || "[]"); }
+      catch { return []; }
+    }
+
+    function savePatients(list) {
+      localStorage.setItem(STORAGE_KEYS.patients, JSON.stringify(list));
+    }
+
+    function getDraft() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.draft) || "{}"); }
+      catch { return {}; }
+    }
+
+    function saveDraft() {
+      localStorage.setItem(STORAGE_KEYS.draft, JSON.stringify(collectFormData()));
+    }
+
+    function clearDraft() {
+      localStorage.removeItem(STORAGE_KEYS.draft);
+    }
+
+    function renderPatientsSelect(selectedKey = "") {
+      const patients = loadPatients().sort((a, b) => (a.patientKey || "").localeCompare(b.patientKey || ""));
+      el.savedPatients.innerHTML = '<option value="">Selecione um paciente salvo</option>';
+      patients.forEach(p => {
+        const option = document.createElement("option");
+        option.value = p.patientKey || "";
+        option.textContent = `${p.patientKey || "sem chave"} - ${p.rnNome || "sem nome"}`;
+        if (selectedKey && selectedKey === p.patientKey) option.selected = true;
+        el.savedPatients.appendChild(option);
+      });
+    }
+
+    function collectFormData() {
+      const obj = {};
+      FIELDS.forEach(id => obj[id] = el[id]?.value ?? "");
+      return obj;
+    }
+
+    function fillForm(data = {}) {
+      FIELDS.forEach(id => {
+        if (el[id]) el[id].value = data[id] ?? "";
+      });
+      updateAgeDisplays();
+      saveDraft();
+    }
+
+    function resetFormFields() {
+      FIELDS.forEach(id => {
+        if (el[id]) el[id].value = "";
+      });
+      updateAgeDisplays();
+      lastCalculation = null;
+      el.resultCard.style.display = "none";
+      el.reportTransferenciaCard.style.display = "none";
+      el.reportTransferenciaText.value = "";
+      clearDraft();
+    }
+
+    function saveCurrentPatient() {
+      const data = collectFormData();
+      const key = (data.patientKey || data.rnProntuario || data.rnNome || "").trim();
+
+      if (!key) {
+        alert("Informe uma chave do cadastro, prontuário ou nome para salvar o paciente.");
+        return;
+      }
+
+      data.patientKey = key;
+      el.patientKey.value = key;
+
+      const patients = loadPatients();
+      const index = patients.findIndex(p => p.patientKey === key);
+
+      if (index >= 0) {
+        patients[index] = { ...patients[index], ...data, updatedAt: new Date().toISOString() };
+      } else {
+        patients.push({ ...data, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+      }
+
+      savePatients(patients);
+      renderPatientsSelect(key);
+      saveDraft();
+      alert("Paciente salvo neste aparelho.");
+    }
+
+    function deleteCurrentPatient() {
+      const key = (el.patientKey.value || el.savedPatients.value || "").trim();
+      if (!key) {
+        alert("Selecione ou informe um paciente para excluir.");
+        return;
+      }
+
+      const patients = loadPatients();
+      const filtered = patients.filter(p => p.patientKey !== key);
+
+      if (filtered.length === patients.length) {
+        alert("Paciente não encontrado.");
+        return;
+      }
+
+      savePatients(filtered);
+      renderPatientsSelect();
+      resetFormFields();
+      alert("Paciente excluído.");
+    }
+
+    function loadSelectedPatient() {
+      const key = el.savedPatients.value;
+      if (!key) return;
+      const patient = loadPatients().find(p => p.patientKey === key);
+      if (!patient) return;
+      fillForm(patient);
+      renderPatientsSelect(key);
+    }
+
+    function combineBirthDateTime() {
+      const date = el.dataNascimento.value;
+      if (!date) return null;
+      const time = el.horaNascimento.value || "00:00";
+      const dt = new Date(`${date}T${time}`);
+      return Number.isNaN(dt.getTime()) ? null : dt;
+    }
+
+    function getReferenceDateTime() {
+      const ref = el.dataHoraSaida.value ? new Date(el.dataHoraSaida.value) : new Date();
+      return Number.isNaN(ref.getTime()) ? new Date() : ref;
+    }
+
+    function formatDateTime(value) {
+      if (!value) return "-";
+      const dt = new Date(value);
+      if (Number.isNaN(dt.getTime())) return value;
+      return dt.toLocaleString("pt-BR");
+    }
+
+    function calculateChronologicalDays() {
+      const birth = combineBirthDateTime();
+      if (!birth) return null;
+      const ref = getReferenceDateTime();
+      const diffMs = ref.getTime() - birth.getTime();
+      if (diffMs < 0) return null;
+      return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    }
+
+    function calculateCorrectedGA() {
+      const weeks = parseInt(el.igNascSemanas.value || "", 10);
+      const days = parseInt(el.igNascDias.value || "", 10);
+      if (Number.isNaN(weeks) || Number.isNaN(days)) return null;
+
+      const chronoDays = calculateChronologicalDays();
+      if (chronoDays === null) return null;
+
+      const totalDays = (weeks * 7) + days + chronoDays;
+      return {
+        corrWeeks: Math.floor(totalDays / 7),
+        corrDays: totalDays % 7,
+        chronoDays
+      };
+    }
+
+    function updateAgeDisplays() {
+      const chronoDays = calculateChronologicalDays();
+      const corrected = calculateCorrectedGA();
+      const reference = el.dataHoraSaida.value ? formatDateTime(el.dataHoraSaida.value) : "Agora";
+
+      el.idadeDiasValue.textContent = chronoDays === null ? "-" : `${chronoDays} dia(s)`;
+      el.igCorrigidaValue.textContent = corrected ? `${corrected.corrWeeks} sem + ${corrected.corrDays} dia(s)` : "-";
+      el.momentoCalculoValue.textContent = reference;
+    }
+
+    function getRespiratoryPoints(respStatus, fio2) {
+      if (!respStatus || !fio2) return null;
+      if (respStatus === "other") return 0;
+      const group = CONFIG.respiratoryMatrix[respStatus];
+      if (!group || !(fio2 in group)) return null;
+      return group[fio2];
+    }
+
+    function getRiskBand(score) {
+      return CONFIG.riskBands.find(band => score >= band.min && score <= band.max) || null;
+    }
+
+    function buildInterpretation(score, riskBand) {
+      const riskText = riskBand ? riskBand.text : "não disponível";
+      if (score <= 16) {
+        return `Total ${score} pontos — faixa baixa a moderada na escala California TRIPS. Na referência original, mortalidade em até 7 dias após o transporte para esta banda é descrita em torno de ${riskText} (estimativa populacional, não predição do paciente).`;
+      }
+      if (score <= 34) {
+        return `Total ${score} pontos — faixa mais elevada na escala. A publicação associa totais nessa ordem a intervalos de mortalidade até 7 dias após o transporte da ordem de ${riskText}; integrar com clínica e protocolo de transporte — esta tela não define conduta.`;
+      }
+      return `Total ${score} pontos — faixa muito elevada. Na tabela TRIPS, bandas altas apresentam intervalos largos (${riskText}); usar apenas como marcador complementar junto à equipe assistencial.`;
+    }
+
+    function validateForm() {
+      if (!el.responsiveness.value) return "Selecione a responsividade.";
+      if (!el.respStatus.value) return "Selecione o estado respiratório.";
+      if (!el.fio2.value) return "Selecione a FiO₂.";
+      if (!el.temperature.value) return "Selecione a temperatura.";
+      if (!el.sbp.value) return "Selecione a pressão arterial sistólica.";
+      if (!el.pressors.value) return "Selecione o uso de drogas vasoativas.";
+      if (el.respStatus.value !== "other" && el.fio2.value === "na") {
+        return "Para estado respiratório moderado ou grave, selecione uma faixa válida de FiO₂.";
+      }
+      return null;
+    }
+
+    function getLabel(selectElement) {
+      return selectElement.options[selectElement.selectedIndex]?.text || "-";
+    }
+
+    function collectPatientData() {
+      const corrected = calculateCorrectedGA();
+      const chronoDays = calculateChronologicalDays();
+
+      return {
+        patientKey: el.patientKey.value.trim(),
+        rnNome: el.rnNome.value.trim(),
+        rnProntuario: el.rnProntuario.value.trim(),
+        dataNascimento: el.dataNascimento.value || "",
+        horaNascimento: el.horaNascimento.value || "",
+        idadeGestacional: el.idadeGestacional.value.trim(),
+        igNascSemanas: el.igNascSemanas.value || "",
+        igNascDias: el.igNascDias.value || "",
+        peso: el.peso.value || "",
+        hospitalOrigem: el.hospitalOrigem.value.trim(),
+        hospitalDestino: el.hospitalDestino.value.trim(),
+        medicoOrigem: el.medicoOrigem.value.trim(),
+        medicoDestino: el.medicoDestino.value.trim(),
+        dataHoraSaida: formatDateTime(el.dataHoraSaida.value),
+        dataHoraChegada: formatDateTime(el.dataHoraChegada.value),
+        diagnostico: el.diagnostico.value.trim(),
+        motivoTransferencia: el.motivoTransferencia.value.trim(),
+        intervencoes: el.intervencoes.value.trim(),
+        observacoesTransporte: el.observacoesTransporte.value.trim(),
+        idadeDias: chronoDays === null ? "-" : `${chronoDays} dia(s)`,
+        igCorrigida: corrected ? `${corrected.corrWeeks} sem + ${corrected.corrDays} dia(s)` : "-"
+      };
+    }
+
+    function calculateTrips() {
+      updateAgeDisplays();
+      const error = validateForm();
+      if (error) {
+        alert(error);
+        return;
+      }
+
+      const pointsResponsiveness = CONFIG.responsiveness[el.responsiveness.value];
+      const pointsTemperature = CONFIG.temperature[el.temperature.value];
+      const pointsSbp = CONFIG.sbp[el.sbp.value];
+      const pointsPressors = CONFIG.pressors[el.pressors.value];
+      const pointsRespiratory = getRespiratoryPoints(el.respStatus.value, el.fio2.value);
+
+      if (pointsRespiratory === null) {
+        alert("Combinação respiratória/FiO₂ inválida.");
+        return;
+      }
+
+      const total = pointsResponsiveness + pointsTemperature + pointsSbp + pointsPressors + pointsRespiratory;
+      const riskBand = getRiskBand(total);
+      const riskText = riskBand ? riskBand.text : "fora da faixa configurada";
+      const interpretation = buildInterpretation(total, riskBand);
+
+      el.pointsResponsiveness.textContent = pointsResponsiveness;
+      el.pointsResp.textContent = pointsRespiratory;
+      el.pointsTemp.textContent = pointsTemperature;
+      el.pointsSbp.textContent = pointsSbp;
+      el.pointsPressors.textContent = pointsPressors;
+      el.totalScore.textContent = total;
+      el.resultText.textContent = interpretation;
+      el.riskChip.className = "risk-chip " + (riskBand ? riskBand.css : "risk-warn");
+      el.riskChip.textContent = "Faixa publicada (mortalidade ≤7 dias pós-transporte): " + riskText;
+
+      lastCalculation = {
+        patient: collectPatientData(),
+        total,
+        riskText,
+        interpretation,
+        points: {
+          responsiveness: pointsResponsiveness,
+          respiratory: pointsRespiratory,
+          temperature: pointsTemperature,
+          sbp: pointsSbp,
+          pressors: pointsPressors
+        },
+        labels: {
+          responsiveness: getLabel(el.responsiveness),
+          respStatus: getLabel(el.respStatus),
+          fio2: getLabel(el.fio2),
+          temperature: getLabel(el.temperature),
+          sbp: getLabel(el.sbp),
+          pressors: getLabel(el.pressors)
+        }
+      };
+
+      el.reportTransferenciaText.value = generateTransferReport(lastCalculation);
+      el.resultCard.style.display = "block";
+      saveDraft();
+    }
+
+    function generateTransferReport(data) {
+      const p = data.patient;
+
+      const lines = [
+        "RESUMO INFORMATIVO — DADOS DA TELA + CALIFORNIA TRIPS (EDUCATIVO)",
+        "",
+        "NOTA: Texto gerado automaticamente a partir dos campos preenchidos. Revisar antes de arquivar, enviar ou usar como documento oficial. Nao prescreve transporte nem tratamento.",
+        "",
+        `RN: ${p.rnNome || "-"}`,
+        `Identificacao hospitalar / ID: ${p.rnProntuario || "-"}`,
+        `Chave do cadastro: ${p.patientKey || "-"}`,
+        `Data de nascimento: ${p.dataNascimento || "-"}`,
+        `Hora de nascimento: ${p.horaNascimento || "-"}`,
+        `Idade cronológica: ${p.idadeDias}`,
+        `IG ao nascimento: ${p.igNascSemanas || "-"} sem + ${p.igNascDias || "-"} dia(s)`,
+        `IG corrigida: ${p.igCorrigida}`,
+        `Peso atual: ${p.peso ? `${p.peso} g` : "-"}`,
+        "",
+        `Serviço de origem: ${p.hospitalOrigem || "-"}`,
+        `Serviço de destino: ${p.hospitalDestino || "-"}`,
+        `Médico da origem: ${p.medicoOrigem || "-"}`,
+        `Médico do destino: ${p.medicoDestino || "-"}`,
+        "",
+        `Data/hora da saída: ${p.dataHoraSaida || "-"}`,
+        `Data/hora da chegada: ${p.dataHoraChegada || "-"}`,
+        "",
+        "Registro clínico / hipótese (assistente):",
+        p.diagnostico || "-",
+        "",
+        "Motivo da transferência:",
+        p.motivoTransferencia || "-",
+        "",
+        "Estabilização e intervenções antes do transporte:",
+        p.intervencoes || "-",
+        "",
+        "California TRIPS Score:",
+        `Responsividade: ${data.points.responsiveness} (${data.labels.responsiveness})`,
+        `Respiratório + FiO₂: ${data.points.respiratory} (${data.labels.respStatus} / ${data.labels.fio2})`,
+        `Temperatura: ${data.points.temperature} (${data.labels.temperature})`,
+        `Pressão arterial sistólica: ${data.points.sbp} (${data.labels.sbp})`,
+        `Uso de drogas vasoativas: ${data.points.pressors} (${data.labels.pressors})`,
+        `TRIPS total: ${data.total}`,
+        `Faixa de mortalidade (literatura TRIPS, ate 7 dias apos transporte): ${data.riskText}`,
+        "",
+        "Descricao educativa (nao e conduta):",
+        data.interpretation,
+        "",
+        "Intercorrencias / observacoes do transporte:",
+        p.observacoesTransporte || "-",
+        "",
+        "NeoPedCalc — ferramenta educacional. Confirmar tudo com avaliacao clinica e protocolo institucional."
+      ];
+      let text = lines.join("\n");
+      if (typeof window.neopedLegalReportFooter === "function") {
+        text += window.neopedLegalReportFooter();
+      }
+      return text;
+    }
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        alert("Texto copiado. Revise antes de arquivar ou compartilhar.");
+      } catch {
+        if (typeof window.neopedCopyFail === 'function') window.neopedCopyFail(); else alert("Nao foi possivel copiar automaticamente. Revise o texto e copie manualmente para uso informativo.");
+      }
+    }
+
+    async function shareText(title, text) {
+      if (navigator.share) {
+        try {
+          await navigator.share({ title, text });
+          return;
+        } catch {}
+      }
+      await copyText(text);
+    }
+
+    function sendByEmail(subject, body) {
+      const mailto = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      window.location.href = mailto;
+    }
+
+    function sendByWhatsApp(text) {
+      const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+      window.open(url, "_blank");
+    }
+
+    function ensureCalculation() {
+      if (!lastCalculation) calculateTrips();
+      return lastCalculation;
+    }
+
+    function printTransferReport() {
+      const data = ensureCalculation();
+      if (!data) return;
+      el.reportTransferenciaText.value = generateTransferReport(data);
+      el.reportTransferenciaCard.style.display = "block";
+      document.querySelectorAll(".report-card").forEach(card => card.classList.remove("printing"));
+      el.reportTransferenciaCard.classList.add("printing");
+      window.print();
+      el.reportTransferenciaCard.classList.remove("printing");
+    }
+
+    function initDraft() {
+      const draft = (() => {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.draft) || "{}"); }
+        catch { return {}; }
+      })();
+      if (Object.keys(draft).length) fillForm(draft);
+    }
+
+    FIELDS.forEach(id => {
+      if (el[id]) {
+        el[id].addEventListener("input", () => {
+          updateAgeDisplays();
+          saveDraft();
+        });
+        el[id].addEventListener("change", () => {
+          updateAgeDisplays();
+          saveDraft();
+        });
+      }
+    });
+
+    el.savedPatients.addEventListener("change", loadSelectedPatient);
+    el.btnSavePatient.addEventListener("click", saveCurrentPatient);
+    el.btnDeletePatient.addEventListener("click", deleteCurrentPatient);
+
+    el.btnNewPatient.addEventListener("click", () => {
+      resetFormFields();
+      renderPatientsSelect();
+      alert("Tela limpa para novo cadastro.");
+    });
+
+    el.btnCalculate.addEventListener("click", calculateTrips);
+
+    el.btnClear.addEventListener("click", () => {
+      resetFormFields();
+      renderPatientsSelect();
+    });
+
+    el.btnHow.addEventListener("click", () => {
+      el.modalBackdrop.style.display = "flex";
+    });
+
+    el.btnCloseModal.addEventListener("click", () => {
+      el.modalBackdrop.style.display = "none";
+    });
+
+    el.modalBackdrop.addEventListener("click", (e) => {
+      if (e.target === el.modalBackdrop) el.modalBackdrop.style.display = "none";
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      if (el.modalBackdrop.style.display !== "flex") return;
+      el.modalBackdrop.style.display = "none";
+    });
+
+    el.btnTransferencia.addEventListener("click", async () => {
+      const data = ensureCalculation();
+      if (!data) return;
+      const text = generateTransferReport(data);
+      el.reportTransferenciaText.value = text;
+      el.reportTransferenciaCard.style.display = "block";
+      await copyText(text);
+      el.reportTransferenciaCard.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    el.btnPrint.addEventListener("click", printTransferReport);
+
+    el.btnCopyTransfer.addEventListener("click", async () => {
+      const data = ensureCalculation();
+      if (!data) return;
+      await copyText(generateTransferReport(data));
+    });
+
+    el.btnShareTransfer.addEventListener("click", async () => {
+      const data = ensureCalculation();
+      if (!data) return;
+      await shareText("NeoPedCalc — resumo TRIPS (educativo)", generateTransferReport(data));
+    });
+
+    el.btnEmailTransfer.addEventListener("click", () => {
+      const data = ensureCalculation();
+      if (!data) return;
+      sendByEmail("NeoPedCalc — resumo TRIPS (educativo)", generateTransferReport(data));
+    });
+
+    el.btnWhatsTransfer.addEventListener("click", () => {
+      const data = ensureCalculation();
+      if (!data) return;
+      sendByWhatsApp(generateTransferReport(data));
+    });
+
+    function fillForm(data = {}) {
+      FIELDS.forEach(id => {
+        if (el[id]) el[id].value = data[id] ?? "";
+      });
+      updateAgeDisplays();
+      saveDraft();
+    }
+
+    function loadSelectedPatient() {
+      const key = el.savedPatients.value;
+      if (!key) return;
+      const patient = loadPatients().find(p => p.patientKey === key);
+      if (!patient) return;
+      fillForm(patient);
+      renderPatientsSelect(key);
+    }
+
+    renderPatientsSelect();
+    initDraft();
+    updateAgeDisplays();
+  </script>
+  <script src="../js/neoped-datetime-fix.js"></script>
+  <script src="../js/neoped-nav.js"></script>
+</body>
+</html>

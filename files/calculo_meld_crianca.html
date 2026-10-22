@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>NeoPedCalc — MELD (educativo)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            touch-action: pan-y;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .app-viewport {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+        .app-shell {
+            width: 100%;
+            max-width: 980px;
+            box-sizing: border-box;
+        }
+
+        .card, .panel, .box {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-section h3 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 1.4em;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            max-width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input, select, textarea, button {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #d1d5db;
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.06);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        @media (max-width: 640px) {
+            .app-viewport {
+                padding: 12px;
+            }
+
+            .form-row,
+            .form-row-3,
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .results {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 30px;
+            margin-top: 30px;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        body {
+            overscroll-behavior-x: none;
+        }
+
+        .table-wrap {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        th, td {
+            word-wrap: break-word;
+            overflow-wrap: anywhere;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .result-card.meld {
+            border-left: 5px solid #e74c3c;
+        }
+
+        .result-card.meld-na {
+            border-left: 5px solid #f39c12;
+        }
+
+        .result-card h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .result-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #e74c3c;
+            margin: 20px 0;
+        }
+
+        .result-value.meld-na {
+            color: #f39c12;
+        }
+
+        .result-description {
+            color: #374151;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .interpretation {
+            background: #ecf0f1;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .interpretation h5 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .interpretation p {
+            color: #34495e;
+            line-height: 1.6;
+        }
+
+        .info-section {
+            background: #e8f4f8;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .info-section h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .info-section ul {
+            color: #34495e;
+            line-height: 1.8;
+            padding-left: 20px;
+        }
+
+        .info-section li {
+            margin-bottom: 8px;
+        }
+
+        .formula-section {
+            background: #f1f2f6;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 30px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .formula-section h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .formula {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            border: 2px solid #ddd;
+            margin-bottom: 15px;
+        }
+
+        .formula h5 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .formula-text {
+            text-align: center;
+            font-size: 1.1em;
+            color: #2c3e50;
+        }
+
+        .copy-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .copy-btn:hover {
+            background: #229954;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #856404;
+        }
+
+        .warning-box h5 {
+            margin-bottom: 8px;
+            color: #856404;
+        }
+
+        @media (max-width: 768px) {
+            .form-row, .form-row-3, .result-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .app-viewport {
+                padding: 12px;
+            }
+
+            .header h1 {
+                font-size: 1.4em;
+            }
+
+            .header p {
+                font-size: 0.9em;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .section {
+                padding: 12px;
+            }
+
+            .section h3 {
+                font-size: 1.1em;
+            }
+
+            input {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            button {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .results {
+                padding: 12px;
+            }
+
+            .score-display {
+                font-size: 2.5em;
+            }
+
+            .interpretation {
+                font-size: 13px;
+            }
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-info {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-info:hover {
+            background: white;
+            color: #111827;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
+            box-sizing: border-box;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 0 auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 700px;
+            max-height: 86vh;
+            overflow: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-body h3 {
+            color: #111827;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #374151;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #111827;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 100%;
+            }
+
+            .modal-body {
+                padding: 20px;
+                max-height: 75vh;
+            }
+
+            .modal-header {
+                padding: 15px 20px;
+            }
+
+            .modal-header h2 {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 100%;
+            }
+
+            .modal-body {
+                padding: 15px;
+                max-height: 80vh;
+            }
+
+            .modal-header h2 {
+                font-size: 16px;
+            }
+
+            .modal-body h3 {
+                font-size: 16px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <div class="app-viewport">
+        <div class="app-shell">
+            <div class="container">
+        <div class="header">
+            <h1>Calculadora MELD</h1>
+            <p>Model for End-stage Liver Disease — estimativa educativa de gravidade hepática</p>
+            <div class="header-actions">
+                <button type="button" class="btn-info" onclick="abrirModal()">Como usar</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="warning-box">
+                <h5>Importante</h5>
+                <p>O MELD Score é utilizado para pacientes com idade >= 12 anos. Para pacientes pediatricos (< 12 anos), utilize o PELD Score.</p>
+            </div>
+
+            <div class="form-section">
+                <h3>Dados do Paciente</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nomePaciente">Nome do Paciente:</label>
+                        <input type="text" id="nomePaciente" placeholder="Digite o nome do paciente">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dataNascimento">Data de Nascimento:</label>
+                        <input type="date" id="dataNascimento">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dataCalculo">Data do Cálculo:</label>
+                        <input type="date" id="dataCalculo">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="idadeAnos">Idade (anos):</label>
+                        <input type="number" id="idadeAnos" placeholder="Idade em anos" min="12" max="120">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="dialise">Diálise nas últimas 2 semanas:</label>
+                    <select id="dialise">
+                        <option value="0">Não</option>
+                        <option value="1">Sim</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Parametros Laboratoriais</h3>
+                
+                <div class="form-row-3">
+                    <div class="form-group">
+                        <label for="creatinina">Creatinina (mg/dL):</label>
+                        <input type="number" id="creatinina" step="0.01" min="0" placeholder="Ex: 1.2">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bilirrubinaTotal">Bilirrubina Total (mg/dL):</label>
+                        <input type="number" id="bilirrubinaTotal" step="0.1" min="0" placeholder="Ex: 2.5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="inr">INR (International Normalized Ratio):</label>
+                        <input type="number" id="inr" step="0.01" min="0" placeholder="Ex: 1.5">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="sodio">Sódio (mEq/L):</label>
+                    <input type="number" id="sodio" step="0.1" min="0" placeholder="Ex: 135">
+                </div>
+            </div>
+
+            <button type="button" class="btn" onclick="calcularMELD()">Calcular MELD Score</button>
+
+            <div class="results" id="results">
+                <div class="result-grid">
+                    <div class="result-card meld">
+                        <h4>MELD Score</h4>
+                        <div class="result-value" id="meldScore">0</div>
+                        <div class="result-description">Score MELD</div>
+                    </div>
+
+                    <div class="result-card meld-na">
+                        <h4>MELD-Na Score</h4>
+                        <div class="result-value meld-na" id="meldNaScore">0</div>
+                        <div class="result-description">Score MELD-Na</div>
+                    </div>
+                </div>
+
+                <div class="interpretation" id="interpretation">
+                    <h5>Interpretacao dos Resultados</h5>
+                    <p id="interpretationText"></p>
+                </div>
+
+            <button type="button" class="copy-btn" onclick="copiarRelatorio()">Copiar texto informativo</button>
+            </div>
+
+            <div class="info-section">
+                <h4>Informacoes sobre o MELD Score</h4>
+                <ul>
+                <li><strong>MELD</strong> e usado para priorizar pacientes >= 12 anos na lista de transplante hepatica</li>
+                    <li><strong>MELD-Na</strong> incorpora o sódio sérico para maior precisão</li>
+                    <li>Score mais alto indica maior urgência para transplante</li>
+                    <li>Estimativa de mortalidade em 90 dias</li>
+                    <li>Atualizado regularmente conforme condição clínica</li>
+                    <li>Valores mínimos: Creatinina, Bilirrubina e INR = 1.0</li>
+                    <li>Valor máximo: Creatinina = 4.0 mg/dL</li>
+                </ul>
+            </div>
+
+            <div class="formula-section">
+                <h4>Formulas do MELD Score</h4>
+                
+                <div class="formula">
+                    <h5>MELD Score:</h5>
+                    <div class="formula-text">
+                        MELD = 9.6 x ln(Creatinina) + 3.8 x ln(Bilirrubina) + 11.2 x ln(INR) + 6.4
+                    </div>
+                </div>
+
+                <div class="formula">
+                    <h5>MELD-Na Score:</h5>
+                    <div class="formula-text">
+                        MELD-Na = MELD + 1.32 x (137 - Sodio) - [0.033 x MELD x (137 - Sodio)]
+                    </div>
+                </div>
+
+                <div class="formula">
+                    <h5>Regras de Ajuste:</h5>
+                    <div class="formula-text">
+                        - Creatinina, Bilirrubina, INR: minimo 1.0<br>
+                        - Creatinina: maximo 4.0 mg/dL<br>
+                        - Sodio: minimo 125, maximo 137 mEq/L<br>
+                        - Dialise: Creatinina = 4.0 mg/dL
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — Calculadora MELD (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta calculadora organiza variáveis para estimar MELD/MELD-Na como apoio informativo na avaliação de gravidade hepática. O resultado não substitui avaliação clínica, protocolo institucional ou prescrição.</p>
+                
+                <h3>Fórmula MELD</h3>
+                <div class="formula-box">
+                    <strong>Fórmula MELD Pediátrica:</strong><br><br>
+                    <strong>MELD = 10 x [0.957 x ln(Creatinina) + 0.378 x ln(Bilirrubina) + 1.120 x ln(INR) + 0.643]</strong><br><br>
+                    <strong>Variáveis:</strong><br>
+                    - Creatinina: mg/dL (minimo 1.0)<br>
+                    - Bilirrubina Total: mg/dL<br>
+                    - INR: International Normalized Ratio<br><br>
+                    <strong>Limitações:</strong><br>
+                    - Creatinina < 1.0 -> usar 1.0<br>
+                    - Bilirrubina < 1.0 -> usar 1.0<br>
+                    - INR < 1.0 -> usar 1.0<br><br>
+                    <strong>Interpretação:</strong><br>
+                    - 0-9: Baixo risco<br>
+                    - 10-19: Risco moderado<br>
+                    - 20-29: Alto risco<br>
+                    - 30-39: Muito alto risco<br>
+                    - >= 40: Risco extremo
+                </div>
+
+                <h3>Parâmetros Avaliados</h3>
+                <ul>
+                    <li><strong>Creatinina:</strong> mg/dL</li>
+                    <li><strong>Bilirrubina Total:</strong> mg/dL</li>
+                    <li><strong>INR:</strong> International Normalized Ratio</li>
+                    <li><strong>MELD Score:</strong> 0-100</li>
+                    <li><strong>Gravidade:</strong> Baixa, moderada, alta</li>
+                    <li><strong>Prognóstico:</strong> Baseado no score</li>
+                    <li><strong>Transplante:</strong> Prioridade</li>
+                    <li><strong>Mortalidade:</strong> Estimada</li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Insira Creatinina:</strong> mg/dL</li>
+                    <li><strong>Informe Bilirrubina:</strong> Total mg/dL</li>
+                    <li><strong>Insira INR:</strong> International Normalized Ratio</li>
+                    <li><strong>Calcule:</strong> Sistema calcula automaticamente</li>
+                    <li><strong>Interprete:</strong> Gravidade e prognóstico</li>
+                    <li><strong>Monitore:</strong> Evolução</li>
+                </ol>
+
+                <h3>Interpretação do MELD</h3>
+                <ul>
+                    <li><strong>0-9:</strong> Doença hepática leve</li>
+                    <li><strong>10-19:</strong> Doença hepática moderada</li>
+                    <li><strong>20-29:</strong> Doença hepática grave</li>
+                    <li><strong>30-39:</strong> Doença hepática muito grave</li>
+                    <li><strong>>= 40:</strong> Doenca hepatica terminal</li>
+                    <li><strong>MELD 15+:</strong> Considerar transplante</li>
+                    <li><strong>MELD 25+:</strong> Prioridade alta</li>
+                    <li><strong>MELD 35+:</strong> Prioridade máxima</li>
+                </ul>
+
+                <h3>Causas de Doença Hepática</h3>
+                <ul>
+                    <li><strong>Virais:</strong> Hepatite B, C</li>
+                    <li><strong>Autoimunes:</strong> Hepatite autoimune</li>
+                    <li><strong>Metabólicas:</strong> Wilson, hemocromatose</li>
+                    <li><strong>Tóxicas:</strong> Medicamentos, álcool</li>
+                    <li><strong>Colestáticas:</strong> Atresia biliar</li>
+                    <li><strong>Vasculares:</strong> Síndrome de Budd-Chiari</li>
+                    <li><strong>Congênitas:</strong> Fibrose cística</li>
+                    <li><strong>Idiopáticas:</strong> Criptogênica</li>
+                </ul>
+
+                <h3>Complicações da Doença Hepática</h3>
+                <ul>
+                    <li><strong>Hipertensão Portal:</strong> Varizes</li>
+                    <li><strong>Ascite:</strong> Líquido peritoneal</li>
+                    <li><strong>Encefalopatia:</strong> Hepática</li>
+                    <li><strong>Síndrome Hepatorenal:</strong> Insuficiência</li>
+                    <li><strong>Síndrome Hepatopulmonar:</strong> Hipoxemia</li>
+                    <li><strong>Coagulopatia:</strong> Hemorragias</li>
+                    <li><strong>Infecções:</strong> Espontâneas</li>
+                    <li><strong>Câncer:</strong> Hepatocarcinoma</li>
+                </ul>
+
+                <h3>Fatores que Influenciam MELD</h3>
+                <ul>
+                    <li><strong>Função Renal:</strong> Creatinina</li>
+                    <li><strong>Função Hepática:</strong> Bilirrubina</li>
+                    <li><strong>Coagulação:</strong> INR</li>
+                    <li><strong>Idade:</strong> Pediátrica</li>
+                    <li><strong>Comorbidades:</strong> Outras doenças</li>
+                    <li><strong>Medicamentos:</strong> Anticoagulantes</li>
+                    <li><strong>Desidratação:</strong> Creatinina</li>
+                    <li><strong>Transfusões:</strong> Bilirrubina</li>
+                </ul>
+
+                <h3>Indicações para Transplante</h3>
+                <ul>
+                    <li><strong>MELD >= 15:</strong> Considerar</li>
+                    <li><strong>MELD >= 25:</strong> Prioridade alta</li>
+                    <li><strong>MELD >= 35:</strong> Prioridade maxima</li>
+                    <li><strong>Complicações:</strong> Refratárias</li>
+                    <li><strong>Qualidade de Vida:</strong> Comprometida</li>
+                    <li><strong>Prognóstico:</strong> < 1 ano</li>
+                    <li><strong>Câncer:</strong> Hepatocarcinoma</li>
+                    <li><strong>Metabólicas:</strong> Erro inato</li>
+                </ul>
+
+                <h3>Contraindicações Transplante</h3>
+                <ul>
+                    <li><strong>Infecção:</strong> Ativa</li>
+                    <li><strong>Malignidade:</strong> Extra-hepática</li>
+                    <li><strong>Dependência:</strong> Álcool/drogas</li>
+                    <li><strong>Psiquiátricas:</strong> Graves</li>
+                    <li><strong>Cardiopulmonares:</strong> Graves</li>
+                    <li><strong>Neurológicas:</strong> Irreversíveis</li>
+                    <li><strong>Idade:</strong> Muito avançada</li>
+                    <li><strong>Suporte:</strong> Social inadequado</li>
+                </ul>
+
+                <h3>Prognóstico</h3>
+                <ul>
+                    <li><strong>MELD < 10:</strong> Sobrevida > 90% (3 meses)</li>
+                    <li><strong>MELD 10-19:</strong> Sobrevida 70-90%</li>
+                    <li><strong>MELD 20-29:</strong> Sobrevida 40-70%</li>
+                    <li><strong>MELD 30-39:</strong> Sobrevida 20-40%</li>
+                    <li><strong>MELD >= 40:</strong> Sobrevida < 20%</li>
+                    <li><strong>Transplante:</strong> Melhora prognóstico</li>
+                    <li><strong>Complicações:</strong> Pioram</li>
+                    <li><strong>Pediátrico:</strong> Melhor que adulto</li>
+                </ul>
+
+                <h3>Monitoramento</h3>
+                <ul>
+                    <li><strong>Laboratório:</strong> Mensal</li>
+                    <li><strong>MELD:</strong> Recálculo</li>
+                    <li><strong>Complicações:</strong> Rastreamento</li>
+                    <li><strong>Ultrassom:</strong> Hepático</li>
+                    <li><strong>Endoscopia:</strong> Varizes</li>
+                    <li><strong>Doppler:</strong> Portal</li>
+                    <li><strong>Biópsia:</strong> Se necessário</li>
+                    <li><strong>Transplante:</strong> Lista de espera</li>
+                </ul>
+
+                <h3>Limitações e Considerações</h3>
+                <ul>
+                    <li>Score clínico apenas</li>
+                    <li>Variações individuais</li>
+                    <li>Fatores não incluídos</li>
+                    <li>Monitoramento clínico</li>
+                    <li>Interpretação experiente</li>
+                    <li>Ajuste individual</li>
+                    <li>Protocolos institucionais</li>
+                    <li>Correlação clínica</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Kamath PS, et al. A model to predict survival in patients with end-stage liver disease. Hepatology. 2001;33(2):464-470.<br>
+                    - Wiesner R, et al. Model for end-stage liver disease (MELD) and allocation of donor livers. Gastroenterology. 2003;124(1):91-96.<br>
+                    - McDiarmid SV, et al. Pediatric end-stage liver disease score predicts death and graft loss within 3 months after transplantation. Liver Transpl. 2002;8(3):278-284.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Definir data atual
+        document.getElementById('dataCalculo').valueAsDate = new Date();
+
+        // Calcular idade automaticamente
+        document.getElementById('dataNascimento').addEventListener('change', function() {
+            const dataNascimento = new Date(this.value);
+            const hoje = new Date();
+            const idadeAnos = Math.floor((hoje - dataNascimento) / (1000 * 60 * 60 * 24 * 365.25));
+            document.getElementById('idadeAnos').value = idadeAnos;
+        });
+
+        function calcularMELD() {
+            // Capturar valores
+            const creatinina = parseFloat(document.getElementById('creatinina').value);
+            const bilirrubina = parseFloat(document.getElementById('bilirrubinaTotal').value);
+            const inr = parseFloat(document.getElementById('inr').value);
+            const sodio = parseFloat(document.getElementById('sodio').value);
+            const dialise = parseInt(document.getElementById('dialise').value);
+            const idadeAnos = parseInt(document.getElementById('idadeAnos').value);
+
+            // Validações
+            if (!creatinina || !bilirrubina || !inr || !sodio || isNaN(idadeAnos)) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                return;
+            }
+
+            if (idadeAnos < 12) {
+                alert('MELD Score e para pacientes >= 12 anos. Para pacientes pediatricos, utilize o PELD Score.');
+                return;
+            }
+
+            if (creatinina <= 0 || bilirrubina <= 0 || inr <= 0 || sodio <= 0) {
+                alert('Os valores laboratoriais devem ser maiores que zero.');
+                return;
+            }
+
+            // Aplicar regras de ajuste
+            let creatininaAjustada = creatinina;
+            let bilirrubinaAjustada = bilirrubina;
+            let inrAjustado = inr;
+            let sodioAjustado = sodio;
+
+            // Regras para creatinina
+            if (dialise === 1) {
+                creatininaAjustada = 4.0;
+            } else {
+                if (creatininaAjustada < 1.0) creatininaAjustada = 1.0;
+                if (creatininaAjustada > 4.0) creatininaAjustada = 4.0;
+            }
+
+            // Regras para bilirrubina e INR
+            if (bilirrubinaAjustada < 1.0) bilirrubinaAjustada = 1.0;
+            if (inrAjustado < 1.0) inrAjustado = 1.0;
+
+            // Regras para sódio
+            if (sodioAjustado < 125) sodioAjustado = 125;
+            if (sodioAjustado > 137) sodioAjustado = 137;
+
+            // Calcular MELD Score
+            let meldScore = 9.6 * Math.log(creatininaAjustada) + 
+                           3.8 * Math.log(bilirrubinaAjustada) + 
+                           11.2 * Math.log(inrAjustado) + 6.4;
+
+            // Calcular MELD-Na Score
+            const deltaNa = 137 - sodioAjustado;
+            let meldNaScore = meldScore + 1.32 * deltaNa - (0.033 * meldScore * deltaNa);
+
+            // Arredondar para números inteiros
+            meldScore = Math.round(meldScore);
+            meldNaScore = Math.round(meldNaScore);
+
+            // Exibir resultados
+            document.getElementById('meldScore').textContent = meldScore.toFixed(1);
+            document.getElementById('meldNaScore').textContent = meldNaScore.toFixed(1);
+
+            // Interpretação
+            let interpretacao = '';
+            if (meldScore < 10) {
+                interpretacao = 'MELD Score baixo. Paciente com menor prioridade para transplante hepático.';
+            } else if (meldScore >= 10 && meldScore < 20) {
+                interpretacao = 'MELD Score moderado. Paciente com prioridade intermediária para transplante hepático.';
+            } else if (meldScore >= 20 && meldScore < 30) {
+                interpretacao = 'MELD Score alto. Paciente com alta prioridade para transplante hepático.';
+            } else {
+                interpretacao = 'MELD Score muito alto. Paciente com máxima prioridade para transplante hepático.';
+            }
+
+            interpretacao += ` O MELD-Na Score (${meldNaScore.toFixed(1)}) incorpora o sodio serico para maior precisao na avaliacao.`;
+
+            document.getElementById('interpretationText').textContent = interpretacao;
+
+            // Mostrar resultados
+            document.getElementById('results').classList.add('show');
+
+            // Armazenar dados para relatório
+            let interpretacaoRelatorio = '';
+            if (meldScore < 10) {
+                interpretacaoRelatorio = 'MELD Score baixo. Paciente com menor prioridade para transplante hepatica.';
+            } else if (meldScore >= 10 && meldScore < 20) {
+                interpretacaoRelatorio = 'MELD Score moderado. Paciente com prioridade intermediaria para transplante hepatica.';
+            } else if (meldScore >= 20 && meldScore < 30) {
+                interpretacaoRelatorio = 'MELD Score alto. Paciente com alta prioridade para transplante hepatica.';
+            } else {
+                interpretacaoRelatorio = 'MELD Score muito alto. Paciente com maxima prioridade para transplante hepatica.';
+            }
+            interpretacaoRelatorio += ` O MELD-Na Score (${meldNaScore.toFixed(1)}) incorpora o sodio serico para maior precisao na avaliacao.`;
+
+            window.dadosMELD = {
+                nomePaciente: document.getElementById('nomePaciente').value,
+                dataNascimento: document.getElementById('dataNascimento').value,
+                dataCalculo: document.getElementById('dataCalculo').value,
+                idadeAnos: idadeAnos,
+                creatinina: creatinina,
+                creatininaAjustada: creatininaAjustada,
+                bilirrubina: bilirrubina,
+                bilirrubinaAjustada: bilirrubinaAjustada,
+                inr: inr,
+                inrAjustado: inrAjustado,
+                sodio: sodio,
+                sodioAjustado: sodioAjustado,
+                dialise: dialise,
+                meldScore: meldScore,
+                meldNaScore: meldNaScore,
+                interpretacao: interpretacao,
+                interpretacaoRelatorio: interpretacaoRelatorio
+            };
+        }
+
+        function copiarRelatorio() {
+            if (!window.dadosMELD) {
+                alert('Calcule o MELD Score primeiro.');
+                return;
+            }
+
+            const dados = window.dadosMELD;
+            let relatorio = `RESUMO INFORMATIVO — MELD / MELD-Na (EDUCATIVO)
+=====================================
+
+DADOS DO PACIENTE
+-----------------
+Nome: ${dados.nomePaciente}
+Data de Nascimento: ${dados.dataNascimento}
+Idade: ${dados.idadeAnos} anos
+Data do Calculo: ${dados.dataCalculo}
+Dialise nas ultimas 2 semanas: ${dados.dialise ? 'Sim' : 'Nao'}
+
+PARAMETROS LABORATORIAIS
+------------------------
+Creatinina: ${dados.creatinina} mg/dL (ajustada: ${dados.creatininaAjustada} mg/dL)
+Bilirrubina Total: ${dados.bilirrubina} mg/dL (ajustada: ${dados.bilirrubinaAjustada} mg/dL)
+INR: ${dados.inr} (ajustado: ${dados.inrAjustado})
+Sodio: ${dados.sodio} mEq/L (ajustado: ${dados.sodioAjustado} mEq/L)
+
+RESULTADOS
+----------
+MELD Score: ${dados.meldScore.toFixed(1)}
+MELD-Na Score: ${dados.meldNaScore.toFixed(1)}
+
+INTERPRETACAO
+-------------
+${dados.interpretacaoRelatorio}
+
+OBSERVACOES IMPORTANTES
+-----------------------
+- MELD Score e usado para priorizacao na lista de transplante hepatica (>= 12 anos)
+- MELD-Na incorpora o sodio serico para maior precisao
+- Score mais alto indica maior urgencia para transplante
+- Reavaliar regularmente conforme evolucao clinica
+- Considerar outros fatores clinicos alem do score
+
+Data de Geracao: ${new Date().toLocaleString('pt-BR')}`;
+
+            relatorio = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorio;
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorio += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                relatorio += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            navigator.clipboard.writeText(relatorio).then(function() {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(function() {
+                // Fallback para navegadores mais antigos
+                const textArea = document.createElement('textarea');
+                textArea.value = relatorio;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+
+    </script>
+</div>
+</div>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

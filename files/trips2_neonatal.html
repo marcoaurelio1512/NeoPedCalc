@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — TRIPS-II neonatal (educativo)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: none;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #34495e;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #d1d5db;
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.06);
+        }
+
+        .form-group .unit {
+            color: #374151;
+            font-size: 0.9rem;
+            margin-left: 10px;
+        }
+
+        .results-section {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .result-item {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .result-item .label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .result-item .value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .risk-section {
+            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .risk-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .risk-badge.baixo {
+            background: rgba(39, 174, 96, 0.2);
+            color: #27ae60;
+            border: 1px solid #27ae60;
+        }
+
+        .risk-badge.intermediario {
+            background: rgba(243, 156, 18, 0.2);
+            color: #f39c12;
+            border: 1px solid #f39c12;
+        }
+
+        .risk-badge.alto {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+        }
+
+        .report-section {
+            background: #2c3e50;
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .copy-btn:hover {
+            background: linear-gradient(135deg, #229954 0%, #27ae60 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        .copy-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(39, 174, 96, 0.3);
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-right: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+            transform: translateY(-1px);
+        }
+
+        .secondary-btn {
+            background: #95a5a6;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .secondary-btn:hover {
+            background: #7f8c8d;
+        }
+
+        .info-section {
+            background: #ecf0f1;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .info-section ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .info-section li {
+            padding: 8px 0;
+            border-bottom: 1px solid #bdc3c7;
+            color: #34495e;
+        }
+
+        .info-section li:last-child {
+            border-bottom: none;
+        }
+
+        .reference {
+            background: #95a5a6;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+
+            .header h1 {
+                font-size: 1.4em;
+            }
+
+            .header p {
+                font-size: 0.9em;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .section {
+                padding: 12px;
+            }
+
+            .section h3 {
+                font-size: 1.1em;
+            }
+
+            input, select {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            button {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .results {
+                padding: 12px;
+            }
+
+            .score-display {
+                font-size: 2.5em;
+            }
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-info:hover {
+            background: white;
+            color: #2c3e50;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #2c3e50;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+
+            .modal-body {
+                padding: 20px;
+                max-height: 75vh;
+            }
+
+            .modal-header {
+                padding: 15px 20px;
+            }
+
+            .modal-header h2 {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 98%;
+                margin: 5% auto;
+            }
+
+            .modal-body {
+                padding: 15px;
+                max-height: 80vh;
+            }
+
+            .modal-header h2 {
+                font-size: 16px;
+            }
+
+            .modal-body h3 {
+                font-size: 16px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>TRIPS-II</h1>
+            <p>Transport Risk Index of Physiological Stability — apoio educativo para estimar risco fisiológico no transporte neonatal</p>
+            <div class="header-actions">
+                <button type="button" class="btn-info" onclick="abrirModal()">
+                    Como usar
+                </button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="info-section">
+                <h3>Instruções de Uso</h3>
+                <ul>
+                    <li><strong>Quando usar:</strong> Avaliação da estabilidade fisiológica durante transporte neonatal</li>
+                    <li><strong>Janela:</strong> Admissão ou durante o transporte</li>
+                    <li><strong>Variáveis:</strong> Temperatura, pressão arterial sistólica, status respiratório, resposta à dor</li>
+                    <li><strong>Interpretação:</strong> 0-10 baixo risco, 11-20 intermediário, >20 alto risco</li>
+                    <li><strong>Objetivo:</strong> Identificar recém-nascidos com maior risco durante transporte</li>
+                </ul>
+            </div>
+
+            <div class="form-grid">
+                <!-- Dados do Paciente -->
+                <div class="form-section">
+                    <h2 class="section-title">Dados do Paciente</h2>
+                    
+                    <div class="form-group">
+                        <label for="nome">Nome do Paciente</label>
+                        <input type="text" id="nome" placeholder="Nome completo">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="data_nascimento">Data de Nascimento</label>
+                        <input type="date" id="data_nascimento">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="idade_gestacional_nascimento">Idade Gestacional no Nascimento</label>
+                        <input type="number" id="idade_gestacional_nascimento" min="22" max="44" step="0.1" placeholder="Ex.: 32.5">
+                        <span class="unit">semanas</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="data_avaliacao">Data da Avaliação</label>
+                        <input type="date" id="data_avaliacao">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="hora_avaliacao">Hora da Avaliação</label>
+                        <input type="time" id="hora_avaliacao">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="idade_dias">Idade em Dias (Calculada)</label>
+                        <input type="number" id="idade_dias" readonly>
+                        <span class="unit">dias</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="idade_gestacional_corrigida">Idade Gestacional Corrigida</label>
+                        <input type="text" id="idade_gestacional_corrigida" readonly>
+                        <span class="unit">semanas e dias</span>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2 class="section-title">Parâmetros TRIPS-II</h2>
+                    
+                    <div class="form-group">
+                        <label for="temp">Temperatura</label>
+                        <input type="number" id="temp" min="30" max="40.5" step="0.1" placeholder="Ex.: 36.5">
+                        <span class="unit">°C</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pas">Pressão Arterial Sistólica</label>
+                        <input type="number" id="pas" min="20" max="100" step="1" placeholder="Ex.: 45">
+                        <span class="unit">mmHg</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="resp">Status Respiratório</label>
+                        <select id="resp">
+                            <option value="">Selecione...</option>
+                            <option value="ar_ambiente">Respira ar ambiente</option>
+                            <option value="o2_suporte">O₂ baixo fluxo</option>
+                            <option value="cpap">CPAP / VNI</option>
+                            <option value="vm">Ventilação mecânica invasiva</option>
+                            <option value="vm_fio2_alta">VM com FiO₂ ≥ 0,6</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="noci">Resposta à Dor/Estímulo</label>
+                        <select id="noci">
+                            <option value="">Selecione...</option>
+                            <option value="vig_desconforto">Vigil / reage normalmente</option>
+                            <option value="letargico">Letárgico / hipo-reativo</option>
+                            <option value="dor_nao_chora">Responde minimamente à dor</option>
+                            <option value="sem_resposta">Sem resposta à dor</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="obs">Observações</label>
+                        <input type="text" id="obs" placeholder="Sedação? Transporte? FiO₂ exata?">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botões de Ação -->
+            <div style="text-align: center; margin: 30px 0;">
+                <button class="action-btn" onclick="calcularTRIPS()">
+                    Calcular TRIPS-II
+                </button>
+                <button class="secondary-btn" onclick="limparDados()">
+                    Limpar Dados
+                </button>
+            </div>
+
+            <!-- Resultados -->
+            <div class="results-section">
+                <h2 class="section-title">Resultado TRIPS-II</h2>
+                <div class="results-grid">
+                    <div class="result-item">
+                        <div class="label">Pontuação TRIPS-II</div>
+                        <div class="value" id="trips2-score">0</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="label">Classificação de Risco</div>
+                        <div class="value" id="risk-classification">-</div>
+                    </div>
+                </div>
+                <div id="risk-assessment" style="margin-top: 20px; text-align: center;"></div>
+                <div id="detailed-result" style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;"></div>
+            </div>
+
+            <!-- Texto informativo -->
+            <div class="report-section">
+                <h2 class="section-title">Texto informativo para prontuário eletrônico (revisar)</h2>
+                <button type="button" class="copy-btn" onclick="gerarECopiarRelatorio()">
+                    Gerar e copiar texto informativo
+                </button>
+            </div>
+
+            <!-- Referência -->
+            <div class="reference">
+                <strong>Referência:</strong> TRIPS-II - Transport Risk Index of Physiological Stability para avaliação de estabilidade durante transporte neonatal.
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — TRIPS-II (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>O TRIPS-II é uma referência para organizar dados fisiológicos durante transporte inter-hospitalar neonatal e apoiar discussão de risco. Este conteúdo é informativo e não substitui avaliação clínica, protocolos locais ou prescrição.</p>
+                
+                <h3>Fórmula do TRIPS-II</h3>
+                <div class="formula-box">
+                    <strong>TRIPS-II = Temperatura + Pressão Arterial + Oxigenação + pH + Convulsões + Suporte Ventilatório</strong><br><br>
+                    Onde cada variável recebe pontos baseados na gravidade:<br>
+                    • Temperatura: 0-4 pontos<br>
+                    • Pressão Arterial: 0-4 pontos<br>
+                    • Oxigenação: 0-6 pontos<br>
+                    • pH: 0-4 pontos<br>
+                    • Convulsões: 0 ou 4 pontos<br>
+                    • Suporte Ventilatório: 0-6 pontos<br><br>
+                    <strong>Escala Total:</strong> 0-28 pontos (quanto maior, maior o risco)
+                </div>
+
+                <h3>Variáveis Avaliadas</h3>
+                <ul>
+                    <li><strong>Temperatura:</strong> Temperatura corporal no momento do transporte</li>
+                    <li><strong>Pressão Arterial:</strong> Pressão arterial média (PAM) em mmHg</li>
+                    <li><strong>Oxigenação:</strong> Relação PaO2/FiO2 ou saturação de oxigênio</li>
+                    <li><strong>pH:</strong> pH arterial ou venoso</li>
+                    <li><strong>Convulsões:</strong> Presença de atividade convulsiva</li>
+                    <li><strong>Suporte Ventilatório:</strong> Tipo de suporte respiratório necessário</li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Temperatura:</strong> Informe a temperatura corporal em °C (ex: 36.5°C)</li>
+                    <li><strong>Pressão Arterial Média:</strong> Em mmHg (ex: 30 mmHg)</li>
+                    <li><strong>PaO2:</strong> Pressão parcial de oxigênio em mmHg (ex: 80 mmHg)</li>
+                    <li><strong>FiO2:</strong> Fração de oxigênio inspirado (ex: 0.6 para 60%)</li>
+                    <li><strong>pH:</strong> pH arterial ou venoso (ex: 7.25)</li>
+                    <li><strong>Convulsões:</strong> Marque "Sim" se houver convulsões</li>
+                    <li><strong>Suporte Ventilatório:</strong> Selecione o tipo de suporte necessário</li>
+                    <li>Clique em <strong>"Calcular TRIPS-II"</strong> para obter o escore</li>
+                </ol>
+
+                <h3>Interpretação dos Resultados</h3>
+                <ul>
+                    <li><strong>0-5 pontos:</strong> Baixo risco de instabilidade durante transporte</li>
+                    <li><strong>6-10 pontos:</strong> Risco moderado - monitoramento intensivo</li>
+                    <li><strong>11-15 pontos:</strong> Alto risco - equipe especializada necessária</li>
+                    <li><strong>16-20 pontos:</strong> Muito alto risco - estabilização prévia recomendada</li>
+                    <li><strong>21+ pontos:</strong> Risco extremo - transporte apenas se necessário</li>
+                </ul>
+
+                <h3>Considerações Importantes</h3>
+                <ul>
+                    <li>Use valores no momento do transporte, não piores valores</li>
+                    <li>Específico para transporte inter-hospitalar neonatal</li>
+                    <li>Útil para planejamento e alocação de recursos</li>
+                    <li>Complementar à avaliação clínica individual</li>
+                    <li>Considerar estabilização antes do transporte se escore alto</li>
+                    <li>Equipe especializada recomendada para escores >10</li>
+                    <li>Monitoramento contínuo durante o transporte</li>
+                </ul>
+
+                <h3>Aplicações Clínicas</h3>
+                <ul>
+                    <li><strong>Planejamento de Transporte:</strong> Determinar recursos necessários</li>
+                    <li><strong>Alocação de Equipe:</strong> Definir especialização da equipe</li>
+                    <li><strong>Comunicação:</strong> Informar equipe receptora sobre risco</li>
+                    <li><strong>Pesquisa:</strong> Avaliar outcomes de transporte</li>
+                </ul>
+
+                <h3>Limitações</h3>
+                <ul>
+                    <li>Não substitui avaliação clínica individual</li>
+                    <li>Baseado em população específica de estudo</li>
+                    <li>Pode não capturar todos os fatores de risco</li>
+                    <li>Validação limitada em diferentes contextos</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Lee SK, et al. Transport Risk Index of Physiological Stability (TRIPS): a validated score for transport of critically ill infants. J Perinatol. 2001;21(7):457-62.<br>
+                    - Shah PS, et al. Transport Risk Index of Physiological Stability (TRIPS II): validation of a simplified score for predicting mortality in transported neonates. J Perinatol. 2005;25(9):602-8.<br>
+                    - Lee SK, et al. Transport Risk Index of Physiological Stability: a practical system for assessing infant transport care. J Pediatr. 2001;138(1):101-6.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Tabela de pontuação TRIPS-II baseada na literatura
+        const TRIPS2_TABLE = {
+            temperature_c: [
+                { range: [30.0, 35.9], pts: 6 },
+                { range: [36.0, 36.4], pts: 3 },
+                { range: [36.5, 37.5], pts: 0 },
+                { range: [37.6, 38.5], pts: 2 },
+                { range: [38.6, 40.5], pts: 4 }
+            ],
+            systolic_bp_mmHg: [
+                { max: 30, pts: 8 },
+                { max: 40, pts: 5 },
+                { max: 50, pts: 3 },
+                { max: Infinity, pts: 0 }
+            ],
+            resp_status: {
+                ar_ambiente: 0,
+                o2_suporte: 3,
+                cpap: 6,
+                vm: 9,
+                vm_fio2_alta: 12
+            },
+            nociception: {
+                vig_desconforto: 0,
+                letargico: 4,
+                dor_nao_chora: 8,
+                sem_resposta: 12
+            }
+        };
+
+        function pointsTemp(c) {
+            for(const b of TRIPS2_TABLE.temperature_c) { 
+                if(c >= b.range[0] && c <= b.range[1]) return b.pts; 
+            }
+            return 0;
+        }
+
+        function pointsPAS(p) {
+            for(const b of TRIPS2_TABLE.systolic_bp_mmHg) { 
+                if(p <= b.max) return b.pts; 
+            }
+            return 0;
+        }
+
+        function pointsResp(k) { 
+            return TRIPS2_TABLE.resp_status[k] ?? 0; 
+        }
+
+        function pointsNoci(k) { 
+            return TRIPS2_TABLE.nociception[k] ?? 0; 
+        }
+
+        function getRiskLevel(score) {
+            if(score <= 10) return {label: 'Baixo Risco', cls: 'baixo'};
+            if(score <= 20) return {label: 'Risco Intermediário', cls: 'intermediario'};
+            return {label: 'Alto Risco', cls: 'alto'};
+        }
+
+        function getRespDescription(key) {
+            const descriptions = {
+                ar_ambiente: 'Ar ambiente',
+                o2_suporte: 'O₂ baixo fluxo',
+                cpap: 'CPAP/VNI',
+                vm: 'VM invasiva',
+                vm_fio2_alta: 'VM FiO₂ ≥ 0,6'
+            };
+            return descriptions[key] || key;
+        }
+
+        function getNociDescription(key) {
+            const descriptions = {
+                vig_desconforto: 'Vigil / reage normalmente',
+                letargico: 'Letárgico / hipo-reativo',
+                dor_nao_chora: 'Mínima resposta à dor',
+                sem_resposta: 'Sem resposta à dor'
+            };
+            return descriptions[key] || key;
+        }
+
+        function calcularTRIPS() {
+            const temp = parseFloat(document.getElementById('temp').value);
+            const pas = parseFloat(document.getElementById('pas').value);
+            const resp = document.getElementById('resp').value;
+            const noci = document.getElementById('noci').value;
+
+            if([temp, pas].some(Number.isNaN) || !resp || !noci) {
+                alert('Preencha todos os campos obrigatórios.');
+                return;
+            }
+
+            const trips2Score = pointsTemp(temp) + pointsPAS(pas) + pointsResp(resp) + pointsNoci(noci);
+            const risk = getRiskLevel(trips2Score);
+
+            // Atualizar display
+            document.getElementById('trips2-score').textContent = trips2Score;
+            document.getElementById('risk-classification').textContent = risk.label;
+            
+            const riskDiv = document.getElementById('risk-assessment');
+            riskDiv.innerHTML = `<div class="risk-badge ${risk.cls}">${risk.label}</div>`;
+
+            // Detalhes do resultado
+            const tempScore = pointsTemp(temp);
+            const pasScore = pointsPAS(pas);
+            const respScore = pointsResp(resp);
+            const nociScore = pointsNoci(noci);
+
+            const detailedResult = document.getElementById('detailed-result');
+            detailedResult.innerHTML = `
+                Detalhamento: Temperatura ${temp}°C (${tempScore}pts) • 
+                PAS ${pas}mmHg (${pasScore}pts) • 
+                ${getRespDescription(resp)} (${respScore}pts) • 
+                ${getNociDescription(noci)} (${nociScore}pts)
+            `;
+        }
+
+        function limparDados() {
+            ['nome', 'data_nascimento', 'idade_gestacional_nascimento', 'data_avaliacao', 'hora_avaliacao', 
+             'idade_dias', 'idade_gestacional_corrigida', 'temp', 'pas', 'resp', 'noci', 'obs'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            
+            document.getElementById('trips2-score').textContent = '0';
+            document.getElementById('risk-classification').textContent = '-';
+            document.getElementById('risk-assessment').innerHTML = '';
+            document.getElementById('detailed-result').innerHTML = '';
+        }
+
+        function gerarECopiarRelatorio() {
+            const trips2Score = document.getElementById('trips2-score').textContent;
+            const riskClassification = document.getElementById('risk-classification').textContent;
+            const riskLevel = document.getElementById('risk-assessment').textContent;
+
+            if(trips2Score === '0') {
+                alert('Calcule primeiro o TRIPS-II antes de gerar o texto informativo.');
+                return;
+            }
+
+            // Obter dados do paciente
+            const nome = document.getElementById('nome').value;
+            const dataNascimento = document.getElementById('data_nascimento').value;
+            const idadeGestacionalNascimento = document.getElementById('idade_gestacional_nascimento').value;
+            const dataAvaliacao = document.getElementById('data_avaliacao').value;
+            const horaAvaliacao = document.getElementById('hora_avaliacao').value;
+            const idadeDias = document.getElementById('idade_dias').value;
+            const idadeGestacionalCorrigida = document.getElementById('idade_gestacional_corrigida').value;
+
+            // Obter dados do TRIPS-II
+            const temp = document.getElementById('temp').value;
+            const pas = document.getElementById('pas').value;
+            const resp = document.getElementById('resp').value;
+            const noci = document.getElementById('noci').value;
+            const obs = document.getElementById('obs').value;
+
+            const tempScore = pointsTemp(parseFloat(temp));
+            const pasScore = pointsPAS(parseFloat(pas));
+            const respScore = pointsResp(resp);
+            const nociScore = pointsNoci(noci);
+
+            let relatorioTexto = `RESUMO INFORMATIVO — TRIPS-II (EDUCATIVO)
+${nome ? `Paciente: ${nome}` : ''}
+${dataAvaliacao ? `Data da Avaliação: ${dataAvaliacao}` : ''}${horaAvaliacao ? ` - Hora: ${horaAvaliacao}` : ''}
+
+DADOS DO PACIENTE:
+${dataNascimento ? `- Data de Nascimento: ${dataNascimento}` : ''}
+${idadeGestacionalNascimento ? `- Idade Gestacional no Nascimento: ${idadeGestacionalNascimento} semanas` : ''}
+${idadeDias ? `- Idade em Dias: ${idadeDias} dias` : ''}
+${idadeGestacionalCorrigida ? `- Idade Gestacional Corrigida: ${idadeGestacionalCorrigida}` : ''}
+
+DADOS DO TRANSPORTE/ADMISSÃO:
+- Temperatura: ${temp}°C (${tempScore} pontos)
+- Pressão Arterial Sistólica: ${pas} mmHg (${pasScore} pontos)
+- Status Respiratório: ${getRespDescription(resp)} (${respScore} pontos)
+- Resposta à Dor/Estímulo: ${getNociDescription(noci)} (${nociScore} pontos)
+${obs ? `- Observações: ${obs}` : ''}
+
+RESULTADOS:
+- Pontuação TRIPS-II: ${trips2Score} pontos
+- Classificação de Risco: ${riskClassification}
+- Nível de Risco: ${riskLevel}
+
+INTERPRETAÇÃO:
+O TRIPS-II avalia a estabilidade fisiológica durante transporte neonatal.
+Valores mais altos indicam maior instabilidade e risco durante o transporte.
+Classificação usada nesta página: 0-10 baixo risco, 11-20 intermediário, >20 alto risco (interpretação educativa; não define conduta automaticamente).
+
+CRITÉRIOS DE PONTUAÇÃO TRIPS-II:
+- Temperatura: 30.0-35.9°C=6pts, 36.0-36.4°C=3pts, 36.5-37.5°C=0pts, 37.6-38.5°C=2pts, 38.6-40.5°C=4pts
+- PAS: ≤30mmHg=8pts, 31-40mmHg=5pts, 41-50mmHg=3pts, >50mmHg=0pts
+- Status Respiratório: Ar ambiente=0pts, O₂ baixo fluxo=3pts, CPAP/VNI=6pts, VM=9pts, VM FiO₂≥0.6=12pts
+- Resposta à Dor: Vigil/reage=0pts, Letárgico=4pts, Mínima resposta=8pts, Sem resposta=12pts
+
+Referência: TRIPS-II - Transport Risk Index of Physiological Stability para avaliação de estabilidade durante transporte neonatal.`;
+
+            relatorioTexto = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorioTexto;
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorioTexto += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                relatorioTexto += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            // Copiar para área de transferência
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(relatorioTexto).then(() => {
+                    if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                }).catch(err => {
+                    copiarTextoFallback(relatorioTexto);
+                });
+            } else {
+                copiarTextoFallback(relatorioTexto);
+            }
+        }
+
+        function copiarTextoFallback(texto) {
+            const textArea = document.createElement('textarea');
+            textArea.value = texto;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            } catch (err) {
+                if (typeof window.neopedCopyFail === 'function') window.neopedCopyFail(); else alert('Nao foi possivel copiar automaticamente. Revise o texto e copie manualmente para uso informativo.');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        function calcularIdade() {
+            const dataNascimento = document.getElementById('data_nascimento').value;
+            const dataAvaliacao = document.getElementById('data_avaliacao').value;
+            const idadeGestacionalNascimento = parseFloat(document.getElementById('idade_gestacional_nascimento').value);
+
+            if (dataNascimento && dataAvaliacao) {
+                const nascimento = new Date(dataNascimento);
+                const avaliacao = new Date(dataAvaliacao);
+                
+                // Calcular diferença em dias
+                const diffTime = Math.abs(avaliacao - nascimento);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                document.getElementById('idade_dias').value = diffDays;
+                
+                // Calcular idade gestacional corrigida
+                if (idadeGestacionalNascimento && !isNaN(idadeGestacionalNascimento)) {
+                    const semanasAdicionais = Math.floor(diffDays / 7);
+                    const diasAdicionais = diffDays % 7;
+                    
+                    const idadeGestacionalCorrigida = idadeGestacionalNascimento + semanasAdicionais + (diasAdicionais / 7);
+                    const semanasCorrigidas = Math.floor(idadeGestacionalCorrigida);
+                    const diasCorrigidos = Math.round((idadeGestacionalCorrigida - semanasCorrigidas) * 7);
+                    
+                    document.getElementById('idade_gestacional_corrigida').value = 
+                        `${semanasCorrigidas} sem ${diasCorrigidos} dias`;
+                }
+            }
+        }
+
+        function preencherDataAtual() {
+            const hoje = new Date();
+            const dataAtual = hoje.toISOString().split('T')[0];
+            const horaAtual = hoje.toTimeString().slice(0, 5);
+            
+            if (!document.getElementById('data_avaliacao').value) {
+                document.getElementById('data_avaliacao').value = dataAtual;
+            }
+            if (!document.getElementById('hora_avaliacao').value) {
+                document.getElementById('hora_avaliacao').value = horaAtual;
+            }
+        }
+
+        // Event listeners para cálculo automático
+        document.addEventListener('DOMContentLoaded', function() {
+            // Preencher data atual ao carregar
+            preencherDataAtual();
+            
+            // Event listeners para cálculo de idade
+            ['data_nascimento', 'data_avaliacao', 'idade_gestacional_nascimento'].forEach(id => {
+                document.getElementById(id).addEventListener('input', calcularIdade);
+            });
+        });
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

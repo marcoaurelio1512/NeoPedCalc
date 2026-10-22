@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>NeoPedCalc — Anemia ferropriva (educativo)</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --success: #16a34a;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --border: #e5e7eb;
+      --shadow: 0 10px 25px rgba(0,0,0,0.06);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+    }
+
+    body {
+      min-height: 100vh;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 16px 14px 150px;
+    }
+
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: linear-gradient(180deg, #f4f7fb 85%, rgba(244,247,251,0));
+      padding-top: 8px;
+      padding-bottom: 10px;
+    }
+
+    .title-card {
+      background: var(--card);
+      border-radius: 22px;
+      padding: 18px 16px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .title-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .title-card h1 {
+      font-size: 1.35rem;
+      line-height: 1.2;
+      margin: 0 0 6px;
+    }
+
+    .title-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .mini-btn {
+      border: none;
+      background: #eef4ff;
+      color: var(--primary);
+      font-weight: 700;
+      border-radius: 12px;
+      padding: 10px 14px;
+      min-height: 42px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .section {
+      margin-top: 14px;
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .section h2 {
+      font-size: 1.02rem;
+      margin: 0 0 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: #fff;
+      padding: 12px 14px;
+      font-size: 1rem;
+      color: var(--text);
+      outline: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .check-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      min-height: unset;
+      margin: 0;
+    }
+
+    .inline-note {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .results {
+      display: none;
+    }
+
+    .result-box {
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+      background: #fff;
+    }
+
+    .status {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .status.low { color: var(--success); }
+    .status.mid { color: var(--warning); }
+    .status.high { color: var(--danger); }
+
+    .badge {
+      display: inline-block;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-top: 6px;
+    }
+
+    .badge.green { background: rgba(22,163,74,0.12); color: var(--success); }
+    .badge.orange { background: rgba(217,119,6,0.12); color: var(--warning); }
+    .badge.red { background: rgba(220,38,38,0.12); color: var(--danger); }
+
+    .list {
+      margin: 8px 0 0;
+      padding-left: 18px;
+    }
+
+    .list li {
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .mono-box {
+      white-space: pre-wrap;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      font-size: 0.95rem;
+      line-height: 1.45;
+    }
+
+    .reference-box {
+      font-size: 0.86rem;
+      line-height: 1.45;
+      color: var(--muted);
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      margin-top: 12px;
+      white-space: pre-wrap;
+    }
+
+    /* Acima da barra NeoPed (voltar / início) – neoped-nav ~56px + safe area */
+    .footer-actions {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: calc(56px + max(8px, env(safe-area-inset-bottom)));
+      padding: 12px 14px 12px;
+      background: rgba(244,247,251,0.96);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(0,0,0,0.06);
+      z-index: 30;
+    }
+
+    .footer-actions-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+
+    button {
+      min-height: 52px;
+      border: none;
+      border-radius: 16px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 12px 14px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:active {
+      background: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 100;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 640px;
+      max-height: 85vh;
+      overflow-y: auto;
+      background: #fff;
+      border-radius: 22px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+      padding: 18px;
+      border: 1px solid var(--border);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .close-btn {
+      min-height: 40px;
+      min-width: 40px;
+      border-radius: 12px;
+      border: none;
+      background: #eef2f7;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    .modal p, .modal li {
+      line-height: 1.5;
+      font-size: 0.96rem;
+    }
+
+    .modal ul {
+      padding-left: 18px;
+    }
+
+    @media (min-width: 640px) {
+      .grid.two {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .checkbox-group {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .title-card h1 {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="../css/neoped-responsive.css" />
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <div class="title-card">
+        <div class="title-top">
+          <div>
+            <h1>NeoPedCalc — Anemia ferropriva</h1>
+            <p>Ferramenta educativa: estimativa de risco e classificação de apoio com base em diretriz SBP — não substitui avaliação clínica, exames nem prescrição.</p>
+          </div>
+          <button class="mini-btn" type="button" onclick="abrirModal()">Como funciona</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>1. Dados do lactente</h2>
+      <div class="grid two">
+        <div class="field">
+          <label for="idade">Idade (meses)</label>
+          <input type="number" id="idade" min="0" step="1" placeholder="Ex: 8" />
+        </div>
+
+        <div class="field">
+          <label for="peso">Peso atual (kg)</label>
+          <input type="number" id="peso" min="0" step="0.1" placeholder="Ex: 7.5" />
+        </div>
+
+        <div class="field">
+          <label for="ig">Idade gestacional ao nascer (semanas)</label>
+          <input type="number" id="ig" min="20" step="1" placeholder="Ex: 38" />
+        </div>
+
+        <div class="field">
+          <label for="alimentacao">Tipo de alimentacao</label>
+          <select id="alimentacao">
+            <option value="">Selecione</option>
+            <option value="aleitamento_exclusivo">Aleitamento exclusivo</option>
+            <option value="misto">Misto</option>
+            <option value="formula">Formula infantil</option>
+            <option value="leite_vaca">Leite de vaca</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="introducao">Introducao alimentar</label>
+          <select id="introducao">
+            <option value="">Selecione</option>
+            <option value="sim">Sim</option>
+            <option value="nao">Nao</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="usoFerro">Uso previo de ferro</label>
+          <select id="usoFerro">
+            <option value="">Selecione</option>
+            <option value="sim">Sim</option>
+            <option value="nao">Nao</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>2. Fatores de risco e sintomas</h2>
+      <div class="checkbox-group">
+        <label class="check-item"><input type="checkbox" id="prematuro" /> Prematuro</label>
+        <label class="check-item"><input type="checkbox" id="baixoPeso" /> Baixo peso ao nascer</label>
+        <label class="check-item"><input type="checkbox" id="palidez" /> Palidez</label>
+        <label class="check-item"><input type="checkbox" id="irritabilidade" /> Irritabilidade</label>
+        <label class="check-item"><input type="checkbox" id="fadiga" /> Fadiga ou apatia</label>
+        <label class="check-item"><input type="checkbox" id="dietaPobre" /> Dieta pobre em ferro</label>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>3. Dados laboratoriais</h2>
+      <div class="grid two">
+        <div class="field">
+          <label for="hb">Hemoglobina (g/dL)</label>
+          <input type="number" id="hb" min="0" step="0.1" placeholder="Ex: 10.2" />
+        </div>
+
+        <div class="field">
+          <label for="ferritina">Ferritina (mcg/L)</label>
+          <input type="number" id="ferritina" min="0" step="0.1" placeholder="Ex: 11" />
+        </div>
+
+        <div class="field">
+          <label for="pcr">PCR elevada?</label>
+          <select id="pcr">
+            <option value="">Selecione</option>
+            <option value="nao">Nao</option>
+            <option value="sim">Sim</option>
+          </select>
+        </div>
+      </div>
+      <div class="inline-note">
+        Ferritina deve ser interpretada junto com inflamacao.
+      </div>
+    </div>
+
+    <div class="section results" id="resultsSection">
+      <h2>4. Resultado</h2>
+
+      <div class="result-box">
+        <div class="status" id="classificacao">Classificacao:</div>
+        <div id="badgeContainer"></div>
+      </div>
+
+      <div class="result-box">
+        <strong>Score de risco</strong>
+        <div id="scoreRisco" style="margin-top:8px;"></div>
+      </div>
+
+      <div class="result-box">
+        <strong>Informações de apoio à leitura (diretriz SBP — revisar no contexto clínico)</strong>
+        <ul class="list" id="condutaList"></ul>
+      </div>
+
+      <div class="result-box">
+        <strong>Alertas clinicos</strong>
+        <ul class="list" id="alertasList"></ul>
+      </div>
+
+      <div class="result-box">
+        <strong>Resumo informativo (profissional de saúde)</strong>
+        <div class="mono-box" id="textoMedico"></div>
+      </div>
+
+      <div class="result-box">
+        <strong>Explicacao para os pais</strong>
+        <div class="mono-box" id="textoPais"></div>
+      </div>
+
+      <div class="result-box">
+        <strong>Texto informativo (copiável — revisar antes de qualquer uso documental)</strong>
+        <div class="mono-box" id="relatorioProntuario"></div>
+        <div style="margin-top:10px;">
+          <button class="btn-primary" type="button" onclick="copiarRelatorio()">Copiar texto informativo</button>
+        </div>
+      </div>
+
+      <div class="reference-box">
+Sociedade Brasileira de Pediatria. Departamentos Cientificos de Nutrologia e de Hematologia e Hemoterapia.
+Recomendacoes para o tratamento e prevencao da deficiencia de ferro e anemia ferropriva em lactentes - Atualizacao 2026.
+Diretrizes da Sociedade Brasileira de Pediatria, numero 32, 17 de marco de 2026.
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-actions">
+    <div class="footer-actions-inner">
+      <button type="button" class="btn-secondary" onclick="limparFormulario()">Limpar</button>
+      <button type="button" class="btn-secondary" onclick="gerarRelatorio()">Gerar texto informativo</button>
+      <button type="button" class="btn-primary" onclick="calcular()">Calcular</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalComoFunciona" onclick="fecharModalFora(event)">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloModal">
+      <div class="modal-header">
+        <h3 id="tituloModal">Como funciona (educativo)</h3>
+        <button class="close-btn" type="button" onclick="fecharModal()">X</button>
+      </div>
+
+      <p>
+        Este módulo organiza dados para <strong>estudo e orientação informativa</strong> sobre risco de deficiência de ferro e anemia ferropriva em lactentes. Não realiza diagnóstico nem define tratamento.
+      </p>
+
+      <ul>
+        <li>Lê idade, peso, alimentação, fatores de risco e exames informados por você.</li>
+        <li>Pontua riscos frequentemente citados na literatura (prematuridade, baixo peso, dieta pobre em ferro, leite de vaca precoce, etc.).</li>
+        <li>Com hemoglobina e ferritina, compara com cortes de apoio para uma <strong>classificação algorítmica</strong> que deve ser validada clinicamente.</li>
+        <li>Mostra faixas de ferro elementar calculadas pelo peso conforme referência SBP, apenas para <strong>conferência educativa</strong> — decisão e dose são sempre assistenciais.</li>
+        <li>Produz resumos em linguagem técnica e para família, e um texto estruturado para cópia, com aviso legal quando o NeoPedCalc estiver carregado.</li>
+      </ul>
+
+      <div class="reference-box" style="margin-top:12px;">
+Sociedade Brasileira de Pediatria. Departamentos Cientificos de Nutrologia e de Hematologia e Hemoterapia.
+Recomendacoes para o tratamento e prevencao da deficiencia de ferro e anemia ferropriva em lactentes - Atualizacao 2026.
+Diretrizes da Sociedade Brasileira de Pediatria, numero 32, 17 de marco de 2026.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function getHbCutoff(idadeMeses) {
+      if (idadeMeses >= 6 && idadeMeses <= 23) return 10.5;
+      if (idadeMeses >= 24 && idadeMeses <= 59) return 11.0;
+      return null;
+    }
+
+    function getFerritinCutoff(idadeMeses, pcrElevada) {
+      if (idadeMeses < 60) return pcrElevada ? 30 : 12;
+      return pcrElevada ? 70 : 15;
+    }
+
+    function abrirModal() {
+      document.getElementById("modalComoFunciona").classList.add("active");
+      document.body.style.overflow = "hidden";
+    }
+
+    function fecharModal() {
+      document.getElementById("modalComoFunciona").classList.remove("active");
+      document.body.style.overflow = "";
+    }
+
+    function fecharModalFora(event) {
+      if (event.target.id === "modalComoFunciona") {
+        fecharModal();
+      }
+    }
+
+    document.addEventListener("keydown", function(event) {
+      if (event.key === "Escape") fecharModal();
+    });
+
+    function limparFormulario() {
+      document.querySelectorAll("input").forEach(el => {
+        if (el.type === "checkbox") el.checked = false;
+        else el.value = "";
+      });
+
+      document.querySelectorAll("select").forEach(el => el.value = "");
+      document.getElementById("resultsSection").style.display = "none";
+      document.getElementById("relatorioProntuario").textContent = "";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function normalizarTextoSelect(valor) {
+      if (!valor) return "Nao informado";
+
+      const mapa = {
+        "sim": "Sim",
+        "nao": "Nao",
+        "aleitamento_exclusivo": "Aleitamento exclusivo",
+        "misto": "Misto",
+        "formula": "Formula infantil",
+        "leite_vaca": "Leite de vaca"
+      };
+
+      return mapa[valor] || valor;
+    }
+
+    function calcular() {
+      const idade = parseFloat(document.getElementById("idade").value);
+      const peso = parseFloat(document.getElementById("peso").value);
+      const alimentacao = document.getElementById("alimentacao").value;
+      const introducao = document.getElementById("introducao").value;
+      const usoFerro = document.getElementById("usoFerro").value;
+
+      const prematuro = document.getElementById("prematuro").checked;
+      const baixoPeso = document.getElementById("baixoPeso").checked;
+      const palidez = document.getElementById("palidez").checked;
+      const irritabilidade = document.getElementById("irritabilidade").checked;
+      const fadiga = document.getElementById("fadiga").checked;
+      const dietaPobre = document.getElementById("dietaPobre").checked;
+
+      const hb = parseFloat(document.getElementById("hb").value);
+      const ferritina = parseFloat(document.getElementById("ferritina").value);
+      const pcr = document.getElementById("pcr").value;
+
+      if (isNaN(idade) || isNaN(peso)) {
+        alert("Preencha pelo menos idade e peso.");
+        return;
+      }
+
+      let risco = 0;
+      let alertas = [];
+      let condutas = [];
+      let classificacao = "Sem anemia definida";
+      let badgeHTML = '<span class="badge green">Baixo risco</span>';
+
+      if (prematuro) risco += 30;
+      if (baixoPeso) risco += 20;
+
+      if (alimentacao === "leite_vaca" && idade < 12) {
+        risco += 25;
+        alertas.push("Uso de leite de vaca antes de 12 meses: alto risco para deficiencia de ferro.");
+      }
+
+      if (dietaPobre) risco += 20;
+      if (usoFerro === "nao" && idade >= 6 && idade <= 24) risco += 15;
+      if (palidez || irritabilidade || fadiga) risco += 10;
+
+      if (introducao === "nao" && idade >= 6) {
+        risco += 20;
+        alertas.push("Ausencia de introducao alimentar apos 6 meses.");
+      }
+
+      const hbCutoff = getHbCutoff(idade);
+      const pcrElevada = pcr === "sim";
+      const ferritinaCutoff = getFerritinCutoff(idade, pcrElevada);
+
+      const temHb = !isNaN(hb);
+      const temFerritina = !isNaN(ferritina);
+
+      const hbBaixa = temHb && hbCutoff !== null ? hb < hbCutoff : false;
+      const ferritinaBaixa = temFerritina ? ferritina < ferritinaCutoff : false;
+
+      if (temHb && temFerritina) {
+        if (hbBaixa && ferritinaBaixa) {
+          classificacao = "Anemia ferropriva";
+          badgeHTML = '<span class="badge red">Alto risco ou provavel anemia ferropriva</span>';
+        } else if (!hbBaixa && ferritinaBaixa) {
+          classificacao = "Deficiencia de ferro sem anemia";
+          badgeHTML = '<span class="badge orange">Risco moderado ou deficiencia de ferro</span>';
+        } else if (!hbBaixa && !ferritinaBaixa) {
+          classificacao = "Sem evidencia laboratorial de anemia ferropriva";
+          badgeHTML = '<span class="badge green">Baixo risco laboratorial</span>';
+        } else if (hbBaixa && !ferritinaBaixa) {
+          classificacao = "Anemia com ferritina nao compativel com ferropenia isolada";
+          badgeHTML = '<span class="badge orange">Investigar diagnostico diferencial</span>';
+          alertas.push("Hemoglobina baixa com ferritina nao reduzida: considerar diagnostico diferencial.");
+        }
+      } else {
+        if (risco > 60) {
+          classificacao = "Alto risco clinico para deficiencia de ferro ou anemia";
+          badgeHTML = '<span class="badge red">Alto risco clinico</span>';
+        } else if (risco >= 31) {
+          classificacao = "Risco clinico moderado";
+          badgeHTML = '<span class="badge orange">Risco moderado</span>';
+        } else {
+          classificacao = "Baixo risco clinico";
+          badgeHTML = '<span class="badge green">Baixo risco</span>';
+        }
+      }
+
+      if (idade < 6) {
+        if (prematuro || baixoPeso) {
+          const dosePrematuroMin = (peso * 2).toFixed(1);
+          const dosePrematuroMax = (peso * 4).toFixed(1);
+          condutas.push("Referência SBP: em prematuro ou baixo peso costuma-se discutir ferro elementar na faixa de " + dosePrematuroMin + " a " + dosePrematuroMax + " mg/dia — decisão e prescrição são assistenciais.");
+        } else {
+          condutas.push("Menor de 6 meses: a diretriz enfatiza aleitamento materno exclusivo quando possível — contexto clínico individual.");
+        }
+      }
+
+      if (idade >= 6 && idade <= 24 && classificacao !== "Anemia ferropriva") {
+        condutas.push("Faixa etária de maior risco na literatura de referência: costuma-se discutir profilaxia de ferro.");
+        condutas.push("Valores frequentemente citados na diretriz para profilaxia: 10 a 12,5 mg/dia de ferro elementar (conferir texto-fonte e paciente).");
+      }
+
+      if (classificacao === "Anemia ferropriva") {
+        const doseMin = (peso * 3).toFixed(1);
+        const doseMax = (peso * 6).toFixed(1);
+        condutas.push("Cálculo educativo (diretriz): ferro elementar oral na faixa de " + doseMin + " a " + doseMax + " mg/dia costuma ser discutido para anemia ferropriva — não é prescrição.");
+        condutas.push("A literatura menciona reavaliação laboratorial em cerca de 30 a 45 dias (planejamento assistencial).");
+        condutas.push("Resposta esperada descrita na referência: incremento de hemoglobina ≥ 1 g/dL em contexto adequado — correlacionar com caso real.");
+      }
+
+      if (classificacao === "Deficiencia de ferro sem anemia") {
+        condutas.push("Diretriz discute dieta e eventual suplementação conforme contexto — decisão clínica.");
+      }
+
+      if ((!temHb || !temFerritina) && risco >= 31) {
+        condutas.push("Risco moderado/alto sem exames completos: a prática assistencial frequentemente inclui discussão de hemograma, ferritina e PCR — não é solicitação automatizada.");
+      }
+
+      if (alimentacao === "leite_vaca" && idade < 12) {
+        condutas.push("Literatura pediátrica associa leite de vaca precoce a maior risco de deficiência de ferro — tema para orientação individualizada.");
+      }
+
+      if (introducao === "nao" && idade >= 6) {
+        condutas.push("Após 6 meses, a diretriz discute introdução alimentar com fontes de ferro — planejamento nutricional assistencial.");
+      }
+
+      if (dietaPobre) {
+        condutas.push("Material de referência cita fontes dietéticas de ferro e vitamina C para biodisponibilidade — apoio educativo.");
+      }
+
+      if (alertas.length === 0) {
+        alertas.push("Sem alertas criticos alem da avaliacao clinica rotineira.");
+      }
+
+      let faixaRisco = "Baixo risco";
+      let classeRisco = "low";
+
+      if (risco > 60) {
+        faixaRisco = "Alto risco";
+        classeRisco = "high";
+      } else if (risco >= 31) {
+        faixaRisco = "Risco moderado";
+        classeRisco = "mid";
+      }
+
+      const textoMedico = [
+        "Classificacao: " + classificacao + ".",
+        "Score de risco: " + risco + " pontos (" + faixaRisco + ").",
+        "Idade: " + idade + " meses.",
+        "Peso: " + peso + " kg.",
+        "Primeira linha de apoio informativo: " + (condutas[0] || "correlacionar com avaliação clínica") + ".",
+        "Base educativa inspirada na diretriz SBP 2026 — correlacionar com o caso."
+      ].join("\n");
+
+      const textoPais = [
+        "Seu bebe pode ter risco de falta de ferro, que e importante para crescimento, desenvolvimento e aprendizado.",
+        "A alimentacao correta e, em alguns casos, o suplemento de ferro ajudam a prevenir ou tratar esse problema.",
+        "Evite leite de vaca antes de 1 ano e siga a orientacao do pediatra."
+      ].join("\n");
+
+      document.getElementById("classificacao").textContent = "Classificacao: " + classificacao;
+      document.getElementById("classificacao").className = "status " + classeRisco;
+      document.getElementById("badgeContainer").innerHTML = badgeHTML;
+
+      document.getElementById("scoreRisco").innerHTML =
+        '<span class="badge ' + (classeRisco === "high" ? "red" : classeRisco === "mid" ? "orange" : "green") + '">' +
+        risco + " pontos - " + faixaRisco + "</span>";
+
+      const condutaList = document.getElementById("condutaList");
+      condutaList.innerHTML = "";
+      condutas.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        condutaList.appendChild(li);
+      });
+
+      const alertasList = document.getElementById("alertasList");
+      alertasList.innerHTML = "";
+      alertas.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        alertasList.appendChild(li);
+      });
+
+      document.getElementById("textoMedico").textContent = textoMedico;
+      document.getElementById("textoPais").textContent = textoPais;
+      document.getElementById("resultsSection").style.display = "block";
+
+      gerarRelatorioInterno();
+
+      document.getElementById("resultsSection").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function gerarRelatorioInterno() {
+      const idade = document.getElementById("idade").value || "";
+      const peso = document.getElementById("peso").value || "";
+      const ig = document.getElementById("ig").value || "Nao informada";
+      const alimentacao = document.getElementById("alimentacao").value || "";
+      const introducao = document.getElementById("introducao").value || "";
+      const usoFerro = document.getElementById("usoFerro").value || "";
+
+      const prematuro = document.getElementById("prematuro").checked ? "Sim" : "Nao";
+      const baixoPeso = document.getElementById("baixoPeso").checked ? "Sim" : "Nao";
+      const palidez = document.getElementById("palidez").checked ? "Sim" : "Nao";
+      const irritabilidade = document.getElementById("irritabilidade").checked ? "Sim" : "Nao";
+      const fadiga = document.getElementById("fadiga").checked ? "Sim" : "Nao";
+      const dietaPobre = document.getElementById("dietaPobre").checked ? "Sim" : "Nao";
+
+      const hb = document.getElementById("hb").value || "Nao informado";
+      const ferritina = document.getElementById("ferritina").value || "Nao informada";
+      const pcr = document.getElementById("pcr").value || "";
+
+      const classificacao = document.getElementById("classificacao")?.textContent?.replace("Classificacao: ", "") || "Nao calculada";
+
+      const condutas = Array.from(document.querySelectorAll("#condutaList li")).map(li => "- " + li.textContent).join("\n") || "- Nao geradas";
+      const alertas = Array.from(document.querySelectorAll("#alertasList li")).map(li => "- " + li.textContent).join("\n") || "- Nao gerados";
+
+      const relatorio = [
+        "RESUMO INFORMATIVO — DEFICIENCIA DE FERRO / ANEMIA FERROPRIVA (EDUCATIVO)",
+        "NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.",
+        "",
+        "DADOS INSERIDOS",
+        "Idade em meses: " + idade,
+        "Peso em kg: " + peso,
+        "Idade gestacional ao nascer em semanas: " + ig,
+        "Tipo de alimentacao: " + normalizarTextoSelect(alimentacao),
+        "Introducao alimentar: " + normalizarTextoSelect(introducao),
+        "Uso previo de ferro: " + normalizarTextoSelect(usoFerro),
+        "",
+        "FATORES DE RISCO E SINTOMAS",
+        "Prematuro: " + prematuro,
+        "Baixo peso ao nascer: " + baixoPeso,
+        "Palidez: " + palidez,
+        "Irritabilidade: " + irritabilidade,
+        "Fadiga ou apatia: " + fadiga,
+        "Dieta pobre em ferro: " + dietaPobre,
+        "",
+        "DADOS LABORATORIAIS",
+        "Hemoglobina: " + hb,
+        "Ferritina: " + ferritina,
+        "PCR elevada: " + normalizarTextoSelect(pcr),
+        "",
+        "CLASSIFICACAO (HIPOTESE DO APP — VALIDAR CLINICAMENTE)",
+        classificacao,
+        "",
+        "INFORMACOES DE APOIO (NAO E PRESCRICAO)",
+        condutas,
+        "",
+        "ALERTAS CLINICOS",
+        alertas,
+        "",
+        "REFERENCIA",
+        "Sociedade Brasileira de Pediatria. Recomendacoes para o tratamento e prevencao da deficiencia de ferro e anemia ferropriva em lactentes. Atualizacao 2026."
+      ].join("\n");
+
+      var relatorioFinal = relatorio;
+      if (typeof window.neopedLegalReportFooter === "function") {
+        relatorioFinal += "\n\n" + window.neopedLegalReportFooter().trim();
+      } else {
+        relatorioFinal += "\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.";
+      }
+      document.getElementById("relatorioProntuario").textContent = relatorioFinal;
+    }
+
+    function gerarRelatorio() {
+      const idade = document.getElementById("idade").value;
+      const peso = document.getElementById("peso").value;
+
+      if (!idade || !peso) {
+        alert("Preencha pelo menos idade e peso.");
+        return;
+      }
+
+      if (document.getElementById("resultsSection").style.display !== "block") {
+        calcular();
+        return;
+      }
+
+      gerarRelatorioInterno();
+      document.getElementById("resultsSection").style.display = "block";
+      document.getElementById("relatorioProntuario").scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    async function copiarRelatorio() {
+      const texto = document.getElementById("relatorioProntuario").textContent.trim();
+
+      if (!texto) {
+        alert("Gere o texto informativo (Calcular ou \"Gerar texto informativo\") antes de copiar.");
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(texto);
+        if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert("Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.");
+      } catch (erro) {
+        const area = document.createElement("textarea");
+        area.value = texto;
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand("copy");
+        document.body.removeChild(area);
+        if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert("Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.");
+      }
+    }
+  </script>
+  <script src="../js/neoped-datetime-fix.js"></script>
+  <script src="../js/neoped-nav.js"></script>
+</body>
+</html>

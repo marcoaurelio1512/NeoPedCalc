@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>NeoPedCalc — Critérios de DBP neonatal (educativo)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            touch-action: pan-y;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .app-viewport {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+        .app-shell {
+            width: 100%;
+            max-width: 980px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 980px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .form-container {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            max-width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #111827;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .radio-group {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .radio-option {
+            background: #f8f9fa;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .radio-option:hover {
+            border-color: #111827;
+            background: #e8f2ff;
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        .radio-option.selected {
+            border-color: #111827;
+            background: #e8f2ff;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .result-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .result-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 5px;
+        }
+
+        .result-description {
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .classification {
+            background: #fff3cd;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .classification h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .classification-text {
+            font-size: 18px;
+            font-weight: bold;
+            color: #856404;
+            text-align: center;
+            padding: 15px;
+            background: #fff;
+            border-radius: 8px;
+        }
+
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: none;
+        }
+
+        .info strong {
+            color: #1976d2;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #d1d5db;
+        }
+
+        .warning strong {
+            color: #856404;
+        }
+
+        .criteria-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .criteria-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row, .radio-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .app-viewport {
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 18px;
+            }
+
+            .header p {
+                font-size: 11px;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .section {
+                padding: 12px;
+            }
+
+            input, select {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            button {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .table-responsive {
+                font-size: 13px;
+            }
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-info {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-info:hover {
+            background: white;
+            color: #111827;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
+            box-sizing: border-box;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 720px;
+            max-height: 86vh;
+            overflow: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #e5e7eb 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-body h3 {
+            color: #111827;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #374151;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #111827;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .modal-header {
+                padding: 15px 20px;
+            }
+
+            .modal-header h2 {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 98%;
+            }
+
+            .modal-body {
+                padding: 15px;
+            }
+
+            .modal-header h2 {
+                font-size: 16px;
+            }
+
+            .modal-body h3 {
+                font-size: 16px;
+            }
+        }
+        .btn-report {
+            margin-top: 20px;
+            background: #28a745;
+            color: white;
+        }
+
+        .card, .panel, .box {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        label {
+            display: block;
+        }
+
+        input, select, textarea, button {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        input, select, textarea {
+            width: 100%;
+        }
+
+        .table-wrap {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        th, td {
+            word-wrap: break-word;
+            overflow-wrap: anywhere;
+        }
+
+        body {
+            overscroll-behavior-x: none;
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <div class="app-viewport">
+        <div class="app-shell">
+            <div class="container">
+                <div class="header">
+                    <h1>DBP neonatal — critérios (Jobe/Bancalari, uso educativo)</h1>
+                    <p>Ferramenta para <strong>estudo e registro sintético</strong> com base nos critérios que você informa. <strong>Não é diagnóstico médico</strong> — confirme com radiografia, evolução clínica e definições atualizadas da sua instituição.</p>
+                    <div class="header-actions">
+                        <button type="button" class="btn-info" onclick="abrirModal()">Como usar</button>
+                    </div>
+                </div>
+
+                <div class="form-container">
+                    <form id="dbpForm">
+                        <div class="form-group">
+                            <label for="nome">Nome do Paciente:</label>
+                            <input type="text" id="nome" placeholder="Ex: João Silva">
+                        </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dataNascimento">Data de Nascimento:</label>
+                        <input type="date" id="dataNascimento" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="idadeGestacional">Idade Gestacional ao Nascimento (semanas):</label>
+                        <input type="number" id="idadeGestacional" step="0.1" min="22" max="42" placeholder="Ex: 28.5" required>
+                    </div>
+                </div>
+
+                <div class="criteria-section">
+                    <h3>Critério 1: Dependência de Oxigênio aos 28 dias</h3>
+                    <div class="form-group">
+                        <label>O RN era dependente de O2 suplementar aos 28 dias de vida?</label>
+                        <div class="radio-group">
+                            <div class="radio-option" data-value="sim">
+                                <input type="radio" name="dependenciaO2" value="sim" id="dependenciaO2_sim">
+                                <label for="dependenciaO2_sim">Sim</label>
+                            </div>
+                            <div class="radio-option" data-value="nao">
+                                <input type="radio" name="dependenciaO2" value="nao" id="dependenciaO2_nao">
+                                <label for="dependenciaO2_nao">Não</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="criteria-section">
+                    <h3>Critério 2: Época da Reavaliação</h3>
+                    <div class="form-group">
+                        <label for="dataReavaliacao">Data da Reavaliação:</label>
+                        <input type="date" id="dataReavaliacao" required>
+                    </div>
+                </div>
+
+                <div class="criteria-section">
+                    <h3>Critério 3: Necessidade de Suporte na Reavaliação</h3>
+                    <div class="form-group">
+                        <label>Na data da reavaliação, o paciente necessita de:</label>
+                        <div class="radio-group">
+                            <div class="radio-option" data-value="oxigenio">
+                                <input type="radio" name="suporteReavaliacao" value="oxigenio" id="suporteReavaliacao_oxigenio">
+                                <label for="suporteReavaliacao_oxigenio">Oxigênio suplementar</label>
+                            </div>
+                            <div class="radio-option" data-value="cpap">
+                                <input type="radio" name="suporteReavaliacao" value="cpap" id="suporteReavaliacao_cpap">
+                                <label for="suporteReavaliacao_cpap">CPAP nasal</label>
+                            </div>
+                            <div class="radio-option" data-value="vm">
+                                <input type="radio" name="suporteReavaliacao" value="vm" id="suporteReavaliacao_vm">
+                                <label for="suporteReavaliacao_vm">Ventilação mecânica</label>
+                            </div>
+                            <div class="radio-option" data-value="nenhum">
+                                <input type="radio" name="suporteReavaliacao" value="nenhum" id="suporteReavaliacao_nenhum">
+                                <label for="suporteReavaliacao_nenhum">Nenhum suporte</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                        <button type="submit" class="btn">Avaliar Critérios da DBP</button>
+                    </form>
+
+                    <div id="results" class="results">
+                        <div class="result-card">
+                            <h3>Idade Gestacional Corrigida</h3>
+                            <div class="result-value" id="igc">0.0</div>
+                            <div class="result-description">semanas</div>
+                        </div>
+
+                        <div class="result-card">
+                            <h3>Dias de Vida</h3>
+                            <div class="result-value" id="diasVida">0.0</div>
+                            <div class="result-description">dias</div>
+                        </div>
+
+                        <div class="classification" id="classification">
+                            <h3>Resumo da classificação (educativo)</h3>
+                            <div class="classification-text" id="classificationText"></div>
+                        </div>
+
+                        <button type="button" id="gerarRelatorio" class="btn btn-report">
+                            Copiar texto informativo
+                        </button>
+                    </div>
+
+                    <div class="info">
+                        <strong>Lógica resumida nesta página (educativo):</strong><br>
+                        • <strong>Critério 1:</strong> dependência de O₂ aos 28 dias (sim/não), conforme você marca<br>
+                        • <strong>Critério 2:</strong> data de reavaliação usada para IGC ou dias de vida, conforme IG ao nascer<br>
+                        • <strong>Critério 3:</strong> tipo de suporte na reavaliação (O₂ / CPAP / VM / nenhum)<br><br>
+                        <strong>Gravidade (rótulo do app):</strong> leve (só O₂), moderada (O₂ “maior” ou CPAP), grave (VM) — espelha a implementação interna; <strong>não substitui</strong> laudo nem consenso multidisciplinar.
+                    </div>
+
+                    <div class="warning">
+                        <strong>Atenção:</strong> Uso educacional. DBP evoluiu em várias definições (incl. “new BPD”); use diretrizes e discussão clínica para decisões assistenciais.
+                    </div>
+
+                    <div class="info">
+                        <strong>Referência:</strong> Jobe AH, Bancalari E. Bronchopulmonary dysplasia. 
+                        Am J Respir Crit Care Med. 2001;163:1723-9.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — DBP neonatal (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Aplicar a <strong>lógica implementada nesta página</strong> aos dados que você preenche (O₂ aos 28 dias, data da reavaliação, suporte na reavaliação, IG ao nascer) e exibir um <strong>rótulo de classificação</strong>. Uso para <strong>aprendizado e rascunho de texto</strong> — <strong>não substitui</strong> critério formal, imagem ou decisão da neonatologia.</p>
+
+                <h3>Contexto histórico (resumo)</h3>
+                <div class="formula-box">
+                    Há várias definições de DBP ao longo do tempo (ex.: NIH/2001, estudos de oxigenação na reavaliação). Literatura como Jobe &amp; Bancalari resume conceitos; serviços podem usar cortes ligeiramente diferentes.<br><br>
+                    Esta calculadora segue a <strong>regra programada no código</strong>, não todas as variantes publicadas.
+                </div>
+
+                <h3>Passos na tela</h3>
+                <ol>
+                    <li>Preencha identificação, data de nascimento, IG e critérios com radio buttons.</li>
+                    <li>Informe a <strong>data da reavaliação</strong> (o app calcula dias de vida e IGC).</li>
+                    <li>Clique em <strong>Avaliar Critérios da DBP</strong> e leia o resumo.</li>
+                    <li><strong>Copiar texto informativo</strong> gera um bloco para colar — revise antes de arquivar.</li>
+                </ol>
+
+                <h3>Limitações</h3>
+                <ul>
+                    <li>Não registra FiO₂ exata nem provas funcionais — só o que está nos campos.</li>
+                    <li>Eventos agudos ou suporte por causa não pulmonar podem distorcer a leitura clínica.</li>
+                    <li>Definições mais recentes (ex.: “new BPD”) não são reproduzidas integralmente aqui.</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Jobe AH, Bancalari E. Bronchopulmonary dysplasia. Am J Respir Crit Care Med. 2001;163(7):1723-1729.<br>
+                    - Shennan AT, et al. Abnormal pulmonary outcomes in premature infants: prediction from oxygen requirement in the neonatal period. Pediatrics. 1988;82(4):527-532.<br>
+                    - Northway WH Jr, et al. Pulmonary disease following respirator therapy of hyaline-membrane disease. Bronchopulmonary dysplasia. N Engl J Med. 1967;276(7):357-368.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Função para calcular idade gestacional corrigida
+        function calcularIGC(idadeGestacional, diasVida) {
+            const semanasVida = diasVida / 7;
+            return idadeGestacional + semanasVida;
+        }
+
+        // Função para classificar a DBP
+        function classificarDBP(dependenciaO2, igc, diasVida, idadeGestacional, suporteReavaliacao) {
+            console.log('Dados recebidos:', {dependenciaO2, igc, diasVida, idadeGestacional, suporteReavaliacao});
+            
+            // Critério 1: Dependência de O2 aos 28 dias
+            if (dependenciaO2 !== 'sim') {
+                return {
+                    classificacao: 'Não tem DBP',
+                    classificacaoPlain: 'Nao tem DBP',
+                    descricao: 'O RN não era dependente de O2 suplementar aos 28 dias de vida.',
+                    descricaoPlain: 'O RN nao era dependente de O2 suplementar aos 28 dias de vida.',
+                    cor: '#28a745'
+                };
+            }
+
+            // Critério 2: Época da reavaliação
+            let criterio2Atendido = false;
+            let mensagemCriterio2 = '';
+            
+            if (idadeGestacional < 32) {
+                // RN < 32 semanas: reavaliação na IGC ≥ 36 semanas
+                criterio2Atendido = igc >= 36;
+                mensagemCriterio2 = 'Reavaliar quando IGC ≥ 36 semanas.';
+            } else {
+                // RN ≥ 32 semanas: reavaliação ≥ 56 dias de vida
+                criterio2Atendido = diasVida >= 56;
+                mensagemCriterio2 = 'Reavaliar quando ≥ 56 dias de vida.';
+            }
+
+            if (!criterio2Atendido) {
+                return {
+                    classificacao: 'Aguardar reavaliação',
+                    classificacaoPlain: 'Aguardar reavaliacao',
+                    descricao: mensagemCriterio2,
+                    descricaoPlain: mensagemCriterio2.replace('reavaliação', 'reavaliacao'),
+                    cor: '#ffc107'
+                };
+            }
+
+            // Critério 3: Necessidade de suporte na reavaliação
+            if (suporteReavaliacao === 'nenhum') {
+                return {
+                    classificacao: 'Não tem DBP',
+                    classificacaoPlain: 'Nao tem DBP',
+                    descricao: 'Não necessita de suporte respiratório na reavaliação.',
+                    descricaoPlain: 'Nao necessita de suporte respiratorio na reavaliacao.',
+                    cor: '#28a745'
+                };
+            }
+
+            // Classificação da gravidade da DBP
+            if (suporteReavaliacao === 'vm') {
+                return {
+                    classificacao: 'DBP Grave',
+                    classificacaoPlain: 'DBP Grave',
+                    descricao: 'Necessita de ventilação mecânica na reavaliação.',
+                    descricaoPlain: 'Necessita de ventilacao mecanica na reavaliacao.',
+                    cor: '#dc3545'
+                };
+            } else if (suporteReavaliacao === 'cpap') {
+                return {
+                    classificacao: 'DBP Moderada',
+                    classificacaoPlain: 'DBP Moderada',
+                    descricao: 'Necessita de CPAP nasal na reavaliação.',
+                    descricaoPlain: 'Necessita de CPAP nasal na reavaliacao.',
+                    cor: '#fd7e14'
+                };
+            } else if (suporteReavaliacao === 'oxigenio') {
+                return {
+                    classificacao: 'DBP Leve',
+                    classificacaoPlain: 'DBP Leve',
+                    descricao: 'Necessita de oxigênio suplementar na reavaliação.',
+                    descricaoPlain: 'Necessita de oxigenio suplementar na reavaliacao.',
+                    cor: '#20c997'
+                };
+            }
+
+            return {
+                classificacao: 'Indeterminado',
+                classificacaoPlain: 'Indeterminado',
+                descricao: 'Critérios não completamente atendidos.',
+                descricaoPlain: 'Criterios nao completamente atendidos.',
+                cor: '#6c757d'
+            };
+        }
+
+        // Função para avaliar critérios
+        function avaliarCriterios() {
+            console.log('Iniciando avaliação de critérios...');
+            
+            const nome = document.getElementById('nome').value;
+            const dataNascimento = new Date(document.getElementById('dataNascimento').value);
+            const idadeGestacional = parseFloat(document.getElementById('idadeGestacional').value);
+            const dataReavaliacao = new Date(document.getElementById('dataReavaliacao').value);
+            const dependenciaO2 = document.querySelector('input[name="dependenciaO2"]:checked')?.value;
+            const suporteReavaliacao = document.querySelector('input[name="suporteReavaliacao"]:checked')?.value;
+
+            console.log('Dados coletados:', {
+                nome, dataNascimento, idadeGestacional, dataReavaliacao, 
+                dependenciaO2, suporteReavaliacao
+            });
+
+            if (!dataNascimento || !idadeGestacional || !dataReavaliacao || !dependenciaO2 || !suporteReavaliacao) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                console.log('Campos obrigatórios não preenchidos');
+                return;
+            }
+
+            // Calcular dias de vida
+            const diasVida = Math.floor((dataReavaliacao - dataNascimento) / (1000 * 60 * 60 * 24));
+            
+            // Calcular IGC
+            const igc = calcularIGC(idadeGestacional, diasVida);
+
+            console.log('Cálculos realizados:', {diasVida, igc});
+
+            // Classificar DBP
+            const classificacao = classificarDBP(dependenciaO2, igc, diasVida, idadeGestacional, suporteReavaliacao);
+
+            console.log('Classificação obtida:', classificacao);
+
+            // Exibir resultados
+            document.getElementById('igc').textContent = igc.toFixed(1);
+            document.getElementById('diasVida').textContent = Number(diasVida).toFixed(1);
+            document.getElementById('classificationText').textContent = classificacao.classificacao;
+            document.getElementById('classificationText').style.color = classificacao.cor;
+            document.getElementById('classification').style.borderColor = classificacao.cor;
+
+            // Mostrar resultados
+            document.getElementById('results').style.display = 'block';
+            
+            console.log('Resultados exibidos com sucesso');
+        }
+
+        // Função para gerar relatório
+        function gerarRelatorio() {
+            console.log('Iniciando geração de relatório...');
+            
+            const nome = document.getElementById('nome').value;
+            const dataNascimento = new Date(document.getElementById('dataNascimento').value);
+            const idadeGestacional = parseFloat(document.getElementById('idadeGestacional').value);
+            const dataReavaliacao = new Date(document.getElementById('dataReavaliacao').value);
+            const dependenciaO2 = document.querySelector('input[name="dependenciaO2"]:checked')?.value;
+            const suporteReavaliacao = document.querySelector('input[name="suporteReavaliacao"]:checked')?.value;
+
+            console.log('Dados para relatório:', {
+                nome, dataNascimento, idadeGestacional, dataReavaliacao, 
+                dependenciaO2, suporteReavaliacao
+            });
+
+            if (!dataNascimento || !idadeGestacional || !dataReavaliacao || !dependenciaO2 || !suporteReavaliacao) {
+                alert('Erro: Campos obrigatórios não encontrados. Execute a avaliação primeiro.');
+                console.log('Campos obrigatórios não preenchidos para relatório');
+                return;
+            }
+
+            // Recalcular valores
+            const diasVida = Math.floor((dataReavaliacao - dataNascimento) / (1000 * 60 * 60 * 24));
+            const igc = calcularIGC(idadeGestacional, diasVida);
+            const classificacao = classificarDBP(dependenciaO2, igc, diasVida, idadeGestacional, suporteReavaliacao);
+
+            console.log('Dados calculados para relatório:', {diasVida, igc, classificacao});
+
+            const foot = (typeof window.neopedLegalReportFooter === 'function')
+                ? window.neopedLegalReportFooter()
+                : '';
+
+            const relatorio = `RESUMO INFORMATIVO — Criterios DBP neonatal (NeoPedCalc, uso educativo)
+=========================================
+
+NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com exame, imagem e criterios institucionais.
+
+DADOS INFORMADOS:
+- Nome: ${nome || 'Nao informado'}
+- Data de nascimento: ${dataNascimento.toLocaleDateString('pt-BR')}
+- Idade gestacional ao nascimento: ${Number(idadeGestacional).toFixed(1)} semanas
+- Data da reavaliacao: ${dataReavaliacao.toLocaleDateString('pt-BR')}
+
+CALCULOS NO APP:
+- Dias de vida (ate reavaliacao): ${Number(diasVida).toFixed(1)} dias
+- Idade gestacional corrigida: ${igc.toFixed(1)} semanas
+
+CRITERIOS (campos preenchidos):
+- Dependencia de O2 aos 28 dias: ${dependenciaO2 === 'sim' ? 'Sim' : 'Nao'}
+- Janela esperada de reavaliacao (rotulo): ${idadeGestacional < 32 ? 'IGC >= 36 semanas' : '>= 56 dias de vida'}
+- Suporte na reavaliacao: ${getDescricaoSuporte(suporteReavaliacao)}
+
+ROTULO AUTOMATICO (revisar):
+- ${classificacao.classificacaoPlain || classificacao.classificacao}
+- Texto do app: ${classificacao.descricaoPlain || classificacao.descricao}
+
+LEMBRETES EDUCATIVOS:
+- Suporte na reavaliacao nao deve idealmente refletir apenas evento agudo; correlacione com clinica e testes quando aplicavel.
+- Jobe & Bancalari, Am J Respir Crit Care Med 2001 — referencia classica; outras definicoes coexistem na literatura.
+
+---
+NOTA EDUCATIVA: Revise todos os valores. A NeoPedCalc nao substitui julgamento clinico nem protocolos institucionais.
+
+${foot ? foot.trim() : ''}`;
+
+            console.log('Relatório gerado:', relatorio);
+
+            const msgCopia = 'Texto copiado. Revise numeros e contexto antes de usar em registro clinico ou mensagem.';
+
+            navigator.clipboard.writeText(relatorio).then(() => {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                console.log('Relatório copiado com sucesso');
+            }).catch((err) => {
+                console.error('Erro ao copiar relatório:', err);
+                const textArea = document.createElement('textarea');
+                textArea.value = relatorio;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+
+        // Função para obter descrição do suporte
+        function getDescricaoSuporte(suporte) {
+            const descricoes = {
+                oxigenio: 'Oxigenio suplementar',
+                cpap: 'CPAP nasal',
+                vm: 'Ventilacao mecanica',
+                nenhum: 'Nenhum suporte'
+            };
+            return descricoes[suporte] || 'Nao informado';
+        }
+
+        // Event listener para o formulário
+        document.addEventListener('DOMContentLoaded', function() {
+            // Definir data de hoje como padrão para reavaliação
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('dataReavaliacao').value = hoje;
+
+            // Event listener para o formulário
+            const form = document.getElementById('dbpForm');
+            if (form) {
+                console.log('Formulário encontrado, adicionando event listener');
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    console.log('Formulário submetido');
+                    avaliarCriterios();
+                });
+            } else {
+                console.log('Formulário não encontrado');
+            }
+
+            // Event listener para o botão de relatório
+            const botaoRelatorio = document.getElementById('gerarRelatorio');
+            if (botaoRelatorio) {
+                console.log('Botão de relatório encontrado, adicionando event listener');
+                botaoRelatorio.addEventListener('click', function() {
+                    console.log('Botão de relatório clicado');
+                    gerarRelatorio();
+                });
+            } else {
+                console.log('Botão de relatório não encontrado');
+            }
+        });
+
+        // Event listener para radio buttons - tornar toda a área clicável
+        document.addEventListener('change', function(e) {
+            if (e.target.type === 'radio') {
+                console.log('Radio button clicado:', e.target.name, e.target.value);
+                const radioGroup = e.target.name;
+                const allOptions = document.querySelectorAll(`input[name="${radioGroup}"]`);
+                allOptions.forEach(option => {
+                    option.closest('.radio-option').classList.remove('selected');
+                });
+                e.target.closest('.radio-option').classList.add('selected');
+            }
+        });
+
+        // Event listener para cliques nas opções de radio
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.radio-option')) {
+                const radioOption = e.target.closest('.radio-option');
+                const radioInput = radioOption.querySelector('input[type="radio"]');
+                if (radioInput) {
+                    radioInput.checked = true;
+                    radioInput.dispatchEvent(new Event('change'));
+                }
+            }
+        });
+
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

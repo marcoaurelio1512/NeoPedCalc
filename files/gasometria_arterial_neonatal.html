@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — Gasometria arterial neonatal (educativo)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .alert-box {
+            background: #fffbe0;
+            border: 1px solid #f1e49a;
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+
+        .alert-box h3 {
+            font-weight: 800;
+            color: #856404;
+            margin: 0 0 6px 0;
+            font-size: 14px;
+        }
+
+        .alert-box ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .results-section {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .results-section h3 {
+            font-size: 14px;
+            margin: 0 0 15px 0;
+            color: #111;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .result-item {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .result-label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .result-number {
+            font-size: 24px;
+            font-weight: 900;
+            color: #111;
+            margin: 5px 0;
+        }
+
+        .result-interpretation {
+            font-size: 12px;
+            font-weight: 600;
+            color: #444;
+        }
+
+        .report-btn {
+            background: #111;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #374151;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        /* Modal Styles */
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(17, 17, 17, 0.1);
+            color: #111;
+            border: 2px solid #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-info:hover {
+            background: #111;
+            color: #fff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #2c3e50;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        .age-indicator {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: white;
+        }
+
+        .reference-table {
+            margin-top: 25px;
+            overflow-x: auto;
+        }
+
+        .reference-table table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .reference-table th, .reference-table td {
+            padding: 10px;
+            border: 1px solid #e7e7ee;
+            text-align: left;
+        }
+
+        .reference-table th {
+            background: #f6f7fb;
+            font-weight: 800;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border: 1px solid #6b7280;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        @media (max-width: 768px) {
+            .modal {
+                padding: 10px;
+            }
+            .modal-content {
+                width: 95%;
+                max-height: 95vh;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+<body>
+    <header>
+        <h1>🩸 Gasometria Arterial Neonatal</h1>
+        <p>Análise de Gasometria com Seleção Automática por Idade Gestacional</p>
+        <div class="header-actions">
+            <button type="button" class="btn-info" onclick="abrirModal()">
+                Como usar
+            </button>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="card">
+            <div class="content">
+            <!-- Dados do Paciente -->
+            <div class="form-section">
+                <h3>👤 Dados do Paciente</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome">Nome do Paciente:</label>
+                        <input type="text" id="nome" placeholder="Ex: João Silva">
+                    </div>
+                    <div class="form-group">
+                        <label for="peso">Peso (kg):</label>
+                        <input type="number" id="peso" step="0.001" placeholder="Ex: 2.500">
+                    </div>
+                    <div class="form-group">
+                        <label for="idadeGestacional">Idade Gestacional (semanas):</label>
+                        <input type="number" id="idadeGestacional" step="0.1" placeholder="Ex: 32.5" onchange="atualizarTipoNeonato()">
+                    </div>
+                    <div class="form-group">
+                        <label for="fio2">FiO2 (%):</label>
+                        <input type="number" id="fio2" step="0.1" placeholder="Ex: 21" onchange="calcularTudo()">
+                    </div>
+                </div>
+                
+                <div id="tipoNeonato" class="age-indicator">
+                    Informe a idade gestacional para determinar o tipo de neonato
+                </div>
+            </div>
+
+            <!-- Valores da Gasometria -->
+            <div class="form-section">
+                <h3>🧪 Valores da Gasometria</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ph">pH:</label>
+                        <input type="number" id="ph" step="0.01" placeholder="Ex: 7.35" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="pco2">pCO2 (mmHg):</label>
+                        <input type="number" id="pco2" step="0.1" placeholder="Ex: 40" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="po2">pO2 (mmHg):</label>
+                        <input type="number" id="po2" step="0.1" placeholder="Ex: 80" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="hco3">HCO3- (mEq/L):</label>
+                        <input type="number" id="hco3" step="0.1" placeholder="Ex: 24" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="sato2">SatO2 (%):</label>
+                        <input type="number" id="sato2" step="0.1" placeholder="Ex: 95" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="be">Base Excess (mEq/L):</label>
+                        <input type="number" id="be" step="0.1" placeholder="Ex: 0" onchange="calcularTudo()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Eletrólitos -->
+            <div class="form-section">
+                <h3>⚗️ Eletrólitos (Opcionais)</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="na">Na+ (mEq/L):</label>
+                        <input type="number" id="na" step="0.1" placeholder="Ex: 140" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="k">K+ (mEq/L):</label>
+                        <input type="number" id="k" step="0.1" placeholder="Ex: 4.5" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="cl">Cl- (mEq/L):</label>
+                        <input type="number" id="cl" step="0.1" placeholder="Ex: 105" onchange="calcularTudo()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cálculos Automáticos -->
+            <div class="results-section">
+                <h3>🔬 Cálculos Automáticos</h3>
+                <div class="result-grid">
+                    <div class="result-item">
+                        <div class="result-label">pH Estimado</div>
+                        <div class="result-number" id="phEstimado">-</div>
+                        <div class="result-interpretation" id="phEstimadoInterpretation">Henderson-Hasselbalch</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Base Excess Esperado</div>
+                        <div class="result-number" id="beEsperado">-</div>
+                        <div class="result-interpretation" id="beEsperadoInterpretation">Siggaard-Anderson</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">HCO3- Esperado</div>
+                        <div class="result-number" id="hco3Esperado">-</div>
+                        <div class="result-interpretation" id="hco3EsperadoInterpretation">mEq/L</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">pCO2 Esperado</div>
+                        <div class="result-number" id="pco2Esperado">-</div>
+                        <div class="result-interpretation" id="pco2EsperadoInterpretation">mmHg (±2)</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Anion Gap</div>
+                        <div class="result-number" id="anionGap">-</div>
+                        <div class="result-interpretation" id="anionGapInterpretation">mEq/L</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interpretação -->
+            <div class="results-section">
+                <h3>📋 Interpretação</h3>
+                <div class="result-grid">
+                    <div class="result-item">
+                        <div class="result-label">Distúrbio Ácido-Base</div>
+                        <div class="result-number" id="disturbioAcidoBase">-</div>
+                        <div class="result-interpretation" id="disturbioAcidoBaseInterpretation">Aguardando dados</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Classificação de Hipoxemia</div>
+                        <div class="result-number" id="hipoxemia">-</div>
+                        <div class="result-interpretation" id="hipoxemiaInterpretation">Aguardando dados</div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="report-btn" onclick="gerarRelatorio()">Copiar texto informativo</button>
+
+            <!-- Tabela de Referência -->
+            <div class="reference-table">
+                <h3>📈 Valores Normais - Gasometria Neonatal</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parâmetro</th>
+                            <th>RNPT < 30 sem</th>
+                            <th>RNPT 30-36 sem</th>
+                            <th>RNT ≥ 37 sem</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>pH</td>
+                            <td>7.25 - 7.35</td>
+                            <td>7.30 - 7.40</td>
+                            <td>7.35 - 7.45</td>
+                        </tr>
+                        <tr>
+                            <td>pCO2 (mmHg)</td>
+                            <td>45 - 55</td>
+                            <td>40 - 50</td>
+                            <td>35 - 45</td>
+                        </tr>
+                        <tr>
+                            <td>pO2 (mmHg)</td>
+                            <td>50 - 70</td>
+                            <td>60 - 80</td>
+                            <td>80 - 100</td>
+                        </tr>
+                        <tr>
+                            <td>HCO3- (mEq/L)</td>
+                            <td>18 - 22</td>
+                            <td>20 - 24</td>
+                            <td>22 - 26</td>
+                        </tr>
+                        <tr>
+                            <td>SatO2 (%)</td>
+                            <td>85 - 95</td>
+                            <td>90 - 98</td>
+                            <td>95 - 100</td>
+                        </tr>
+                        <tr>
+                            <td>Base Excess (mEq/L)</td>
+                            <td>-5 a +2</td>
+                            <td>-3 a +2</td>
+                            <td>-2 a +2</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Calculadora de Gasometria Arterial Neonatal</p>
+        <p><strong>Referências:</strong> Fanaroff and Martin's Neonatal-Perinatal Medicine. 11th ed. 2020.</p>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — Gasometria arterial neonatal (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta calculadora organiza variáveis para estimativa educativa da gasometria arterial neonatal. O conteúdo é informativo e não substitui avaliação clínica, protocolo institucional ou prescrição.</p>
+                
+                <h3>Parâmetros Analisados</h3>
+                <div class="formula-box">
+                    <strong>pH Arterial:</strong> 7.25-7.35 (normal neonatal)<br>
+                    <strong>PaO2:</strong> 50-80 mmHg (normal neonatal)<br>
+                    <strong>PaCO2:</strong> 30-50 mmHg (normal neonatal)<br>
+                    <strong>HCO3-:</strong> 18-24 mEq/L (normal neonatal)<br>
+                    <strong>BE (Base Excess):</strong> -5 a +5 mEq/L (normal neonatal)<br>
+                    <strong>SaO2:</strong> 85-95% (normal neonatal)<br><br>
+                    <strong>Valores por Idade Gestacional:</strong><br>
+                    • <strong>Pré-termo extremo:</strong> pH 7.20-7.30, PaCO2 35-55<br>
+                    • <strong>Pré-termo:</strong> pH 7.25-7.35, PaCO2 30-50<br>
+                    • <strong>Termo:</strong> pH 7.25-7.35, PaCO2 30-50
+                </div>
+
+                <h3>Distúrbios Ácido-Base Neonatais</h3>
+                <ul>
+                    <li><strong>Acidose Metabólica:</strong> pH < 7.25, HCO3- < 18</li>
+                    <li><strong>Alcalose Metabólica:</strong> pH > 7.35, HCO3- > 24</li>
+                    <li><strong>Acidose Respiratória:</strong> pH < 7.25, PaCO2 > 50</li>
+                    <li><strong>Alcalose Respiratória:</strong> pH > 7.35, PaCO2 < 30</li>
+                    <li><strong>Distúrbios Mistos:</strong> Combinados</li>
+                    <li><strong>Compensação:</strong> Mecanismos limitados</li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Insira os Valores:</strong> pH, PaO2, PaCO2, HCO3-</li>
+                    <li><strong>Informe a Idade Gestacional:</strong> Para valores de referência</li>
+                    <li><strong>Calcule:</strong> Sistema analisa automaticamente</li>
+                    <li><strong>Interprete:</strong> Diagnóstico ácido-base</li>
+                    <li><strong>Analise Oxigenação:</strong> PaO2 e SaO2</li>
+                    <li><strong>Considere Contexto:</strong> Clínica neonatal</li>
+                </ol>
+
+                <h3>Considerações Especiais Neonatais</h3>
+                <ul>
+                    <li><strong>Idade Gestacional:</strong> Pré-termos têm valores diferentes</li>
+                    <li><strong>Idade Pós-natal:</strong> Primeira semana - adaptação</li>
+                    <li><strong>Função Renal:</strong> Imatura, compensação limitada</li>
+                    <li><strong>Função Pulmonar:</strong> Desenvolvimento contínuo</li>
+                    <li><strong>Metabolismo:</strong> Reduzido em pré-termos</li>
+                    <li><strong>Desenvolvimento:</strong> Maturidade dos sistemas</li>
+                    <li><strong>Variações:</strong> Fisiológicas e patológicas</li>
+                    <li><strong>Contexto:</strong> Clínico e laboratorial</li>
+                </ul>
+
+                <h3>Causas Comuns de Distúrbios Neonatais</h3>
+                <ul>
+                    <li><strong>Acidose Metabólica:</strong> Sepse, choque, asfixia</li>
+                    <li><strong>Alcalose Metabólica:</strong> Vômitos, diuréticos</li>
+                    <li><strong>Acidose Respiratória:</strong> RDS, pneumonia, apneia</li>
+                    <li><strong>Alcalose Respiratória:</strong> Hiperventilação, dor</li>
+                    <li><strong>Hipoxemia:</strong> Doenças pulmonares, cardíacas</li>
+                    <li><strong>Hipercapnia:</strong> Retenção de CO2</li>
+                </ul>
+
+                <h3>Monitoramento e Condutas Neonatais</h3>
+                <ul>
+                    <li><strong>Repetição:</strong> Frequência de monitoramento</li>
+                    <li><strong>Correção:</strong> Tratamento específico</li>
+                    <li><strong>Suporte:</strong> Ventilatório, circulatório</li>
+                    <li><strong>Medicações:</strong> Bicarbonato, diuréticos</li>
+                    <li><strong>Fluidoterapia:</strong> Correção de distúrbios</li>
+                    <li><strong>Oxigenação:</strong> Suporte respiratório</li>
+                </ul>
+
+                <h3>Limitações e Considerações</h3>
+                <ul>
+                    <li>Não substitui avaliação clínica</li>
+                    <li>Requer contexto clínico</li>
+                    <li>Variações individuais</li>
+                    <li>Interferências técnicas</li>
+                    <li>Coleta adequada necessária</li>
+                    <li>Transporte e processamento</li>
+                    <li>Equipamentos calibrados</li>
+                    <li>Interpretação experiente</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Martin RJ, et al. Fanaroff and Martin's neonatal-perinatal medicine. 11th ed. Elsevier; 2020.<br>
+                    - Gleason CA, et al. Avery's diseases of the newborn. 10th ed. Elsevier; 2018.<br>
+                    - Gomella TL, et al. Neonatology: management, procedures, on-call problems, diseases, and drugs. 7th ed. McGraw-Hill; 2013.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        let tipoNeonato = '';
+
+        // Função para atualizar o tipo de neonato baseado na idade gestacional
+        function atualizarTipoNeonato() {
+            const idadeGestacional = parseFloat(document.getElementById('idadeGestacional').value) || 0;
+            const indicador = document.getElementById('tipoNeonato');
+            
+            if (idadeGestacional < 30) {
+                tipoNeonato = 'RNPT<30sem';
+                indicador.innerHTML = '👶 Recém-nascido Pré-termo < 30 semanas (Prematuro Extremo)';
+                indicador.style.background = 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)';
+            } else if (idadeGestacional >= 30 && idadeGestacional < 37) {
+                tipoNeonato = 'RNPT';
+                indicador.innerHTML = '👶 Recém-nascido Pré-termo 30-36 semanas (Prematuro Tardio)';
+                indicador.style.background = 'linear-gradient(135deg, #f39c12 0%, #e67e22 100%)';
+            } else if (idadeGestacional >= 37) {
+                tipoNeonato = 'RNT';
+                indicador.innerHTML = '👶 Recém-nascido A Termo ≥ 37 semanas';
+                indicador.style.background = 'linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)';
+            } else {
+                tipoNeonato = '';
+                indicador.innerHTML = 'Informe a idade gestacional para determinar o tipo de neonato';
+                indicador.style.background = 'linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%)';
+            }
+            
+            calcularTudo();
+        }
+
+        // Função para calcular pH estimado (Henderson-Hasselbalch)
+        function calcularPH_Estimado() {
+            const pco2 = parseFloat(document.getElementById('pco2').value) || 0;
+            const hco3 = parseFloat(document.getElementById('hco3').value) || 0;
+            
+            if (pco2 > 0 && hco3 > 0) {
+                const phEstimado = 6.1 + Math.log10(hco3 / (0.03 * pco2));
+                document.getElementById('phEstimado').textContent = phEstimado.toFixed(2);
+                document.getElementById('phEstimadoInterpretation').textContent = 'Henderson-Hasselbalch';
+            } else {
+                document.getElementById('phEstimado').textContent = '-';
+                document.getElementById('phEstimadoInterpretation').textContent = 'Dados insuficientes';
+            }
+        }
+
+        // Função para calcular Base Excess esperado (Siggaard-Anderson)
+        function calcularBE_Esperado() {
+            const hco3 = parseFloat(document.getElementById('hco3').value) || 0;
+            const ph = parseFloat(document.getElementById('ph').value) || 0;
+            
+            if (hco3 > 0 && ph > 0) {
+                const beEsperado = 0.9287 * hco3 + 13.77 * ph - 124.58;
+                document.getElementById('beEsperado').textContent = beEsperado.toFixed(1);
+                document.getElementById('beEsperadoInterpretation').textContent = 'Siggaard-Anderson';
+            } else {
+                document.getElementById('beEsperado').textContent = '-';
+                document.getElementById('beEsperadoInterpretation').textContent = 'Dados insuficientes';
+            }
+        }
+
+        // Função para calcular HCO3 esperado
+        function calcularHCO3_Esperado() {
+            const pco2 = parseFloat(document.getElementById('pco2').value) || 0;
+            const ph = parseFloat(document.getElementById('ph').value) || 0;
+            
+            if (pco2 > 0 && ph > 0) {
+                const hco3Esperado = 0.03 * pco2 * Math.pow(10, ph - 6.1);
+                document.getElementById('hco3Esperado').textContent = hco3Esperado.toFixed(1);
+                document.getElementById('hco3EsperadoInterpretation').textContent = 'mEq/L';
+            } else {
+                document.getElementById('hco3Esperado').textContent = '-';
+                document.getElementById('hco3EsperadoInterpretation').textContent = 'Dados insuficientes';
+            }
+        }
+
+        // Função para calcular pCO2 esperado
+        function calcularPCO2_Esperado() {
+            const hco3 = parseFloat(document.getElementById('hco3').value) || 0;
+            
+            if (hco3 > 0) {
+                const pco2Esperado = 1.5 * hco3 + 8;
+                document.getElementById('pco2Esperado').textContent = pco2Esperado.toFixed(1);
+                document.getElementById('pco2EsperadoInterpretation').textContent = 'mmHg (±2)';
+            } else {
+                document.getElementById('pco2Esperado').textContent = '-';
+                document.getElementById('pco2EsperadoInterpretation').textContent = 'Dados insuficientes';
+            }
+        }
+
+        // Função para calcular Anion Gap
+        function calcularAnionGap() {
+            const na = parseFloat(document.getElementById('na').value) || 0;
+            const cl = parseFloat(document.getElementById('cl').value) || 0;
+            const hco3 = parseFloat(document.getElementById('hco3').value) || 0;
+            
+            if (na > 0 && cl > 0 && hco3 > 0) {
+                const anionGap = na - (cl + hco3);
+                document.getElementById('anionGap').textContent = anionGap.toFixed(1);
+                
+                let interpretacao = '';
+                if (anionGap < 8) {
+                    interpretacao = 'Baixo';
+                } else if (anionGap > 12) {
+                    interpretacao = 'Alto';
+                } else {
+                    interpretacao = 'Normal';
+                }
+                document.getElementById('anionGapInterpretation').textContent = interpretacao;
+            } else {
+                document.getElementById('anionGap').textContent = '-';
+                document.getElementById('anionGapInterpretation').textContent = 'Eletrólitos necessários';
+            }
+        }
+
+        // Função para interpretar distúrbios ácido-base
+        function interpretarDisturbios() {
+            const ph = parseFloat(document.getElementById('ph').value) || 0;
+            const pco2 = parseFloat(document.getElementById('pco2').value) || 0;
+            const hco3 = parseFloat(document.getElementById('hco3').value) || 0;
+            const be = parseFloat(document.getElementById('be').value) || 0;
+            
+            if (ph > 0 && pco2 > 0 && hco3 > 0) {
+                let disturbio = '';
+                let interpretacao = '';
+                
+                // Determinar valores de referência baseado no tipo de neonato
+                let phMin, phMax, pco2Min, pco2Max, hco3Min, hco3Max, beMin, beMax;
+                
+                if (tipoNeonato === 'RNPT<30sem') {
+                    phMin = 7.25; phMax = 7.35;
+                    pco2Min = 45; pco2Max = 55;
+                    hco3Min = 18; hco3Max = 22;
+                    beMin = -5; beMax = 2;
+                } else if (tipoNeonato === 'RNPT') {
+                    phMin = 7.30; phMax = 7.40;
+                    pco2Min = 40; pco2Max = 50;
+                    hco3Min = 20; hco3Max = 24;
+                    beMin = -3; beMax = 2;
+                } else if (tipoNeonato === 'RNT') {
+                    phMin = 7.35; phMax = 7.45;
+                    pco2Min = 35; pco2Max = 45;
+                    hco3Min = 22; hco3Max = 26;
+                    beMin = -2; beMax = 2;
+                } else {
+                    // Valores padrão se tipo não definido
+                    phMin = 7.35; phMax = 7.45;
+                    pco2Min = 35; pco2Max = 45;
+                    hco3Min = 22; hco3Max = 26;
+                    beMin = -2; beMax = 2;
+                }
+                
+                // Interpretar distúrbio primário
+                if (ph < phMin) {
+                    if (pco2 > pco2Max) {
+                        disturbio = 'Acidose Respiratória';
+                        interpretacao = 'Primária';
+                    } else if (hco3 < hco3Min || be < beMin) {
+                        disturbio = 'Acidose Metabólica';
+                        interpretacao = 'Primária';
+                    } else {
+                        disturbio = 'Acidose Mista';
+                        interpretacao = 'Complexa';
+                    }
+                } else if (ph > phMax) {
+                    if (pco2 < pco2Min) {
+                        disturbio = 'Alcalose Respiratória';
+                        interpretacao = 'Primária';
+                    } else if (hco3 > hco3Max || be > beMax) {
+                        disturbio = 'Alcalose Metabólica';
+                        interpretacao = 'Primária';
+                    } else {
+                        disturbio = 'Alcalose Mista';
+                        interpretacao = 'Complexa';
+                    }
+                } else {
+                    disturbio = 'Equilíbrio Ácido-Base';
+                    interpretacao = 'Normal';
+                }
+                
+                // Verificar compensação
+                if (disturbio !== 'Equilíbrio Ácido-Base' && disturbio !== 'Acidose Mista' && disturbio !== 'Alcalose Mista') {
+                    if (disturbio.includes('Respiratória')) {
+                        if (hco3 > hco3Max || be > beMax) {
+                            interpretacao += ' - Compensada';
+                        } else {
+                            interpretacao += ' - Não Compensada';
+                        }
+                    } else if (disturbio.includes('Metabólica')) {
+                        if (pco2 < pco2Min) {
+                            interpretacao += ' - Compensada';
+                        } else {
+                            interpretacao += ' - Não Compensada';
+                        }
+                    }
+                }
+                
+                document.getElementById('disturbioAcidoBase').textContent = disturbio;
+                document.getElementById('disturbioAcidoBaseInterpretation').textContent = interpretacao;
+            } else {
+                document.getElementById('disturbioAcidoBase').textContent = '-';
+                document.getElementById('disturbioAcidoBaseInterpretation').textContent = 'Dados insuficientes';
+            }
+        }
+
+        // Função para classificar hipoxemia
+        function classificarHipoxemia() {
+            const po2 = parseFloat(document.getElementById('po2').value) || 0;
+            const fio2 = parseFloat(document.getElementById('fio2').value) || 21;
+            
+            if (po2 > 0) {
+                let classificacao = '';
+                let interpretacao = '';
+                
+                // Determinar valores de referência baseado no tipo de neonato
+                let po2Min, po2Max;
+                
+                if (tipoNeonato === 'RNPT<30sem') {
+                    po2Min = 50; po2Max = 70;
+                } else if (tipoNeonato === 'RNPT') {
+                    po2Min = 60; po2Max = 80;
+                } else if (tipoNeonato === 'RNT') {
+                    po2Min = 80; po2Max = 100;
+                } else {
+                    po2Min = 80; po2Max = 100;
+                }
+                
+                if (po2 >= po2Max) {
+                    classificacao = 'Normal';
+                    interpretacao = 'Oxigenação adequada';
+                } else if (po2 >= po2Min) {
+                    classificacao = 'Leve';
+                    interpretacao = 'Hipoxemia leve';
+                } else if (po2 >= po2Min * 0.7) {
+                    classificacao = 'Moderada';
+                    interpretacao = 'Hipoxemia moderada';
+                } else {
+                    classificacao = 'Severa';
+                    interpretacao = 'Hipoxemia severa';
+                }
+                
+                // Verificar correção com FiO2
+                if (fio2 > 21) {
+                    const po2Esperado = fio2 * 5; // Regra aproximada
+                    if (po2 < po2Esperado * 0.8) {
+                        interpretacao += ' - Não corrigida';
+                    } else {
+                        interpretacao += ' - Corrigida';
+                    }
+                }
+                
+                document.getElementById('hipoxemia').textContent = classificacao;
+                document.getElementById('hipoxemiaInterpretation').textContent = interpretacao;
+            } else {
+                document.getElementById('hipoxemia').textContent = '-';
+                document.getElementById('hipoxemiaInterpretation').textContent = 'Dados insuficientes';
+            }
+        }
+
+        // Função principal para calcular tudo
+        function calcularTudo() {
+            calcularPH_Estimado();
+            calcularBE_Esperado();
+            calcularHCO3_Esperado();
+            calcularPCO2_Esperado();
+            calcularAnionGap();
+            interpretarDisturbios();
+            classificarHipoxemia();
+        }
+
+        // Função para gerar relatório UTF-8 sem acentos
+        function gerarRelatorio() {
+            // Verificar se os valores essenciais da gasometria estão preenchidos
+            const ph = document.getElementById('ph').value;
+            const pco2 = document.getElementById('pco2').value;
+            const po2 = document.getElementById('po2').value;
+            const hco3 = document.getElementById('hco3').value;
+            const sato2 = document.getElementById('sato2').value;
+            const be = document.getElementById('be').value;
+            
+            // Valores essenciais da gasometria
+            const valoresEssenciais = [ph, pco2, po2, hco3, sato2, be];
+            const camposEssenciais = ['pH', 'pCO2', 'pO2', 'HCO3-', 'SatO2', 'Base Excess'];
+            
+            // Verificar se todos os valores essenciais estão preenchidos
+            const valoresFaltando = [];
+            for (let i = 0; i < valoresEssenciais.length; i++) {
+                if (!valoresEssenciais[i] || valoresEssenciais[i] === '0' || valoresEssenciais[i] === '') {
+                    valoresFaltando.push(camposEssenciais[i]);
+                }
+            }
+            
+            if (valoresFaltando.length > 0) {
+                alert(`Para gerar o relatorio, e necessario preencher os seguintes valores essenciais da gasometria:\n\n${valoresFaltando.join(', ')}\n\nOs eletrolitos (Na+, K+, Cl-) sao opcionais.`);
+                return;
+            }
+            
+            const nome = document.getElementById('nome').value || 'Paciente';
+            const peso = document.getElementById('peso').value || '0';
+            const idadeGestacional = document.getElementById('idadeGestacional').value || '0';
+            const fio2 = document.getElementById('fio2').value || '21';
+            const na = document.getElementById('na').value || '0';
+            const k = document.getElementById('k').value || '0';
+            const cl = document.getElementById('cl').value || '0';
+            
+            const phEstimado = document.getElementById('phEstimado').textContent;
+            const beEsperado = document.getElementById('beEsperado').textContent;
+            const hco3Esperado = document.getElementById('hco3Esperado').textContent;
+            const pco2Esperado = document.getElementById('pco2Esperado').textContent;
+            const anionGap = document.getElementById('anionGap').textContent;
+            const disturbioAcidoBase = document.getElementById('disturbioAcidoBase').textContent;
+            const disturbioAcidoBaseInterpretation = document.getElementById('disturbioAcidoBaseInterpretation').textContent;
+            const hipoxemia = document.getElementById('hipoxemia').textContent;
+            const hipoxemiaInterpretation = document.getElementById('hipoxemiaInterpretation').textContent;
+            
+            const agora = new Date();
+            const dataHora = agora.toLocaleString('pt-BR');
+            
+            let relatorio = `RESUMO INFORMATIVO — GASOMETRIA ARTERIAL NEONATAL (EDUCATIVO)\n`;
+            relatorio += `==========================================\n\n`;
+            
+            relatorio += `DADOS DO PACIENTE\n`;
+            relatorio += `-----------------\n`;
+            relatorio += `Data/Hora: ${dataHora}\n`;
+            relatorio += `Nome: ${nome}\n`;
+            relatorio += `Peso: ${peso} kg\n`;
+            relatorio += `Idade Gestacional: ${idadeGestacional} semanas\n`;
+            relatorio += `Tipo de Neonato: ${tipoNeonato}\n`;
+            relatorio += `FiO2: ${fio2}%\n\n`;
+            
+            relatorio += `VALORES DA GASOMETRIA\n`;
+            relatorio += `---------------------\n`;
+            relatorio += `pH: ${ph}\n`;
+            relatorio += `pCO2: ${pco2} mmHg\n`;
+            relatorio += `pO2: ${po2} mmHg\n`;
+            relatorio += `HCO3-: ${hco3} mEq/L\n`;
+            relatorio += `SatO2: ${sato2}%\n`;
+            relatorio += `Base Excess: ${be} mEq/L\n\n`;
+            
+            if (na !== '0' || k !== '0' || cl !== '0') {
+                relatorio += `ELETROLITOS\n`;
+                relatorio += `-----------\n`;
+                relatorio += `Na+: ${na} mEq/L\n`;
+                relatorio += `K+: ${k} mEq/L\n`;
+                relatorio += `Cl-: ${cl} mEq/L\n\n`;
+            }
+            
+            relatorio += `CALCULOS AUTOMATICOS\n`;
+            relatorio += `--------------------\n`;
+            relatorio += `pH Estimado: ${phEstimado}\n`;
+            relatorio += `Base Excess Esperado: ${beEsperado} mEq/L\n`;
+            relatorio += `HCO3- Esperado: ${hco3Esperado} mEq/L\n`;
+            relatorio += `pCO2 Esperado: ${pco2Esperado} mmHg\n`;
+            relatorio += `Anion Gap: ${anionGap} mEq/L\n\n`;
+            
+            relatorio += `INTERPRETACAO CLINICA\n`;
+            relatorio += `---------------------\n`;
+            relatorio += `Disturbio Acido-Base: ${disturbioAcidoBase}\n`;
+            relatorio += `Interpretacao: ${disturbioAcidoBaseInterpretation}\n`;
+            relatorio += `Classificacao de Hipoxemia: ${hipoxemia}\n`;
+            relatorio += `Interpretacao: ${hipoxemiaInterpretation}\n\n`;
+            
+            relatorio += `VALORES DE REFERENCIA UTILIZADOS\n`;
+            relatorio += `--------------------------------\n`;
+            if (tipoNeonato === 'RNPT<30sem') {
+                relatorio += `Tipo: Recem-nascido Pre-termo < 30 semanas\n`;
+                relatorio += `pH: 7.25 - 7.35\n`;
+                relatorio += `pCO2: 45 - 55 mmHg\n`;
+                relatorio += `pO2: 50 - 70 mmHg\n`;
+                relatorio += `HCO3-: 18 - 22 mEq/L\n`;
+                relatorio += `SatO2: 85 - 95%\n`;
+                relatorio += `Base Excess: -5 a +2 mEq/L\n\n`;
+            } else if (tipoNeonato === 'RNPT') {
+                relatorio += `Tipo: Recem-nascido Pre-termo 30-36 semanas\n`;
+                relatorio += `pH: 7.30 - 7.40\n`;
+                relatorio += `pCO2: 40 - 50 mmHg\n`;
+                relatorio += `pO2: 60 - 80 mmHg\n`;
+                relatorio += `HCO3-: 20 - 24 mEq/L\n`;
+                relatorio += `SatO2: 90 - 98%\n`;
+                relatorio += `Base Excess: -3 a +2 mEq/L\n\n`;
+            } else if (tipoNeonato === 'RNT') {
+                relatorio += `Tipo: Recem-nascido A Termo >= 37 semanas\n`;
+                relatorio += `pH: 7.35 - 7.45\n`;
+                relatorio += `pCO2: 35 - 45 mmHg\n`;
+                relatorio += `pO2: 80 - 100 mmHg\n`;
+                relatorio += `HCO3-: 22 - 26 mEq/L\n`;
+                relatorio += `SatO2: 95 - 100%\n`;
+                relatorio += `Base Excess: -2 a +2 mEq/L\n\n`;
+            }
+            
+            relatorio += `FORMULAS UTILIZADAS\n`;
+            relatorio += `------------------\n`;
+            relatorio += `Henderson-Hasselbalch: pH = pK + log[HCO3-]/[CO2]\n`;
+            relatorio += `Siggaard-Anderson: BE = 0.9287 x HCO3 + 13.77 x pH - 124.58\n`;
+            relatorio += `HCO3 Esperado: HCO3 = 0.03 x pCO2 x 10^(pH - 6.1)\n`;
+            relatorio += `pCO2 Esperado: pCO2 = 1.5 x HCO3 + 8 ± 2\n`;
+            relatorio += `Anion Gap: AG = Na+ - (Cl- + HCO3-)\n\n`;
+            
+            relatorio += `OBSERVACOES IMPORTANTES\n`;
+            relatorio += `----------------------\n`;
+            relatorio += `- A gasometria arterial e fundamental para avaliacao do equilibrio acido-base\n`;
+            relatorio += `- Os valores de referencia variam conforme a idade gestacional\n`;
+            relatorio += `- Prematuros extremos (<30 sem) tem valores de referencia mais baixos\n`;
+            relatorio += `- Sempre correlacionar com o quadro clinico do paciente\n`;
+            relatorio += `- Monitorar resposta terapeutica e ajustar tratamento conforme necessario\n`;
+            relatorio += `- Considerar fatores que podem influenciar os valores (medicacoes, ventilacao, etc.)\n\n`;
+            
+            relatorio += `REFERENCIAS\n`;
+            relatorio += `-----------\n`;
+            relatorio += `1. Siggaard-Andersen O. An acid-base chart for arterial blood with normal and pathophysiological reference areas. Scan J Clin Lab Invest. 27:239-245, 1971.\n`;
+            relatorio += `2. Grogono AW. Acid-Base Tutorial. Tulane University School of Medicine.\n`;
+            relatorio += `3. Protocolos de Gasometria Neonatal - NeoPedCalc\n\n`;
+            
+            relatorio += `DETALHES TECNICOS\n`;
+            relatorio += `-----------------\n`;
+            relatorio += `Calculadora: Gasometria Arterial Neonatal - NeoPedCalc\n`;
+            relatorio += `Tipo de Neonato: ${tipoNeonato}\n`;
+            relatorio += `Data de Geracao: ${dataHora}\n`;
+            relatorio += `Formato: UTF-8 (compativel com sistemas medicos)\n`;
+            
+            relatorio = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorio;
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorio += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                relatorio += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            // Copiar para a área de transferência
+            navigator.clipboard.writeText(relatorio).then(function() {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(function(err) {
+                // Fallback: mostrar em modal
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                    background: rgba(0,0,0,0.8); z-index: 10000; display: flex; 
+                    align-items: center; justify-content: center; padding: 20px;
+                `;
+                modal.innerHTML = `
+                    <div style="background: white; padding: 30px; border-radius: 10px; max-width: 80%; max-height: 80%; overflow: auto;">
+                        <h3>Texto informativo gerado</h3>
+                        <pre style="white-space: pre-wrap; font-family: monospace; font-size: 12px;">${relatorio}</pre>
+                        <button onclick="this.parentElement.parentElement.remove()" aria-label="Fechar" style="margin-top: 20px; padding: 10px 20px; background: #6b7280; color: white; border: none; border-radius: 5px; cursor: pointer;">&times;</button>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            });
+        }
+
+        // Inicializar cálculos
+        calcularTudo();
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

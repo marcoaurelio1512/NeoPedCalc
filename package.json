@@ -1,0 +1,29 @@
+{
+  "name": "neopedcalc",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "NeoPedCalc — plataforma educacional de neonatologia e pediatria",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server/index.js",
+    "dev": "node --env-file-if-exists=.env server/index.js",
+    "test": "node --test tests/*.test.js",
+    "check": "python3 scripts/audit.py",
+    "test:browser": "node tests/smoke.js",
+    "audit:browser": "node tests/browser-audit.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.0.0",
+    "cookie-parser": "^1.4.7",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.0.0",
+    "helmet": "^8.0.0",
+    "stripe": "^20.0.0"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.0"
+  }
+}

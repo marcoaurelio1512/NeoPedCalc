@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — VancoCalc (educativo)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        select,
+        input,
+        textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .btn {
+            border: 0;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 800;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .primary {
+            background: #111;
+            color: #fff;
+        }
+
+        .secondary {
+            background: #fff;
+            border: 1px solid #d9d9e6;
+            color: #111;
+        }
+
+        .results {
+            background: #e8fff0;
+            border: 1px solid #b4ffcf;
+            padding: 14px;
+            border-radius: 12px;
+            margin-top: 12px;
+        }
+
+        .results h3 {
+            margin: 0 0 10px;
+            font-size: 16px;
+            color: #0a6a2a;
+        }
+
+        .result-item {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .result-item strong {
+            color: #111;
+        }
+
+        .interpretation {
+            background: #fffbe0;
+            border: 1px solid #f1e49a;
+            padding: 14px;
+            border-radius: 12px;
+            margin-top: 12px;
+            font-size: 13px;
+        }
+
+        .interpretation h3 {
+            margin: 0 0 10px;
+            font-size: 16px;
+            color: #5a4a00;
+        }
+
+        .interpretation ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+
+        .interpretation li {
+            margin-bottom: 8px;
+        }
+
+        .info-section h3, .info-section h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .info-section ul {
+            padding-left: 20px;
+        }
+
+        .reference {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 12px;
+        }
+
+        /* Modal Styles */
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(17, 17, 17, 0.1);
+            color: #111;
+            border: 2px solid #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-info:hover {
+            background: #111;
+            color: #fff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #2c3e50;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .modal {
+                padding: 10px;
+            }
+            .modal-content {
+                width: 95%;
+                max-height: 95vh;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+
+<body>
+    <header>
+        <h1>VancoCalc - Calculadora AUC Vancomicina</h1>
+        <p>Cálculo da Área sob a Curva para Crianças e Neonatos</p>
+        <div class="header-actions">
+            <button class="btn-info" onclick="abrirModal()">
+                Como usar
+            </button>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="card">
+            <div class="form-container">
+            <div class="form-group">
+                <label for="faixaEtaria">Faixa Etária do Paciente:</label>
+                <select id="faixaEtaria" onchange="atualizarFormulario()">
+                    <option value="">-- Escolha uma opção --</option>
+                    <option value="crianca">Criança</option>
+                    <option value="neonatal">Recém-nascido</option>
+                </select>
+            </div>
+
+            <form id="formCampos"></form>
+
+            <div id="botoes" style="display:none;">
+                <button type="button" class="btn primary" onclick="calcular()">Calcular AUC</button>
+                <button type="button" class="btn secondary" onclick="gerarRelatorio()">Gerar Relatório</button>
+            </div>
+
+            <div id="resultado"></div>
+            </div> <!-- End form-container -->
+        </div> <!-- End card -->
+
+        <div class="card info-section">
+            <h3 style="margin-top:0;">Explicações clínicas e fórmulas utilizadas</h3>
+            <p>Esta calculadora estima a área sob a curva (AUC) da vancomicina com base nas diretrizes de 2020 da
+                ASHP, IDSA, PIDS e SIDP.</p>
+
+            <h4>Crianças</h4>
+            <ul>
+                <li><strong>Clearance:</strong> Fórmula de Schwartz modificada: (0,413 × altura) / creatinina
+                    (altura em cm)</li>
+                <li><strong>Vd:</strong> Assume-se 0,7 × clearance estimado (simplificado)</li>
+            </ul>
+
+            <h4>Recém-nascidos</h4>
+            <ul>
+                <li><strong>Clearance:</strong> Fórmula de Schwartz (Neonato): (0,33 × comprimento) / creatinina
+                    (comprimento em cm)</li>
+                <li><strong>Vd:</strong> 0,9 × peso</li>
+            </ul>
+
+            <h4>AUC (Area sob a curva)</h4>
+            <ul>
+                <li><strong>AUC estimada:</strong> ((Cpico + Cvale)/2) × intervalo</li>
+                <li><strong>Kel (eliminacao):</strong> ln(Cpico / Cvale) / t</li>
+            </ul>
+
+            <div class="reference">
+                <h4 style="margin-top:0;">Referencia bibliografica</h4>
+                <p>Michael J Rybak, et al. Therapeutic monitoring of vancomycin...<br>
+                    Am J Health Syst Pharm. 2020; 77(11):835-864.<br>
+                    DOI: <a href="https://doi.org/10.1093/ajhp/zxaa036" target="_blank">10.1093/ajhp/zxaa036</a></p>
+            </div>
+        <div class="footer">
+            NeoPedCalc &copy; <span data-neoped-year></span> - VancoCalc
+        </div>
+    </div> <!-- End wrap -->
+
+    <script>
+        function atualizarFormulario() {
+            const faixa = document.getElementById("faixaEtaria").value;
+            const form = document.getElementById("formCampos");
+            const botoes = document.getElementById("botoes");
+            form.innerHTML = "";
+            botoes.style.display = "none";
+            document.getElementById("resultado").innerHTML = "";
+
+            if (!faixa) return;
+
+            let campos = "";
+            if (faixa === "crianca") {
+                campos += '<div class="form-group"><label for="idade">Idade (anos):</label><input type="number" id="idade" step="0.1" required></div>';
+                campos += '<div class="form-group"><label for="altura">Altura (cm):</label><input type="number" id="altura" step="0.1" required></div>';
+                campos += '<div class="form-group"><label for="peso">Peso (kg):</label><input type="number" id="peso" step="0.001" required></div>';
+                campos += '<div class="form-group"><label for="creatinina">Creatinina sérica (mg/dL):</label><input type="number" id="creatinina" step="0.01" required></div>';
+            } else if (faixa === "neonatal") {
+                campos += '<div class="form-group"><label for="idadeDias">Idade pós-natal (dias):</label><input type="number" id="idadeDias" step="0.1" required></div>';
+                campos += '<div class="form-group"><label for="peso">Peso (kg):</label><input type="number" id="peso" step="0.001" required></div>';
+                campos += '<div class="form-group"><label for="altura">Comprimento (cm):</label><input type="number" id="altura" step="0.1" required></div>';
+                campos += '<div class="form-group"><label for="creatinina">Creatinina sérica (mg/dL):</label><input type="number" id="creatinina" step="0.01" required></div>';
+            }
+
+            campos += '<div class="form-group"><label for="cpeak">Concentracao de Pico (mg/L):</label><input type="number" id="cpeak" step="0.1" required></div>';
+            campos += '<div class="form-group"><label for="ctrough">Concentracao de Vale (mg/L):</label><input type="number" id="ctrough" step="0.1" required></div>';
+            campos += '<div class="form-group"><label for="t">Tempo entre pico e vale (horas):</label><input type="number" id="t" step="0.1" required></div>';
+            campos += '<div class="form-group"><label for="tau">Intervalo de dosagem (horas):</label><input type="number" id="tau" value="12" step="1" required></div>';
+
+            form.innerHTML = campos;
+            botoes.style.display = "block";
+        }
+
+        function calcular() {
+            const faixa = document.getElementById("faixaEtaria").value;
+            const cpeak = parseFloat(document.getElementById("cpeak").value);
+            const ctrough = parseFloat(document.getElementById("ctrough").value);
+            const t = parseFloat(document.getElementById("t").value);
+            const tau = parseFloat(document.getElementById("tau").value);
+            let clearance = 0;
+            const altura = parseFloat(document.getElementById("altura").value);
+            const creat = parseFloat(document.getElementById("creatinina").value);
+            const peso = parseFloat(document.getElementById("peso").value);
+
+            // Limites de Segurança
+            if (peso > 200 || altura > 250) {
+                alert('Erro: Medidas fora de parâmetros fisiológicos suportados.');
+                return;
+            }
+
+            if (faixa === "crianca") {
+                clearance = (0.413 * altura) / creat;
+            } else if (faixa === "neonatal") {
+                clearance = (0.33 * altura) / creat;
+            }
+
+            const kel = Math.log(cpeak / ctrough) / t;
+            const vd = faixa === "neonatal" ? 0.9 * parseFloat(document.getElementById("peso").value) : 0.7 * clearance;
+            const auc = ((cpeak + ctrough) / 2) * tau;
+
+            document.getElementById("resultado").innerHTML = `
+                <div class="results">
+                    <h3>Resultados</h3>
+                    <div class="result-item"><strong>Clearance estimado:</strong> ${clearance.toFixed(2)} mL/min</div>
+                    <div class="result-item"><strong>Volume de distribuicao (Vd):</strong> ${vd.toFixed(2)} L</div>
+                    <div class="result-item"><strong>Taxa de eliminacao (kel):</strong> ${kel.toFixed(4)} 1/h</div>
+                    <div class="result-item"><strong>AUC estimada:</strong> ${auc.toFixed(2)} mg·h/L</div>
+                </div>
+${interpretarResultados(clearance, vd, kel, auc)}
+            `;
+        }
+
+        function interpretarResultados(clearance, vd, kel, auc) {
+            let interpretacao = '<div class="interpretation"><h3>Interpretacao clinica</h3><ul>';
+
+            interpretacao += `<li><strong>Clearance (${clearance.toFixed(2)} mL/min):</strong> `;
+            if (clearance < 30) {
+                interpretacao += "Funcao renal reduzida. Pode haver risco de acumulo de vancomicina.<br><em>Justificativa:</em> Valores baixos de clearance indicam disfuncao renal significativa.";
+            } else {
+                interpretacao += "Funcao renal preservada.<br><em>Justificativa:</em> Clearance adequado permite eliminacao eficaz da vancomicina.";
+            }
+            interpretacao += "</li>";
+
+            interpretacao += `<li><strong>Volume de distribuicao (Vd = ${vd.toFixed(2)} L):</strong> `;
+            if (vd > 10) {
+                interpretacao += "Alta distribuicao. Pode indicar necessidade de dose de ataque maior.<br><em>Justificativa:</em> Valores altos indicam que o antibiotico esta se distribuindo por muitos tecidos.";
+            } else {
+                interpretacao += "Distribuicao esperada.<br><em>Justificativa:</em> Vd dentro do esperado para pacientes saudaveis.";
+            }
+            interpretacao += "</li>";
+
+            interpretacao += `<li><strong>Taxa de eliminacao (kel = ${kel.toFixed(4)} 1/h):</strong> `;
+            if (kel < 0.1) {
+                interpretacao += "Eliminacao lenta.<br><em>Justificativa:</em> Uma kel baixa indica eliminacao lenta, exigindo ajuste na frequencia de doses.";
+            } else {
+                interpretacao += "Eliminacao adequada.<br><em>Justificativa:</em> Dentro do intervalo esperado para eliminacao terapeutica.";
+            }
+            interpretacao += "</li>";
+
+            interpretacao += `<li><strong>AUC estimada: ${auc.toFixed(2)} mg·h/L:</strong> `;
+            if (auc < 400) {
+                interpretacao += "Exposicao abaixo do ideal.<br><em>Justificativa:</em> Abaixo de 400 mg·h/L pode estar associado a falha terapeutica.";
+            } else if (auc <= 600) {
+                interpretacao += "Alvo terapeutico atingido.<br><em>Justificativa:</em> 400-600 mg·h/L e a faixa recomendada pelas diretrizes.";
+            } else {
+                interpretacao += "Exposicao excessiva.<br><em>Justificativa:</em> Acima de 600 mg·h/L aumenta o risco de nefrotoxicidade.";
+            }
+            interpretacao += "</li>";
+
+            interpretacao += "</ul></div>";
+            return interpretacao;
+        }
+
+        function gerarRelatorio() {
+            const faixa = document.getElementById("faixaEtaria").value;
+            if (!faixa) {
+                alert("Por favor, selecione a faixa etaria e calcule os resultados primeiro.");
+                return;
+            }
+
+            const cpeak = parseFloat(document.getElementById("cpeak").value);
+            const ctrough = parseFloat(document.getElementById("ctrough").value);
+            const t = parseFloat(document.getElementById("t").value);
+            const tau = parseFloat(document.getElementById("tau").value);
+
+            let clearance = 0;
+            let dadosPaciente = "";
+
+            if (faixa === "crianca") {
+                const idade = parseFloat(document.getElementById("idade").value);
+                const altura = parseFloat(document.getElementById("altura").value);
+                const peso = parseFloat(document.getElementById("peso").value);
+                const creat = parseFloat(document.getElementById("creatinina").value);
+                clearance = (0.413 * altura) / creat;
+
+                dadosPaciente = `DADOS DO PACIENTE:
+- Faixa etaria: Crianca
+- Idade: ${idade.toFixed(1)} anos
+- Altura: ${altura.toFixed(1)} cm
+- Peso: ${peso.toFixed(3)} kg
+- Creatinina serica: ${creat.toFixed(2)} mg/dL`;
+            } else if (faixa === "neonatal") {
+                const idadeDias = parseFloat(document.getElementById("idadeDias").value);
+                const peso = parseFloat(document.getElementById("peso").value);
+                const creat = parseFloat(document.getElementById("creatinina").value);
+                clearance = (0.34 * peso * 1000) / creat;
+
+                dadosPaciente = `DADOS DO PACIENTE:
+- Faixa etaria: Recem-nascido
+- Idade pos-natal: ${idadeDias.toFixed(1)} dias
+- Peso: ${peso.toFixed(3)} kg
+- Creatinina serica: ${creat.toFixed(2)} mg/dL`;
+            }
+
+            const kel = Math.log(cpeak / ctrough) / t;
+            const vd = faixa === "neonatal" ? 0.9 * parseFloat(document.getElementById("peso").value) : 0.7 * clearance;
+            const auc = ((cpeak + ctrough) / 2) * tau;
+
+            let interpretacao = "";
+            if (clearance < 30) {
+                interpretacao += "- Clearance: Funcao renal reduzida. Risco de acumulo de vancomicina.\n";
+            } else {
+                interpretacao += "- Clearance: Funcao renal preservada.\n";
+            }
+
+            if (vd > 10) {
+                interpretacao += "- Vd: Alta distribuicao. Considerar dose de ataque maior.\n";
+            } else {
+                interpretacao += "- Vd: Distribuicao esperada.\n";
+            }
+
+            if (kel < 0.1) {
+                interpretacao += "- Kel: Eliminacao lenta. Ajustar frequencia de doses.\n";
+            } else {
+                interpretacao += "- Kel: Eliminacao adequada.\n";
+            }
+
+            if (auc < 400) {
+                interpretacao += "- AUC: Exposicao abaixo do ideal. Risco de falha terapeutica.\n";
+            } else if (auc <= 600) {
+                interpretacao += "- AUC: Alvo terapeutico atingido (400-600 mg·h/L).\n";
+            } else {
+                interpretacao += "- AUC: Exposicao excessiva. Risco de nefrotoxicidade.\n";
+            }
+
+            const dataHora = new Date().toLocaleString('pt-BR');
+
+            const relatorio = `
+VANCOCALC - RELATORIO DE CALCULO AUC VANCOMICINA
+================================================
+
+Data e hora do relatorio: ${dataHora}
+
+${dadosPaciente}
+
+PARAMETROS FARMACOCINETICOS:
+- Concentracao de Pico: ${cpeak.toFixed(1)} mg/L
+- Concentracao de Vale: ${ctrough.toFixed(1)} mg/L
+- Tempo entre pico e vale: ${t.toFixed(1)} horas
+- Intervalo de dosagem: ${tau.toFixed(0)} horas
+
+RESULTADOS CALCULADOS:
+- Clearance estimado: ${clearance.toFixed(2)} mL/min
+- Volume de distribuicao (Vd): ${vd.toFixed(2)} L
+- Taxa de eliminacao (kel): ${kel.toFixed(4)} 1/h
+- AUC estimada: ${auc.toFixed(2)} mg·h/L
+
+INTERPRETACAO CLINICA:
+${interpretacao}
+
+REFERENCIA:
+Michael J Rybak, et al. Therapeutic monitoring of vancomycin...
+Am J Health Syst Pharm. 2020; 77(11):835-864.
+DOI: 10.1093/ajhp/zxaa036
+
+OBSERVACOES:
+- Esta calculadora estima a AUC com base nas diretrizes de 2020
+- Sempre considerar o contexto clinico do paciente
+- Ajustes de dose devem ser feitos por profissional qualificado
+
+================================================
+Gerado por: NeoPedCalc - VancoCalc
+`;
+
+            // Copiar para area de transferencia
+            navigator.clipboard.writeText(relatorio).then(() => {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(() => {
+                // Fallback para navegadores mais antigos
+                const textArea = document.createElement('textarea');
+                textArea.value = relatorio;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function (event) {
+            const modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — VancoCalc (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta calculadora estima a Área Sob a Curva (AUC) da vancomicina em crianças e neonatos, auxiliando no
+                    monitoramento terapêutico e ajuste de dose.</p>
+
+                <h3>Fórmulas Utilizadas</h3>
+                <div class="formula-box">
+                    <strong>1. Clearance (CL):</strong><br>
+                    Criança: CL = (0.413 × Altura) / Creatinina<br>
+                    Neonato: CL = (0.34 × Peso × 1000) / Creatinina<br><br>
+
+                    <strong>2. Taxa de Eliminação (kel):</strong><br>
+                    kel = ln(Cpico / Cvale) / Tempo<br><br>
+
+                    <strong>3. Volume de Distribuição (Vd):</strong><br>
+                    Criança: Vd = 0.7 × CL<br>
+                    Neonato: Vd = 0.9 × Peso<br><br>
+
+                    <strong>4. Área Sob a Curva (AUC):</strong><br>
+                    AUC = [(Cpico + Cvale) / 2] × Intervalo de Dosagem
+                </div>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Selecione a faixa etária:</strong> Criança ou Neonato</li>
+                    <li><strong>Preencha os dados do paciente:</strong>
+                        <ul>
+                            <li>Criança: Idade (anos), Altura (cm), Peso (kg), Creatinina sérica (mg/dL)</li>
+                            <li>Neonato: Idade pós-natal (dias), Peso (kg), Creatinina sérica (mg/dL)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Informe os níveis séricos:</strong>
+                        <ul>
+                            <li>Concentração de Pico (mg/L): Nível após a infusão</li>
+                            <li>Concentração de Vale (mg/L): Nível antes da próxima dose</li>
+                            <li>Tempo entre pico e vale (horas)</li>
+                            <li>Intervalo de dosagem (horas): Geralmente 12 ou 24 horas</li>
+                        </ul>
+                    </li>
+                    <li>Clique em <strong>"Calcular AUC"</strong> para obter os resultados</li>
+                </ol>
+
+                <h3>Interpretação dos Resultados</h3>
+                <ul>
+                    <li><strong>Clearance (CL):</strong> Capacidade de eliminar a vancomicina
+                        <ul>
+                            <li>CL < 30 mL/min: Função renal reduzida - risco de acúmulo</li>
+                            <li>CL ≥ 30 mL/min: Função renal preservada</li>
+                        </ul>
+                    </li>
+                    <li><strong>Volume de Distribuição (Vd):</strong> Espaço de distribuição do fármaco
+                        <ul>
+                            <li>Vd > 10 L: Alta distribuição - considerar dose de ataque maior</li>
+                            <li>Vd ≤ 10 L: Distribuição esperada</li>
+                        </ul>
+                    </li>
+                    <li><strong>Taxa de Eliminação (kel):</strong> Velocidade de eliminação
+                        <ul>
+                            <li>kel < 0.1 1/h: Eliminação lenta - ajustar frequência</li>
+                            <li>kel ≥ 0.1 1/h: Eliminação adequada</li>
+                        </ul>
+                    </li>
+                    <li><strong>AUC:</strong> Exposição total ao fármaco
+                        <ul>
+                            <li>AUC 400-600 mg·h/L: Faixa terapêutica ideal</li>
+                            <li>AUC < 400 mg·h/L: Subterapêutico - considerar aumento de dose</li>
+                            <li>AUC > 600 mg·h/L: Risco de toxicidade - considerar redução</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h3>Faixas Terapêuticas</h3>
+                <ul>
+                    <li><strong>Pico (1 hora pós-infusão):</strong> 25-40 mg/L</li>
+                    <li><strong>Vale (antes da próxima dose):</strong> 10-15 mg/L (infecções simples) ou 15-20 mg/L
+                        (infecções graves)</li>
+                    <li><strong>AUC/MIC:</strong> ≥ 400 mg·h/L para eficácia ótima</li>
+                </ul>
+
+                <h3>Considerações Importantes</h3>
+                <ul>
+                    <li>A vancomicina é eliminada principalmente pelos rins - ajustar dose em disfunção renal</li>
+                    <li>Monitorar creatinina sérica regularmente durante o tratamento</li>
+                    <li>Em neonatos, a função renal é imatura - clearance varia com idade gestacional e pós-natal</li>
+                    <li>Sinais de toxicidade: nefrotoxicidade, ototoxicidade, síndrome do homem vermelho</li>
+                    <li>Considerar dose de ataque (loading dose) em infecções graves: 20-25 mg/kg</li>
+                    <li>Nunca administrar vancomicina em bolus - sempre infundir em pelo menos 60 minutos</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Rybak MJ, et al. Therapeutic monitoring of vancomycin for serious methicillin-resistant
+                    Staphylococcus aureus infections: A revised consensus guideline and review by the American Society
+                    of Health-System Pharmacists, the Infectious Diseases Society of America, the Pediatric Infectious
+                    Diseases Society, and the Society of Infectious Diseases Pharmacists. Am J Health Syst Pharm.
+                    2020.<br>
+                    - Liu C, et al. Clinical practice guidelines by the Infectious Diseases Society of America for the
+                    treatment of methicillin-resistant Staphylococcus aureus infections in adults and children. Clin
+                    Infect Dis. 2011.<br>
+                    - Young TE, Mangum B. Neofax 2024: A Manual of Drugs Used in Neonatal Care. 37th ed. 2024.
+                </div>
+            </div>
+        </div>
+    </div>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+
+</html>

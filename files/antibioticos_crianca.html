@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>NeoPedCalc — Antibióticos pediátricos (educativo)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            margin: 0 0 15px 0;
+            color: #111;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .alert-box {
+            background: #fff3cd;
+            border: 1px solid #e5e7eb;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .alert-box h3 { margin: 0 0 5px 0; font-size: 15px; }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .result-card {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .result-card h3 {
+            font-size: 12px;
+            color: #666;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: 900;
+            color: #111;
+        }
+
+        .result-description {
+            font-size: 12px;
+            color: #374151;
+            margin-top: 4px;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #e5e7eb;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        .info {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .patient-info {
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #2e7d32;
+        }
+
+        .observacoes {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .action-btn, .btn {
+            background: #111;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #374151;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        /* Modal Styles */
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(17, 17, 17, 0.1);
+            color: #111;
+            border: 2px solid #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-info:hover {
+            background: #111;
+            color: #fff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 { margin: 0; font-size: 22px; }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover { transform: rotate(90deg); }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child { margin-top: 0; }
+        .modal-body p { line-height: 1.6; margin-bottom: 15px; color: #34495e; }
+        .modal-body ul, .modal-body ol { margin: 10px 0; padding-left: 25px; }
+        .modal-body li { margin-bottom: 8px; line-height: 1.5; }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong { color: #2c3e50; }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong { color: #27ae60; }
+
+        @media (max-width: 768px) {
+            .modal { padding: 10px; }
+            .modal-content { width: 95%; max-height: 95vh; }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+
+<body>
+    <header>
+        <h1>Antibióticos Criança</h1>
+        <p>NeoPedCalc - Calculadora Baseada em Peso + Idade + Função Renal (88+ Medicamentos)</p>
+        <div class="header-actions">
+            <button class="btn-info" onclick="abrirModal()">
+                Como usar            </button>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="card">
+
+                <div class="form-container">
+                    <form id="antibioticoForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="peso">Peso (kg):</label>
+                                <input type="number" id="peso" step="0.001" min="0.1" max="200" placeholder="Ex: 15.500"
+                                    required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="idade">Idade (anos):</label>
+                                <input type="number" id="idade" min="0" max="18" step="0.1" placeholder="Ex: 5.2"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="creatinina">Creatinina Plasmática (mg/dl):</label>
+                                <input type="number" id="creatinina" step="0.01" min="0.1" max="10"
+                                    placeholder="Ex: 0.5">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="altura">Altura (cm):</label>
+                                <input type="number" id="altura" min="30" max="200" placeholder="Ex: 110">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="antibiotico">Medicamento:</label>
+                            <select id="antibiotico" required>
+                                <option value="">Selecione o medicamento</option>
+                                <optgroup label="Antivirais">
+                                    <option value="aciclovir">Aciclovir</option>
+                                    <option value="abacavir">Abacavir</option>
+                                    <option value="amprenavir">Amprenavir</option>
+                                    <option value="amantadina">Amantadina</option>
+                                    <option value="efavirez">Efavirez</option>
+                                    <option value="fanciclovir">Fanciclovir</option>
+                                    <option value="ganciclovir">Ganciclovir</option>
+                                    <option value="indinavir">Indinavir</option>
+                                    <option value="foscarnet">Foscarnet</option>
+                                    <option value="oseltamivir">Oseltamivir</option>
+                                    <option value="zidovudina">Zidovudina (AZT)</option>
+                                </optgroup>
+                                <optgroup label="Penicilinas">
+                                    <option value="ampicilina">Ampicilina</option>
+                                    <option value="amoxacilina">Amoxacilina</option>
+                                    <option value="amoxacilina_clavulanato">Amoxacilina-Clavulanato</option>
+                                    <option value="ampicilina_sulbactam">Ampicilina Sulbactam</option>
+                                    <option value="carbenicilina">Carbenicilina</option>
+                                    <option value="nafcillina">Nafcillina</option>
+                                    <option value="oxacilina">Oxacilina</option>
+                                    <option value="penicilina_g">Penicilina G</option>
+                                    <option value="penicilina_v">Penicilina V</option>
+                                    <option value="piperacilina">Piperacilina</option>
+                                    <option value="ticarcilina">Ticarcilina</option>
+                                </optgroup>
+                                <optgroup label="Aminoglicosídeos">
+                                    <option value="amicacina">Amicacina</option>
+                                    <option value="gentamicina">Gentamicina</option>
+                                    <option value="kanamicina">Kanamicina</option>
+                                    <option value="neomicina">Neomicina</option>
+                                    <option value="estreptomicina">Estreptomicina</option>
+                                    <option value="tobramicina">Tobramicina</option>
+                                </optgroup>
+                                <optgroup label="Cefalosporinas">
+                                    <option value="cefazolina">Cefazolina</option>
+                                    <option value="cefalexina">Cefalexina</option>
+                                    <option value="cefalotina">Cefalotina</option>
+                                    <option value="cefadroxil">Cefadroxil</option>
+                                    <option value="cefaclor">Cefaclor</option>
+                                    <option value="cefuroxima">Cefuroxima</option>
+                                    <option value="cefoxitina">Cefoxitina</option>
+                                    <option value="cefotaxima">Cefotaxima</option>
+                                    <option value="ceftriaxona">Ceftriaxona</option>
+                                    <option value="ceftazidima">Ceftazidima</option>
+                                    <option value="cefepima">Cefepima</option>
+                                    <option value="cefixima">Cefixima</option>
+                                    <option value="cefoperazona">Cefoperazona</option>
+                                    <option value="cefpodoxima">Cefpodoxima</option>
+                                    <option value="cefprozil">Cefprozil</option>
+                                </optgroup>
+                                <optgroup label="Carbapenems">
+                                    <option value="imipenem">Imipenem</option>
+                                    <option value="meropenem">Meropenem</option>
+                                </optgroup>
+                                <optgroup label="Outros Antibióticos">
+                                    <option value="azitromicina">Azitromicina</option>
+                                    <option value="aztreonam">Aztreonam</option>
+                                    <option value="clindamicina">Clindamicina</option>
+                                    <option value="cloranfenicol">Cloranfenicol</option>
+                                    <option value="ciprofloxacino">Ciprofloxacino</option>
+                                    <option value="claritromicina">Claritromicina</option>
+                                    <option value="doxiciclina">Doxiciclina</option>
+                                    <option value="eritromicina">Eritromicina</option>
+                                    <option value="fosfomicina">Fosfomicina</option>
+                                    <option value="isoniazida">Isoniazida</option>
+                                    <option value="metronidazol">Metronidazol</option>
+                                    <option value="minociclina">Minociclina</option>
+                                    <option value="nitrofurantoina">Nitrofurantoina</option>
+                                    <option value="norfloxacin">Norfloxacin</option>
+                                    <option value="ofloxacino">Ofloxacino</option>
+                                    <option value="pefloxacina">Pefloxacina</option>
+                                    <option value="pentamidina">Pentamidina</option>
+                                    <option value="pirazinamida">Pirazinamida</option>
+                                    <option value="pirimetamina">Pirimetamina</option>
+                                    <option value="rifampicina">Rifampicina</option>
+                                    <option value="sulfadiazina">Sulfadiazina</option>
+                                    <option value="sulfametoxazol_trimetoprim">Sulfametoxazol+Trimetoprim</option>
+                                    <option value="sulfasalazina">Sulfasalazina</option>
+                                    <option value="vancomicina">Vancomicina</option>
+                                    <option value="teicoplanina">Teicoplanina</option>
+                                    <option value="polimixina_b">Polimixina B</option>
+                                    <option value="acido_nalidixico">Ácido Nalidíxico</option>
+                                </optgroup>
+                                <optgroup label="Antifúngicos">
+                                    <option value="anfotericina_b">Anfotericina B</option>
+                                    <option value="fluconazol">Fluconazol</option>
+                                    <option value="caspofungin">Caspofungin</option>
+                                    <option value="fluocitocina">Fluocitocina</option>
+                                    <option value="gliceofulvina">Gliceofulvina</option>
+                                    <option value="itraconazol">Itraconazol</option>
+                                </optgroup>
+                                <optgroup label="Biológicos">
+                                    <option value="palivizumab">Palivizumab (Synagis)</option>
+                                </optgroup>
+                                <optgroup label="Antiparasitários">
+                                    <option value="antimoniato_meglumina">Antimoniato de Meglumina</option>
+                                    <option value="albendazol">Albendazol</option>
+                                    <option value="cambendazol">Cambendazol</option>
+                                    <option value="piperazina">Piperazina</option>
+                                    <option value="palmoato_pirvinio">Palmoato de Pirvínio</option>
+                                    <option value="nimorazol">Nimorazol</option>
+                                    <option value="nitazoxanida">Nitazoxanida</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="indicacao">Indicação:</label>
+                            <select id="indicacao" required>
+                                <option value="">Selecione a indicação</option>
+                                <option value="padrao">Dosagem Padrão</option>
+                                <option value="meningite">Meningite</option>
+                                <option value="sepse">Sepse</option>
+                                <option value="pneumonia">Pneumonia</option>
+                                <option value="uti">UTI</option>
+                                <option value="imunossuprimido">Imunossuprimido</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn">Calcular Dosagem</button>
+                    </form>
+
+                    <div id="patientInfo" class="patient-info" style="display: none;">
+                        <strong>Informações do Paciente:</strong>
+                        <div id="patientDetails"></div>
+                    </div>
+
+                    <div id="resultado" style="display: none;">
+                        <div class="results-grid">
+                            <div class="result-card">
+                                <h3>Dosagem por Dose</h3>
+                                <div class="result-value" id="doseValue">0.0</div>
+                                <div class="result-description" id="doseUnit">mg</div>
+                            </div>
+
+                            <div class="result-card">
+                                <h3>Intervalo entre Doses</h3>
+                                <div class="result-value" id="intervaloValue">0</div>
+                                <div class="result-description">horas</div>
+                            </div>
+
+                            <div class="result-card">
+                                <h3>Dosagem Diária Total</h3>
+                                <div class="result-value" id="doseDiariaValue">0.0</div>
+                                <div class="result-description" id="doseDiariaUnit">mg/dia</div>
+                            </div>
+
+                            <div class="result-card">
+                                <h3>Dosagem por Peso</h3>
+                                <div class="result-value" id="dosePesoValue">0.0</div>
+                                <div class="result-description" id="dosePesoUnit">mg/kg/dose</div>
+                            </div>
+                        </div>
+                        <button type="button" id="gerarRelatorio" class="btn"
+                            style="margin-top: 20px; background: #28a745;">
+                            Copiar texto informativo
+                        </button>
+                    </div>
+
+                    <div id="observacoes" class="observacoes" style="display: none;">
+                        <strong>Observações e Precauções:</strong>
+                        <div id="observacoesTexto"></div>
+                    </div>
+
+                    <div class="warning">
+                        <strong>Atenção:</strong> Esta calculadora é apenas para fins educacionais.
+                        Sempre consulte as diretrizes clínicas atuais e um farmacêutico clínico para prescrições.
+                    </div>
+
+                    <div class="info">
+                        <strong>Considerações Importantes:</strong><br>
+                        • Ajustar dosagem baseado na função renal<br>
+                        • Monitorar níveis séricos quando indicado<br>
+                        • Considerar interações medicamentosas<br>
+                        • Verificar sensibilidade bacteriana<br>
+                        • Ajustar para idade e peso do paciente
+                    </div>
+                </div> <!-- End form-container -->
+            </div> <!-- End card -->
+
+            <div class="footer">
+                NeoPedCalc &copy; <span data-neoped-year></span> - Antibióticos Criança
+            </div>
+        </div> <!-- End wrap -->
+
+            <!-- Modal de Informações -->
+            <div id="modalInfo" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Como usar — Antibióticos pediátricos (educativo)</h2>
+                        <span class="close" onclick="fecharModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <h3>Objetivo (educativo)</h3>
+                        <p>Esta calculadora organiza parâmetros para estimativa educativa de dose de antibióticos pediátricos.
+                            O conteúdo é informativo e não substitui avaliação clínica, protocolo institucional ou prescrição.</p>
+
+                        <h3>Metodologia de Cálculo</h3>
+                        <div class="formula-box">
+                            <strong>Fórmula Geral:</strong><br>
+                            Dose Total = Peso (kg) × Dose por kg<br>
+                            Intervalo = Definido pela idade e função renal<br>
+                            Doses por dia = 24 horas / Intervalo (horas)<br>
+                            Dose diária total = Dose Total × Doses por dia<br><br>
+
+                            <strong>Ajuste por Função Renal:</strong><br>
+                            Em caso de disfunção renal, as doses são ajustadas conforme:<br>
+                            - Clearance de creatinina (CrCl)<br>
+                            - Nível de creatinina sérica<br>
+                            - Idade e peso corporal
+                        </div>
+
+                        <h3>Categorização do Paciente</h3>
+                        <p>As crianças são categorizadas por idade:</p>
+                        <ul>
+                            <li><strong>Lactentes (1-12 meses):</strong> Doses ajustadas para maturação renal e hepática
+                            </li>
+                            <li><strong>Pré-escolares (1-5 anos):</strong> Doses baseadas em peso e idade</li>
+                            <li><strong>Escolares (6-12 anos):</strong> Doses intermediárias entre crianças e
+                                adolescentes</li>
+                            <li><strong>Adolescentes (13-17 anos):</strong> Doses próximas às de adultos</li>
+                        </ul>
+
+                        <h3>Instruções de Uso</h3>
+                        <ol>
+                            <li><strong>Idade (anos):</strong> Informe a idade da criança em anos com 1 casa decimal
+                                (ex: 4.5 anos)</li>
+                            <li><strong>Peso (kg):</strong> Informe o peso atual em quilogramas com até 3 casas decimais
+                                (ex: 18.750 kg)</li>
+                            <li><strong>Creatinina sérica (mg/dL):</strong> Informe o valor da creatinina sérica (ex:
+                                0.8 mg/dL)</li>
+                            <li><strong>Medicamento:</strong> Selecione o medicamento desejado da lista (88+ opções
+                                disponíveis)</li>
+                            <li><strong>Indicação:</strong> Selecione a indicação clínica específica (se aplicável)</li>
+                            <li>Clique em <strong>"Calcular Dose"</strong> para obter os resultados</li>
+                        </ol>
+
+                        <h3>Interpretação dos Resultados</h3>
+                        <ul>
+                            <li><strong>Dose por Peso:</strong> Dose recomendada por quilograma de peso corporal</li>
+                            <li><strong>Dose Total:</strong> Dose total a ser administrada em cada aplicação</li>
+                            <li><strong>Intervalo:</strong> Tempo entre as doses (em horas)</li>
+                            <li><strong>Doses por Dia:</strong> Número de administrações diárias</li>
+                            <li><strong>Dose Diária Total:</strong> Quantidade total do medicamento administrada em 24
+                                horas</li>
+                            <li><strong>Clearance de Creatinina:</strong> Estimativa da função renal (quando aplicável)
+                            </li>
+                        </ul>
+
+                        <h3>Considerações Importantes</h3>
+                        <ul>
+                            <li>As doses são ajustadas conforme a maturação renal e hepática da criança</li>
+                            <li>Crianças menores têm função renal imatura - doses podem ser ajustadas</li>
+                            <li>Conforme a criança cresce, as doses são reavaliadas</li>
+                            <li>Monitorar função renal através de creatinina sérica e clearance estimado</li>
+                            <li>Considerar ajustes em casos de disfunção renal ou hepática</li>
+                            <li>Alguns medicamentos têm indicações especiais (meningite, pneumonia, infecções graves)
+                            </li>
+                            <li>Reavaliar doses regularmente conforme o paciente cresce e ganha peso</li>
+                            <li>Considerar interações medicamentosas</li>
+                            <li>Monitorar sinais de toxicidade específicos de cada medicamento</li>
+                        </ul>
+
+                        <h3>Principais Categorias de Medicamentos</h3>
+                        <ul>
+                            <li><strong>Antibióticos Beta-lactâmicos:</strong> Penicilinas, Cefalosporinas,
+                                Carbapenêmicos</li>
+                            <li><strong>Glicopeptídeos:</strong> Vancomicina, Teicoplanina</li>
+                            <li><strong>Aminoglicosídeos:</strong> Gentamicina, Amicacina, Tobramicina</li>
+                            <li><strong>Macrolídeos:</strong> Azitromicina, Claritromicina, Eritromicina</li>
+                            <li><strong>Quinolonas:</strong> Ciprofloxacina, Levofloxacina</li>
+                            <li><strong>Outros:</strong> Clindamicina, Metronidazol, Trimetoprim-Sulfametoxazol</li>
+                        </ul>
+
+                        <h3>Ajuste de Dose por Função Renal</h3>
+                        <p>Para medicamentos com eliminação renal:</p>
+                        <ul>
+                            <li><strong>Função renal normal:</strong> Dose padrão</li>
+                            <li><strong>Insuficiência renal leve:</strong> Redução de 25-30% da dose</li>
+                            <li><strong>Insuficiência renal moderada:</strong> Redução de 50% da dose</li>
+                            <li><strong>Insuficiência renal grave:</strong> Redução de 75% da dose ou ajuste de
+                                intervalo</li>
+                        </ul>
+
+                        <div class="reference-box">
+                            <strong>Referências:</strong><br>
+                            - Taketomo CK, et al. Pediatric & Neonatal Dosage Handbook with International Trade Names
+                            Index. 29th ed. 2022.<br>
+                            - Bradley JS, et al. The management of community-acquired pneumonia in infants and children
+                            older than 3 months of age: clinical practice guidelines by the Pediatric Infectious
+                            Diseases Society and the Infectious Diseases Society of America. Clin Infect Dis. 2011.<br>
+                            - Anderson BJ, Holford NHG. Mechanistic basis of using body size and maturation to predict
+                            clearance in humans. Drug Metab Pharmacokinet. 2009.<br>
+                            - Allegaert K, et al. Clinical pharmacology in neonates and young infants: the benefit of a
+                            population-tailored approach. Expert Rev Clin Pharmacol. 2012.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                // Base de dados de medicamentos para crianças
+                const medicamentos = {
+                    // ANTIVIRAIS
+                    aciclovir: {
+                        dose: "250-500",
+                        unidade: "mg/m2",
+                        intervalo: 8,
+                        observacoes: "Em meningo-encefalite = dose a cada 6 hr",
+                        ajuste_renal: ">50ml/min 100%",
+                        classe: "Antiviral"
+                    },
+                    abacavir: {
+                        dose: "8",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "Dose máxima 300 mg/dose. Cp 300 mg sol 20mg/ml",
+                        ajuste_renal: "Não requer",
+                        classe: "Antiviral"
+                    },
+                    ganciclovir: {
+                        dose: "2.5",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "Antiretroviral para citomegalovírus",
+                        ajuste_renal: ">50ml/min 50-100%",
+                        classe: "Antiviral"
+                    },
+                    oseltamivir: {
+                        dose: "30-75",
+                        unidade: "mg",
+                        intervalo: 12,
+                        observacoes: "<15 kg 30 mg, 2 vezes/dia > 15 a 23 kg 45 mg, 2 vezes/dia > 23 a 40 kg 60 mg, 2 vezes/dia > 40 kg 75 mg, 2 vezes/dia",
+                        ajuste_renal: "Tratar 5 dias",
+                        classe: "Antiviral"
+                    },
+                    zidovudina: {
+                        dose: "2",
+                        unidade: "mg/kg",
+                        intervalo: 6,
+                        observacoes: "sol.oral 10mg/ml. Rn filho de mãe HIV positivo por 6 semanas 1a. dose com 6 hs de vida",
+                        ajuste_renal: ">50ml/min 100%",
+                        classe: "Antiviral"
+                    },
+
+                    // PENICILINAS
+                    ampicilina: {
+                        dose: "25-100",
+                        unidade: "mg/kg",
+                        intervalo: 6,
+                        observacoes: "meningite: dose x 2. Dose max. 2-3g/dia",
+                        ajuste_renal: ">50ml/min 6h"
+                    },
+                    amoxacilina: {
+                        dose: "8.5-16.5",
+                        unidade: "mg/kg",
+                        intervalo: 8,
+                        observacoes: "Dose alta 80-90 mg/kg/dia VO 2xx/dia. Dose max. 875mg/dose",
+                        ajuste_renal: ">50ml/min 8h",
+                        classe: "Penicilina"
+                    },
+                    amoxacilina_clavulanato: {
+                        dose: "12.5-25",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "Dose alta 80-90 mg/kg/dia VO 2xx/dia. Dose max. 875mg/dose, para pneumo resistente",
+                        ajuste_renal: ">50ml/min 8h",
+                        classe: "Penicilina"
+                    },
+                    penicilina_g: {
+                        dose: "25000-100000",
+                        unidade: "UI/kg",
+                        intervalo: 6,
+                        observacoes: "Dose máxima 2-4 milhões UI/dia",
+                        ajuste_renal: ">50ml/min 6h",
+                        classe: "Penicilina"
+                    },
+                    nafcillina: {
+                        dose: "25-50",
+                        unidade: "mg/kg",
+                        intervalo: 6,
+                        observacoes: "Cobertura para S. aureus",
+                        ajuste_renal: ">50ml/min 6h",
+                        classe: "Penicilina"
+                    },
+                    oxacilina: {
+                        dose: "25-50",
+                        unidade: "mg/kg",
+                        intervalo: 6,
+                        observacoes: "Cobertura para S. aureus",
+                        ajuste_renal: ">50ml/min 6h",
+                        classe: "Penicilina"
+                    },
+
+                    // AMINOGLICOSÍDEOS
+                    amicacina: {
+                        dose: "5-7.5",
+                        unidade: "mg/kg",
+                        intervalo: 8,
+                        observacoes: "Ampola 100,200 ou 500mg/2ml. Monitorar níveis séricos",
+                        ajuste_renal: ">50ml/min 8-12h",
+                        classe: "Aminoglicosídeo"
+                    },
+                    gentamicina: {
+                        dose: "2.5-5",
+                        unidade: "mg/kg",
+                        intervalo: 8,
+                        observacoes: "Monitorar níveis séricos obrigatório",
+                        ajuste_renal: ">50ml/min 8-12h",
+                        classe: "Aminoglicosídeo"
+                    },
+                    tobramicina: {
+                        dose: "2.5-5",
+                        unidade: "mg/kg",
+                        intervalo: 8,
+                        observacoes: "Monitorar níveis séricos obrigatório",
+                        ajuste_renal: ">50ml/min 8-12h",
+                        classe: "Aminoglicosídeo"
+                    },
+
+                    // CEFALOSPORINAS
+                    cefazolina: {
+                        dose: "20-40",
+                        unidade: "mg/kg",
+                        intervalo: 6,
+                        observacoes: "Cobertura para Gram-positivos",
+                        ajuste_renal: ">50ml/min 6-8h",
+                        classe: "Cefalosporina"
+                    },
+                    cefotaxima: {
+                        dose: "25-50",
+                        unidade: "mg/kg",
+                        intervalo: 8,
+                        observacoes: "Boa penetração no SNC",
+                        ajuste_renal: ">50ml/min 8h",
+                        classe: "Cefalosporina"
+                    },
+                    ceftriaxona: {
+                        dose: "25-50",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "meningite: = dose cada 12 hr, 100mg/kg. Monitorizar Bilirrubinas e Vit K",
+                        ajuste_renal: ">50ml/min 100%",
+                        classe: "Cefalosporina"
+                    },
+                    ceftazidima: {
+                        dose: "25-50",
+                        unidade: "mg/kg",
+                        intervalo: 8,
+                        observacoes: "Excelente cobertura para Pseudomonas",
+                        ajuste_renal: ">50ml/min 8h",
+                        classe: "Cefalosporina"
+                    },
+                    cefepima: {
+                        dose: "25-50",
+                        unidade: "mg/kg",
+                        intervalo: 8,
+                        observacoes: "Cobertura ampla incluindo Pseudomonas",
+                        ajuste_renal: ">50ml/min 8h",
+                        classe: "Cefalosporina"
+                    },
+
+                    // CARBAPENEMS
+                    imipenem: {
+                        dose: "15-25",
+                        unidade: "mg/kg",
+                        intervalo: 6,
+                        observacoes: "Cobertura ampla incluindo anaeróbios",
+                        ajuste_renal: ">50ml/min 6h",
+                        classe: "Carbapenem"
+                    },
+                    meropenem: {
+                        dose: "20-40",
+                        unidade: "mg/kg",
+                        intervalo: 8,
+                        observacoes: "Reservado para infecções graves e multirresistentes",
+                        ajuste_renal: ">50ml/min 8h",
+                        classe: "Carbapenem"
+                    },
+
+                    // OUTROS ANTIBIÓTICOS
+                    azitromicina: {
+                        dose: "10-12",
+                        unidade: "mg/kg",
+                        intervalo: 24,
+                        observacoes: "Dose maxima de 500 mg/dia",
+                        ajuste_renal: ">50ml/min 100%",
+                        classe: "Macrolídeo"
+                    },
+                    clindamicina: {
+                        dose: "5-7.5",
+                        unidade: "mg/kg",
+                        intervalo: 6,
+                        observacoes: "Não penetra o SNC. Vigilância gastrointestinal",
+                        ajuste_renal: ">50ml/min 100%",
+                        classe: "Lincosamida"
+                    },
+                    cloranfenicol: {
+                        dose: "12.5-25",
+                        unidade: "mg/kg",
+                        intervalo: 6,
+                        observacoes: "Cobertura para Gram-positivos e negativos. Monitorar níveis séricos",
+                        ajuste_renal: ">50ml/min 6h",
+                        classe: "Fenicol"
+                    },
+                    ciprofloxacino: {
+                        dose: "10-15",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "Reservado para infecções graves. Não usar em <18 anos rotineiramente",
+                        ajuste_renal: ">50ml/min 12h",
+                        classe: "Quinolona"
+                    },
+                    eritromicina: {
+                        dose: "10-15",
+                        unidade: "mg/kg",
+                        intervalo: 6,
+                        observacoes: "Cobertura para Gram-positivos e alguns Gram-negativos",
+                        ajuste_renal: ">50ml/min 6h",
+                        classe: "Macrolídeo"
+                    },
+                    metronidazol: {
+                        dose: "7.5-15",
+                        unidade: "mg/kg",
+                        intervalo: 8,
+                        observacoes: "Antibiótico para anaeróbios. Cobertura para Bacteroides e Clostridium",
+                        ajuste_renal: ">50ml/min 8h",
+                        classe: "Nitroimidazol"
+                    },
+                    rifampicina: {
+                        dose: "10-20",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "Cobertura para Gram-positivos e alguns Gram-negativos",
+                        ajuste_renal: ">50ml/min 12h",
+                        classe: "Rifamicina"
+                    },
+                    vancomicina: {
+                        dose: "3-6",
+                        unidade: "mg/kg",
+                        intervalo: 6,
+                        observacoes: "Infusão lenta +/- 1 hr. Nefro e ototox. Numerosas incompatibilidades. Inf.graves ou SNC 15mg/kg/dose",
+                        ajuste_renal: ">50ml/min 6-12h",
+                        classe: "Glicopeptídeo"
+                    },
+
+                    // ANTIFÚNGICOS
+                    anfotericina_b: {
+                        dose: "0.5-1",
+                        unidade: "mg/kg",
+                        intervalo: 24,
+                        observacoes: "Antifúngico de amplo espectro. Cobertura para fungos filamentosos",
+                        ajuste_renal: "Não requer",
+                        classe: "Antifúngico"
+                    },
+                    fluconazol: {
+                        dose: "10-15",
+                        unidade: "mg/kg",
+                        intervalo: 24,
+                        observacoes: "Infec. Graves 12mg/kg/dose 1xx/dia",
+                        ajuste_renal: ">50ml/min 100%",
+                        classe: "Antifúngico"
+                    },
+                    caspofungin: {
+                        dose: "50",
+                        unidade: "mg/m2",
+                        intervalo: 24,
+                        observacoes: "Antifúngico equinocandina. Cobertura para Candida e Aspergillus",
+                        ajuste_renal: "Não requer",
+                        classe: "Antifúngico"
+                    },
+
+                    // BIOLÓGICOS
+                    palivizumab: {
+                        dose: "15",
+                        unidade: "mg/kg",
+                        intervalo: 720,
+                        observacoes: "Anticorpo monoclonal. Para prevenção de VSR. Dose mensal",
+                        ajuste_renal: "Não requer",
+                        classe: "Biológico"
+                    },
+
+                    // MEDICAMENTOS ADICIONAIS QUE ESTAVAM FALTANDO
+                    amprenavir: {
+                        dose: "20",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "Adolesc. >50 Kg e adultos 1200mg/dose. Cp de 50 e 100mg Sol oral 15mg/ml",
+                        ajuste_renal: "Não requer",
+                        classe: "Antiviral"
+                    },
+                    amantadina: {
+                        dose: "5",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "Tratamento e proflaxia Influenza A. Cp 100 mg.Crianças >9 anos 200mg/dia",
+                        ajuste_renal: "Não requer",
+                        classe: "Antiviral"
+                    },
+                    efavirez: {
+                        dose: "12",
+                        unidade: "mg/kg",
+                        intervalo: 24,
+                        observacoes: "Cp de 50 e 100mg e 200mg. Sol oral 30mg/ml. Pode arredondar a dose",
+                        ajuste_renal: "Não requer",
+                        classe: "Antiviral"
+                    },
+                    fanciclovir: {
+                        dose: "250",
+                        unidade: "mg",
+                        intervalo: 8,
+                        observacoes: "Para adolescentes para herpes genital 250mg de 8/8 hs por 10 dias",
+                        ajuste_renal: "Não requer",
+                        classe: "Antiviral"
+                    },
+                    indinavir: {
+                        dose: "250-500",
+                        unidade: "mg/m2",
+                        intervalo: 8,
+                        observacoes: ">3 anos 250 a 500 mg/m2 VO a cada 8 horas",
+                        ajuste_renal: "Não requer",
+                        classe: "Antiviral"
+                    },
+                    foscarnet: {
+                        dose: "60",
+                        unidade: "mg/kg",
+                        intervalo: 8,
+                        observacoes: "Alternativa para I ganciclovir para CMV, retinite pelo CMV",
+                        ajuste_renal: "Ajustar para função renal",
+                        classe: "Antiviral"
+                    },
+                    ampicilina_sulbactam: {
+                        dose: "25-100",
+                        unidade: "mg/kg",
+                        intervalo: 6,
+                        observacoes: "Doses baseadas na ampicilina. Doses maiores para infecções mais graves",
+                        ajuste_renal: ">50ml/min 6h",
+                        classe: "Penicilina"
+                    },
+                    carbenicilina: {
+                        dose: "50-600",
+                        unidade: "mg/kg",
+                        intervalo: 4,
+                        observacoes: "Ampola 1g. Dose máxima 42 g/dia",
+                        ajuste_renal: "Ajustar para função renal",
+                        classe: "Penicilina"
+                    },
+                    penicilina_v: {
+                        dose: "25-50",
+                        unidade: "mg/kg",
+                        intervalo: 6,
+                        observacoes: "Penicilina oral. Cobertura para estreptococos",
+                        ajuste_renal: "Não requer",
+                        classe: "Penicilina"
+                    },
+                    ticarcilina: {
+                        dose: "50-100",
+                        unidade: "mg/kg",
+                        intervalo: 6,
+                        observacoes: "Penicilina de amplo espectro. Cobertura para Pseudomonas",
+                        ajuste_renal: ">50ml/min 6h",
+                        classe: "Penicilina"
+                    },
+                    kanamicina: {
+                        dose: "5-7.5",
+                        unidade: "mg/kg",
+                        intervalo: 8,
+                        observacoes: "Aminoglicosídeo. Monitorar níveis séricos",
+                        ajuste_renal: ">50ml/min 8-12h",
+                        classe: "Aminoglicosídeo"
+                    },
+                    neomicina: {
+                        dose: "5-10",
+                        unidade: "mg/kg",
+                        intervalo: 6,
+                        observacoes: "Aminoglicosídeo. Uso principalmente tópico e oral",
+                        ajuste_renal: "Ajustar para função renal",
+                        classe: "Aminoglicosídeo"
+                    },
+                    estreptomicina: {
+                        dose: "15-20",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "Aminoglicosídeo. Principalmente para tuberculose",
+                        ajuste_renal: ">50ml/min 12h",
+                        classe: "Aminoglicosídeo"
+                    },
+                    cefalexina: {
+                        dose: "6.25-25",
+                        unidade: "mg/kg",
+                        intervalo: 6,
+                        observacoes: "Pode ser usado a cada 8 ou 12hs em infecções não complicadas",
+                        ajuste_renal: ">50ml/min 6h",
+                        classe: "Cefalosporina"
+                    },
+                    cefalotina: {
+                        dose: "20-40",
+                        unidade: "mg/kg",
+                        intervalo: 6,
+                        observacoes: "Não penetra no SNC",
+                        ajuste_renal: ">50ml/min 6-8h",
+                        classe: "Cefalosporina"
+                    },
+                    cefadroxil: {
+                        dose: "15",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "Estreptococcus do grupo A pode ser administrado 1xx/dia",
+                        ajuste_renal: ">50ml/min 12h",
+                        classe: "Cefalosporina"
+                    },
+                    cefaclor: {
+                        dose: "6.5-13.5",
+                        unidade: "mg/kg",
+                        intervalo: 8,
+                        observacoes: "Otite media e farinfite pode ser de 12/12 hs",
+                        ajuste_renal: ">50ml/min 100%",
+                        classe: "Cefalosporina"
+                    },
+                    cefuroxima: {
+                        dose: "15-30",
+                        unidade: "mg/kg",
+                        intervalo: 8,
+                        observacoes: "Cefalosporina de segunda geração",
+                        ajuste_renal: ">50ml/min 8h",
+                        classe: "Cefalosporina"
+                    },
+                    cefoxitina: {
+                        dose: "20-40",
+                        unidade: "mg/kg",
+                        intervalo: 6,
+                        observacoes: "Cefamicina. Cobertura para anaeróbios",
+                        ajuste_renal: ">50ml/min 6h",
+                        classe: "Cefalosporina"
+                    },
+                    cefixima: {
+                        dose: "8",
+                        unidade: "mg/kg",
+                        intervalo: 24,
+                        observacoes: "Cefalosporina oral de terceira geração",
+                        ajuste_renal: "Não requer",
+                        classe: "Cefalosporina"
+                    },
+                    cefoperazona: {
+                        dose: "25-50",
+                        unidade: "mg/kg",
+                        intervalo: 8,
+                        observacoes: "Cefalosporina de terceira geração com cobertura para Pseudomonas",
+                        ajuste_renal: ">50ml/min 8h",
+                        classe: "Cefalosporina"
+                    },
+                    cefpodoxima: {
+                        dose: "5-10",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "Cefalosporina oral de terceira geração",
+                        ajuste_renal: "Não requer",
+                        classe: "Cefalosporina"
+                    },
+                    cefprozil: {
+                        dose: "7.5-15",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "Cefalosporina oral de segunda geração",
+                        ajuste_renal: "Não requer",
+                        classe: "Cefalosporina"
+                    },
+                    ciprofloxacino: {
+                        dose: "10-15",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "Reservado para infecções graves. Não usar em <18 anos rotineiramente",
+                        ajuste_renal: ">50ml/min 12h",
+                        classe: "Quinolona"
+                    },
+                    claritromicina: {
+                        dose: "7.5-15",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "Macrolídeo. Cobertura para Gram-positivos e alguns Gram-negativos",
+                        ajuste_renal: ">50ml/min 12h",
+                        classe: "Macrolídeo"
+                    },
+                    doxiciclina: {
+                        dose: "2-4",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "Tetraciclina. Não usar em <8 anos rotineiramente",
+                        ajuste_renal: "Não requer",
+                        classe: "Tetraciclina"
+                    },
+                    isoniazida: {
+                        dose: "10-15",
+                        unidade: "mg/kg",
+                        intervalo: 24,
+                        observacoes: "Antituberculoso. Dose máxima 300mg/dia",
+                        ajuste_renal: "Não requer",
+                        classe: "Antituberculoso"
+                    },
+                    minociclina: {
+                        dose: "2-4",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "Tetraciclina. Não usar em <8 anos rotineiramente",
+                        ajuste_renal: "Não requer",
+                        classe: "Tetraciclina"
+                    },
+                    nitrofurantoina: {
+                        dose: "1-2",
+                        unidade: "mg/kg",
+                        intervalo: 6,
+                        observacoes: "Antibiótico para infecções urinárias",
+                        ajuste_renal: "Não usar se clearance <60ml/min",
+                        classe: "Nitrofurano"
+                    },
+                    norfloxacin: {
+                        dose: "10-15",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "Quinolona. Reservado para infecções graves",
+                        ajuste_renal: ">50ml/min 12h",
+                        classe: "Quinolona"
+                    },
+                    ofloxacino: {
+                        dose: "10-15",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "Quinolona. Reservado para infecções graves",
+                        ajuste_renal: ">50ml/min 12h",
+                        classe: "Quinolona"
+                    },
+                    pefloxacina: {
+                        dose: "10-15",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "Quinolona. Reservado para infecções graves",
+                        ajuste_renal: ">50ml/min 12h",
+                        classe: "Quinolona"
+                    },
+                    pentamidina: {
+                        dose: "4",
+                        unidade: "mg/kg",
+                        intervalo: 24,
+                        observacoes: "Antiparasitário. Para Pneumocystis jirovecii",
+                        ajuste_renal: "Ajustar para função renal",
+                        classe: "Antiparasitário"
+                    },
+                    pirazinamida: {
+                        dose: "20-30",
+                        unidade: "mg/kg",
+                        intervalo: 24,
+                        observacoes: "Antituberculoso. Dose máxima 2g/dia",
+                        ajuste_renal: "Não requer",
+                        classe: "Antituberculoso"
+                    },
+                    pirimetamina: {
+                        dose: "1-2",
+                        unidade: "mg/kg",
+                        intervalo: 24,
+                        observacoes: "Antiparasitário. Para toxoplasmose",
+                        ajuste_renal: "Não requer",
+                        classe: "Antiparasitário"
+                    },
+                    sulfadiazina: {
+                        dose: "25-50",
+                        unidade: "mg/kg",
+                        intervalo: 6,
+                        observacoes: "Sulfonamida. Para toxoplasmose",
+                        ajuste_renal: "Ajustar para função renal",
+                        classe: "Sulfonamida"
+                    },
+                    sulfametoxazol_trimetoprim: {
+                        dose: "8-12",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "Sulfonamida + Trimetoprim. Para Pneumocystis jirovecii",
+                        ajuste_renal: "Ajustar para função renal",
+                        classe: "Sulfonamida"
+                    },
+                    sulfasalazina: {
+                        dose: "25-50",
+                        unidade: "mg/kg",
+                        intervalo: 6,
+                        observacoes: "Sulfonamida. Para doença inflamatória intestinal",
+                        ajuste_renal: "Ajustar para função renal",
+                        classe: "Sulfonamida"
+                    },
+                    teicoplanina: {
+                        dose: "6-10",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "Glicopeptídeo. Alternativa à vancomicina",
+                        ajuste_renal: ">50ml/min 12h",
+                        classe: "Glicopeptídeo"
+                    },
+                    polimixina_b: {
+                        dose: "1.5-2.5",
+                        unidade: "mg/kg",
+                        intervalo: 8,
+                        observacoes: "Polimixina. Para Gram-negativos resistentes",
+                        ajuste_renal: "Ajustar para função renal",
+                        classe: "Polimixina"
+                    },
+                    acido_nalidixico: {
+                        dose: "12.5",
+                        unidade: "mg/kg",
+                        intervalo: 6,
+                        observacoes: "Quinolona. Para infecções urinárias",
+                        ajuste_renal: "Não requer",
+                        classe: "Quinolona"
+                    },
+                    anfotericina_b: {
+                        dose: "0.5-1",
+                        unidade: "mg/kg",
+                        intervalo: 24,
+                        observacoes: "Antifúngico de amplo espectro. Cobertura para fungos filamentosos",
+                        ajuste_renal: "Não requer",
+                        classe: "Antifúngico"
+                    },
+                    caspofungin: {
+                        dose: "50",
+                        unidade: "mg/m2",
+                        intervalo: 24,
+                        observacoes: "Antifúngico equinocandina. Cobertura para Candida e Aspergillus",
+                        ajuste_renal: "Não requer",
+                        classe: "Antifúngico"
+                    },
+                    fluocitocina: {
+                        dose: "5",
+                        unidade: "mg/kg",
+                        intervalo: 6,
+                        observacoes: "Antifúngico. Usado em associação com anfotericina B",
+                        ajuste_renal: "Ajustar para função renal",
+                        classe: "Antifúngico"
+                    },
+                    gliceofulvina: {
+                        dose: "10-20",
+                        unidade: "mg/kg",
+                        intervalo: 24,
+                        observacoes: "Antifúngico oral. Para infecções fúngicas superficiais",
+                        ajuste_renal: "Não requer",
+                        classe: "Antifúngico"
+                    },
+                    itraconazol: {
+                        dose: "5-10",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "Antifúngico oral. Cobertura para Candida e Aspergillus",
+                        ajuste_renal: "Não requer",
+                        classe: "Antifúngico"
+                    },
+                    antimoniato_meglumina: {
+                        dose: "20",
+                        unidade: "mg/kg",
+                        intervalo: 24,
+                        observacoes: "Antiparasitário. Para leishmaniose",
+                        ajuste_renal: "Ajustar para função renal",
+                        classe: "Antiparasitário"
+                    },
+                    albendazol: {
+                        dose: "15",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "Antiparasitário. Para helmintos",
+                        ajuste_renal: "Não requer",
+                        classe: "Antiparasitário"
+                    },
+                    cambendazol: {
+                        dose: "5",
+                        unidade: "mg/kg",
+                        intervalo: 24,
+                        observacoes: "Antiparasitário. Para helmintos",
+                        ajuste_renal: "Não requer",
+                        classe: "Antiparasitário"
+                    },
+                    piperazina: {
+                        dose: "75",
+                        unidade: "mg/kg",
+                        intervalo: 24,
+                        observacoes: "Antiparasitário. Para oxiúros e áscaris",
+                        ajuste_renal: "Não requer",
+                        classe: "Antiparasitário"
+                    },
+                    palmoato_pirvinio: {
+                        dose: "5",
+                        unidade: "mg/kg",
+                        intervalo: 24,
+                        observacoes: "Antiparasitário. Para oxiúros",
+                        ajuste_renal: "Não requer",
+                        classe: "Antiparasitário"
+                    },
+                    nimorazol: {
+                        dose: "10",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "Antiparasitário. Para amebíase",
+                        ajuste_renal: "Não requer",
+                        classe: "Antiparasitário"
+                    },
+                    nitazoxanida: {
+                        dose: "7.5",
+                        unidade: "mg/kg",
+                        intervalo: 12,
+                        observacoes: "Antiparasitário. Para giardíase e criptosporidiose",
+                        ajuste_renal: "Não requer",
+                        classe: "Antiparasitário"
+                    }
+                };
+
+                // Função para calcular superfície corporal
+                function calcularSuperficieCorporal(peso, altura) {
+                    return Math.sqrt((peso * altura) / 3600);
+                }
+
+                // Função para calcular clearance de creatinina (Schwartz)
+                function calcularClearanceCreatinina(altura, creatinina, idade) {
+                    const k = idade < 1 ? 0.33 : idade < 13 ? 0.45 : 0.55;
+                    return (k * altura) / creatinina;
+                }
+
+                // Função para atualizar informações do paciente
+                function updatePatientInfo() {
+                    const peso = parseFloat(document.getElementById('peso').value);
+                    const idade = parseFloat(document.getElementById('idade').value);
+                    const creatinina = parseFloat(document.getElementById('creatinina').value);
+                    const altura = parseFloat(document.getElementById('altura').value);
+
+                    if (peso && idade && creatinina && altura) {
+                        const superficie = calcularSuperficieCorporal(peso, altura);
+                        const clearance = calcularClearanceCreatinina(altura, creatinina, idade);
+
+                        document.getElementById('patientDetails').innerHTML = `
+                    <strong>Peso:</strong> ${peso} kg<br>
+                    <strong>Idade:</strong> ${idade} anos<br>
+                    <strong>Altura:</strong> ${altura} cm<br>
+                    <strong>Superfície Corporal:</strong> ${superficie.toFixed(2)} m²<br>
+                    <strong>Clearance de Creatinina:</strong> ${clearance.toFixed(1)} ml/min
+                `;
+                        document.getElementById('patientInfo').style.display = 'block';
+                    }
+                }
+
+                // Event listeners para atualizar informações em tempo real
+                document.getElementById('peso').addEventListener('input', updatePatientInfo);
+                document.getElementById('idade').addEventListener('input', updatePatientInfo);
+                document.getElementById('creatinina').addEventListener('input', updatePatientInfo);
+                document.getElementById('altura').addEventListener('input', updatePatientInfo);
+
+                document.getElementById('antibioticoForm').addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    console.log('=== INÍCIO DO CÁLCULO ===');
+
+                    const peso = parseFloat(document.getElementById('peso').value);
+                    const idade = parseFloat(document.getElementById('idade').value);
+                    const creatinina = parseFloat(document.getElementById('creatinina').value);
+                    const altura = parseFloat(document.getElementById('altura').value);
+                    const antibiotico = document.getElementById('antibiotico').value;
+                    const indicacao = document.getElementById('indicacao').value;
+
+                    console.log('Dados de entrada:', { peso, idade, creatinina, altura, antibiotico, indicacao });
+                    console.log('Medicamentos disponíveis:', Object.keys(medicamentos));
+
+                    const antibioticoData = medicamentos[antibiotico];
+
+                    if (!antibioticoData) {
+                        console.error(`Medicamento '${antibiotico}' não encontrado!`);
+                        alert(`Medicamento '${antibiotico}' não encontrado! Verifique o console para medicamentos disponíveis.`);
+                        return;
+                    }
+
+                    // Limites de segurança rígidos
+                    if (peso > 200 || altura > 250) {
+                        alert('Erro: Medidas fora de parâmetros fisiológicos pediátricos suportados (Máx 200kg / 250cm). Verifique a digitação.');
+                        return;
+                    }
+
+                    // Calcular superfície corporal
+                    const superficie = calcularSuperficieCorporal(peso, altura);
+
+                    // Calcular clearance de creatinina (Fórmula de Schwartz: usa ALTURA, não peso)
+                    const clearance = calcularClearanceCreatinina(altura, creatinina, idade);
+
+                    console.log('Cálculos auxiliares:', { superficie, clearance });
+
+                    // Determinar dose baseada na unidade
+                    let dosePorPeso;
+                    const doseRange = antibioticoData.dose.split('-');
+
+                    if (doseRange.length === 2) {
+                        // Usar dose média do range
+                        dosePorPeso = (parseFloat(doseRange[0]) + parseFloat(doseRange[1])) / 2;
+                    } else {
+                        dosePorPeso = parseFloat(doseRange[0]);
+                    }
+
+                    // Ajustar para indicações especiais
+                    if (indicacao === 'meningite' && antibioticoData.observacoes.includes('meningite')) {
+                        dosePorPeso *= 2; // Dobrar dose para meningite
+                    }
+
+                    // Calcular dose total
+                    let doseTotal;
+                    if (antibioticoData.unidade.includes('m2')) {
+                        doseTotal = dosePorPeso * superficie;
+                    } else {
+                        doseTotal = dosePorPeso * peso;
+                    }
+
+                    // Ajustar intervalo baseado na função renal
+                    let intervalo = antibioticoData.intervalo;
+                    if (clearance < 50 && antibioticoData.ajuste_renal.includes('>50ml/min')) {
+                        // Ajustar intervalo para função renal comprometida
+                        if (intervalo <= 6) {
+                            intervalo = intervalo * 2;
+                        } else if (intervalo <= 12) {
+                            intervalo = intervalo * 1.5;
+                        }
+                    }
+
+                    const dosesPorDia = 24 / intervalo;
+                    const doseDiaria = doseTotal * dosesPorDia;
+
+                    console.log('Cálculos finais:', { dosePorPeso, doseTotal, intervalo, dosesPorDia, doseDiaria });
+
+                    // Exibir resultados
+                    document.getElementById('doseValue').textContent = doseTotal.toFixed(1);
+                    document.getElementById('doseUnit').textContent = antibioticoData.unidade.includes('UI') ? 'UI' : 'mg';
+
+                    document.getElementById('intervaloValue').textContent = intervalo;
+
+                    document.getElementById('doseDiariaValue').textContent = doseDiaria.toFixed(1);
+                    document.getElementById('doseDiariaUnit').textContent = antibioticoData.unidade.includes('UI') ? 'UI/dia' : 'mg/dia';
+
+                    document.getElementById('dosePesoValue').textContent = dosePorPeso.toFixed(1);
+                    document.getElementById('dosePesoUnit').textContent = antibioticoData.unidade.includes('UI') ? 'UI/kg/dose' : 'mg/kg/dose';
+
+                    // Exibir observações
+                    document.getElementById('observacoesTexto').innerHTML = `
+                <strong>Observações:</strong> ${antibioticoData.observacoes}<br>
+                <strong>Ajuste Renal:</strong> ${antibioticoData.ajuste_renal}<br>
+                <strong>Clearance Calculado:</strong> ${clearance.toFixed(1)} ml/min
+            `;
+
+                    document.getElementById('resultado').style.display = 'block';
+                    document.getElementById('observacoes').style.display = 'block';
+                });
+
+                // Função para gerar relatório
+                function gerarRelatorio() {
+                    // Verificar se os elementos existem antes de acessá-los
+                    const pesoElement = document.getElementById('peso');
+                    const idadeElement = document.getElementById('idade');
+                    const creatininaElement = document.getElementById('creatinina');
+                    const alturaElement = document.getElementById('altura');
+                    const antibioticoElement = document.getElementById('antibiotico');
+                    const indicacaoElement = document.getElementById('indicacao');
+
+                    if (!pesoElement || !idadeElement || !antibioticoElement || !indicacaoElement) {
+                        alert('Erro: Campos obrigatorios nao encontrados. Execute o calculo primeiro.');
+                        return;
+                    }
+
+                    // Obter dados do formulário
+                    const peso = parseFloat(pesoElement.value);
+                    const idade = parseFloat(idadeElement.value);
+                    const creatinina = creatininaElement ? parseFloat(creatininaElement.value) || 0.5 : 0.5;
+                    const altura = alturaElement ? parseFloat(alturaElement.value) || 100 : 100;
+                    const antibiotico = antibioticoElement.value;
+                    const indicacao = indicacaoElement.value;
+
+                    // Verificar se os valores são válidos
+                    if (isNaN(peso) || isNaN(idade) || !antibiotico || !indicacao) {
+                        alert('Erro: Dados invalidos. Verifique se todos os campos obrigatorios foram preenchidos.');
+                        return;
+                    }
+
+                    // Recalcular valores
+                    const superficie = calcularSuperficieCorporal(peso, altura);
+                    // Clearance usa altura pela formula de Schwartz
+                    const clearance = calcularClearanceCreatinina(altura, creatinina, idade);
+
+                    const antibioticoData = medicamentos[antibiotico];
+                    if (!antibioticoData) {
+                        alert('Medicamento nao encontrado!');
+                        return;
+                    }
+
+                    // Determinar dose baseada na idade
+                    let dosePorPeso;
+                    if (idade < 1) {
+                        dosePorPeso = antibioticoData.dose_lactente || antibioticoData.dose;
+                    } else if (idade < 12) {
+                        dosePorPeso = antibioticoData.dose_crianca || antibioticoData.dose;
+                    } else {
+                        dosePorPeso = antibioticoData.dose_adolescente || antibioticoData.dose;
+                    }
+
+                    console.log('Dose original:', dosePorPeso, 'Tipo:', typeof dosePorPeso);
+
+                    // Se for um range, usar o valor médio
+                    if (typeof dosePorPeso === 'string' && dosePorPeso.includes('-')) {
+                        const doseRange = dosePorPeso.split('-').map(d => parseFloat(d.trim()));
+                        dosePorPeso = (doseRange[0] + doseRange[1]) / 2;
+                    } else if (Array.isArray(dosePorPeso)) {
+                        dosePorPeso = parseFloat(dosePorPeso[0]);
+                    } else if (typeof dosePorPeso === 'string') {
+                        dosePorPeso = parseFloat(dosePorPeso);
+                    } else {
+                        dosePorPeso = parseFloat(dosePorPeso) || 0;
+                    }
+
+                    console.log('Dose calculada:', dosePorPeso);
+                    console.log('Classe do medicamento:', antibioticoData.classe);
+
+                    // Ajustar para indicações especiais
+                    if (indicacao === 'meningite' && antibioticoData.observacoes.includes('meningite')) {
+                        dosePorPeso *= 2; // Dobrar dose para meningite
+                    }
+
+                    // Calcular dose total
+                    let doseTotal;
+                    if (antibioticoData.unidade.includes('m2')) {
+                        doseTotal = dosePorPeso * superficie;
+                    } else {
+                        doseTotal = dosePorPeso * peso;
+                    }
+
+                    // Ajustar intervalo baseado na função renal
+                    let intervalo = antibioticoData.intervalo;
+                    if (clearance < 50 && antibioticoData.ajuste_renal.includes('>50ml/min')) {
+                        // Ajustar intervalo para função renal comprometida
+                        if (intervalo <= 6) {
+                            intervalo = intervalo * 2;
+                        } else if (intervalo <= 12) {
+                            intervalo = intervalo * 1.5;
+                        }
+                    }
+
+                    const dosesPorDia = 24 / intervalo;
+                    const doseDiaria = doseTotal * dosesPorDia;
+
+                    // Verificar se os cálculos são válidos
+                    if (isNaN(dosePorPeso) || isNaN(doseTotal) || isNaN(doseDiaria)) {
+                        alert('Erro: Nao foi possivel calcular a dosagem. Verifique se o medicamento esta correto.');
+                        return;
+                    }
+
+                    // Determinar unidade
+                    const unidade = antibioticoData.unidade.includes('UI') ? 'UI' : 'mg';
+                    const unidadeDose = antibioticoData.unidade.includes('UI') ? 'UI/kg/dose' : 'mg/kg/dose';
+                    const unidadeDiaria = antibioticoData.unidade.includes('UI') ? 'UI/dia' : 'mg/dia';
+
+                    // Categoria do paciente
+                    let categoriaPaciente = '';
+                    if (idade < 1) {
+                        categoriaPaciente = 'Lactente';
+                    } else if (idade < 12) {
+                        categoriaPaciente = 'Crianca';
+                    } else {
+                        categoriaPaciente = 'Adolescente';
+                    }
+
+                    // Gerar relatório em texto simples
+                    let relatorio = `RESUMO INFORMATIVO — ANTIBIOTICO PEDIATRICO (EDUCATIVO)
+===============================
+
+DADOS DO PACIENTE:
+- Peso: ${peso} kg
+- Idade: ${idade} anos
+- Altura: ${altura} cm
+- Creatinina: ${creatinina} mg/dl
+- Superficie corporal: ${superficie.toFixed(2)} m2
+- Clearance de creatinina: ${clearance.toFixed(1)} ml/min
+- Categoria: ${categoriaPaciente}
+
+MEDICAMENTO:
+- Antibiotico: ${antibioticoData.nome || antibiotico}
+- Classe: ${antibioticoData.classe || 'Nao informada'}
+- Indicacao: ${indicacao}
+
+DOSAGEM CALCULADA:
+- Dose por peso: ${dosePorPeso.toFixed(1)} ${unidadeDose}
+- Dose total por aplicacao: ${doseTotal.toFixed(1)} ${unidade}
+- Intervalo entre doses: ${intervalo} horas
+- Numero de doses por dia: ${dosesPorDia.toFixed(1)}
+- Dose diaria total: ${doseDiaria.toFixed(1)} ${unidadeDiaria}
+
+FUNCAO RENAL:
+- Clearance de creatinina: ${clearance.toFixed(1)} ml/min
+- Ajuste renal aplicado: ${clearance < 50 && antibioticoData.ajuste_renal.includes('>50ml/min') ? 'Sim' : 'Nao'}
+- Intervalo ajustado: ${clearance < 50 && antibioticoData.ajuste_renal.includes('>50ml/min') ? 'Sim' : 'Nao'}
+
+OBSERVACOES:
+- ${antibioticoData.observacoes}
+- Ajuste renal: ${antibioticoData.ajuste_renal}
+- Monitorar niveis sericos quando indicado
+- Considerar interacoes medicamentosas
+- Verificar sensibilidade bacteriana
+- Observar efeitos adversos
+
+CONSIDERACOES CLINICAS:
+- Ajustar dosagem conforme funcao renal
+- Monitorar funcao renal e hepatica
+- Considerar peso atual vs peso ideal
+- Avaliar necessidade de ajuste posologico
+- Seguir protocolos de antibioticoterapia
+- Considerar idade e maturacao organica
+
+Data: ${new Date().toLocaleDateString('pt-BR')}
+Hora: ${new Date().toLocaleTimeString('pt-BR')}`;
+
+                    relatorio = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorio;
+                    if (typeof window.neopedLegalReportFooter === 'function') {
+                        relatorio += '\n' + window.neopedLegalReportFooter().trim();
+                    } else {
+                        relatorio += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+                    }
+
+                    // Copiar para área de transferência
+                    navigator.clipboard.writeText(relatorio).then(() => {
+                        if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                    }).catch(() => {
+                        // Fallback para navegadores mais antigos
+                        const textArea = document.createElement('textarea');
+                        textArea.value = relatorio;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                        if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                    });
+                }
+
+                // Event listener para o botão de relatório - usando delegação de eventos
+                document.addEventListener('click', function (e) {
+                    if (e.target && e.target.id === 'gerarRelatorio') {
+                        gerarRelatorio();
+                    }
+                });
+
+                function abrirModal() {
+                    document.getElementById('modalInfo').style.display = 'flex';
+                }
+
+                function fecharModal() {
+                    document.getElementById('modalInfo').style.display = 'none';
+                }
+
+                window.onclick = function (event) {
+                    const modal = document.getElementById('modalInfo');
+                    if (event.target == modal) {
+                        modal.style.display = 'none';
+                    }
+                }
+            </script>
+            <script>
+
+            </script>
+        </div>
+    </div>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+
+</html>

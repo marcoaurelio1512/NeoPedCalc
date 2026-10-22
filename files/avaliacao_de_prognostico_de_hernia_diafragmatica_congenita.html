@@ -1,0 +1,553 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Calculadora de Risco Pré-Natal - HDC</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <style>
+    html, body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+      touch-action: pan-y;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      min-height: 100vh;
+      overscroll-behavior-x: none;
+    }
+
+    .app-viewport {
+      min-height: 100vh;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 980px;
+      box-sizing: border-box;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #2c3e50;
+      font-size: 1.5em;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+    
+    select, input[type=number], button {
+      width: 100%;
+      max-width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 2px solid #e9ecef;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    
+    select:focus, input[type=number]:focus {
+      outline: none;
+      border-color: #d1d5db;
+      box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+    }
+    button {
+      background-color: #6b7280;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 16px;
+    }
+    
+    button:hover {
+      background-color: #0056b3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    #helpBtn {
+      background-color: #28a745;
+      margin-bottom: 25px;
+      font-size: 14px;
+      padding: 10px 15px;
+    }
+    
+    #helpBtn:hover {
+      background-color: #218838;
+    }
+    #resultado {
+      font-size: 1.1em;
+      font-weight: bold;
+      margin-top: 25px;
+      padding: 15px;
+      border-radius: 8px;
+      background-color: #f8f9fa;
+      border-left: none;
+      line-height: 1.5;
+    }
+    
+    .field-hint {
+      font-size: 0.9em;
+      color: #666;
+      margin-bottom: 10px;
+      font-style: italic;
+    }
+
+    .table-wrap {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    th, td {
+      word-wrap: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      inset: 0;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      box-sizing: border-box;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+    
+    .modal-content {
+      background-color: #fefefe;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 95%;
+      max-width: 800px;
+      max-height: 85vh;
+      overflow-y: auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    
+    .close {
+      color: #374151;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    
+    .help-section {
+      margin-bottom: 20px;
+      padding: 15px;
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      border-left: none;
+    }
+    
+    .help-section h3 {
+      color: #2c3e50;
+      margin-top: 0;
+    }
+    
+    .paper-citation {
+      background-color: #e9ecef;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      font-size: 0.9em;
+    }
+    
+    /* Media Queries para Responsividade */
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+        margin: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+      
+      h2 {
+        font-size: 1.3em;
+        margin-bottom: 15px;
+      }
+      
+      select, input[type=number], button {
+        padding: 15px;
+        font-size: 16px; /* Previne zoom no iOS */
+        margin-bottom: 20px;
+      }
+      
+      #helpBtn {
+        font-size: 16px;
+        padding: 12px 20px;
+        margin-bottom: 20px;
+      }
+      
+      .modal-content {
+        width: 98%;
+        padding: 15px;
+        max-height: 90vh;
+      }
+      
+      .help-section {
+        padding: 12px;
+        margin-bottom: 15px;
+      }
+      
+      .help-section h3 {
+        font-size: 1.1em;
+      }
+      
+      .help-section h4 {
+        font-size: 1em;
+      }
+      
+      .paper-citation {
+        font-size: 0.85em;
+        padding: 8px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .container {
+        padding: 10px;
+      }
+      
+      h2 {
+        font-size: 1.2em;
+        margin-bottom: 10px;
+      }
+      
+      select, input[type=number], button {
+        padding: 12px;
+        margin-bottom: 15px;
+      }
+      
+      #resultado {
+        font-size: 1em;
+        padding: 12px;
+        margin-top: 20px;
+      }
+      
+      .modal-content {
+        padding: 10px;
+      }
+      
+      .help-section {
+        padding: 10px;
+        margin-bottom: 12px;
+      }
+      
+      .help-section h3 {
+        font-size: 1em;
+      }
+      
+      .help-section h4 {
+        font-size: 0.95em;
+      }
+      
+      .paper-citation {
+        font-size: 0.8em;
+        padding: 6px;
+      }
+    }
+    
+    /* Prevenir zoom em inputs no iOS */
+    @media screen and (-webkit-min-device-pixel-ratio: 0) {
+      select, input[type=number] {
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .app-viewport {
+        padding: 12px;
+      }
+
+      table {
+        font-size: 12px;
+      }
+
+      th, td {
+        padding: 6px 8px;
+      }
+    }
+  </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+  <div class="app-viewport">
+    <div class="app-shell">
+      <div class="container">
+        <h2>Calculadora de Risco Pré-Natal – Hérnia Diafragmática Congênita</h2>
+        
+        <div class="header-actions" style="margin-bottom:12px;">
+          <button type="button" class="btn-info" onclick="abrirAjuda()">Como usar</button>
+        </div>
+
+        <label for="oelhr">o/e LHR (%):</label>
+        <div class="field-hint">
+          Relação entre a área pulmonar observada e a esperada para a idade gestacional
+        </div>
+        <input type="number" id="oelhr" min="0" max="100" required>
+
+        <label for="figado">Posição do fígado:</label>
+        <select id="figado">
+          <option value="intra">Intra-abdominal</option>
+          <option value="toracico">Intratorácico</option>
+        </select>
+
+        <label for="lado">Lado da hérnia:</label>
+        <select id="lado">
+          <option value="esquerda">Esquerda</option>
+          <option value="direita">Direita</option>
+        </select>
+
+        <label for="polidramnio">Polidrâmnio presente?</label>
+        <select id="polidramnio">
+          <option value="nao">Não</option>
+          <option value="sim">Sim</option>
+        </select>
+
+        <label for="figado_nasc">Fígado visível ao nascimento?</label>
+        <select id="figado_nasc">
+          <option value="nao">Não</option>
+          <option value="sim">Sim</option>
+        </select>
+
+        <button onclick="calcularRisco()">Calcular Risco</button>
+
+        <h3 id="resultado"></h3>
+      </div>
+
+      <!-- Modal de Ajuda -->
+      <div id="helpModal" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="fecharAjuda()">&times;</span>
+          <h2>Como usar — Calculadora de Risco HDC</h2>
+          
+          <div class="help-section">
+            <h3>Campos da Calculadora</h3>
+            
+            <h4>1. o/e LHR (%) - Observado/Esperado Lung-to-Head Ratio</h4>
+            <p><strong>O que é:</strong> Relação entre a área pulmonar observada e a esperada para a idade gestacional</p>
+            <p><strong>Como medir:</strong> Área pulmonar observada ÷ Área pulmonar esperada × 100</p>
+            <p><strong>Valores de referência:</strong></p>
+            <ul>
+              <li>≥ 45%: Risco baixo (sobrevida 70-80%)</li>
+              <li>35-44%: Risco intermediário (sobrevida 50-70%)</li>
+              <li>< 35%: Risco alto (sobrevida <30-40%)</li>
+            </ul>
+            
+            <h4>2. Posição do Fígado</h4>
+            <p><strong>Intra-abdominal:</strong> Fígado permanece na cavidade abdominal (melhor prognóstico)</p>
+            <p><strong>Intratorácico:</strong> Fígado migrou para a cavidade torácica (pior prognóstico)</p>
+            
+            <h4>3. Lado da Hérnia</h4>
+            <p><strong>Esquerda:</strong> Mais comum, geralmente melhor prognóstico</p>
+            <p><strong>Direita:</strong> Menos comum, tende a ter prognóstico mais reservado</p>
+            
+            <h4>4. Polidrâmnio Presente</h4>
+            <p><strong>O que é:</strong> Volume de líquido amniótico excessivo</p>
+            <p><strong>Significado:</strong> Pode indicar comprometimento da deglutição fetal</p>
+            
+            <h4>5. Fígado Visível ao Nascimento</h4>
+            <p><strong>O que significa:</strong> Fígado herniado para o tórax é visível na ecografia</p>
+            <p><strong>Prognóstico:</strong> Indicador de hérnia grave</p>
+          </div>
+
+          <div class="help-section">
+            <h3>Interpretação dos Resultados</h3>
+            <p><strong>Cores dos Indicadores:</strong></p>
+            <ul>
+              <li>Verde: Risco baixo - prognóstico favorável</li>
+              <li>Amarelo: Risco intermediário - necessita acompanhamento</li>
+              <li>Vermelho: Risco alto - necessita intervenção especializada</li>
+            </ul>
+            
+            <p><strong>Fatores de Piora:</strong></p>
+            <ul>
+              <li>Posição intratorácica do fígado</li>
+              <li>Hérnia à direita</li>
+              <li>Presença de polidrâmnio</li>
+              <li>Fígado visível ao nascimento</li>
+            </ul>
+          </div>
+
+          <div class="help-section">
+            <h3>Base Científica - Revisão Bibliográfica</h3>
+            
+            <h4>Lung-to-Head Ratio (LHR)</h4>
+            <div class="paper-citation">
+              <strong>Metcalfe et al. (2011)</strong> - "Lung-to-head ratio in fetuses with isolated congenital diaphragmatic hernia: systematic review and meta-analysis"<br>
+              <em>Ultrasound in Obstetrics & Gynecology</em> - DOI: 10.1002/uog.9018<br>
+              <strong>Contribuição:</strong> Estabeleceu os valores de corte de LHR para predição de sobrevida
+            </div>
+            
+            <div class="paper-citation">
+              <strong>Jani et al. (2007)</strong> - "Fetal lung-to-head ratio in the prediction of survival in severe left-sided diaphragmatic hernia treated by fetal endoscopic tracheal occlusion (FETO)"<br>
+              <em>American Journal of Obstetrics and Gynecology</em> - DOI: 10.1016/j.ajog.2006.08.038<br>
+              <strong>Contribuição:</strong> Validou o uso do LHR em casos graves de HDC
+            </div>
+
+            <h4>Posição do Fígado</h4>
+            <div class="paper-citation">
+              <strong>Hedrick et al. (2007)</strong> - "Liver position and lung-to-head ratio for prediction of extracorporeal membrane oxygenation and survival in isolated left congenital diaphragmatic hernia"<br>
+              <em>American Journal of Obstetrics and Gynecology</em> - DOI: 10.1016/j.ajog.2006.12.051<br>
+              <strong>Contribuição:</strong> Demonstrou impacto da posição hepática no prognóstico
+            </div>
+
+            <h4>Lateralidade da Hérnia</h4>
+            <div class="paper-citation">
+              <strong>Lally et al. (2006)</strong> - "Congenital Diaphragmatic Hernia Study Group: Defect size determines survival in infants with congenital diaphragmatic hernia"<br>
+              <em>Pediatrics</em> - DOI: 10.1542/peds.2006-2040<br>
+              <strong>Contribuição:</strong> Análise multicêntrica de fatores prognósticos
+            </div>
+
+            <h4>Polidrâmnio</h4>
+            <div class="paper-citation">
+              <strong>Harrison et al. (1993)</strong> - "A prospective study of the outcome for fetuses with diaphragmatic hernia"<br>
+              <em>JAMA</em> - DOI: 10.1001/jama.1993.03510030055035<br>
+              <strong>Contribuição:</strong> Estudo prospectivo pioneiro sobre HDC
+            </div>
+
+            <h4>Fígado Visível ao Nascimento</h4>
+            <div class="paper-citation">
+              <strong>Jani et al. (2006)</strong> - "Prenatal prediction of survival in isolated left-sided congenital diaphragmatic hernia"<br>
+              <em>Ultrasound in Obstetrics & Gynecology</em> - DOI: 10.1002/uog.3786<br>
+              <strong>Contribuição:</strong> Desenvolvimento de score preditivo
+            </div>
+          </div>
+
+          <div class="help-section">
+            <h3>Uso Clínico</h3>
+            <p>Esta calculadora deve ser utilizada por:</p>
+            <ul>
+              <li>Médicos obstetras</li>
+              <li>Ultrassonografistas</li>
+              <li>Geneticistas</li>
+              <li>Cirurgiões pediátricos</li>
+            </ul>
+            
+            <p><strong>Importante:</strong> Os resultados são estimativas baseadas em evidências científicas, mas cada caso deve ser avaliado individualmente considerando outros fatores clínicos.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function calcularRisco() {
+      const oelhr = parseFloat(document.getElementById('oelhr').value);
+      const figado = document.getElementById('figado').value;
+      const lado = document.getElementById('lado').value;
+      const polidramnio = document.getElementById('polidramnio').value;
+      const figado_nasc = document.getElementById('figado_nasc').value;
+
+      let resultado = "";
+
+      if (isNaN(oelhr)) {
+        resultado = "Por favor, insira um valor válido para o LHR.";
+      } else {
+        if (oelhr >= 45) {
+          resultado = "Risco baixo - sobrevida estimada: 70-80%";
+        } else if (oelhr >= 35) {
+          resultado = "Risco intermediário - sobrevida estimada: 50-70%";
+        } else {
+          resultado = "Risco alto - sobrevida estimada: <30-40%";
+        }
+
+        if (figado === "toracico") {
+          resultado += "\nPosição intratorácica do fígado piora o prognóstico.";
+        }
+
+        if (lado === "direita") {
+          resultado += "\nHérnia à direita tende a ter prognóstico mais reservado.";
+        }
+
+        if (polidramnio === "sim") {
+          resultado += "\nPolidrâmnio pode estar associado a maior gravidade.";
+        }
+
+        if (figado_nasc === "sim") {
+          resultado += "\nFígado visível ao nascimento está associado a pior prognóstico.";
+        }
+      }
+
+      document.getElementById("resultado").innerText = resultado;
+    }
+
+    // Funções para o modal de ajuda
+    function abrirAjuda() {
+      document.getElementById("helpModal").style.display = "flex";
+    }
+
+    function fecharAjuda() {
+      document.getElementById("helpModal").style.display = "none";
+    }
+
+    // Fechar modal quando clicar fora dele
+    window.onclick = function(event) {
+      const modal = document.getElementById("helpModal");
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+  </script>
+  <script>
+
+  </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

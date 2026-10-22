@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — Wood-Downes (asma, uso educativo)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .alert-box {
+            background: #fffbe0;
+            border: 1px solid #f1e49a;
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+
+        .alert-box h3 {
+            font-weight: 800;
+            color: #856404;
+            margin: 0 0 6px 0;
+            font-size: 14px;
+        }
+
+        .alert-box ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .score-display {
+            background: #e8fff0;
+            border: 1px solid #b4ffcf;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .score-display h2 {
+            font-size: 14px;
+            margin: 0;
+            color: #27ae60;
+            font-weight: 800;
+        }
+
+        .score-value {
+            font-size: 48px;
+            font-weight: 900;
+            margin: 10px 0;
+            color: #111;
+        }
+
+        .score-interpretation {
+            font-weight: 800;
+            font-size: 16px;
+            color: #111;
+        }
+
+        .btn {
+            border: 0;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 800;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: opacity 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .primary {
+            background: #111;
+            color: #fff;
+        }
+
+        .secondary {
+            background: #fff;
+            border: 1px solid #d9d9e6;
+            color: #111;
+        }
+
+        .report-btn {
+            background: #111;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .report-btn:disabled {
+            background: #eee;
+            color: #374151;
+            cursor: not-allowed;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #374151;
+            margin-top: 20px;
+        }
+
+        /* Modal Styles */
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(17, 17, 17, 0.1);
+            color: #111;
+            border: 2px solid #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-info:hover {
+            background: #111;
+            color: #fff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #2c3e50;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .modal {
+                padding: 10px;
+            }
+            .modal-content {
+                width: 95%;
+                max-height: 95vh;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <header>
+        <h1>🫁 Escala Wood-Downes (pediatria)</h1>
+        <p>Ferramenta educativa — soma de critérios clínicos descritos na literatura; não prescreve nem define internação ou tratamento</p>
+        <div class="header-actions">
+            <button class="btn-info" onclick="abrirModal()">
+                Como usar
+            </button>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="card">
+            <div class="content">
+            <!-- Alert Box -->
+            <div class="alert-box">
+                <h3>⚠️ Contexto da literatura (não é regra assistencial)</h3>
+                <ul>
+                    <li>No artigo original e em textos de referência, <strong>totais mais altos</strong> na escala de Wood-Downes foram <strong>associados</strong> a maior gravidade da crise asmática — sempre em conjunto com exame clínico e, quando indicado, gasometria.</li>
+                    <li><strong>Escore ≥ 5</strong> é frequentemente citado como faixa de <strong>maior alerta</strong> na tradição pediátrica; <strong>não substitui</strong> julgamento do profissional nem protocolo da sua instituição.</li>
+                    <li><strong>pCO₂ elevada</strong> (ex.: valores à volta de 65 mmHg em relatos clássicos) é descrita como <strong>marcador adicional</strong> de gravidade; esta página <strong>não interpreta gasometria</strong>.</li>
+                </ul>
+            </div>
+
+            <!-- Dados do Paciente -->
+            <div class="section">
+                <h2>👤 Dados do Paciente</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome">Nome do Paciente:</label>
+                        <input type="text" id="nome" placeholder="Digite o nome">
+                    </div>
+                    <div class="form-group">
+                        <label for="data">Data/Hora da Avaliação:</label>
+                        <input type="datetime-local" id="data">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Critérios de Avaliação -->
+            <div class="criteria-section">
+                <h3>📋 Critérios Clínicos</h3>
+                <div class="criteria-grid">
+                    <div class="form-group">
+                        <label for="cianose">1. pO₂ ou Cianose:</label>
+                        <select id="cianose" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">70-100 mmHg em ar ambiente / Nenhuma (0)</option>
+                            <option value="1">≤ 70 mmHg em ar ambiente / Em ar ambiente (1)</option>
+                            <option value="2">≤ 70 mmHg com FiO₂ = 40% / Com FiO₂ = 40% (2)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="murmurioVesicular">2. Murmúrio Vesicular:</label>
+                        <select id="murmurioVesicular" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Normal (0)</option>
+                            <option value="1">Desigual (1)</option>
+                            <option value="2">Diminuído ou ausente (2)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="muscAcessoria">3. Utilização de Musculatura Acessória:</label>
+                        <select id="muscAcessoria" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Nenhuma (0)</option>
+                            <option value="1">Moderada (1)</option>
+                            <option value="2">Máxima (2)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sibilos">4. Sibilos Expiratórios:</label>
+                        <select id="sibilos" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Nenhum (0)</option>
+                            <option value="1">Moderados (1)</option>
+                            <option value="2">Marcados (2)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="funcaoCerebral">5. Função Cerebral:</label>
+                        <select id="funcaoCerebral" onchange="calcularScore()">
+                            <option value="">Selecione...</option>
+                            <option value="0">Normal (0)</option>
+                            <option value="1">Deprimido ou agitado (1)</option>
+                            <option value="2">Coma (2)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resultado -->
+            <div class="score-display" id="scoreDisplay">
+                <h2>SCORE TOTAL</h2>
+                <div class="score-value" id="scoreValue">0</div>
+                <div class="score-interpretation" id="scoreInterpretation"></div>
+            </div>
+
+            <!-- Botão Gerar Relatório -->
+            <button type="button" class="report-btn" onclick="gerarRelatorio()" id="reportBtn" disabled>
+                📋 Copiar texto informativo
+            </button>
+
+        </div>
+    </div>
+</div>
+
+    <div class="footer">
+        <p>Uso educacional e informativo. Não realiza diagnóstico nem indica medicamentos, oxigenoterapia ou suporte ventilatório.</p>
+        <p><strong>Referência principal:</strong> Wood DW, Downes JJ, Lecks HI. Am J Dis Child. 1972;123(3):227-228.</p>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar (informação)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta tela soma <strong>cinco domínios clínicos</strong> inspirados na tradição do escore de Wood-Downes e adaptações pediátricas para crise asmática. Serve para <strong>estudo, padronização de linguagem e registro informativo</strong> — não para prescrever drogas, oxigênio, internação ou ventilação.</p>
+                
+                <h3>Fórmula (implementação desta página)</h3>
+                <div class="formula-box">
+                    <strong>Total = soma de 5 critérios</strong>, cada um com pontuação <strong>0, 1 ou 2</strong> conforme as opções dos menus:<br><br>
+                    1) pO₂ / cianose (contexto de ar ambiente ou FiO₂)<br>
+                    2) Murmúrio vesicular<br>
+                    3) Musculatura acessória<br>
+                    4) Sibilos expiratórios<br>
+                    5) Função cerebral (nível de consciência/comportamento)<br><br>
+                    <strong>Faixa do total:</strong> 0 a 10 pontos.<br>
+                    <strong>Nota:</strong> Outros autores publicam variantes (ex.: inclusão explícita de FR); confira sempre a fonte original e o protocolo local.
+                </div>
+
+                <h3>Domínios avaliados</h3>
+                <ul>
+                    <li><strong>pO₂ ou cianose:</strong> grau de hipoxemia/cianose em relação ao ar ambiente ou oxigenoterapia leve</li>
+                    <li><strong>Murmúrio vesicular:</strong> simetria e intensidade à ausculta</li>
+                    <li><strong>Musculatura acessória:</strong> trabalho respiratório</li>
+                    <li><strong>Sibilos:</strong> intensidade dos sibilos expiratórios</li>
+                    <li><strong>Função cerebral:</strong> estado mental / agitação / depressão neurológica</li>
+                </ul>
+
+                <h3>Instruções de uso</h3>
+                <ol>
+                    <li>Preencha os cinco critérios no momento da avaliação clínica</li>
+                    <li>O total atualiza automaticamente ao mudar qualquer item</li>
+                    <li>Correlacione com saturação, gasometria quando indicada, história e exame completo</li>
+                    <li>Use <strong>Copiar texto informativo</strong> apenas como rascunho educativo — revise antes de arquivar</li>
+                </ol>
+
+                <h3>Faixas de total (referência informal nesta ferramenta)</h3>
+                <p style="font-size:14px;line-height:1.5;">Os cortes abaixo seguem a <strong>lógica programada nesta página</strong> (para descrição do grau na escala somada), não uma diretriz terapêutica:</p>
+                <ul>
+                    <li><strong>0–3:</strong> faixa inferior da soma</li>
+                    <li><strong>4:</strong> ponto intermediário isolado nesta implementação</li>
+                    <li><strong>5–6:</strong> total elevado</li>
+                    <li><strong>7–10:</strong> total muito elevado — na literatura clássica, associação com cenários de maior gravidade; integrar com gasometria e decisão assistencial</li>
+                </ul>
+
+                <h3>O que a literatura costuma correlacionar (não prescreve)</h3>
+                <p style="font-size:14px;line-height:1.5;">Textos de referência associam escores mais altos a necessidade de <strong>monitorização mais próxima</strong> e de <strong>complementação com exames</strong> (incluindo gasometria). <strong>Nenhuma conduta</strong> (broncodilatador, corticoide, oxigênio, UTI, VM) é deduzida automaticamente desta calculadora.</p>
+
+                <h3>Considerações importantes</h3>
+                <ul>
+                    <li>Avalie a criança em repouso quando possível; reavalie após intervenções no cenário real</li>
+                    <li>Há subjetividade entre observadores — use como apoio ao ensino e à comunicação, não como veredicto isolado</li>
+                    <li>Comorbidades e idade modificam o risco; não estão na soma numérica</li>
+                </ul>
+
+                <h3>Uso pretendido (informativo)</h3>
+                <ul>
+                    <li>Treino e revisão de critérios da escala</li>
+                    <li>Registro textual para estudo ou discussão de caso, com ressalva educativa</li>
+                    <li>Comparação com artigos e diretrizes institucionais</li>
+                </ul>
+
+                <h3>Limitações</h3>
+                <ul>
+                    <li>Subjetividade na avaliação de alguns parâmetros</li>
+                    <li>Pode variar entre avaliadores</li>
+                    <li>Não considera comorbidades</li>
+                    <li>Pode não capturar todos os aspectos da crise</li>
+                    <li>Não substitui avaliação clínica completa</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Wood DW, Downes JJ, Lecks HI. A clinical scoring system for the diagnosis of respiratory failure. Am J Dis Child. 1972;123(3):227-8.<br>
+                    - Parkin PC, Macarthur C, Saunders NR, Diamond SA, Winders PM. Development of a clinical asthma score for use in hospitalized children between 1 and 5 years of age. J Clin Epidemiol. 1996;49(8):821-5.<br>
+                    - Gorelick MH, Stevens MW, Schultz T, Scribano PV. Performance of a novel clinical score, the Pediatric Asthma Severity Score (PASS), in the evaluation of acute asthma. Acad Emerg Med. 2004;11(1):10-8.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Inicializar data atual
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+                .toISOString()
+                .slice(0, 16);
+            document.getElementById('data').value = localDateTime;
+        });
+
+        function calcularScore() {
+            const criterios = ['cianose', 'murmurioVesicular', 'muscAcessoria', 'sibilos', 'funcaoCerebral'];
+            
+            let scoreTotal = 0;
+            let criteriosPreenchidos = 0;
+
+            criterios.forEach(criterio => {
+                const elemento = document.getElementById(criterio);
+                if (elemento && elemento.value !== '') {
+                    scoreTotal += parseInt(elemento.value);
+                    criteriosPreenchidos++;
+                }
+            });
+
+            // Atualizar display do score
+            document.getElementById('scoreValue').textContent = scoreTotal;
+
+            // Descrição educativa (faixas = lógica desta página; não prescreve)
+            let interpretacao = '';
+            let recomendacao = '';
+            
+            if (scoreTotal < 4) {
+                interpretacao = 'Faixa baixa da soma (0–3 pontos)';
+                recomendacao = 'Na literatura pediátrica, totais nesta faixa costumam ser correlacionados a menor intensidade imediata dos achados somados; decisão de local e terapia depende do protocolo institucional e da avaliação global.';
+            } else if (scoreTotal >= 4 && scoreTotal < 5) {
+                interpretacao = 'Faixa intermediária (4 pontos)';
+                recomendacao = 'Ponto de transição nesta implementação; reforça a necessidade de integrar exame físico, saturação e, se indicado, gasometria — sem padronizar conduta nesta tela.';
+            } else if (scoreTotal >= 5 && scoreTotal < 7) {
+                interpretacao = 'Total elevado (5–6 pontos)';
+                recomendacao = 'Associação histórica com maior gravidade respiratória na tradição do escore; muitos textos sugerem vigilância reforçada e complementação laboratorial quando clinicamente pertinente. Não indica internação nem ventilação por si só.';
+            } else {
+                interpretacao = 'Total muito elevado (7–10 pontos)';
+                recomendacao = 'Correlaciona com cenários de maior gravidade na literatura; hipercapnia (p.ex. pCO₂ elevada) é citada como agravante adicional. Conduta e prioridade assistencial são definidas pelo profissional e pelo serviço.';
+            }
+
+            document.getElementById('scoreInterpretation').innerHTML = `<strong>${interpretacao}</strong><br><br>${recomendacao}`;
+
+            // Mostrar resultado
+            if (criteriosPreenchidos > 0) {
+                document.getElementById('scoreDisplay').style.display = 'block';
+                document.getElementById('reportBtn').disabled = false;
+            } else {
+                document.getElementById('scoreDisplay').style.display = 'none';
+                document.getElementById('reportBtn').disabled = true;
+            }
+        }
+
+        function gerarRelatorio() {
+            const nome = document.getElementById('nome').value || 'Nao informado';
+            const data = document.getElementById('data').value || 'Nao informada';
+            
+            // Formatar data
+            let dataFormatada = 'Nao informada';
+            if (data) {
+                const dt = new Date(data);
+                dataFormatada = dt.toLocaleString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+
+            const scoreTotal = parseInt(document.getElementById('scoreValue').textContent);
+            const interpretacao = document.getElementById('scoreInterpretation').textContent;
+
+            // Coletar critérios selecionados
+            const criteriosNomes = {
+                'cianose': 'pO2 ou Cianose',
+                'murmurioVesicular': 'Murmúrio Vesicular',
+                'muscAcessoria': 'Utilizacao de Musculatura Acessoria',
+                'sibilos': 'Sibilos Expiratórios',
+                'funcaoCerebral': 'Funcao Cerebral'
+            };
+
+            let detalhes = '';
+            Object.keys(criteriosNomes).forEach(key => {
+                const elemento = document.getElementById(key);
+                if (elemento && elemento.value !== '') {
+                    const texto = elemento.options[elemento.selectedIndex].text;
+                    detalhes += `${criteriosNomes[key]}: ${texto}\n`;
+                }
+            });
+
+            var legalFoot = (typeof window.neopedLegalReportFooter === 'function') ? window.neopedLegalReportFooter() : '';
+
+            var blocoContexto = `CONTEXTO EDUCATIVO (sem prescrição)
+- A soma resume achados clínicos selecionados nesta tela; não lista fármacos, doses, oxigenoterapia nem tipo de suporte ventilatório.
+- Na tradição do escore de Wood-Downes, totais mais altos foram associados a maior gravidade; decisões assistenciais seguem protocolo local e julgamento clínico.
+- Gasometria e pCO₂ interpretam-se no contexto do paciente — esta ferramenta não substitui exame laboratorial nem triagem de emergência.`;
+
+            let relatorio = `RESUMO INFORMATIVO — SOMA WOOD-DOWNES (FERRAMENTA EDUCATIVA)
+============================================
+
+NOTA: Texto para apoio informativo. Não constitui prescrição nem decisão de internação. Responsabilidade clínica: profissional de saúde e serviço.
+
+IDENTIFICACAO (opcional)
+------------------------
+Nome: ${nome}
+Data/Hora da Avaliacao: ${dataFormatada}
+
+CRITERIOS PONTUADOS NESTA TELA
+------------------------------
+${detalhes}
+
+RESULTADO
+---------
+TOTAL INFORMADO: ${scoreTotal} pontos (faixa 0-10 nesta implementacao)
+
+DESCRICAO DA FAIXA (educativa)
+------------------------------
+${interpretacao.replace(/<br><br>/g, '\n').replace(/<strong>/g, '').replace(/<\/strong>/g, '')}
+
+${blocoContexto}
+
+CORTES USADOS NESTA PAGINA (referencia interna)
+-----------------------------------------------
+- Total < 4: faixa baixa da soma
+- Total = 4: ponto intermediario nesta implementacao
+- Total 5-6: total elevado
+- Total >= 7: total muito elevado (integrar com clinica e, se indicado, gasometria)
+- Na literatura classica, pCO2 elevada e descrita como agravante; nao calculada aqui.
+
+REFERENCIA PRINCIPAL
+--------------------
+Wood DW, Downes JJ, Lecks HI. A clinical scoring system for the diagnosis of respiratory failure. Am J Dis Child. 1972;123(3):227-228.
+
+Data de geracao do texto: ${new Date().toLocaleString('pt-BR')}` + legalFoot;
+
+            navigator.clipboard.writeText(relatorio).then(() => {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(() => {
+                const textArea = document.createElement('textarea');
+                textArea.value = relatorio;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

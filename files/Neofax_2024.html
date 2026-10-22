@@ -1,0 +1,3422 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>NeoPedCalc — NEOFAX 2024 (educativo)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .section h2 {
+            font-size: 16px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-weight: 700;
+            border-bottom: 1px solid #f0f0f5;
+            padding-bottom: 8px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .drug-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .drug-card {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            border-radius: 10px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .drug-card:hover {
+            border-color: #111;
+            background: #f0f0f5;
+        }
+
+        .drug-card.selected {
+            border-color: #d1d5db;
+            background: #e8fff0;
+        }
+
+        .drug-name {
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .drug-info {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .result-label {
+            font-weight: 600;
+        }
+
+        .result-value {
+            font-weight: 800;
+            color: #28a745;
+        }
+
+        .report-btn {
+            background: #111;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 15px;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .report-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .history-item {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .history-header {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .clear-btn {
+            background: #ff4d4f;
+            color: #fff;
+            border: 0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .reference-info {
+            background: #fffbe6;
+            border: 1px solid #e5e7eb;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-top: 15px;
+        }
+
+        /* Modal Styles */
+        .btn-info {
+            background: rgba(17, 17, 17, 0.1);
+            color: #111;
+            border: 2px solid #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 { margin: 0; font-size: 20px; }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: 4px solid #111;
+            padding: 12px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .wrap { padding: 12px; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <header>
+        <h1>💊 Medicações Neonatais</h1>
+        <p>Calculadora de Doses Baseada no NEOFAX 2024</p>
+        <div class="header-actions">
+            <button class="btn-info" onclick="abrirModal()">
+                Como usar
+            </button>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="card">
+            <!-- Dados do Paciente -->
+            <div class="section">
+                <h2>👤 Dados do Paciente</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome">Nome do Paciente:</label>
+                        <input type="text" id="nome" placeholder="Digite o nome">
+                    </div>
+                    <div class="form-group">
+                        <label for="dataNascimento">Data de Nascimento:</label>
+                        <input type="date" id="dataNascimento">
+                    </div>
+                    <div class="form-group">
+                        <label for="peso">Peso (kg):</label>
+                        <input type="number" id="peso" step="0.001" min="0.1" max="10" placeholder="Ex: 2.500">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="idadeGestacional">Idade Gestacional ao Nascer (semanas):</label>
+                        <input type="number" id="idadeGestacional" min="22" max="42" placeholder="Ex: 32">
+                    </div>
+                    <div class="form-group">
+                        <label for="idadeCorrigida">Idade Gestacional Corrigida:</label>
+                        <input type="text" id="idadeCorrigida" placeholder="Calculada automaticamente" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="idadeDias">Idade em Dias:</label>
+                        <input type="number" id="idadeDias" placeholder="Calculada automaticamente">
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="card">
+            <!-- Seleção de Medicamento -->
+            <div class="section">
+                <h2>💉 Seleção de Medicamento</h2>
+                <div class="form-group">
+                    <label for="medicamento">Medicamento:</label>
+                    <select id="medicamento">
+                        <option value="">Selecione um medicamento</option>
+                        <option value="acetaminofen">Acetaminofen</option>
+                        <option value="acetazolamida">Acetazolamida</option>
+                        <option value="acetilcisteina">Acetilcisteína</option>
+                        <option value="aciclovir">Aciclovir</option>
+                        <option value="adenosina">Adenosina</option>
+                        <option value="albumina">Albumina</option>
+                        <option value="albuterol">Albuterol</option>
+                        <option value="alprostadil">Alprostadil</option>
+                        <option value="alteplase">Alteplase</option>
+                        <option value="amikacina">Amikacina</option>
+                        <option value="aminofilina">Aminofilina</option>
+                        <option value="amiodarona">Amiodarona</option>
+                        <option value="amoxicilina">Amoxicilina</option>
+                        <option value="ampicilina">Ampicilina</option>
+                        <option value="anidulafungina">Anidulafungina</option>
+                        <option value="arginina">Arginina</option>
+                        <option value="aspirina">Aspirina</option>
+                        <option value="atropina">Atropina</option>
+                        <option value="azitromicina">Azitromicina</option>
+                        <option value="aztreonam">Aztreonam</option>
+                        <option value="beractant">Beractant</option>
+                        <option value="bevacizumab">Bevacizumab</option>
+                        <option value="bumetanida">Bumetanida</option>
+                        <option value="bupivacaina">Bupivacaína</option>
+                        <option value="buprenorfina">Buprenorfina</option>
+                        <option value="cafeina_citrato">Cafeína Citrato</option>
+                        <option value="calfactant">Calfactant</option>
+                        <option value="captopril">Captopril</option>
+                        <option value="carglumico">Ácido Carglúmico</option>
+                        <option value="caspofungina">Caspofungina</option>
+                        <option value="cefazolina">Cefazolina</option>
+                        <option value="cefepima">Cefepima</option>
+                        <option value="cefotaxima">Cefotaxima</option>
+                        <option value="cefoxitina">Cefoxitina</option>
+                        <option value="ceftazidima">Ceftazidima</option>
+                        <option value="ceftriaxona">Ceftriaxona</option>
+                        <option value="cloral_hidrato">Cloral Hidrato</option>
+                        <option value="cloranfenicol">Cloranfenicol</option>
+                        <option value="clorotiazida">Clorotiazida</option>
+                        <option value="cimetidina">Cimetidina</option>
+                        <option value="clindamicina">Clindamicina</option>
+                        <option value="clonidina">Clonidina</option>
+                        <option value="clopidogrel">Clopidogrel</option>
+                        <option value="colistina">Colistina</option>
+                        <option value="cosintropina">Cosintropina</option>
+                        <option value="dexametasona">Dexametasona</option>
+                        <option value="dextrose">Dextrose</option>
+                        <option value="diazoxido">Diazóxido</option>
+                        <option value="didanosina">Didanosina</option>
+                        <option value="digoxina">Digoxina</option>
+                        <option value="dobutamina">Dobutamina</option>
+                        <option value="dopamina">Dopamina</option>
+                        <option value="doxiciclina">Doxiciclina</option>
+                        <option value="emtricitabina">Emtricitabina</option>
+                        <option value="enalaprilato">Enalaprilato</option>
+                        <option value="enoxaparina">Enoxaparina</option>
+                        <option value="eritromicina">Eritromicina</option>
+                        <option value="famotidina">Famotidina</option>
+                        <option value="fentanil">Fentanil</option>
+                        <option value="flecainida">Flecainida</option>
+                        <option value="fluconazol">Fluconazol</option>
+                        <option value="flucitosina">Flucitosina</option>
+                        <option value="flumazenil">Flumazenil</option>
+                        <option value="fosfenitoina">Fosfenitoína</option>
+                        <option value="furosemida">Furosemida</option>
+                        <option value="ganciclovir">Ganciclovir</option>
+                        <option value="gentamicina">Gentamicina</option>
+                        <option value="glucagon">Glucagon</option>
+                        <option value="heparina">Heparina</option>
+                        <option value="hialuronidase">Hialuronidase</option>
+                        <option value="hidralazina">Hidralazina</option>
+                        <option value="hidroclorotiazida">Hidroclorotiazida</option>
+                        <option value="hidrocortisona">Hidrocortisona</option>
+                        <option value="ibuprofeno">Ibuprofeno</option>
+                        <option value="imipenem">Imipenem/Cilastatina</option>
+                        <option value="indometacina">Indometacina</option>
+                        <option value="ipratropio">Ipratrópio</option>
+                        <option value="isoproterenol">Isoproterenol</option>
+                        <option value="lamivudina">Lamivudina</option>
+                        <option value="lansoprazol">Lansoprazol</option>
+                        <option value="levetiracetam">Levetiracetam</option>
+                        <option value="linezolida">Linezolida</option>
+                        <option value="lopinavir">Lopinavir/Ritonavir</option>
+                        <option value="lorazepam">Lorazepam</option>
+                        <option value="lucinactant">Lucinactant</option>
+                        <option value="manitol">Manitol</option>
+                        <option value="meropenem">Meropenem</option>
+                        <option value="metadona">Metadona</option>
+                        <option value="metoclopramida">Metoclopramida</option>
+                        <option value="metronidazol">Metronidazol</option>
+                        <option value="micafungina">Micafungina</option>
+                        <option value="midazolam">Midazolam</option>
+                        <option value="milrinona">Milrinona</option>
+                        <option value="morfina">Morfina</option>
+                        <option value="moxifloxacina">Moxifloxacina</option>
+                        <option value="mupirocina">Mupirocina</option>
+                        <option value="nafcilina">Nafcilina</option>
+                        <option value="naloxona">Naloxona</option>
+                        <option value="neostigmina">Neostigmina</option>
+                        <option value="netilmicina">Netilmicina</option>
+                        <option value="nevirapina">Nevirapina</option>
+                        <option value="nicardipina">Nicardipina</option>
+                        <option value="norepinefrina">Norepinefrina</option>
+                        <option value="nistatina">Nistatina</option>
+                        <option value="octreotida">Octreotida</option>
+                        <option value="omeprazol">Omeprazol</option>
+                        <option value="oseltamivir">Oseltamivir</option>
+                        <option value="oxacilina">Oxacilina</option>
+                        <option value="palivizumab">Palivizumab</option>
+                        <option value="pancuronio">Pancurônio</option>
+                        <option value="pantoprazol">Pantoprazol</option>
+                        <option value="papaverina">Papaverina</option>
+                        <option value="pentobarbital">Pentobarbital</option>
+                        <option value="fenobarbital">Fenobarbital</option>
+                        <option value="fentolamina">Fentolamina</option>
+                        <option value="fenilefrina">Fenilefrina</option>
+                        <option value="fenitoina">Fenitoína</option>
+                        <option value="piperacilina">Piperacilina</option>
+                        <option value="procainamida">Procainamida</option>
+                        <option value="propranolol">Propranolol</option>
+                        <option value="protamina">Protamina</option>
+                        <option value="piridoxina">Piridoxina</option>
+                        <option value="quinupristina">Quinupristina/Dalfopristina</option>
+                        <option value="ranibizumab">Ranibizumab</option>
+                        <option value="ranitidina">Ranitidina</option>
+                        <option value="rifampicina">Rifampicina</option>
+                        <option value="rocuronio">Rocurônio</option>
+                        <option value="sildenafila">Sildenafila</option>
+                        <option value="simeticona">Simeticona</option>
+                        <option value="sotalol">Sotalol</option>
+                        <option value="espironolactona">Espironolactona</option>
+                        <option value="succinilcolina">Succinilcolina</option>
+                        <option value="sacarose">Sacarose</option>
+                        <option value="ticarcilina">Ticarcilina/Clavulanato</option>
+                        <option value="tobramicina">Tobramicina</option>
+                        <option value="topiramato">Topiramato</option>
+                        <option value="valganciclovir">Valganciclovir</option>
+                        <option value="vancomicina">Vancomicina</option>
+                        <option value="vecuronio">Vecurônio</option>
+                        <option value="zidovudina">Zidovudina</option>
+                    </select>
+                </div>
+                
+                <!-- Range de Dose Disponível -->
+                <div class="form-row" id="doseRangeRow" style="display: none;">
+                    <div class="form-group">
+                        <label>Range de Dose Disponível:</label>
+                        <div id="doseRangeInfo" style="background: #f8f9fa; padding: 10px; border-radius: 5px; font-size: 0.9em; color: #495057;">
+                            <!-- Será preenchido dinamicamente -->
+                        </div>
+                        <div style="background: #e3f2fd; padding: 8px; border-radius: 5px; font-size: 0.8em; color: #1976d2; margin-top: 5px;">
+                            <strong>ℹ️ Prioridade de Cálculo:</strong><br>
+                            1️⃣ <strong>Dose Personalizada</strong> (se preenchida)<br>
+                            2️⃣ <strong>Dose Específica</strong> (selecionada acima)<br>
+                            3️⃣ <strong>Dose Automática</strong> (baseada na idade gestacional)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seleção de Dose Específica -->
+                <div class="form-row" id="doseSelectionRow" style="display: none;">
+                    <div class="form-group">
+                        <label for="doseSelecionada">Dose Específica:</label>
+                        <select id="doseSelecionada">
+                            <!-- Será preenchido dinamicamente -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Campo para dose personalizada em infusões contínuas -->
+                <div class="form-row" id="dosePersonalizadaRow" style="display: none;">
+                    <div class="form-group">
+                        <label for="dosePersonalizada">Dose Personalizada:</label>
+                        <input type="number" id="dosePersonalizada" step="0.1" min="0" placeholder="Ex: 5">
+                    </div>
+                    <div class="form-group">
+                        <label for="unidadeDosePersonalizada">Unidade:</label>
+                        <select id="unidadeDosePersonalizada">
+                            <option value="mcg/kg/min">mcg/kg/min</option>
+                            <option value="mcg/kg/hora">mcg/kg/hora</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Explicação da prioridade para infusões contínuas -->
+                <div class="form-row" id="prioridadeInfoRow" style="display: none;">
+                    <div class="form-group">
+                        <div style="background: #fff3cd; padding: 10px; border-radius: 5px; font-size: 0.9em; color: #856404; border-left: 4px solid #d1d5db;">
+                            <strong>⚠️ Atenção:</strong> Se você preencher a <strong>Dose Personalizada</strong>, ela terá prioridade sobre a dose específica selecionada. Deixe em branco para usar a dose específica.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Opções de duração de infusão -->
+                <div class="form-row" id="duracaoInfusaoRow" style="display: none;">
+                    <div class="form-group">
+                        <label for="duracaoInfusao">Duração da Infusão:</label>
+                        <select id="duracaoInfusao">
+                            <option value="continua">Infusão Contínua</option>
+                            <option value="6">6 horas</option>
+                            <option value="12">12 horas</option>
+                            <option value="18">18 horas</option>
+                            <option value="24">24 horas</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Botão Calcular -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <button class="report-btn" onclick="calcularDose()" id="calculateBtn" style="width: 100%; margin-top: 20px;">
+                            🧮 Calcular Dose
+                        </button>
+                    </div>
+                </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <!-- Resultados dos Cálculos -->
+            <div class="section" id="calculationResults" style="display: none;">
+                <h2>🧮 Resultados dos Cálculos</h2>
+                <div id="resultsContent"></div>
+            </div>
+
+            </div>
+        </div>
+
+        <div class="card">
+            <!-- Histórico de Cálculos -->
+            <div class="section">
+                <h2>📚 Histórico de Cálculos</h2>
+                <div id="historyContent">
+                    <p style="color: #374151; font-style: italic;">Nenhum cálculo realizado ainda.</p>
+                </div>
+                </div>
+            </div>
+            
+            <button class="report-btn" onclick="gerarRelatorio()" id="reportBtn" disabled style="margin-top: 10px;">
+                📋 Gerar Relatório
+            </button>
+        </div>
+
+        <div class="card">
+            <!-- Informações de Referência -->
+            <div class="section">
+                <h3>📖 Referência</h3>
+                <p><strong>NEOFAX 2024</strong> - Micromedex NeoFax Drug Monograph Summary</p>
+                <p>Esta calculadora utiliza as dosagens e protocolos estabelecidos no NEOFAX 2024 para recém-nascidos, considerando idade gestacional, peso e idade pós-natal para ajuste de doses.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados dos medicamentos baseados no NEOFAX 2024
+        const medicamentos = {
+            acetaminofen: {
+                nome: "Acetaminofen",
+                dosagens: {
+                    iv_febre: {
+                        nome: "IV - Febre",
+                        dose: 12.5,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        maxDia: 50,
+                        condicao: "IG ≥ 32 semanas",
+                        apresentacao: "10 mg/mL"
+                    },
+                    vo_pretermo_menor32: {
+                        nome: "VO - Pré-termo < 32 semanas",
+                        dose: 20,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "IG < 32 semanas",
+                        apresentacao: "Solução oral"
+                    },
+                    vo_pretermo_maior32: {
+                        nome: "VO - Pré-termo ≥ 32 semanas",
+                        dose: 20,
+                        unidade: "mg/kg/dose",
+                        intervalo: 8,
+                        unidadeIntervalo: "horas",
+                        condicao: "IG ≥ 32 semanas",
+                        apresentacao: "Solução oral"
+                    },
+                    vo_termo: {
+                        nome: "VO - A termo",
+                        dose: 20,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "A termo",
+                        apresentacao: "Solução oral"
+                    }
+                }
+            },
+            acetazolamida: {
+                nome: "Acetazolamida",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 5,
+                        unidade: "mg/kg/dose",
+                        intervalo: 8,
+                        unidadeIntervalo: "horas",
+                        condicao: "Hidrocefalia, glaucoma",
+                        apresentacao: "25 mg/mL"
+                    }
+                }
+            },
+            acetilcisteina: {
+                nome: "Acetilcisteína",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 10,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Mucolítico, intoxicação por paracetamol",
+                        apresentacao: "200 mg/mL"
+                    }
+                }
+            },
+            aciclovir: {
+                nome: "Aciclovir",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 20,
+                        unidade: "mg/kg/dose",
+                        intervalo: 8,
+                        unidadeIntervalo: "horas",
+                        condicao: "Infecção por herpes",
+                        apresentacao: "25 mg/mL"
+                    }
+                }
+            },
+            adenosina: {
+                nome: "Adenosina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.1,
+                        unidade: "mg/kg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "bolus rápido",
+                        condicao: "Taquicardia supraventricular",
+                        apresentacao: "3 mg/mL"
+                    }
+                }
+            },
+            albumina: {
+                nome: "Albumina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 1,
+                        unidade: "g/kg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "conforme necessário",
+                        condicao: "Hipoalbuminemia, choque",
+                        apresentacao: "5% ou 25%"
+                    }
+                }
+            },
+            albuterol: {
+                nome: "Albuterol",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.1,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Broncodilatador",
+                        apresentacao: "0.5 mg/mL"
+                    }
+                }
+            },
+            alprostadil: {
+                nome: "Alprostadil",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.05,
+                        unidade: "mcg/kg/min",
+                        intervalo: 0,
+                        unidadeIntervalo: "infusão contínua",
+                        condicao: "Manutenção do canal arterial",
+                        apresentacao: "500 mcg/mL"
+                    }
+                }
+            },
+            alteplase: {
+                nome: "Alteplase",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.5,
+                        unidade: "mg/kg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "bolus",
+                        condicao: "Trombolítico",
+                        apresentacao: "1 mg/mL"
+                    }
+                }
+            },
+            amikacina: {
+                nome: "Amikacina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 15,
+                        unidade: "mg/kg/dose",
+                        intervalo: 24,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico aminoglicosídeo",
+                        apresentacao: "50 mg/mL"
+                    }
+                }
+            },
+            aminofilina: {
+                nome: "Aminofilina",
+                dosagens: {
+                    ataque: {
+                        nome: "Dose de Ataque",
+                        dose: 6,
+                        unidade: "mg/kg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "bolus",
+                        condicao: "Apneia da prematuridade",
+                        apresentacao: "25 mg/mL"
+                    },
+                    manutencao: {
+                        nome: "Dose de Manutenção",
+                        dose: 2,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Apneia da prematuridade",
+                        apresentacao: "25 mg/mL"
+                    }
+                }
+            },
+            amiodarona: {
+                nome: "Amiodarona",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 5,
+                        unidade: "mg/kg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "bolus",
+                        condicao: "Antiarrítmico",
+                        apresentacao: "50 mg/mL"
+                    }
+                }
+            },
+            amoxicilina: {
+                nome: "Amoxicilina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 25,
+                        unidade: "mg/kg/dose",
+                        intervalo: 8,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico penicilina",
+                        apresentacao: "125 mg/5mL"
+                    }
+                }
+            },
+            ampicilina: {
+                nome: "Ampicilina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 25,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "IG ≤ 29 semanas",
+                        apresentacao: "100 mg/mL"
+                    },
+                    ig30_36: {
+                        nome: "IG 30-36 semanas",
+                        dose: 25,
+                        unidade: "mg/kg/dose",
+                        intervalo: 8,
+                        unidadeIntervalo: "horas",
+                        condicao: "IG 30-36 semanas",
+                        apresentacao: "100 mg/mL"
+                    },
+                    ig37_44: {
+                        nome: "IG ≥ 37 semanas",
+                        dose: 25,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "IG ≥ 37 semanas",
+                        apresentacao: "100 mg/mL"
+                    }
+                }
+            },
+            anidulafungina: {
+                nome: "Anidulafungina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 1.5,
+                        unidade: "mg/kg/dose",
+                        intervalo: 24,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antifúngico",
+                        apresentacao: "0.5 mg/mL"
+                    }
+                }
+            },
+            arginina: {
+                nome: "Arginina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 200,
+                        unidade: "mg/kg/dose",
+                        intervalo: 8,
+                        unidadeIntervalo: "horas",
+                        condicao: "Deficiência de arginase",
+                        apresentacao: "100 mg/mL"
+                    }
+                }
+            },
+            aspirina: {
+                nome: "Aspirina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 1,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antiagregante plaquetário",
+                        apresentacao: "100 mg/mL"
+                    }
+                }
+            },
+            atropina: {
+                nome: "Atropina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.02,
+                        unidade: "mg/kg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "bolus",
+                        condicao: "Bradicardia, antídoto",
+                        apresentacao: "0.1 mg/mL"
+                    }
+                }
+            },
+            azitromicina: {
+                nome: "Azitromicina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 10,
+                        unidade: "mg/kg/dose",
+                        intervalo: 24,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico macrolídeo",
+                        apresentacao: "200 mg/5mL"
+                    }
+                }
+            },
+            aztreonam: {
+                nome: "Aztreonam",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 30,
+                        unidade: "mg/kg/dose",
+                        intervalo: 8,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico monobactam",
+                        apresentacao: "100 mg/mL"
+                    }
+                }
+            },
+            beractant: {
+                nome: "Beractant",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 100,
+                        unidade: "mg/kg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "dose única",
+                        condicao: "Surfactante pulmonar",
+                        apresentacao: "25 mg/mL"
+                    }
+                }
+            },
+            bevacizumab: {
+                nome: "Bevacizumab",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.5,
+                        unidade: "mg/kg/dose",
+                        intervalo: 14,
+                        unidadeIntervalo: "dias",
+                        condicao: "Anti-VEGF",
+                        apresentacao: "25 mg/mL"
+                    }
+                }
+            },
+            bumetanida: {
+                nome: "Bumetanida",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.02,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Diurético de alça",
+                        apresentacao: "0.25 mg/mL"
+                    }
+                }
+            },
+            bupivacaina: {
+                nome: "Bupivacaína",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 1,
+                        unidade: "mg/kg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "anestesia local",
+                        condicao: "Anestésico local",
+                        apresentacao: "5 mg/mL"
+                    }
+                }
+            },
+            buprenorfina: {
+                nome: "Buprenorfina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.01,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Analgésico opioide",
+                        apresentacao: "0.3 mg/mL"
+                    }
+                }
+            },
+            cafeina_citrato: {
+                nome: "Cafeína Citrato",
+                dosagens: {
+                    ataque: {
+                        nome: "Dose de Ataque",
+                        dose: 20,
+                        unidade: "mg/kg/dose",
+                        intervalo: 1,
+                        unidadeIntervalo: "dose única",
+                        condicao: "Apneia da prematuridade",
+                        apresentacao: "20 mg/mL"
+                    },
+                    manutencao: {
+                        nome: "Dose de Manutenção",
+                        dose: 5,
+                        unidade: "mg/kg/dose",
+                        intervalo: 24,
+                        unidadeIntervalo: "horas",
+                        condicao: "Apneia da prematuridade",
+                        apresentacao: "20 mg/mL"
+                    }
+                }
+            },
+            calfactant: {
+                nome: "Calfactant",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 105,
+                        unidade: "mg/kg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "dose única",
+                        condicao: "Surfactante pulmonar",
+                        apresentacao: "35 mg/mL"
+                    }
+                }
+            },
+            captopril: {
+                nome: "Captopril",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.1,
+                        unidade: "mg/kg/dose",
+                        intervalo: 8,
+                        unidadeIntervalo: "horas",
+                        condicao: "IECA",
+                        apresentacao: "5 mg/mL"
+                    }
+                }
+            },
+            carglumico: {
+                nome: "Ácido Carglúmico",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 100,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Deficiência de NAGS",
+                        apresentacao: "200 mg/mL"
+                    }
+                }
+            },
+            caspofungina: {
+                nome: "Caspofungina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 1,
+                        unidade: "mg/kg/dose",
+                        intervalo: 24,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antifúngico",
+                        apresentacao: "0.5 mg/mL"
+                    }
+                }
+            },
+            cefazolina: {
+                nome: "Cefazolina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 25,
+                        unidade: "mg/kg/dose",
+                        intervalo: 8,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico cefalosporina",
+                        apresentacao: "100 mg/mL"
+                    }
+                }
+            },
+            cefepima: {
+                nome: "Cefepima",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 50,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico cefalosporina",
+                        apresentacao: "40 mg/mL"
+                    }
+                }
+            },
+            cefotaxima: {
+                nome: "Cefotaxima",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 50,
+                        unidade: "mg/kg/dose",
+                        intervalo: 8,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico cefalosporina",
+                        apresentacao: "100 mg/mL"
+                    }
+                }
+            },
+            cefoxitina: {
+                nome: "Cefoxitina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 25,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico cefalosporina",
+                        apresentacao: "100 mg/mL"
+                    }
+                }
+            },
+            ceftazidima: {
+                nome: "Ceftazidima",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 50,
+                        unidade: "mg/kg/dose",
+                        intervalo: 8,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico cefalosporina",
+                        apresentacao: "100 mg/mL"
+                    }
+                }
+            },
+            ceftriaxona: {
+                nome: "Ceftriaxona",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 50,
+                        unidade: "mg/kg/dose",
+                        intervalo: 24,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico cefalosporina",
+                        apresentacao: "100 mg/mL"
+                    }
+                }
+            },
+            cloral_hidrato: {
+                nome: "Cloral Hidrato",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 25,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Sedativo",
+                        apresentacao: "100 mg/mL"
+                    }
+                }
+            },
+            cloranfenicol: {
+                nome: "Cloranfenicol",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 25,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico",
+                        apresentacao: "100 mg/mL"
+                    }
+                }
+            },
+            clorotiazida: {
+                nome: "Clorotiazida",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 10,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Diurético tiazídico",
+                        apresentacao: "50 mg/mL"
+                    }
+                }
+            },
+            cimetidina: {
+                nome: "Cimetidina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 5,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Anti-H2",
+                        apresentacao: "15 mg/mL"
+                    }
+                }
+            },
+            clindamicina: {
+                nome: "Clindamicina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 10,
+                        unidade: "mg/kg/dose",
+                        intervalo: 8,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico",
+                        apresentacao: "9 mg/mL"
+                    }
+                }
+            },
+            clonidina: {
+                nome: "Clonidina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.5,
+                        unidade: "mcg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Anti-hipertensivo",
+                        apresentacao: "0.1 mg/mL"
+                    }
+                }
+            },
+            clopidogrel: {
+                nome: "Clopidogrel",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.2,
+                        unidade: "mg/kg/dose",
+                        intervalo: 24,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antiagregante plaquetário",
+                        apresentacao: "75 mg/mL"
+                    }
+                }
+            },
+            colistina: {
+                nome: "Colistina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 5,
+                        unidade: "mg/kg/dose",
+                        intervalo: 8,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico",
+                        apresentacao: "150 mg/mL"
+                    }
+                }
+            },
+            cosintropina: {
+                nome: "Cosintropina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.25,
+                        unidade: "mg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "teste",
+                        condicao: "Teste de estimulação",
+                        apresentacao: "0.25 mg/mL"
+                    }
+                }
+            },
+            dexametasona: {
+                nome: "Dexametasona",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.15,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Corticosteróide",
+                        apresentacao: "4 mg/mL"
+                    }
+                }
+            },
+            dextrose: {
+                nome: "Dextrose",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.5,
+                        unidade: "g/kg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "bolus",
+                        condicao: "Hipoglicemia",
+                        apresentacao: "50%"
+                    }
+                }
+            },
+            diazoxido: {
+                nome: "Diazóxido",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 5,
+                        unidade: "mg/kg/dose",
+                        intervalo: 8,
+                        unidadeIntervalo: "horas",
+                        condicao: "Hiperinsulinismo",
+                        apresentacao: "15 mg/mL"
+                    }
+                }
+            },
+            didanosina: {
+                nome: "Didanosina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 100,
+                        unidade: "mg/m²/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antirretroviral",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            },
+            digoxina: {
+                nome: "Digoxina",
+                dosagens: {
+                    ataque: {
+                        nome: "Dose de Ataque",
+                        dose: 0.02,
+                        unidade: "mg/kg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "bolus",
+                        condicao: "Insuficiência cardíaca",
+                        apresentacao: "0.25 mg/mL"
+                    },
+                    manutencao: {
+                        nome: "Dose de Manutenção",
+                        dose: 0.005,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Insuficiência cardíaca",
+                        apresentacao: "0.25 mg/mL"
+                    }
+                }
+            },
+            dobutamina: {
+                nome: "Dobutamina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 5,
+                        unidade: "mcg/kg/min",
+                        intervalo: 0,
+                        unidadeIntervalo: "infusão contínua",
+                        condicao: "Suporte cardíaco",
+                        apresentacao: "12.5 mg/mL"
+                    }
+                }
+            },
+            dopamina: {
+                nome: "Dopamina",
+                dosagens: {
+                    baixa: {
+                        nome: "Dose Baixa",
+                        dose: 2,
+                        unidade: "mcg/kg/min",
+                        intervalo: 0,
+                        unidadeIntervalo: "infusão contínua",
+                        condicao: "Suporte renal",
+                        apresentacao: "40 mg/mL"
+                    },
+                    media: {
+                        nome: "Dose Média",
+                        dose: 5,
+                        unidade: "mcg/kg/min",
+                        intervalo: 0,
+                        unidadeIntervalo: "infusão contínua",
+                        condicao: "Suporte cardíaco",
+                        apresentacao: "40 mg/mL"
+                    },
+                    alta: {
+                        nome: "Dose Alta",
+                        dose: 10,
+                        unidade: "mcg/kg/min",
+                        intervalo: 0,
+                        unidadeIntervalo: "infusão contínua",
+                        condicao: "Suporte cardíaco",
+                        apresentacao: "40 mg/mL"
+                    }
+                }
+            },
+            doxiciclina: {
+                nome: "Doxiciclina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 2,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico tetraciclina",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            },
+            emtricitabina: {
+                nome: "Emtricitabina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 6,
+                        unidade: "mg/kg/dose",
+                        intervalo: 24,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antirretroviral",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            },
+            enalaprilato: {
+                nome: "Enalaprilato",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.01,
+                        unidade: "mg/kg/dose",
+                        intervalo: 8,
+                        unidadeIntervalo: "horas",
+                        condicao: "IECA",
+                        apresentacao: "1.25 mg/mL"
+                    }
+                }
+            },
+            enoxaparina: {
+                nome: "Enoxaparina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 1.5,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Anticoagulante",
+                        apresentacao: "100 mg/mL"
+                    }
+                }
+            },
+            eritromicina: {
+                nome: "Eritromicina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 10,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico macrolídeo",
+                        apresentacao: "50 mg/mL"
+                    }
+                }
+            },
+            famotidina: {
+                nome: "Famotidina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.5,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Anti-H2",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            },
+            fentanil: {
+                nome: "Fentanil",
+                dosagens: {
+                    bolus: {
+                        nome: "Bolus",
+                        dose: 0.001,
+                        unidade: "mg/kg/dose",
+                        intervalo: 2,
+                        unidadeIntervalo: "horas",
+                        condicao: "Analgesia",
+                        apresentacao: "0.05 mg/mL"
+                    },
+                    infusao: {
+                        nome: "Infusão Contínua",
+                        dose: 1,
+                        unidade: "mcg/kg/hora",
+                        intervalo: 0,
+                        unidadeIntervalo: "infusão contínua",
+                        condicao: "Analgesia contínua",
+                        apresentacao: "0.05 mg/mL"
+                    }
+                }
+            },
+            flecainida: {
+                nome: "Flecainida",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 2,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antiarrítmico",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            },
+            fluconazol: {
+                nome: "Fluconazol",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 6,
+                        unidade: "mg/kg/dose",
+                        intervalo: 24,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antifúngico",
+                        apresentacao: "2 mg/mL"
+                    }
+                }
+            },
+            flucitosina: {
+                nome: "Flucitosina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 50,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antifúngico",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            },
+            flumazenil: {
+                nome: "Flumazenil",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.01,
+                        unidade: "mg/kg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "bolus",
+                        condicao: "Antídoto benzodiazepínicos",
+                        apresentacao: "0.1 mg/mL"
+                    }
+                }
+            },
+            fosfenitoina: {
+                nome: "Fosfenitoína",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 20,
+                        unidade: "mg PE/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Anticonvulsivante",
+                        apresentacao: "50 mg PE/mL"
+                    }
+                }
+            },
+            furosemida: {
+                nome: "Furosemida",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 1,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Diurético de alça",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            },
+            ganciclovir: {
+                nome: "Ganciclovir",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 6,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antiviral",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            },
+            gentamicina: {
+                nome: "Gentamicina",
+                dosagens: {
+                    ig_menor29: {
+                        nome: "IG < 29 semanas",
+                        dose: 4,
+                        unidade: "mg/kg/dose",
+                        intervalo: 48,
+                        unidadeIntervalo: "horas",
+                        condicao: "IG < 29 semanas",
+                        apresentacao: "10 mg/mL"
+                    },
+                    ig30_36: {
+                        nome: "IG 30-36 semanas",
+                        dose: 4,
+                        unidade: "mg/kg/dose",
+                        intervalo: 36,
+                        unidadeIntervalo: "horas",
+                        condicao: "IG 30-36 semanas",
+                        apresentacao: "10 mg/mL"
+                    },
+                    ig_maior37: {
+                        nome: "IG ≥ 37 semanas",
+                        dose: 4,
+                        unidade: "mg/kg/dose",
+                        intervalo: 24,
+                        unidadeIntervalo: "horas",
+                        condicao: "IG ≥ 37 semanas",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            },
+            glucagon: {
+                nome: "Glucagon",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.03,
+                        unidade: "mg/kg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "bolus",
+                        condicao: "Hipoglicemia",
+                        apresentacao: "1 mg/mL"
+                    }
+                }
+            },
+            heparina: {
+                nome: "Heparina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 75,
+                        unidade: "U/kg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "bolus",
+                        condicao: "Anticoagulante",
+                        apresentacao: "1000 U/mL"
+                    }
+                }
+            },
+            hialuronidase: {
+                nome: "Hialuronidase",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.1,
+                        unidade: "mL/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "bolus",
+                        condicao: "Facilitador de infusão",
+                        apresentacao: "150 U/mL"
+                    }
+                }
+            },
+            hidralazina: {
+                nome: "Hidralazina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.2,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Anti-hipertensivo",
+                        apresentacao: "20 mg/mL"
+                    }
+                }
+            },
+            hidroclorotiazida: {
+                nome: "Hidroclorotiazida",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 2,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Diurético tiazídico",
+                        apresentacao: "25 mg/mL"
+                    }
+                }
+            },
+            hidrocortisona: {
+                nome: "Hidrocortisona",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 2,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Corticosteróide",
+                        apresentacao: "50 mg/mL"
+                    }
+                }
+            },
+            ibuprofeno: {
+                nome: "Ibuprofeno",
+                dosagens: {
+                    pda: {
+                        nome: "Fechamento de PCA",
+                        dose: 10,
+                        unidade: "mg/kg/dose",
+                        intervalo: 24,
+                        unidadeIntervalo: "horas",
+                        condicao: "Fechamento de PCA",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            },
+            imipenem: {
+                nome: "Imipenem/Cilastatina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 20,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico carbapenem",
+                        apresentacao: "5 mg/mL"
+                    }
+                }
+            },
+            indometacina: {
+                nome: "Indometacina",
+                dosagens: {
+                    pda: {
+                        nome: "Fechamento de PCA",
+                        dose: 0.2,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Fechamento de PCA",
+                        apresentacao: "1 mg/mL"
+                    }
+                }
+            },
+            ipratropio: {
+                nome: "Ipratrópio",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.25,
+                        unidade: "mg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Broncodilatador",
+                        apresentacao: "0.5 mg/mL"
+                    }
+                }
+            },
+            isoproterenol: {
+                nome: "Isoproterenol",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.1,
+                        unidade: "mcg/kg/min",
+                        intervalo: 0,
+                        unidadeIntervalo: "infusão contínua",
+                        condicao: "Broncodilatador",
+                        apresentacao: "0.2 mg/mL"
+                    }
+                }
+            },
+            lamivudina: {
+                nome: "Lamivudina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 4,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antirretroviral",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            },
+            lansoprazol: {
+                nome: "Lansoprazol",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 1,
+                        unidade: "mg/kg/dose",
+                        intervalo: 24,
+                        unidadeIntervalo: "horas",
+                        condicao: "Inibidor de bomba de prótons",
+                        apresentacao: "3 mg/mL"
+                    }
+                }
+            },
+            levetiracetam: {
+                nome: "Levetiracetam",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 20,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Anticonvulsivante",
+                        apresentacao: "100 mg/mL"
+                    }
+                }
+            },
+            linezolida: {
+                nome: "Linezolida",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 10,
+                        unidade: "mg/kg/dose",
+                        intervalo: 8,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico",
+                        apresentacao: "2 mg/mL"
+                    }
+                }
+            },
+            lopinavir: {
+                nome: "Lopinavir/Ritonavir",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 12,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antirretroviral",
+                        apresentacao: "80 mg/20 mg/mL"
+                    }
+                }
+            },
+            lorazepam: {
+                nome: "Lorazepam",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.05,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Ansiolítico",
+                        apresentacao: "2 mg/mL"
+                    }
+                }
+            },
+            lucinactant: {
+                nome: "Lucinactant",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 175,
+                        unidade: "mg/kg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "dose única",
+                        condicao: "Surfactante pulmonar",
+                        apresentacao: "30 mg/mL"
+                    }
+                }
+            },
+            manitol: {
+                nome: "Manitol",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.5,
+                        unidade: "g/kg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "bolus",
+                        condicao: "Diurético osmótico",
+                        apresentacao: "20%"
+                    }
+                }
+            },
+            meropenem: {
+                nome: "Meropenem",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 20,
+                        unidade: "mg/kg/dose",
+                        intervalo: 8,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico carbapenem",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            },
+            metadona: {
+                nome: "Metadona",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.1,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Analgésico opioide",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            },
+            metoclopramida: {
+                nome: "Metoclopramida",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.1,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Procinético",
+                        apresentacao: "5 mg/mL"
+                    }
+                }
+            },
+            metronidazol: {
+                nome: "Metronidazol",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 7.5,
+                        unidade: "mg/kg/dose",
+                        intervalo: 8,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico",
+                        apresentacao: "5 mg/mL"
+                    }
+                }
+            },
+            micafungina: {
+                nome: "Micafungina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 2,
+                        unidade: "mg/kg/dose",
+                        intervalo: 24,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antifúngico",
+                        apresentacao: "0.5 mg/mL"
+                    }
+                }
+            },
+            midazolam: {
+                nome: "Midazolam",
+                dosagens: {
+                    bolus: {
+                        nome: "Bolus",
+                        dose: 0.1,
+                        unidade: "mg/kg/dose",
+                        intervalo: 2,
+                        unidadeIntervalo: "horas",
+                        condicao: "Sedação",
+                        apresentacao: "1 mg/mL"
+                    },
+                    infusao: {
+                        nome: "Infusão Contínua",
+                        dose: 50,
+                        unidade: "mcg/kg/hora",
+                        intervalo: 0,
+                        unidadeIntervalo: "infusão contínua",
+                        condicao: "Sedação contínua",
+                        apresentacao: "1 mg/mL"
+                    }
+                }
+            },
+            milrinona: {
+                nome: "Milrinona",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.5,
+                        unidade: "mcg/kg/min",
+                        intervalo: 0,
+                        unidadeIntervalo: "infusão contínua",
+                        condicao: "Inotrópico",
+                        apresentacao: "0.2 mg/mL"
+                    }
+                }
+            },
+            morfina: {
+                nome: "Morfina",
+                dosagens: {
+                    bolus: {
+                        nome: "Bolus",
+                        dose: 0.05,
+                        unidade: "mg/kg/dose",
+                        intervalo: 2,
+                        unidadeIntervalo: "horas",
+                        condicao: "Analgesia",
+                        apresentacao: "1 mg/mL"
+                    },
+                    infusao: {
+                        nome: "Infusão Contínua",
+                        dose: 10,
+                        unidade: "mcg/kg/hora",
+                        intervalo: 0,
+                        unidadeIntervalo: "infusão contínua",
+                        condicao: "Analgesia contínua",
+                        apresentacao: "1 mg/mL"
+                    }
+                }
+            },
+            moxifloxacina: {
+                nome: "Moxifloxacina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 10,
+                        unidade: "mg/kg/dose",
+                        intervalo: 24,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico quinolona",
+                        apresentacao: "1.6 mg/mL"
+                    }
+                }
+            },
+            mupirocina: {
+                nome: "Mupirocina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.1,
+                        unidade: "g/dose",
+                        intervalo: 8,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico tópico",
+                        apresentacao: "2% pomada"
+                    }
+                }
+            },
+            nafcilina: {
+                nome: "Nafcilina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 25,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico penicilina",
+                        apresentacao: "100 mg/mL"
+                    }
+                }
+            },
+            naloxona: {
+                nome: "Naloxona",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.01,
+                        unidade: "mg/kg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "bolus",
+                        condicao: "Antídoto opioides",
+                        apresentacao: "0.4 mg/mL"
+                    }
+                }
+            },
+            neostigmina: {
+                nome: "Neostigmina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.05,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Anticolinesterásico",
+                        apresentacao: "0.5 mg/mL"
+                    }
+                }
+            },
+            netilmicina: {
+                nome: "Netilmicina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 4,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico aminoglicosídeo",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            },
+            nevirapina: {
+                nome: "Nevirapina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 4,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antirretroviral",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            },
+            nicardipina: {
+                nome: "Nicardipina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.5,
+                        unidade: "mcg/kg/min",
+                        intervalo: 0,
+                        unidadeIntervalo: "infusão contínua",
+                        condicao: "Anti-hipertensivo",
+                        apresentacao: "0.1 mg/mL"
+                    }
+                }
+            },
+            norepinefrina: {
+                nome: "Norepinefrina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.1,
+                        unidade: "mcg/kg/min",
+                        intervalo: 0,
+                        unidadeIntervalo: "infusão contínua",
+                        condicao: "Vasopressor",
+                        apresentacao: "1 mg/mL"
+                    }
+                }
+            },
+            nistatina: {
+                nome: "Nistatina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 100000,
+                        unidade: "U/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antifúngico",
+                        apresentacao: "100000 U/mL"
+                    }
+                }
+            },
+            octreotida: {
+                nome: "Octreotida",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 1,
+                        unidade: "mcg/kg/dose",
+                        intervalo: 8,
+                        unidadeIntervalo: "horas",
+                        condicao: "Análogo da somatostatina",
+                        apresentacao: "50 mcg/mL"
+                    }
+                }
+            },
+            omeprazol: {
+                nome: "Omeprazol",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.5,
+                        unidade: "mg/kg/dose",
+                        intervalo: 24,
+                        unidadeIntervalo: "horas",
+                        condicao: "Inibidor de bomba de prótons",
+                        apresentacao: "2 mg/mL"
+                    }
+                }
+            },
+            oseltamivir: {
+                nome: "Oseltamivir",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 3,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antiviral",
+                        apresentacao: "12 mg/mL"
+                    }
+                }
+            },
+            oxacilina: {
+                nome: "Oxacilina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 25,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico penicilina",
+                        apresentacao: "100 mg/mL"
+                    }
+                }
+            },
+            palivizumab: {
+                nome: "Palivizumab",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 15,
+                        unidade: "mg/kg/dose",
+                        intervalo: 30,
+                        unidadeIntervalo: "dias",
+                        condicao: "Anticorpo monoclonal",
+                        apresentacao: "100 mg/mL"
+                    }
+                }
+            },
+            pancuronio: {
+                nome: "Pancurônio",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.1,
+                        unidade: "mg/kg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "bolus",
+                        condicao: "Bloqueador neuromuscular",
+                        apresentacao: "2 mg/mL"
+                    }
+                }
+            },
+            pantoprazol: {
+                nome: "Pantoprazol",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.5,
+                        unidade: "mg/kg/dose",
+                        intervalo: 24,
+                        unidadeIntervalo: "horas",
+                        condicao: "Inibidor de bomba de prótons",
+                        apresentacao: "0.4 mg/mL"
+                    }
+                }
+            },
+            papaverina: {
+                nome: "Papaverina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.5,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Vasodilatador",
+                        apresentacao: "30 mg/mL"
+                    }
+                }
+            },
+            pentobarbital: {
+                nome: "Pentobarbital",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 2,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Sedativo",
+                        apresentacao: "50 mg/mL"
+                    }
+                }
+            },
+            fenobarbital: {
+                nome: "Fenobarbital",
+                dosagens: {
+                    ataque: {
+                        nome: "Dose de Ataque",
+                        dose: 20,
+                        unidade: "mg/kg/dose",
+                        intervalo: 1,
+                        unidadeIntervalo: "dose única",
+                        condicao: "Convulsões",
+                        apresentacao: "65 mg/mL"
+                    },
+                    manutencao: {
+                        nome: "Dose de Manutenção",
+                        dose: 5,
+                        unidade: "mg/kg/dose",
+                        intervalo: 24,
+                        unidadeIntervalo: "horas",
+                        condicao: "Convulsões",
+                        apresentacao: "65 mg/mL"
+                    }
+                }
+            },
+            fentolamina: {
+                nome: "Fentolamina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.1,
+                        unidade: "mg/kg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "bolus",
+                        condicao: "Bloqueador alfa",
+                        apresentacao: "5 mg/mL"
+                    }
+                }
+            },
+            fenilefrina: {
+                nome: "Fenilefrina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.1,
+                        unidade: "mcg/kg/min",
+                        intervalo: 0,
+                        unidadeIntervalo: "infusão contínua",
+                        condicao: "Vasopressor",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            },
+            fenitoina: {
+                nome: "Fenitoína",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 20,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Anticonvulsivante",
+                        apresentacao: "50 mg/mL"
+                    }
+                }
+            },
+            piperacilina: {
+                nome: "Piperacilina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 100,
+                        unidade: "mg/kg/dose",
+                        intervalo: 8,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico penicilina",
+                        apresentacao: "40 mg/mL"
+                    }
+                }
+            },
+            procainamida: {
+                nome: "Procainamida",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 5,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antiarrítmico",
+                        apresentacao: "100 mg/mL"
+                    }
+                }
+            },
+            propranolol: {
+                nome: "Propranolol",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.5,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Bloqueador beta",
+                        apresentacao: "1 mg/mL"
+                    }
+                }
+            },
+            protamina: {
+                nome: "Protamina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 1,
+                        unidade: "mg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "bolus",
+                        condicao: "Antídoto heparina",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            },
+            piridoxina: {
+                nome: "Piridoxina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 50,
+                        unidade: "mg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "bolus",
+                        condicao: "Vitamina B6",
+                        apresentacao: "50 mg/mL"
+                    }
+                }
+            },
+            quinupristina: {
+                nome: "Quinupristina/Dalfopristina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 7.5,
+                        unidade: "mg/kg/dose",
+                        intervalo: 8,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            },
+            ranibizumab: {
+                nome: "Ranibizumab",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.25,
+                        unidade: "mg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "injeção intravítrea",
+                        condicao: "Anti-VEGF",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            },
+            ranitidina: {
+                nome: "Ranitidina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 2,
+                        unidade: "mg/kg/dose",
+                        intervalo: 8,
+                        unidadeIntervalo: "horas",
+                        condicao: "Anti-H2",
+                        apresentacao: "25 mg/mL"
+                    }
+                }
+            },
+            rifampicina: {
+                nome: "Rifampicina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 10,
+                        unidade: "mg/kg/dose",
+                        intervalo: 24,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico",
+                        apresentacao: "60 mg/mL"
+                    }
+                }
+            },
+            rocuronio: {
+                nome: "Rocurônio",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.6,
+                        unidade: "mg/kg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "bolus",
+                        condicao: "Bloqueador neuromuscular",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            },
+            sildenafila: {
+                nome: "Sildenafila",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.5,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Inibidor PDE5",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            },
+            simeticona: {
+                nome: "Simeticona",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.3,
+                        unidade: "mL/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antiflatulento",
+                        apresentacao: "40 mg/mL"
+                    }
+                }
+            },
+            sotalol: {
+                nome: "Sotalol",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 2,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Bloqueador beta",
+                        apresentacao: "5 mg/mL"
+                    }
+                }
+            },
+            espironolactona: {
+                nome: "Espironolactona",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 1,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Diurético poupador de potássio",
+                        apresentacao: "5 mg/mL"
+                    }
+                }
+            },
+            succinilcolina: {
+                nome: "Succinilcolina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 2,
+                        unidade: "mg/kg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "bolus",
+                        condicao: "Bloqueador neuromuscular",
+                        apresentacao: "20 mg/mL"
+                    }
+                }
+            },
+            sacarose: {
+                nome: "Sacarose",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.1,
+                        unidade: "mL/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "bolus",
+                        condicao: "Analgesia não farmacológica",
+                        apresentacao: "24%"
+                    }
+                }
+            },
+            ticarcilina: {
+                nome: "Ticarcilina/Clavulanato",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 75,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico penicilina",
+                        apresentacao: "31 mg/mL"
+                    }
+                }
+            },
+            tobramicina: {
+                nome: "Tobramicina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 4,
+                        unidade: "mg/kg/dose",
+                        intervalo: 24,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antibiótico aminoglicosídeo",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            },
+            topiramato: {
+                nome: "Topiramato",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 3,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Anticonvulsivante",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            },
+            valganciclovir: {
+                nome: "Valganciclovir",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 16,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antiviral",
+                        apresentacao: "50 mg/mL"
+                    }
+                }
+            },
+            vancomicina: {
+                nome: "Vancomicina",
+                dosagens: {
+                    ig_menor29: {
+                        nome: "IG < 29 semanas",
+                        dose: 15,
+                        unidade: "mg/kg/dose",
+                        intervalo: 24,
+                        unidadeIntervalo: "horas",
+                        condicao: "IG < 29 semanas",
+                        apresentacao: "10 mg/mL"
+                    },
+                    ig30_36: {
+                        nome: "IG 30-36 semanas",
+                        dose: 15,
+                        unidade: "mg/kg/dose",
+                        intervalo: 12,
+                        unidadeIntervalo: "horas",
+                        condicao: "IG 30-36 semanas",
+                        apresentacao: "10 mg/mL"
+                    },
+                    ig_maior37: {
+                        nome: "IG ≥ 37 semanas",
+                        dose: 15,
+                        unidade: "mg/kg/dose",
+                        intervalo: 8,
+                        unidadeIntervalo: "horas",
+                        condicao: "IG ≥ 37 semanas",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            },
+            vecuronio: {
+                nome: "Vecurônio",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 0.1,
+                        unidade: "mg/kg/dose",
+                        intervalo: 0,
+                        unidadeIntervalo: "bolus",
+                        condicao: "Bloqueador neuromuscular",
+                        apresentacao: "4 mg/mL"
+                    }
+                }
+            },
+            zidovudina: {
+                nome: "Zidovudina",
+                dosagens: {
+                    geral: {
+                        nome: "Dose Geral",
+                        dose: 2,
+                        unidade: "mg/kg/dose",
+                        intervalo: 6,
+                        unidadeIntervalo: "horas",
+                        condicao: "Antirretroviral",
+                        apresentacao: "10 mg/mL"
+                    }
+                }
+            }
+        };
+
+        let historicoCalculos = [];
+        let ultimoCalculoSalvo = null;
+
+        // Event listeners
+        document.getElementById('dataNascimento').addEventListener('change', calcularIdades);
+        document.getElementById('idadeGestacional').addEventListener('input', calcularIdades);
+        document.getElementById('medicamento').addEventListener('change', verificarInfusaoContinua);
+
+        function limparCamposMedicamento() {
+            // Limpar campos de dose personalizada
+            document.getElementById('dosePersonalizada').value = '';
+            document.getElementById('unidadeDosePersonalizada').value = 'mcg/kg/min';
+            
+            // Limpar duração de infusão
+            document.getElementById('duracaoInfusao').value = 'continua';
+            
+            // Limpar seleção de dose específica
+            document.getElementById('doseSelecionada').innerHTML = '';
+            
+            // Limpar informações do range
+            document.getElementById('doseRangeInfo').innerHTML = '';
+        }
+
+        function verificarInfusaoContinua() {
+            const medicamentoSelecionado = document.getElementById('medicamento').value;
+            const dosePersonalizadaRow = document.getElementById('dosePersonalizadaRow');
+            const duracaoInfusaoRow = document.getElementById('duracaoInfusaoRow');
+            const doseRangeRow = document.getElementById('doseRangeRow');
+            const doseSelectionRow = document.getElementById('doseSelectionRow');
+            const prioridadeInfoRow = document.getElementById('prioridadeInfoRow');
+            
+            // Limpar campos ao trocar de medicamento
+            limparCamposMedicamento();
+            
+            if (!medicamentoSelecionado) {
+                dosePersonalizadaRow.style.display = 'none';
+                duracaoInfusaoRow.style.display = 'none';
+                doseRangeRow.style.display = 'none';
+                doseSelectionRow.style.display = 'none';
+                prioridadeInfoRow.style.display = 'none';
+                return;
+            }
+            
+            const medicamento = medicamentos[medicamentoSelecionado];
+            let temInfusaoContinua = false;
+            let temMultiplasDosagens = Object.keys(medicamento.dosagens).length > 1;
+            
+            // Verificar se o medicamento tem infusão contínua
+            Object.keys(medicamento.dosagens).forEach(key => {
+                const dosagem = medicamento.dosagens[key];
+                if (dosagem.unidadeIntervalo === "infusão contínua") {
+                    temInfusaoContinua = true;
+                }
+            });
+            
+            // Mostrar range de dose se tiver múltiplas dosagens
+            if (temMultiplasDosagens) {
+                doseRangeRow.style.display = 'flex';
+                doseSelectionRow.style.display = 'flex';
+                
+                // Determinar qual dosagem seria escolhida automaticamente
+                let dosagemAutomatica = null;
+                const idadeCorrigidaTexto = document.getElementById('idadeCorrigida').value;
+                let idadeCorrigida = 0;
+                if (idadeCorrigidaTexto && idadeCorrigidaTexto.includes('semanas')) {
+                    const match = idadeCorrigidaTexto.match(/(\d+)\s+semanas/);
+                    if (match) {
+                        const semanas = parseInt(match[1]);
+                        const diasMatch = idadeCorrigidaTexto.match(/(\d+)\s+dias/);
+                        const dias = diasMatch ? parseInt(diasMatch[1]) : 0;
+                        idadeCorrigida = semanas + (dias / 7);
+                    }
+                } else {
+                    idadeCorrigida = parseFloat(idadeCorrigidaTexto) || 0;
+                }
+                
+                // Lógica para determinar dosagem automática
+                if (medicamentoSelecionado === 'acetaminofen') {
+                    if (idadeCorrigida >= 37) dosagemAutomatica = 'vo_termo';
+                    else if (idadeCorrigida >= 32) dosagemAutomatica = 'vo_pretermo_maior32';
+                    else dosagemAutomatica = 'vo_pretermo_menor32';
+                } else if (medicamentoSelecionado === 'ampicilina') {
+                    if (idadeCorrigida >= 37) dosagemAutomatica = 'ig37_44';
+                    else if (idadeCorrigida >= 30) dosagemAutomatica = 'ig30_36';
+                    else dosagemAutomatica = 'geral';
+                } else if (medicamentoSelecionado === 'gentamicina') {
+                    if (idadeCorrigida >= 37) dosagemAutomatica = 'ig_maior37';
+                    else if (idadeCorrigida >= 30) dosagemAutomatica = 'ig30_36';
+                    else dosagemAutomatica = 'ig_menor29';
+                } else if (medicamentoSelecionado === 'vancomicina') {
+                    if (idadeCorrigida >= 37) dosagemAutomatica = 'ig_maior37';
+                    else if (idadeCorrigida >= 30) dosagemAutomatica = 'ig30_36';
+                    else dosagemAutomatica = 'ig_menor29';
+                } else {
+                    // Para outros medicamentos, usar a primeira dosagem disponível
+                    dosagemAutomatica = Object.keys(medicamento.dosagens)[0];
+                }
+                
+                // Preencher informações do range
+                let rangeInfo = '';
+                let selectOptions = '';
+                
+                // Primeiro, adicionar a dosagem automática
+                if (dosagemAutomatica && medicamento.dosagens[dosagemAutomatica]) {
+                    const dosagem = medicamento.dosagens[dosagemAutomatica];
+                    rangeInfo += `<div><strong>${dosagem.nome}:</strong> ${dosagem.dose} ${dosagem.unidade} - ${dosagem.condicao} <span style="color: #28a745; font-weight: bold;">(Recomendada)</span></div>`;
+                    selectOptions += `<option value="${dosagemAutomatica}" selected>${dosagem.nome} - ${dosagem.dose} ${dosagem.unidade} (Recomendada)</option>`;
+                }
+                
+                // Depois, adicionar as outras dosagens
+                Object.keys(medicamento.dosagens).forEach(key => {
+                    if (key !== dosagemAutomatica) {
+                        const dosagem = medicamento.dosagens[key];
+                        rangeInfo += `<div><strong>${dosagem.nome}:</strong> ${dosagem.dose} ${dosagem.unidade} - ${dosagem.condicao}</div>`;
+                        selectOptions += `<option value="${key}">${dosagem.nome} - ${dosagem.dose} ${dosagem.unidade}</option>`;
+                    }
+                });
+                
+                document.getElementById('doseRangeInfo').innerHTML = rangeInfo;
+                document.getElementById('doseSelecionada').innerHTML = selectOptions;
+            } else {
+                doseRangeRow.style.display = 'none';
+                doseSelectionRow.style.display = 'none';
+            }
+            
+            if (temInfusaoContinua) {
+                dosePersonalizadaRow.style.display = 'flex';
+                duracaoInfusaoRow.style.display = 'flex';
+                prioridadeInfoRow.style.display = 'flex';
+                // Definir unidade padrão baseada no medicamento
+                const unidadeSelect = document.getElementById('unidadeDosePersonalizada');
+                if (medicamentoSelecionado === 'fentanil' || medicamentoSelecionado === 'midazolam' || medicamentoSelecionado === 'morfina') {
+                    unidadeSelect.value = 'mcg/kg/hora';
+                } else {
+                    unidadeSelect.value = 'mcg/kg/min';
+                }
+            } else {
+                dosePersonalizadaRow.style.display = 'none';
+                duracaoInfusaoRow.style.display = 'none';
+                prioridadeInfoRow.style.display = 'none';
+            }
+            
+            // Não calcular automaticamente - aguardar botão
+        }
+
+        function calcularIdades() {
+            const dataNascimento = document.getElementById('dataNascimento').value;
+            const idadeGestacional = parseFloat(document.getElementById('idadeGestacional').value) || 0;
+            
+            if (dataNascimento && idadeGestacional > 0) {
+                const hoje = new Date();
+                const nascimento = new Date(dataNascimento);
+                const idadeDias = Math.floor((hoje - nascimento) / (1000 * 60 * 60 * 24));
+                
+                // Calcular idade gestacional corrigida em semanas e dias
+                const totalSemanas = idadeGestacional + (idadeDias / 7);
+                const semanasCorrigidas = Math.floor(totalSemanas);
+                const diasCorrigidos = Math.round((totalSemanas - semanasCorrigidas) * 7);
+                
+                // Formatar para exibição
+                const idadeCorrigidaFormatada = `${semanasCorrigidas} semanas e ${diasCorrigidos} dias`;
+                
+                document.getElementById('idadeDias').value = idadeDias;
+                document.getElementById('idadeCorrigida').value = idadeCorrigidaFormatada;
+                
+                // Não recalcular automaticamente - aguardar botão
+            }
+        }
+
+        function calcularDose() {
+            const medicamentoSelecionado = document.getElementById('medicamento').value;
+            const peso = parseFloat(document.getElementById('peso').value) || 0;
+            
+            // Extrair valor numérico da idade gestacional corrigida
+            const idadeCorrigidaTexto = document.getElementById('idadeCorrigida').value;
+            let idadeCorrigida = 0;
+            if (idadeCorrigidaTexto && idadeCorrigidaTexto.includes('semanas')) {
+                const match = idadeCorrigidaTexto.match(/(\d+)\s+semanas/);
+                if (match) {
+                    const semanas = parseInt(match[1]);
+                    const diasMatch = idadeCorrigidaTexto.match(/(\d+)\s+dias/);
+                    const dias = diasMatch ? parseInt(diasMatch[1]) : 0;
+                    idadeCorrigida = semanas + (dias / 7);
+                }
+            } else {
+                idadeCorrigida = parseFloat(idadeCorrigidaTexto) || 0;
+            }
+            const dosePersonalizada = parseFloat(document.getElementById('dosePersonalizada').value) || 0;
+            const unidadeDosePersonalizada = document.getElementById('unidadeDosePersonalizada').value;
+            const duracaoInfusao = document.getElementById('duracaoInfusao').value;
+            const doseSelecionada = document.getElementById('doseSelecionada').value;
+            
+            if (!medicamentoSelecionado || peso <= 0) {
+                document.getElementById('calculationResults').style.display = 'none';
+                document.getElementById('reportBtn').disabled = true;
+                return;
+            }
+
+            const medicamento = medicamentos[medicamentoSelecionado];
+            const resultados = [];
+
+            // Determinar qual dosagem usar
+            let dosagemSelecionada = null;
+            
+            // Se o usuário selecionou uma dose específica, usar ela
+            if (doseSelecionada && medicamento.dosagens[doseSelecionada]) {
+                dosagemSelecionada = medicamento.dosagens[doseSelecionada];
+            } else {
+                // Caso contrário, usar lógica baseada na idade gestacional corrigida
+                if (medicamentoSelecionado === 'acetaminofen') {
+                    if (idadeCorrigida >= 37) dosagemSelecionada = medicamento.dosagens['vo_termo'];
+                    else if (idadeCorrigida >= 32) dosagemSelecionada = medicamento.dosagens['vo_pretermo_maior32'];
+                    else dosagemSelecionada = medicamento.dosagens['vo_pretermo_menor32'];
+                } else if (medicamentoSelecionado === 'ampicilina') {
+                    if (idadeCorrigida >= 37) dosagemSelecionada = medicamento.dosagens['ig37_44'];
+                    else if (idadeCorrigida >= 30) dosagemSelecionada = medicamento.dosagens['ig30_36'];
+                    else dosagemSelecionada = medicamento.dosagens['geral'];
+                } else if (medicamentoSelecionado === 'gentamicina') {
+                    if (idadeCorrigida >= 37) dosagemSelecionada = medicamento.dosagens['ig_maior37'];
+                    else if (idadeCorrigida >= 30) dosagemSelecionada = medicamento.dosagens['ig30_36'];
+                    else dosagemSelecionada = medicamento.dosagens['ig_menor29'];
+                } else if (medicamentoSelecionado === 'vancomicina') {
+                    if (idadeCorrigida >= 37) dosagemSelecionada = medicamento.dosagens['ig_maior37'];
+                    else if (idadeCorrigida >= 30) dosagemSelecionada = medicamento.dosagens['ig30_36'];
+                    else dosagemSelecionada = medicamento.dosagens['ig_menor29'];
+                } else {
+                    // Para outros medicamentos, usar a primeira dosagem disponível
+                    const primeiraChave = Object.keys(medicamento.dosagens)[0];
+                    dosagemSelecionada = medicamento.dosagens[primeiraChave];
+                }
+            }
+            
+            if (dosagemSelecionada) {
+                // Verificar se deve usar dose personalizada para infusões contínuas
+                let doseParaCalcular = dosagemSelecionada.dose;
+                let unidadeParaCalcular = dosagemSelecionada.unidade;
+                let intervaloParaCalcular = dosagemSelecionada.intervalo;
+                let unidadeIntervaloParaCalcular = dosagemSelecionada.unidadeIntervalo;
+                let usandoDosePersonalizada = false;
+                
+                if (dosagemSelecionada.unidadeIntervalo === "infusão contínua" && dosePersonalizada > 0) {
+                    doseParaCalcular = dosePersonalizada;
+                    unidadeParaCalcular = unidadeDosePersonalizada;
+                    usandoDosePersonalizada = true;
+                }
+                
+                // Ajustar para diferentes durações de infusão
+                if (dosagemSelecionada.unidadeIntervalo === "infusão contínua" && duracaoInfusao !== "continua") {
+                    intervaloParaCalcular = parseInt(duracaoInfusao);
+                    unidadeIntervaloParaCalcular = "horas";
+                }
+                
+                const doseCalculada = peso * doseParaCalcular;
+                const doseTotal24h = dosagemSelecionada.intervalo > 0 ? (doseCalculada * (24 / dosagemSelecionada.intervalo)) : doseCalculada;
+                
+                let volumeCalculado = 0;
+                let volumeCalculadoHora = 0;
+                let volumeCalculadoTotal = 0;
+                let miligramasTotais = 0;
+                
+                // Para infusões contínuas, calcular miligramas totais
+                if (dosagemSelecionada.unidadeIntervalo === "infusão contínua") {
+                    let duracaoHoras = 1; // Padrão para infusão contínua
+                    if (duracaoInfusao !== "continua") {
+                        duracaoHoras = parseInt(duracaoInfusao);
+                    }
+                    
+                    if (unidadeParaCalcular.includes("mcg/kg/hora")) {
+                        // mcg/kg/hora: dose * peso * horas / 1000 = mg totais
+                        miligramasTotais = (doseParaCalcular * peso * duracaoHoras) / 1000;
+                    } else if (unidadeParaCalcular.includes("mcg/kg/min")) {
+                        // mcg/kg/min: dose * peso * (horas * 60) / 1000 = mg totais
+                        miligramasTotais = (doseParaCalcular * peso * duracaoHoras * 60) / 1000;
+                    }
+                    
+                    // Calcular volume baseado na concentração
+                    if (dosagemSelecionada.apresentacao.includes('mg/mL')) {
+                        const concentracao = parseFloat(dosagemSelecionada.apresentacao.match(/(\d+(?:\.\d+)?)/)[1]);
+                        volumeCalculadoTotal = miligramasTotais / concentracao;
+                        
+                        // Volume por hora para infusão contínua
+                        if (duracaoInfusao === "continua") {
+                            volumeCalculadoHora = volumeCalculadoTotal;
+                        } else {
+                            volumeCalculadoHora = volumeCalculadoTotal / duracaoHoras;
+                        }
+                    }
+                } else if (dosagemSelecionada.apresentacao.includes('mg/mL')) {
+                    const concentracao = parseFloat(dosagemSelecionada.apresentacao.match(/(\d+(?:\.\d+)?)/)[1]);
+                    volumeCalculado = doseCalculada / concentracao;
+                }
+
+                resultados.push({
+                    nome: usandoDosePersonalizada ? 'Dose Personalizada' : dosagemSelecionada.nome,
+                    dose: doseParaCalcular,
+                    unidade: unidadeParaCalcular,
+                    doseCalculada: doseCalculada,
+                    doseTotal24h: doseTotal24h,
+                    intervalo: intervaloParaCalcular,
+                    unidadeIntervalo: unidadeIntervaloParaCalcular,
+                    volumeCalculado: volumeCalculado,
+                    volumeCalculadoHora: volumeCalculadoHora,
+                    volumeCalculadoTotal: volumeCalculadoTotal,
+                    miligramasTotais: miligramasTotais,
+                    apresentacao: dosagemSelecionada.apresentacao,
+                    condicao: usandoDosePersonalizada ? '' : dosagemSelecionada.condicao,
+                    dosePersonalizada: usandoDosePersonalizada,
+                    duracaoInfusao: duracaoInfusao
+                });
+            }
+
+            // Exibir resultados
+            exibirResultados(resultados, medicamento.nome);
+            
+            // Salvar no histórico apenas se for um cálculo completo e diferente do último
+            if (medicamentoSelecionado && peso > 0) {
+                const calculoAtual = `${medicamentoSelecionado}-${peso}-${idadeCorrigida}-${dosePersonalizada}-${duracaoInfusao}`;
+                if (ultimoCalculoSalvo !== calculoAtual) {
+                    salvarNoHistorico(medicamento.nome, resultados);
+                    ultimoCalculoSalvo = calculoAtual;
+                }
+            }
+            
+            document.getElementById('reportBtn').disabled = false;
+        }
+
+        function exibirResultados(resultados, nomeMedicamento) {
+            const resultsContent = document.getElementById('resultsContent');
+            resultsContent.innerHTML = '';
+
+            resultados.forEach(resultado => {
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'result-item';
+                
+                let html = `
+                    <div>
+                        <div class="result-label">${resultado.nome}</div>
+                        <div style="font-size: 0.9em; color: #374151; margin-top: 5px;">
+                            ${resultado.dosePersonalizada ? resultado.apresentacao : (resultado.condicao + ' | ' + resultado.apresentacao)}
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div class="result-value">${resultado.doseCalculada.toFixed(2)} ${resultado.unidade.replace('kg/', '')}</div>
+                        <div style="font-size: 0.9em; color: #374151; margin-top: 5px;">
+                            ${resultado.dosePersonalizada ? 
+                                (resultado.intervalo > 0 ? `A cada ${resultado.intervalo} ${resultado.unidadeIntervalo}` : resultado.unidadeIntervalo) :
+                                (resultado.intervalo > 0 ? `A cada ${resultado.intervalo} ${resultado.unidadeIntervalo}` : resultado.unidadeIntervalo)
+                            }
+                        </div>
+                `;
+                
+                if (resultado.miligramasTotais > 0) {
+                    html += `<div style="font-size: 0.9em; color: #27ae60; margin-top: 5px;">
+                        ${resultado.miligramasTotais.toFixed(2)} mg total
+                    </div>`;
+                    html += `<div style="font-size: 0.9em; color: #6b7280; margin-top: 5px;">
+                        ${resultado.volumeCalculadoHora.toFixed(2)} mL/hora
+                    </div>`;
+                    html += `<div style="font-size: 0.9em; color: #e74c3c; margin-top: 5px;">
+                        ${resultado.volumeCalculadoTotal.toFixed(2)} mL total (${resultado.duracaoInfusao}h)
+                    </div>`;
+                } else if (resultado.volumeCalculadoHora > 0) {
+                    html += `<div style="font-size: 0.9em; color: #6b7280; margin-top: 5px;">
+                        ${resultado.volumeCalculadoHora.toFixed(2)} mL/hora
+                    </div>`;
+                } else if (resultado.volumeCalculado > 0) {
+                    html += `<div style="font-size: 0.9em; color: #6b7280; margin-top: 5px;">
+                        ${resultado.volumeCalculado.toFixed(2)} mL
+                    </div>`;
+                }
+                
+                html += `</div>`;
+                resultDiv.innerHTML = html;
+                resultsContent.appendChild(resultDiv);
+            });
+
+            document.getElementById('calculationResults').style.display = 'block';
+        }
+
+        function salvarNoHistorico(nomeMedicamento, resultados) {
+            const timestamp = new Date().toLocaleString('pt-BR');
+            const peso = parseFloat(document.getElementById('peso').value) || 0;
+            
+            // Manter formato de exibição da idade gestacional corrigida
+            const idadeCorrigidaTexto = document.getElementById('idadeCorrigida').value;
+
+            const calculo = {
+                timestamp: timestamp,
+                medicamento: nomeMedicamento,
+                peso: peso,
+                idadeCorrigida: idadeCorrigidaTexto,
+                resultados: resultados
+            };
+
+            historicoCalculos.unshift(calculo);
+            
+            // Manter apenas os últimos 10 cálculos
+            if (historicoCalculos.length > 10) {
+                historicoCalculos = historicoCalculos.slice(0, 10);
+            }
+
+            atualizarHistorico();
+        }
+
+        function atualizarHistorico() {
+            const historyContent = document.getElementById('historyContent');
+            
+            if (historicoCalculos.length === 0) {
+                historyContent.innerHTML = '<p style="color: #374151; font-style: italic;">Nenhum cálculo realizado ainda.</p>';
+                return;
+            }
+
+            let html = '';
+            historicoCalculos.forEach((calculo, index) => {
+                html += `
+                    <div class="history-item">
+                        <div class="history-header">
+                            ${calculo.medicamento} - ${calculo.timestamp}
+                            <button class="clear-btn" onclick="removerDoHistorico(${index})">Remover</button>
+                        </div>
+                        <div class="history-details">
+                            Peso: ${calculo.peso} kg | IG Corrigida: ${calculo.idadeCorrigida}
+                        </div>
+                    </div>
+                `;
+            });
+
+            historyContent.innerHTML = html;
+        }
+
+        function removerDoHistorico(index) {
+            historicoCalculos.splice(index, 1);
+            atualizarHistorico();
+        }
+
+        function gerarRelatorio() {
+            if (historicoCalculos.length === 0) {
+                alert('Nenhum cálculo foi realizado ainda. Execute pelo menos um cálculo antes de gerar o relatório.');
+                return;
+            }
+
+            const nome = document.getElementById('nome').value || 'Paciente';
+            const dataNascimento = document.getElementById('dataNascimento').value || 'Não informada';
+            const peso = document.getElementById('peso').value || 'Não informado';
+            const idadeGestacional = document.getElementById('idadeGestacional').value || 'Não informada';
+            const idadeCorrigidaTexto = document.getElementById('idadeCorrigida').value || 'Não calculada';
+            const idadeDias = document.getElementById('idadeDias').value || 'Não calculada';
+
+            let relatorio = `RELATORIO - MEDICACOES NEONATAIS
+========================================
+
+DADOS DO PACIENTE
+-----------------
+Data/Hora: ${new Date().toLocaleString('pt-BR')}
+Nome: ${nome}
+Data de Nascimento: ${dataNascimento}
+Peso: ${peso} kg
+Idade Gestacional ao Nascer: ${idadeGestacional} semanas
+Idade Gestacional Corrigida: ${idadeCorrigidaTexto}
+Idade em Dias: ${idadeDias} dias
+
+CALCULOS REALIZADOS
+-------------------`;
+
+            historicoCalculos.forEach((calculo, index) => {
+                relatorio += `\n\nCALCULO ${index + 1}:
+Medicamento: ${calculo.medicamento}
+Peso: ${calculo.peso} kg
+Idade Gestacional Corrigida: ${calculo.idadeCorrigida}
+
+Dosagens Calculadas:`;
+
+                calculo.resultados.forEach(resultado => {
+                    relatorio += `\n- ${resultado.nome}:
+  Dose: ${resultado.dose} ${resultado.unidade}
+  Dose Calculada: ${resultado.doseCalculada.toFixed(2)} ${resultado.unidade.replace('kg/', '')}
+  Intervalo: ${resultado.intervalo > 0 ? `A cada ${resultado.intervalo} ${resultado.unidadeIntervalo}` : resultado.unidadeIntervalo}`;
+                    
+                    if (resultado.miligramasTotais > 0) {
+                        relatorio += `\n  Miligramas Totais: ${resultado.miligramasTotais.toFixed(2)} mg`;
+                        relatorio += `\n  Volume: ${resultado.volumeCalculadoHora.toFixed(2)} mL/hora`;
+                        relatorio += `\n  Volume Total: ${resultado.volumeCalculadoTotal.toFixed(2)} mL (${resultado.duracaoInfusao} horas)`;
+                    } else if (resultado.volumeCalculadoHora > 0) {
+                        relatorio += `\n  Volume: ${resultado.volumeCalculadoHora.toFixed(2)} mL/hora`;
+                    } else if (resultado.volumeCalculado > 0) {
+                        relatorio += `\n  Volume: ${resultado.volumeCalculado.toFixed(2)} mL`;
+                    }
+                    
+                    relatorio += `\n  Apresentacao: ${resultado.apresentacao}
+  Condicao: ${resultado.condicao}`;
+                });
+            });
+
+            relatorio += `\n\nDETALHOS TECNICOS
+-----------------
+Total de Calculos: ${historicoCalculos.length}
+Data de Geracao: ${new Date().toLocaleString('pt-BR')}
+Referencia: NEOFAX 2024 - Micromedex NeoFax Drug Monograph Summary
+
+OBSERVACOES IMPORTANTES
+-----------------------
+- Verificar sempre a apresentacao da droga antes da administracao
+- Confirmar calculos com farmaceutico quando necessario
+- Monitorar resposta terapeutica e efeitos adversos
+- Ajustar dose conforme resposta clinica
+- Atencao especial para neonatos: monitorar funcao hepatica e renal
+- Verificar limites maximos diarios para cada droga
+- Considerar idade gestacional corrigida para ajuste de doses
+- Monitorar niveis sericos quando indicado
+- Seguir protocolos de seguranca medicamentosa
+
+REFERENCIAS
+-----------
+- NEOFAX 2024 - Micromedex NeoFax Drug Monograph Summary
+- Protocolos de Seguranca Medicamentosa em Neonatologia
+- Guias de Pratica Clinica em Neonatologia`;
+
+            // Copiar para a área de transferência
+            navigator.clipboard.writeText(relatorio).then(() => {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(() => {
+                // Fallback para navegadores que não suportam clipboard API
+                const textArea = document.createElement('textarea');
+                textArea.value = relatorio;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            atualizarHistorico();
+        });
+
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        };
+    </script>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — NEOFAX 2024 (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta calculadora é baseada no NEOFAX 2024 (37ª edição), um manual de referência amplamente utilizado para dosagem de medicamentos em recém-nascidos, incluindo mais de 100 medicamentos diferentes.</p>
+
+                <h3>Metodologia de Cálculo</h3>
+                <div class="formula-box">
+                    <strong>Fórmula Geral:</strong><br>
+                    Dose Total = Peso (kg) × Dose por kg<br>
+                    Intervalo = Definido pela idade gestacional e dias de vida<br>
+                    Doses por dia = 24 horas / Intervalo (horas)<br>
+                    Dose diária total = Dose Total × Doses por dia<br><br>
+
+                    <strong>Fatores de Ajuste:</strong><br>
+                    - Idade gestacional (≤29, 30-34, ≥35 semanas)<br>
+                    - Idade pós-natal (0-7 dias, 8-28 dias, ≥29 dias)<br>
+                    - Peso corporal (kg)<br>
+                    - Indicação clínica específica
+                </div>
+
+                <h3>Categorização do Paciente</h3>
+                <p>Os recém-nascidos são categorizados conforme:</p>
+                <ul>
+                    <li><strong>Idade Gestacional:</strong>
+                        <ul>
+                            <li>Prematuro extremo (≤29 semanas)</li>
+                            <li>Prematuro moderado (30-34 semanas)</li>
+                            <li>Recém-nascido a termo (≥35 semanas)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Idade Pós-Natal:</strong>
+                        <ul>
+                            <li>0-7 dias de vida</li>
+                            <li>8-28 dias de vida</li>
+                            <li>≥29 dias de vida</li>
+                        </ul>
+                    </li>
+                    <li><strong>Indicações Especiais:</strong>
+                        <ul>
+                            <li>Imunossuprimido</li>
+                            <li>Meningoencefalite</li>
+                            <li>Outras indicações específicas</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Peso (kg):</strong> Informe o peso atual em quilogramas com até 3 casas decimais (ex: 2.350 kg)</li>
+                    <li><strong>Idade Gestacional (semanas):</strong> Informe a idade gestacional ao nascer (ex: 32 semanas)</li>
+                    <li><strong>Dias de Vida:</strong> Informe quantos dias de vida pós-natal o recém-nascido possui (ex: 5 dias)</li>
+                    <li><strong>Medicamento:</strong> Selecione o medicamento desejado da lista (100+ opções disponíveis)</li>
+                    <li><strong>Indicação:</strong> Selecione a indicação clínica específica (se aplicável)</li>
+                    <li>Clique em <strong>"Calcular Dose"</strong> para obter os resultados</li>
+                    <li>Use o botão <strong>"Gerar Relatório"</strong> para criar um relatório completo em texto simples</li>
+                </ol>
+
+                <h3>Interpretação dos Resultados</h3>
+                <ul>
+                    <li><strong>Dose por Peso:</strong> Dose recomendada por quilograma de peso corporal</li>
+                    <li><strong>Dose Total:</strong> Dose total a ser administrada em cada aplicação</li>
+                    <li><strong>Intervalo:</strong> Tempo entre as doses (em horas)</li>
+                    <li><strong>Doses por Dia:</strong> Número de administrações diárias</li>
+                    <li><strong>Dose Diária Total:</strong> Quantidade total do medicamento administrada em 24 horas</li>
+                    <li><strong>Unidade:</strong> mg (miligramas) ou UI (unidades internacionais)</li>
+                </ul>
+
+                <h3>Considerações Importantes</h3>
+                <ul>
+                    <li>As doses do NEOFAX são baseadas em evidências científicas e consenso de especialistas</li>
+                    <li>Prematuros extremos têm função renal e hepática imatura - doses geralmente menores e intervalos maiores</li>
+                    <li>Conforme o recém-nascido cresce, as doses são ajustadas para refletir a maturação dos sistemas</li>
+                    <li>Monitorar função renal através de creatinina sérica</li>
+                    <li>Considerar ajustes em casos de disfunção renal ou hepática</li>
+                    <li>Alguns medicamentos têm indicações especiais que alteram a dose (ex: meningoencefalite, imunossuprimido)</li>
+                    <li>Reavaliar doses regularmente conforme o paciente cresce</li>
+                    <li>Considerar interações medicamentosas</li>
+                    <li>Monitorar sinais de toxicidade específicos de cada medicamento</li>
+                </ul>
+
+                <h3>Categorias de Medicamentos Disponíveis</h3>
+                <ul>
+                    <li><strong>Antibióticos:</strong> Ampicilina, Gentamicina, Vancomicina, Cefalosporinas, Carbapenêmicos, etc.</li>
+                    <li><strong>Antifúngicos:</strong> Fluconazol, Anfotericina B, Caspofungina</li>
+                    <li><strong>Antivirais:</strong> Aciclovir, Ganciclovir, Foscarnet</li>
+                    <li><strong>Cardiovasculares:</strong> Dopamina, Dobutamina, Adrenalina, Noradrenalina, Milrinona</li>
+                    <li><strong>Anticonvulsivantes:</strong> Fenobarbital, Fenitoína, Levetiracetam, Topiramato</li>
+                    <li><strong>Sedativos:</strong> Midazolam, Fentanil, Morfina</li>
+                    <li><strong>Diuréticos:</strong> Furosemida, Espironolactona, Hidroclorotiazida</li>
+                    <li><strong>Outros:</strong> Cafeína, Teofilina, Insulina, Surfactante, etc.</li>
+                </ul>
+
+                <h3>Sobre o NEOFAX</h3>
+                <p>O NEOFAX é um manual de referência amplamente utilizado em unidades de terapia intensiva neonatal, contendo:</p>
+                <ul>
+                    <li>Doses baseadas em idade gestacional e pós-natal</li>
+                    <li>Indicações e contraindicações</li>
+                    <li>Interações medicamentosas</li>
+                    <li>Monitoramento terapêutico</li>
+                    <li>Efeitos adversos</li>
+                    <li>Recomendações de ajuste de dose</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Young TE, Mangum B. Neofax 2024: A Manual of Drugs Used in Neonatal Care. 37th ed. 2024.<br>
+                    - Taketomo CK, et al. Pediatric & Neonatal Dosage Handbook with International Trade Names Index. 29th ed. 2022.<br>
+                    - Allegaert K, et al. Clinical pharmacology in neonates and young infants: the benefit of a population-tailored approach. Expert Rev Clin Pharmacol. 2012.<br>
+                    - Smits A, et al. Clinical pharmacokinetics of drugs in neonates. Expert Opin Drug Metab Toxicol. 2015.
+                </div>
+            </div>
+        </div>
+    </div>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

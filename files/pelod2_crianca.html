@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — PELOD-2 (pediatria, uso educativo)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #6b7280;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --background-color: #ecf0f1;
+            --card-background: #ffffff;
+            --text-color: #2c3e50;
+            --text-muted: #374151;
+            --border-color: #bdc3c7;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--background-color) 0%, #d5dbdb 100%);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: var(--card-background);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .form-section {
+            background: var(--card-background);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-section:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+
+        .subsection-title {
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+            margin: 20px 0 15px 0;
+            font-weight: 600;
+            padding-left: 10px;
+            border-left: none;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #d1d5db;
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.06);
+            background: white;
+        }
+
+        .form-group input[readonly] {
+            background-color: #e9ecef;
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .unit {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: #4b5563;
+            color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--text-muted) 0%, #6c757d 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .copy-btn:hover {
+            background: linear-gradient(135deg, #229954 0%, #27ae60 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        .copy-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(39, 174, 96, 0.3);
+        }
+
+        .results-section {
+            background: var(--card-background);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: none;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .result-value {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        .risk-indicator {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .risk-low {
+            background: rgba(39, 174, 96, 0.1);
+            color: var(--success-color);
+            border: 2px solid rgba(39, 174, 96, 0.3);
+        }
+
+        .risk-medium {
+            background: rgba(243, 156, 18, 0.1);
+            color: var(--warning-color);
+            border: 2px solid rgba(243, 156, 18, 0.3);
+        }
+
+        .risk-high {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+            border: 2px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .report-section {
+            background: var(--card-background);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .breakdown-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .breakdown-table th,
+        .breakdown-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .breakdown-table th {
+            background: #f3f4f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        .breakdown-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .result-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #374151;
+        }
+
+        .info-box h4 {
+            margin-bottom: 10px;
+            color: #374151;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .container { border-radius: 10px; }
+            .header h1 { font-size: 1.8em; }
+            .content { padding: 20px; }
+            .section { padding: 15px; }
+            button { padding: 12px; font-size: 15px; }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 5px; }
+            .header h1 { font-size: 1.4em; }
+            .header p { font-size: 0.9em; }
+            .content { padding: 15px; }
+            .section { padding: 12px; }
+            .section h3 { font-size: 1.1em; }
+            input, select { padding: 10px; font-size: 14px; }
+            button { padding: 10px; font-size: 14px; }
+            .results { padding: 12px; }
+            .score-display { font-size: 2.5em; }
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(52, 73, 94, 0.2);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-info:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+
+        .modal-body ul, .modal-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong {
+            color: #2c3e50;
+        }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong {
+            color: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+
+            .modal-body {
+                padding: 20px;
+                max-height: 75vh;
+            }
+
+            .modal-header {
+                padding: 15px 20px;
+            }
+
+            .modal-header h2 {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 98%;
+                margin: 5% auto;
+            }
+
+            .modal-body {
+                padding: 15px;
+                max-height: 80vh;
+            }
+
+            .modal-header h2 {
+                font-size: 16px;
+            }
+
+            .modal-body h3 {
+                font-size: 16px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>PELOD-2 (pediatria)</h1>
+            <p>Ferramenta educativa — soma de disfunção orgânica segundo parâmetros publicados; o percentual exibido vem de um modelo estatístico de referência, não substitui prognóstico clínico individual</p>
+            <div class="header-actions">
+                <button class="btn-info" onclick="abrirModal()">
+                    Como usar
+                </button>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2 class="section-title">Dados do Paciente</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="nome">Nome do Paciente</label>
+                    <input type="text" id="nome" placeholder="Nome completo">
+                </div>
+                <div class="form-group">
+                    <label for="data_nascimento">Data de Nascimento</label>
+                    <input type="date" id="data_nascimento">
+                </div>
+                <div class="form-group">
+                    <label for="data_avaliacao">Data da Avaliação</label>
+                    <input type="date" id="data_avaliacao">
+                </div>
+                <div class="form-group">
+                    <label for="hora_avaliacao">Hora da Avaliação</label>
+                    <input type="time" id="hora_avaliacao">
+                </div>
+                <div class="form-group">
+                    <label for="idade_completa">Idade (Calculada)</label>
+                    <input type="text" id="idade_completa" readonly>
+                    <span class="unit">anos, meses e dias</span>
+                </div>
+                <div class="form-group">
+                    <label for="dia_uti">Dia de UTI</label>
+                    <input type="number" id="dia_uti" min="1" max="120" step="1" placeholder="Ex.: 1">
+                    <span class="unit">dias</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2 class="section-title">Dados PELOD-2 (Piores Valores do Dia)</h2>
+            
+            <div class="info-box">
+                <h4>Informações importantes</h4>
+                <p>O PELOD-2 deve ser calculado com base nos <strong>piores valores do dia</strong> para cada variável. Para cada parâmetro, use o valor que representa a maior disfunção observada durante as 24 horas. Você pode inserir valores únicos ou listas separadas por vírgula — o sistema seleciona automaticamente o pior valor conforme a regra (mínimo ou máximo, conforme o parâmetro).</p>
+                <p style="margin-top:10px;"><strong>Uso desta tela:</strong> apoio ao ensino e registro informativo. O número percentual associado ao total é uma <strong>transformação logística do escore</strong> derivada da publicação de referência — <strong>não é probabilidade clínica individual</strong> nem critério isolado de conduta.</p>
+            </div>
+
+            <h3 class="subsection-title">Neurológico</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="gcs">Escala de Coma de Glasgow (GCS)</label>
+                    <input type="text" id="gcs" placeholder="Ex.: 7 ou lista: 9,7,8">
+                    <span class="unit">pior valor do dia (quanto menor, pior)</span>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Cardiovascular</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="map">Pressão Arterial Média (PAM)</label>
+                    <input type="text" id="map" placeholder="Ex.: 48 ou lista: 55,48,52">
+                    <span class="unit">mmHg (pior valor do dia)</span>
+                </div>
+                <div class="form-group">
+                    <label for="lactate">Lactato</label>
+                    <input type="text" id="lactate" placeholder="Ex.: 4.2 ou lista: 2.1,3.8,4.2">
+                    <span class="unit">mmol/L (pior valor do dia)</span>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Respiratório</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="pao2">PaO₂</label>
+                    <input type="text" id="pao2" placeholder="Ex.: 70 ou lista: 85,70,90">
+                    <span class="unit">mmHg (pior valor do dia)</span>
+                </div>
+                <div class="form-group">
+                    <label for="fio2">FiO₂</label>
+                    <input type="text" id="fio2" placeholder="Ex.: 0.6 ou lista: 0.4,0.6,0.5">
+                    <span class="unit">fração (maior valor do dia)</span>
+                </div>
+                <div class="form-group">
+                    <label for="paco2">PaCO₂</label>
+                    <input type="text" id="paco2" placeholder="Ex.: 60 ou lista: 50,60,55">
+                    <span class="unit">mmHg (pior valor do dia)</span>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Renal / Hematológico</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="creatinine">Creatinina</label>
+                    <input type="text" id="creatinine" placeholder="Ex.: 1.2 ou lista: 0.9,1.2,1.1">
+                    <span class="unit">mg/dL (pior valor do dia)</span>
+                </div>
+                <div class="form-group">
+                    <label for="platelets">Plaquetas</label>
+                    <input type="text" id="platelets" placeholder="Ex.: 85 ou lista: 120,85,95">
+                    <span class="unit">10³/µL (pior valor do dia)</span>
+                </div>
+                <div class="form-group">
+                    <label for="wbc">Leucócitos</label>
+                    <input type="text" id="wbc" placeholder="Ex.: 2.8 ou lista: 6.0,2.8,3.5">
+                    <span class="unit">10³/µL (pior valor do dia)</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="obs">Observações</label>
+                <input type="text" id="obs" placeholder="Sedação? Ventilação? Contexto clínico">
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="calcularPELOD2()">Calcular PELOD-2</button>
+                <button class="btn btn-secondary" onclick="limparDados()">Limpar Dados</button>
+            </div>
+        </div>
+
+        <div class="results-section">
+            <h2 class="section-title">Resultados</h2>
+            <div id="resultados" class="result-item">
+                <span class="result-label">PELOD-2 - Escore Total:</span>
+                <span class="result-value" id="escore_total">-</span>
+            </div>
+            <div id="resultados_prob" class="result-item">
+                <span class="result-label">Valor do modelo logístico (referência Leteurtre et al., não predição individual):</span>
+                <span class="result-value" id="probabilidade_mortalidade">-</span>
+            </div>
+            <div id="indicador_risco" style="text-align: center; margin-top: 15px;"></div>
+            <div id="breakdown_table"></div>
+        </div>
+
+        <div class="report-section">
+            <h2 class="section-title">Texto informativo para prontuário eletrônico (revisar)</h2>
+            <button type="button" class="copy-btn" onclick="gerarECopiarRelatorio()">Gerar e copiar texto informativo</button>
+        </div>
+
+        <div class="form-section" style="text-align:center;font-size:0.9rem;color:var(--text-muted);">
+            <p>NeoPedCalc — uso educacional e informativo. Não prescreve tratamento nem substitui julgamento clínico ou critérios institucionais de gravidade.</p>
+        </div>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar (informação)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>O PELOD-2 quantifica <strong>disfunção orgânica pediátrica</strong> a partir de variáveis fisiológicas/laboratoriais. Nesta página ele serve para <strong>estudo, treino e registro informativo</strong>. O percentual mostrado aplica a função logística publicada por Leteurtre et al. ao total calculado — é uma <strong>curva populacional de referência</strong>, não uma “chance” individual do paciente.</p>
+                
+                <h3>O que esta implementação soma</h3>
+                <div class="formula-box">
+                    <strong>Total = pontos neurológicos + cardiovasculares + respiratórios + renais + hematológicos</strong> (conforme tabelas da publicação, espelhadas nos campos da tela).<br><br>
+                    <strong>Domínios presentes nesta ferramenta:</strong><br>
+                    • Neurológico: GCS (pior do dia; quanto menor, mais pontos)<br>
+                    • Cardiovascular: PAM (mmHg) e lactato (mmol/L)<br>
+                    • Respiratório: razão PaO₂/FiO₂ e PaCO₂<br>
+                    • Renal: creatinina (mg/dL)<br>
+                    • Hematológico: plaquetas e leucócitos (10³/µL)<br><br>
+                    <strong>Total máximo nesta página:</strong> até <strong>21 pontos</strong> (soma dos máximos por domínio nesta configuração).<br>
+                    <strong>Observação:</strong> O PELOD-2 completo no artigo pode incluir outros critérios em contextos específicos; confira sempre a fonte original e o protocolo local.
+                </div>
+
+                <h3>Instruções de uso</h3>
+                <ol>
+                    <li>Preencha os piores valores de cada parâmetro nas últimas 24 h (ou janela definida pelo seu serviço)</li>
+                    <li>Use vírgula para listar vários valores; o sistema escolhe o pior conforme a regra do parâmetro</li>
+                    <li>Informe FiO₂ como fração (ex.: 0,6 para 60%)</li>
+                    <li>Clique em <strong>Calcular PELOD-2</strong> para ver total, tabela de contribuição e valor do modelo logístico</li>
+                    <li>Use <strong>Copiar texto</strong> apenas como rascunho educativo — revise antes de arquivar</li>
+                </ol>
+
+                <h3>Faixas de total (apenas organização visual nesta tela)</h3>
+                <p style="font-size:14px;line-height:1.5;">Esta página colore o resultado em três faixas para facilitar leitura — <strong>não definem prognóstico sozinhas</strong>:</p>
+                <ul>
+                    <li><strong>0–4 pontos:</strong> faixa baixa do total calculado aqui</li>
+                    <li><strong>5–9 pontos:</strong> faixa intermediária</li>
+                    <li><strong>≥10 pontos:</strong> faixa alta do total — integrar com exame clínico, suporte e diretrizes institucionais</li>
+                </ul>
+
+                <h3>Sobre o percentual exibido</h3>
+                <p style="font-size:14px;line-height:1.5;">O valor em % resulta da fórmula <code>logit = α + β × escore</code> com coeficientes da referência embutidos neste código. Interpretação adequada exige contexto epidemiológico e clínico; <strong>não use como único critério de decisão terapêutica.</strong></p>
+
+                <h3>Considerações importantes</h3>
+                <ul>
+                    <li>Qualidade e sincronia dos exames influenciam o total</li>
+                    <li>Evolução seriada do escore pode ser discutida na literatura; a decisão de frequência de coleta é assistencial</li>
+                    <li>Comorbidades e terapias (ex.: sedação) alteram a leitura dos parâmetros — não estão “corrigidas” automaticamente nesta tela</li>
+                </ul>
+
+                <h3>Uso pretendido (informativo)</h3>
+                <ul>
+                    <li>Ensino de definição de disfunção orgânica pediátrica</li>
+                    <li>Padronização de registro para estudo ou auditoria interna, com ressalvas explícitas</li>
+                    <li>Comparação com artigos e bases de dados de UTI pediátrica</li>
+                </ul>
+
+                <h3>Limitações</h3>
+                <ul>
+                    <li>Não substitui avaliação clínica individual nem escores institucionais obrigatórios</li>
+                    <li>Validação e performance variam por população e cenário assistencial</li>
+                    <li>Depende da disponibilidade e acurácia dos dados inseridos</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referência principal:</strong> Leteurtre S, et al. PELOD-2: an update of the PEdiatric logistic organ dysfunction score. <em>Crit Care Med</em>. 2013;41(7):1761-73.<br>
+                    <strong>Contexto histórico:</strong> Leteurtre S, et al. Pediatric logistic organ dysfunction (PELOD) score. <em>Lancet</em>. 2003;362(9379):192-7.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Configuração PELOD-2 baseada na literatura
+        const PELOD2_CONFIG = {
+            logistic: { alpha: -4.0, beta: 0.12 },
+            neuro: {
+                gcs: [
+                    { max: 5, pts: 4 },
+                    { max: 8, pts: 3 },
+                    { max: 11, pts: 2 },
+                    { max: 14, pts: 1 },
+                    { max: Infinity, pts: 0 }
+                ]
+            },
+            cardio: {
+                map: [
+                    { max: 45, pts: 2 },
+                    { max: 55, pts: 1 },
+                    { max: Infinity, pts: 0 }
+                ],
+                lactate: [
+                    { min: 4.0, max: Infinity, pts: 2 },
+                    { min: 2.5, max: 3.9, pts: 1 },
+                    { min: 0, max: 2.49, pts: 0 }
+                ]
+            },
+            resp: {
+                pf_ratio: [
+                    { max: 100, pts: 3 },
+                    { max: 200, pts: 2 },
+                    { max: 300, pts: 1 },
+                    { max: Infinity, pts: 0 }
+                ],
+                paco2: [
+                    { min: 51, max: 70, pts: 1 },
+                    { min: 71, max: 90, pts: 2 },
+                    { min: 91, max: Infinity, pts: 3 }
+                ]
+            },
+            renal: {
+                creatinine: [
+                    { min: 2.0, max: Infinity, pts: 2 },
+                    { min: 1.0, max: 1.99, pts: 1 },
+                    { min: 0, max: 0.99, pts: 0 }
+                ]
+            },
+            heme: {
+                platelets: [
+                    { max: 50, pts: 3 },
+                    { max: 99, pts: 2 },
+                    { max: 149, pts: 1 },
+                    { max: Infinity, pts: 0 }
+                ],
+                wbc: [
+                    { max: 3, pts: 2 },
+                    { min: 25, max: Infinity, pts: 1 }
+                ]
+            }
+        };
+
+        // Função para calcular idade em anos, meses e dias
+        function calcularIdade() {
+            const dataNascimento = document.getElementById('data_nascimento').value;
+            const dataAvaliacao = document.getElementById('data_avaliacao').value;
+
+            if (dataNascimento && dataAvaliacao) {
+                const nascimento = new Date(dataNascimento);
+                const avaliacao = new Date(dataAvaliacao);
+                
+                let anos = avaliacao.getFullYear() - nascimento.getFullYear();
+                let meses = avaliacao.getMonth() - nascimento.getMonth();
+                let dias = avaliacao.getDate() - nascimento.getDate();
+                
+                if (dias < 0) {
+                    meses--;
+                    const ultimoMes = new Date(avaliacao.getFullYear(), avaliacao.getMonth(), 0);
+                    dias += ultimoMes.getDate();
+                }
+                
+                if (meses < 0) {
+                    anos--;
+                    meses += 12;
+                }
+                
+                let idadeTexto = '';
+                if (anos > 0) {
+                    idadeTexto += `${anos} ano${anos > 1 ? 's' : ''}`;
+                }
+                if (meses > 0) {
+                    if (idadeTexto) idadeTexto += ', ';
+                    idadeTexto += `${meses} mês${meses > 1 ? 'es' : ''}`;
+                }
+                if (dias > 0 || (!anos && !meses)) {
+                    if (idadeTexto) idadeTexto += ', ';
+                    idadeTexto += `${dias} dia${dias > 1 ? 's' : ''}`;
+                }
+                
+                document.getElementById('idade_completa').value = idadeTexto || '0 dias';
+            }
+        }
+
+        // Preencher data e hora atuais
+        function preencherDataAtual() {
+            const hoje = new Date();
+            const dataAtual = hoje.toISOString().split('T')[0];
+            const horaAtual = hoje.toTimeString().slice(0, 5);
+            
+            if (!document.getElementById('data_avaliacao').value) {
+                document.getElementById('data_avaliacao').value = dataAtual;
+            }
+            if (!document.getElementById('hora_avaliacao').value) {
+                document.getElementById('hora_avaliacao').value = horaAtual;
+            }
+        }
+
+        // Função para processar lista ou valor único
+        function processarListaOuValor(texto) {
+            if (!texto || texto === '') return NaN;
+            if (!String(texto).includes(',')) return parseFloat(texto);
+            const arr = String(texto).split(',').map(v => parseFloat(v.trim())).filter(v => !Number.isNaN(v));
+            if (!arr.length) return NaN;
+            return arr;
+        }
+
+        // Função para selecionar pior valor
+        function selecionarPiorValor(valorOuArray, preferencia) {
+            // preferencia: 'min' (quanto menor pior), 'max' (quanto maior pior)
+            if (Array.isArray(valorOuArray)) {
+                return preferencia === 'max' ? Math.max(...valorOuArray) : Math.min(...valorOuArray);
+            }
+            return valorOuArray;
+        }
+
+        // Função para calcular PaO2/FiO2
+        function calcularPF(pao2, fio2) {
+            if (!fio2 || fio2 <= 0) return Infinity;
+            return pao2 / fio2;
+        }
+
+        // Função auxiliar para calcular pontos por faixas
+        function pontosPorFaixa(valor, faixas) {
+            if (valor == null || Number.isNaN(valor)) return 0;
+            for (const faixa of faixas) {
+                const min = faixa.min != null ? faixa.min : -Infinity;
+                const max = faixa.max != null ? faixa.max : Infinity;
+                if (valor >= min && valor <= max) return faixa.pts;
+            }
+            return 0;
+        }
+
+        // Função para calcular PELOD-2
+        function calcularPELOD2() {
+            // Obter valores dos campos
+            const diaUti = document.getElementById('dia_uti').value;
+            
+            // Neurológico
+            const gcs_in = processarListaOuValor(document.getElementById('gcs').value);
+            const gcs = selecionarPiorValor(gcs_in, 'min');
+
+            // Cardiovascular
+            const map_in = processarListaOuValor(document.getElementById('map').value);
+            const map = selecionarPiorValor(map_in, 'min');
+            const lactate_in = processarListaOuValor(document.getElementById('lactate').value);
+            const lactate = selecionarPiorValor(lactate_in, 'max');
+
+            // Respiratório
+            const pao2_in = processarListaOuValor(document.getElementById('pao2').value);
+            const pao2 = selecionarPiorValor(pao2_in, 'min');
+            const fio2_in = processarListaOuValor(document.getElementById('fio2').value);
+            const fio2 = selecionarPiorValor(fio2_in, 'max');
+            const paco2_in = processarListaOuValor(document.getElementById('paco2').value);
+            const paco2 = selecionarPiorValor(paco2_in, 'max');
+
+            // Renal/Hematológico
+            const creatinine_in = processarListaOuValor(document.getElementById('creatinine').value);
+            const creatinine = selecionarPiorValor(creatinine_in, 'max');
+            const platelets_in = processarListaOuValor(document.getElementById('platelets').value);
+            const platelets = selecionarPiorValor(platelets_in, 'min');
+            const wbc_in = processarListaOuValor(document.getElementById('wbc').value);
+            const wbc = selecionarPiorValor(wbc_in, 'min');
+
+            // Calcular PaO2/FiO2
+            const pf = calcularPF(pao2, fio2);
+
+            let score = 0;
+            const breakdown = [];
+
+            // Neurológico
+            const gcs_pts = pontosPorFaixa(gcs, PELOD2_CONFIG.neuro.gcs);
+            score += gcs_pts;
+            if (gcs && !Number.isNaN(gcs)) {
+                breakdown.push(['Neurológico - GCS', gcs, gcs_pts]);
+            }
+
+            // Cardiovascular
+            const map_pts = pontosPorFaixa(map, PELOD2_CONFIG.cardio.map);
+            score += map_pts;
+            if (map && !Number.isNaN(map)) {
+                breakdown.push(['Cardiovascular - PAM', `${map} mmHg`, map_pts]);
+            }
+
+            const lactate_pts = pontosPorFaixa(lactate, PELOD2_CONFIG.cardio.lactate);
+            score += lactate_pts;
+            if (lactate && !Number.isNaN(lactate)) {
+                breakdown.push(['Cardiovascular - Lactato', `${lactate} mmol/L`, lactate_pts]);
+            }
+
+            // Respiratório
+            const pf_pts = pontosPorFaixa(pf, PELOD2_CONFIG.resp.pf_ratio);
+            score += pf_pts;
+            if (pao2 && fio2 && !Number.isNaN(pao2) && !Number.isNaN(fio2)) {
+                breakdown.push(['Respiratório - P/F', isFinite(pf) ? pf.toFixed(0) : '∞', pf_pts]);
+            }
+
+            const paco2_pts = pontosPorFaixa(paco2, PELOD2_CONFIG.resp.paco2);
+            score += paco2_pts;
+            if (paco2 && !Number.isNaN(paco2)) {
+                breakdown.push(['Respiratório - PaCO₂', `${paco2} mmHg`, paco2_pts]);
+            }
+
+            // Renal
+            const creatinine_pts = pontosPorFaixa(creatinine, PELOD2_CONFIG.renal.creatinine);
+            score += creatinine_pts;
+            if (creatinine && !Number.isNaN(creatinine)) {
+                breakdown.push(['Renal - Creatinina', `${creatinine} mg/dL`, creatinine_pts]);
+            }
+
+            // Hematológico
+            const platelets_pts = pontosPorFaixa(platelets, PELOD2_CONFIG.heme.platelets);
+            score += platelets_pts;
+            if (platelets && !Number.isNaN(platelets)) {
+                breakdown.push(['Hematológico - Plaquetas', `${platelets} 10³/µL`, platelets_pts]);
+            }
+
+            const wbc_pts = pontosPorFaixa(wbc, PELOD2_CONFIG.heme.wbc);
+            score += wbc_pts;
+            if (wbc && !Number.isNaN(wbc)) {
+                breakdown.push(['Hematológico - Leucócitos', `${wbc} 10³/µL`, wbc_pts]);
+            }
+
+            // Calcular probabilidade
+            const logit = PELOD2_CONFIG.logistic.alpha + PELOD2_CONFIG.logistic.beta * score;
+            const probability = 1 / (1 + Math.exp(-logit));
+
+            // Exibir resultados
+            const diaTexto = diaUti ? ` (Dia ${diaUti})` : '';
+            document.getElementById('escore_total').textContent = `${score} pontos${diaTexto}`;
+            document.getElementById('probabilidade_mortalidade').textContent = `${(probability * 100).toFixed(1)}%`;
+
+            // Faixas descritivas nesta ferramenta (não prognóstico isolado)
+            let riskLevel, riskClass;
+            if (score <= 4) {
+                riskLevel = 'Faixa baixa do total (0–4)';
+                riskClass = 'risk-low';
+            } else if (score <= 9) {
+                riskLevel = 'Faixa intermediária (5–9)';
+                riskClass = 'risk-medium';
+            } else {
+                riskLevel = 'Faixa alta do total (≥10)';
+                riskClass = 'risk-high';
+            }
+
+            document.getElementById('indicador_risco').innerHTML = 
+                `<span class="risk-indicator ${riskClass}">${riskLevel}</span>`;
+
+            // Criar tabela de breakdown
+            let tableHTML = '<table class="breakdown-table">';
+            tableHTML += '<thead><tr><th>Sistema</th><th>Valor (Pior do Dia)</th><th>Pontos</th></tr></thead>';
+            tableHTML += '<tbody>';
+            breakdown.forEach(([sistema, valor, pontos]) => {
+                tableHTML += `<tr><td>${sistema}</td><td>${valor}</td><td><strong>${pontos}</strong></td></tr>`;
+            });
+            tableHTML += '</tbody></table>';
+            
+            document.getElementById('breakdown_table').innerHTML = tableHTML;
+        }
+
+        // Função para gerar e copiar relatório
+        function gerarECopiarRelatorio() {
+            const nome = document.getElementById('nome').value;
+            const dataNascimento = document.getElementById('data_nascimento').value;
+            const dataAvaliacao = document.getElementById('data_avaliacao').value;
+            const horaAvaliacao = document.getElementById('hora_avaliacao').value;
+            const idadeCompleta = document.getElementById('idade_completa').value;
+            const diaUti = document.getElementById('dia_uti').value;
+            const obs = document.getElementById('obs').value;
+
+            const escoreTotal = document.getElementById('escore_total').textContent;
+            const probabilidade = document.getElementById('probabilidade_mortalidade').textContent;
+            const indicador = document.getElementById('indicador_risco').textContent;
+            var legalFoot = (typeof window.neopedLegalReportFooter === 'function') ? window.neopedLegalReportFooter() : '';
+
+            let relatorioTexto = `RESUMO INFORMATIVO — PELOD-2 (FERRAMENTA EDUCATIVA)
+============================================
+
+NOTA: Texto para apoio informativo. Nao substitui avaliacao clinica nem define prognostico individual. O percentual abaixo vem de modelo estatistico de referencia (Leteurtre et al.), nao de predicao isolada do paciente.
+
+IDENTIFICACAO (opcional)
+------------------------
+${nome ? `Nome: ${nome}` : 'Nome: (nao informado)'}
+${dataAvaliacao ? `Data da avaliacao: ${dataAvaliacao}` : ''}${horaAvaliacao ? ` — Hora: ${horaAvaliacao}` : ''}
+${dataNascimento ? `Data de nascimento: ${dataNascimento}` : ''}
+${idadeCompleta ? `Idade na data da avaliacao: ${idadeCompleta}` : ''}
+${diaUti ? `Dia de UTI (campo informativo): ${diaUti}` : ''}
+
+VARIAVEIS INSERIDAS (piores valores do dia, conforme tela)
+----------------------------------------------------------
+- GCS: ${document.getElementById('gcs').value || '-'}
+- PAM: ${document.getElementById('map').value || '-'} mmHg
+- Lactato: ${document.getElementById('lactate').value || '-'} mmol/L
+- PaO2: ${document.getElementById('pao2').value || '-'} mmHg
+- FiO2: ${document.getElementById('fio2').value || '-'}
+- PaCO2: ${document.getElementById('paco2').value || '-'} mmHg
+- Creatinina: ${document.getElementById('creatinine').value || '-'} mg/dL
+- Plaquetas: ${document.getElementById('platelets').value || '-'} 10³/uL
+- Leucocitos: ${document.getElementById('wbc').value || '-'} 10³/uL
+${obs ? `Observacoes: ${obs}` : ''}
+
+RESULTADOS NESTA SESSAO
+-----------------------
+- Total PELOD-2 (soma desta implementacao): ${escoreTotal}
+- Valor do modelo logistico (referencia): ${probabilidade}
+- Faixa descritiva na interface: ${indicador}
+
+CONTEXTO EDUCATIVO
+------------------
+O PELOD-2 quantifica disfuncao organica em criancas criticas segundo criterios publicados. Totais maiores refletem maior pontuacao pelos limiares da tabela; conduta e prognostico clinico dependem do contexto e do protocolo local.
+
+TABELA DE PONTOS (espelhada neste codigo)
+------------------------------------------
+- GCS: ≤5=4, 6-8=3, 9-11=2, 12-14=1, 15=0
+- PAM: ≤45 mmHg=2, 46-55=1, >55=0
+- Lactato: ≥4,0=2; 2,5-3,9=1; <2,5=0 mmol/L
+- PaO2/FiO2: <100=3; 100-200=2; 200-300=1; >300=0
+- PaCO2: 51-70=1; 71-90=2; >90=3 mmHg (≤50=0 nesta implementacao)
+- Creatinina: ≥2,0=2; 1,0-1,99=1; <1,0=0 mg/dL
+- Plaquetas: <50=3; 50-99=2; 100-149=1; ≥150=0 (10³/uL)
+- Leucocitos: <3=2; >25=1; caso contrario=0 (10³/uL)
+
+Referencia: Leteurtre S, et al. PELOD-2: an update of the PELOD pediatric organ dysfunction score. Crit Care Med. 2013;41(7):1761-73.` + legalFoot;
+
+            copiarTexto(relatorioTexto);
+        }
+
+        // Função para copiar texto
+        function copiarTexto(texto) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(texto).then(() => {
+                    if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+                }).catch(err => {
+                    copiarTextoFallback(texto);
+                });
+            } else {
+                copiarTextoFallback(texto);
+            }
+        }
+
+        function copiarTextoFallback(texto) {
+            const textArea = document.createElement('textarea');
+            textArea.value = texto;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            } catch (err) {
+                if (typeof window.neopedCopyFail === 'function') window.neopedCopyFail(); else alert('Nao foi possivel copiar automaticamente. Revise o texto e copie manualmente para uso informativo.');
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // Função para limpar dados
+        function limparDados() {
+            const campos = [
+                'nome', 'data_nascimento', 'data_avaliacao', 
+                'hora_avaliacao', 'idade_completa', 'dia_uti', 'gcs',
+                'map', 'lactate', 'pao2', 'fio2', 'paco2',
+                'creatinine', 'platelets', 'wbc', 'obs'
+            ];
+
+            campos.forEach(campo => {
+                const elemento = document.getElementById(campo);
+                if (elemento.type === 'select-one') {
+                    elemento.selectedIndex = 0;
+                } else {
+                    elemento.value = '';
+                }
+            });
+
+            document.getElementById('escore_total').textContent = '-';
+            document.getElementById('probabilidade_mortalidade').textContent = '-';
+            document.getElementById('indicador_risco').innerHTML = '';
+            document.getElementById('breakdown_table').innerHTML = '';
+        }
+
+        // Event listeners
+        document.getElementById('data_nascimento').addEventListener('change', calcularIdade);
+        document.getElementById('data_avaliacao').addEventListener('change', calcularIdade);
+
+        // Preencher data atual ao carregar
+        window.addEventListener('load', preencherDataAtual);
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

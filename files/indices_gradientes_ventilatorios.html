@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPedCalc — Índices e gradientes ventilatórios (educativo)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .form-section h3 {
+            font-size: 14px;
+            margin: 0 0 15px 0;
+            color: #111;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .results-section {
+            background: #f0f4ff;
+            border: 1px solid #b4cfff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .results-section h3 {
+            font-size: 14px;
+            margin: 0 0 15px 0;
+            color: #111;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .result-item {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .result-label {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 5px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .result-number {
+            font-size: 24px;
+            font-weight: 900;
+            color: #111;
+        }
+
+        .result-interpretation {
+            font-size: 12px;
+            color: #333;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .report-btn {
+            background: #111;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .warning-box, .info-box {
+            background: #fffbe0;
+            border: 1px solid #f1e49a;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .reference-table {
+            margin-top: 25px;
+            overflow-x: auto;
+        }
+
+        .reference-table table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .reference-table th, .reference-table td {
+            padding: 10px;
+            border: 1px solid #e7e7ee;
+            text-align: left;
+        }
+
+        .reference-table th {
+            background: #f6f7fb;
+            font-weight: 800;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #374151;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        /* Modal Styles */
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(17, 17, 17, 0.1);
+            color: #111;
+            border: 2px solid #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-info:hover {
+            background: #111;
+            color: #fff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 { margin: 0; font-size: 22px; }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover { transform: rotate(90deg); }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child { margin-top: 0; }
+        .modal-body p { line-height: 1.6; margin-bottom: 15px; color: #34495e; }
+        .modal-body ul, .modal-body ol { margin: 10px 0; padding-left: 25px; }
+        .modal-body li { margin-bottom: 8px; line-height: 1.5; }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong { color: #2c3e50; }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong { color: #27ae60; }
+
+        @media (max-width: 768px) {
+            .modal { padding: 10px; }
+            .modal-content { width: 95%; max-height: 95vh; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+<body>
+    <header>
+        <h1>🧪 Índices e Gradientes Ventilatórios</h1>
+        <p>Apoio informativo para interpretação educativa de índices e gradientes ventilatórios</p>
+        <div class="header-actions">
+            <button type="button" class="btn-info" onclick="abrirModal()">
+                Como usar
+            </button>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="card">
+            <div class="content">
+            <!-- Dados do Paciente -->
+            <div class="form-section">
+                <h3>👤 Dados do Paciente</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome">Nome do Paciente:</label>
+                        <input type="text" id="nome" placeholder="Ex: João Silva">
+                    </div>
+                    <div class="form-group">
+                        <label for="dataAvaliacao">Data da Avaliação:</label>
+                        <input type="date" id="dataAvaliacao" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="horarioAvaliacao">Horário da Avaliação:</label>
+                        <input type="time" id="horarioAvaliacao" onchange="calcularTudo()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parâmetros Ventilatórios -->
+            <div class="form-section">
+                <h3>🫁 Parâmetros Ventilatórios</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fio2">FiO2 (%):</label>
+                        <input type="number" id="fio2" step="0.1" min="21" max="100" placeholder="Ex: 30" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="map">MAP (cmH2O):</label>
+                        <input type="number" id="map" step="0.1" placeholder="Ex: 12" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="pip">PIP (cmH2O):</label>
+                        <input type="number" id="pip" step="0.1" placeholder="Ex: 20" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="peep">PEEP (cmH2O):</label>
+                        <input type="number" id="peep" step="0.1" placeholder="Ex: 5" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="tempoInsp">Tempo Inspiratório (s):</label>
+                        <input type="number" id="tempoInsp" step="0.1" placeholder="Ex: 0.8" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="tempoExp">Tempo Expiratório (s):</label>
+                        <input type="number" id="tempoExp" step="0.1" placeholder="Ex: 1.2" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="freqResp">Frequência Respiratória (rpm):</label>
+                        <input type="number" id="freqResp" step="1" placeholder="Ex: 30" onchange="calcularTudo()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gasometria -->
+            <div class="form-section">
+                <h3>🧪 Gasometria</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pco2">pCO2 (mmHg):</label>
+                        <input type="number" id="pco2" step="0.1" placeholder="Ex: 40" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="po2">pO2 (mmHg):</label>
+                        <input type="number" id="po2" step="0.1" placeholder="Ex: 80" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="sato2">SatO2 (%):</label>
+                        <input type="number" id="sato2" step="0.1" placeholder="Ex: 95" onchange="calcularTudo()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parâmetros Ambientais -->
+            <div class="form-section">
+                <h3>🌡️ Parâmetros Ambientais</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="temperatura">Temperatura (°C):</label>
+                        <input type="number" id="temperatura" step="0.1" value="37" placeholder="Ex: 37" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="altitude">Altitude (m):</label>
+                        <input type="number" id="altitude" step="1" value="0" placeholder="Ex: 0" onchange="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label for="pressaoAtm">Pressão Atmosférica (mmHg):</label>
+                        <input type="number" id="pressaoAtm" step="0.1" value="760" placeholder="Ex: 760" onchange="calcularTudo()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cálculos Automáticos -->
+            <div class="results-section">
+                <h3>🔬 Cálculos Automáticos</h3>
+                <div class="result-grid">
+                    <div class="result-item">
+                        <div class="result-label">Pressão Alveolar de O2</div>
+                        <div class="result-number" id="pao2">-</div>
+                        <div class="result-interpretation" id="pao2Interpretation">mmHg</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Índice de Oxigenação</div>
+                        <div class="result-number" id="indiceOxigenacao">-</div>
+                        <div class="result-interpretation" id="indiceOxigenacaoInterpretation">-</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Índice Respiratório</div>
+                        <div class="result-number" id="indiceRespiratorio">-</div>
+                        <div class="result-interpretation" id="indiceRespiratorioInterpretation">-</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Índice de Ventilação</div>
+                        <div class="result-number" id="indiceVentilacao">-</div>
+                        <div class="result-interpretation" id="indiceVentilacaoInterpretation">-</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Gradiente A-a</div>
+                        <div class="result-number" id="gradienteAa">-</div>
+                        <div class="result-interpretation" id="gradienteAaInterpretation">mmHg</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Relação PaO2/PAO2</div>
+                        <div class="result-number" id="relacaoPao2Pao2">-</div>
+                        <div class="result-interpretation" id="relacaoPao2Pao2Interpretation">-</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">PaO2/FiO2</div>
+                        <div class="result-number" id="pao2Fio2">-</div>
+                        <div class="result-interpretation" id="pao2Fio2Interpretation">-</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">SatO2/FiO2</div>
+                        <div class="result-number" id="sato2Fio2">-</div>
+                        <div class="result-interpretation" id="sato2Fio2Interpretation">-</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Relação I:E</div>
+                        <div class="result-number" id="relacaoIE">-</div>
+                        <div class="result-interpretation" id="relacaoIEInterpretation">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="report-btn" onclick="gerarRelatorio()">Copiar texto informativo</button>
+        </div>
+    </div>
+</div>
+
+    <div class="footer">
+        <p>Calculadora de Índices e Gradientes Ventilatórios</p>
+        <p><strong>Referências:</strong> Protocolos de Terapia Intensiva Pediátrica e Neonatal.</p>
+    </div>
+
+            <!-- Tabela de Referência -->
+            <div class="reference-table">
+                <h3>📈 Valores de Referência</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parâmetro</th>
+                            <th>Valor Normal</th>
+                            <th>Observações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Gradiente A-a</td>
+                            <td>2-5 mmHg</td>
+                            <td>Em ar ambiente</td>
+                        </tr>
+                        <tr>
+                            <td>Gradiente A-a Neonato</td>
+                            <td>30-35 mmHg</td>
+                            <td>Valores normais para neonatos</td>
+                        </tr>
+                        <tr>
+                            <td>PaO2/FiO2</td>
+                            <td>> 300</td>
+                            <td>Normal</td>
+                        </tr>
+                        <tr>
+                            <td>PaO2/FiO2</td>
+                            <td>200-300</td>
+                            <td>Leve</td>
+                        </tr>
+                        <tr>
+                            <td>PaO2/FiO2</td>
+                            <td>100-200</td>
+                            <td>Moderado</td>
+                        </tr>
+                        <tr>
+                            <td>PaO2/FiO2</td>
+                            <td>< 100</td>
+                            <td>Grave</td>
+                        </tr>
+                        <tr>
+                            <td>SatO2/FiO2</td>
+                            <td>> 350</td>
+                            <td>Normal</td>
+                        </tr>
+                        <tr>
+                            <td>Índice de Oxigenação</td>
+                            <td>≤ 10</td>
+                            <td>SDR leve</td>
+                        </tr>
+                        <tr>
+                            <td>Índice de Oxigenação</td>
+                            <td>10-25</td>
+                            <td>SDR moderada</td>
+                        </tr>
+                        <tr>
+                            <td>Índice de Oxigenação</td>
+                            <td>≥ 25</td>
+                            <td>SDR grave</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Informações Técnicas -->
+            <div class="info-box">
+                <h4>🔧 Fórmulas Utilizadas</h4>
+                <p><strong>Pressão Alveolar de O2 (PAO2):</strong></p>
+                <p>PAO2 = (P_atm - P_H2O) × FiO2 - (pCO2 / RQ)</p>
+                <p><strong>Índice de Oxigenação (IO):</strong></p>
+                <p>IO = (MAP × FiO2 × 100) / PaO2</p>
+                <p><strong>Índice Respiratório (IR):</strong></p>
+                <p>IR = (MAP × FiO2 × 100) / (PaO2 / FiO2)</p>
+                <p><strong>Índice de Ventilação (IV):</strong></p>
+                <p>IV = (PIP - PEEP) × Freq_Resp / 1000</p>
+                <p><strong>Gradiente A-a:</strong></p>
+                <p>Grad A-a = PAO2 - PaO2</p>
+            </div>
+
+            <!-- Avisos Importantes -->
+            <div class="warning-box">
+                <h4>⚠️ Avisos Importantes</h4>
+                <p><strong>Índice de Oxigenação (IO):</strong></p>
+                <p>• IO ≥ 20: Indicação de NO inalatório</p>
+                <p>• IO ≥ 40: Indicação de ECMO (mortalidade 80%)</p>
+                <p>• Gradiente A-a > 610 mmHg por > 8h: Mortalidade 78% (indicação ECMO)</p>
+                <p><strong>Relação PaO2/PAO2:</strong></p>
+                <p>• < 0.21: Indicação de uso de Surfactante ou membrana hialina grave</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Informações -->
+    <div id="modalInfo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Como usar — Índices e gradientes ventilatórios (educativo)</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Objetivo (educativo)</h3>
+                <p>Esta calculadora organiza variáveis para estimativa educativa de índices ventilatórios e gradientes de oxigenação. O conteúdo é informativo e não substitui avaliação clínica, protocolos institucionais ou prescrição.</p>
+                
+                <h3>Fórmulas Principais</h3>
+                <div class="formula-box">
+                    <strong>Compliance Pulmonar Estática:</strong><br>
+                    Cest = ΔV / ΔP = Volume / (Pplatô - PEEP)<br><br>
+                    <strong>Compliance Dinâmica:</strong><br>
+                    Cdyn = Volume / (Pico - PEEP)<br><br>
+                    <strong>Resistência das Vias Aéreas:</strong><br>
+                    Raw = (Pico - Pplatô) / Fluxo<br><br>
+                    <strong>Gradiente Alveolo-Arterial de O2:</strong><br>
+                    A-aO2 = PAO2 - PaO2<br><br>
+                    <strong>Pressão Alveolar de O2:</strong><br>
+                    PAO2 = FiO2 × (PB - PH2O) - (PaCO2/R)<br><br>
+                    <strong>Índice de Oxigenação (OI):</strong><br>
+                    OI = (FiO2 × MAP × 100) / PaO2<br><br>
+                    <strong>Índice de Ventilação (VI):</strong><br>
+                    VI = (FR × PIP × 100) / PaCO2
+                </div>
+
+                <h3>Parâmetros Avaliados</h3>
+                <ul>
+                    <li><strong>Volume Corrente:</strong> mL/kg peso ideal</li>
+                    <li><strong>Pico de Pressão:</strong> cmH2O</li>
+                    <li><strong>Pressão de Platô:</strong> cmH2O</li>
+                    <li><strong>PEEP:</strong> cmH2O</li>
+                    <li><strong>Fluxo:</strong> L/min</li>
+                    <li><strong>Frequência Respiratória:</strong> /min</li>
+                    <li><strong>PaO2:</strong> mmHg</li>
+                    <li><strong>PaCO2:</strong> mmHg</li>
+                </ul>
+
+                <h3>Instruções de Uso</h3>
+                <ol>
+                    <li><strong>Insira o Volume Corrente:</strong> mL/kg</li>
+                    <li><strong>Informe a Pico de Pressão:</strong> cmH2O</li>
+                    <li><strong>Insira a Pressão de Platô:</strong> cmH2O</li>
+                    <li><strong>Informe o PEEP:</strong> cmH2O</li>
+                    <li><strong>Insira os Valores Gasométricos:</strong> PaO2, PaCO2</li>
+                    <li><strong>Calcule:</strong> Sistema calcula automaticamente</li>
+                    <li><strong>Interprete:</strong> Índices e gradientes</li>
+                </ol>
+
+                <h3>Compliance Pulmonar</h3>
+                <ul>
+                    <li><strong>Normal:</strong> 50-100 mL/cmH2O</li>
+                    <li><strong>Reduzida:</strong> < 30 mL/cmH2O</li>
+                    <li><strong>SDRA:</strong> < 20 mL/cmH2O</li>
+                    <li><strong>Fibrose:</strong> Muito reduzida</li>
+                    <li><strong>Edema:</strong> Reduzida</li>
+                    <li><strong>Atelectasia:</strong> Reduzida</li>
+                    <li><strong>Enfisema:</strong> Aumentada</li>
+                    <li><strong>Asma:</strong> Normal ou aumentada</li>
+                </ul>
+
+                <h3>Resistência das Vias Aéreas</h3>
+                <ul>
+                    <li><strong>Normal:</strong> 2-5 cmH2O/L/s</li>
+                    <li><strong>Elevada:</strong> > 10 cmH2O/L/s</li>
+                    <li><strong>Asma:</strong> Muito elevada</li>
+                    <li><strong>DPOC:</strong> Elevada</li>
+                    <li><strong>Bronquiolite:</strong> Elevada</li>
+                    <li><strong>Secreção:</strong> Aumenta resistência</li>
+                    <li><strong>Broncoespasmo:</strong> Muito elevada</li>
+                    <li><strong>Obstrução:</strong> Aumenta resistência</li>
+                </ul>
+
+                <h3>Gradiente Alveolo-Arterial</h3>
+                <ul>
+                    <li><strong>Normal (Ar Ambiente):</strong> < 15 mmHg</li>
+                    <li><strong>Normal (FiO2 100%):</strong> < 100 mmHg</li>
+                    <li><strong>Leve:</strong> 15-30 mmHg</li>
+                    <li><strong>Moderado:</strong> 30-60 mmHg</li>
+                    <li><strong>Grave:</strong> > 60 mmHg</li>
+                    <li><strong>SDRA:</strong> > 100 mmHg</li>
+                    <li><strong>Edema Pulmonar:</strong> Elevado</li>
+                    <li><strong>Pneumonia:</strong> Elevado</li>
+                </ul>
+
+                <h3>Índices de Oxigenação</h3>
+                <ul>
+                    <li><strong>PaO2/FiO2:</strong> > 300 normal</li>
+                    <li><strong>OI (Oxigenation Index):</strong> < 5 normal</li>
+                    <li><strong>VI (Ventilation Index):</strong> < 40 normal</li>
+                    <li><strong>OSI:</strong> Oxygenation Status Index</li>
+                    <li><strong>P/F Ratio:</strong> Relação oxigenação</li>
+                    <li><strong>SpO2/FiO2:</strong> Não invasivo</li>
+                    <li><strong>Murray Score:</strong> Componente oxigenação</li>
+                    <li><strong>LIS:</strong> Lung Injury Score</li>
+                </ul>
+
+                <h3>Interpretação dos Índices</h3>
+                <ul>
+                    <li><strong>OI < 5:</strong> Oxigenação adequada</li>
+                    <li><strong>OI 5-15:</strong> Oxigenação comprometida</li>
+                    <li><strong>OI > 15:</strong> Oxigenação crítica</li>
+                    <li><strong>VI < 40:</strong> Ventilação adequada</li>
+                    <li><strong>VI 40-80:</strong> Ventilação comprometida</li>
+                    <li><strong>VI > 80:</strong> Ventilação crítica</li>
+                    <li><strong>Driving Pressure:</strong> < 15 cmH2O</li>
+                    <li><strong>Pplatô:</strong> < 30 cmH2O</li>
+                </ul>
+
+                <h3>Aplicações Clínicas</h3>
+                <ul>
+                    <li><strong>Monitoramento:</strong> Ventilação mecânica</li>
+                    <li><strong>Otimização:</strong> Parâmetros ventilatórios</li>
+                    <li><strong>Diagnóstico:</strong> Distúrbios respiratórios</li>
+                    <li><strong>Prognóstico:</strong> Evolução clínica</li>
+                    <li><strong>Desmame:</strong> Extubação</li>
+                    <li><strong>Pesquisa:</strong> Estudos clínicos</li>
+                    <li><strong>Qualidade:</strong> Indicadores</li>
+                    <li><strong>Protocolos:</strong> Terapia intensiva</li>
+                </ul>
+
+                <h3>Limitações dos Índices</h3>
+                <ul>
+                    <li>Variações entre equipamentos</li>
+                    <li>Condições de medição</li>
+                    <li>Fatores não incluídos</li>
+                    <li>Interpretação clínica</li>
+                    <li>Variações individuais</li>
+                    <li>Comorbidades</li>
+                    <li>Medicações</li>
+                    <li>Posição do paciente</li>
+                </ul>
+
+                <h3>Monitoramento Contínuo</h3>
+                <ul>
+                    <li><strong>Tendência:</strong> Evolução temporal</li>
+                    <li><strong>Resposta:</strong> A terapêuticas</li>
+                    <li><strong>Complicações:</strong> Detecção precoce</li>
+                    <li><strong>Alerta:</strong> Valores críticos</li>
+                    <li><strong>Registro:</strong> Documentação</li>
+                    <li><strong>Análise:</strong> Multidisciplinar</li>
+                    <li><strong>Ajuste:</strong> Individualizado</li>
+                    <li><strong>Protocolos:</strong> Institucionais</li>
+                </ul>
+
+                <h3>Limitações e Considerações</h3>
+                <ul>
+                    <li>Não substitui avaliação clínica</li>
+                    <li>Requer contexto clínico</li>
+                    <li>Variações individuais</li>
+                    <li>Fatores não incluídos</li>
+                    <li>Monitoramento contínuo</li>
+                    <li>Interpretação experiente</li>
+                    <li>Ajuste individual</li>
+                    <li>Protocolos institucionais</li>
+                </ul>
+
+                <div class="reference-box">
+                    <strong>Referências:</strong><br>
+                    - Gattinoni L, et al. Lung recruitment in patients with the acute respiratory distress syndrome. N Engl J Med. 2006;354(17):1775-1786.<br>
+                    - Amato MB, et al. Driving pressure and survival in the acute respiratory distress syndrome. N Engl J Med. 2015;372(8):747-755.<br>
+                    - Slutsky AS, et al. Ventilator-induced lung injury. N Engl J Med. 2013;369(22):2126-2136.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'block';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Função para calcular Pressão Alveolar de O2
+        function calcularPAO2() {
+            const fio2Percent = parseFloat(document.getElementById('fio2').value) || 0;
+            const fio2 = fio2Percent / 100; // Converter porcentagem para fração decimal
+            const pco2 = parseFloat(document.getElementById('pco2').value) || 0;
+            const temperatura = parseFloat(document.getElementById('temperatura').value) || 37;
+            const pressaoAtm = parseFloat(document.getElementById('pressaoAtm').value) || 760;
+            
+            if (fio2Percent > 0 && pco2 > 0) {
+                // Pressão do vapor d'água baseada na temperatura
+                const pH2O = 47 * Math.pow(10, (temperatura - 37) * 0.1);
+                const RQ = 0.8; // Quociente respiratório
+                
+                const pao2 = (pressaoAtm - pH2O) * fio2 - (pco2 / RQ);
+                document.getElementById('pao2').textContent = pao2.toFixed(1);
+                document.getElementById('pao2Interpretation').textContent = 'mmHg';
+            } else {
+                document.getElementById('pao2').textContent = '-';
+                document.getElementById('pao2Interpretation').textContent = 'Dados insuficientes';
+            }
+        }
+
+        // Função para calcular Índice de Oxigenação
+        function calcularIndiceOxigenacao() {
+            const map = parseFloat(document.getElementById('map').value) || 0;
+            const fio2Percent = parseFloat(document.getElementById('fio2').value) || 0;
+            const fio2 = fio2Percent / 100; // Converter porcentagem para fração decimal
+            const po2 = parseFloat(document.getElementById('po2').value) || 0;
+            
+            if (map > 0 && fio2Percent > 0 && po2 > 0) {
+                const io = (map * fio2 * 100) / po2;
+                document.getElementById('indiceOxigenacao').textContent = io.toFixed(1);
+                
+                let interpretacao = '';
+                if (io <= 10) {
+                    interpretacao = 'SDR leve';
+                } else if (io <= 25) {
+                    interpretacao = 'SDR moderada';
+                } else {
+                    interpretacao = 'SDR grave';
+                }
+                
+                if (io >= 20) {
+                    interpretacao += ' - Considerar NO';
+                }
+                if (io >= 40) {
+                    interpretacao += ' - Considerar ECMO';
+                }
+                
+                document.getElementById('indiceOxigenacaoInterpretation').textContent = interpretacao;
+            } else {
+                document.getElementById('indiceOxigenacao').textContent = '-';
+                document.getElementById('indiceOxigenacaoInterpretation').textContent = 'Dados insuficientes';
+            }
+        }
+
+        // Função para calcular Índice Respiratório
+        function calcularIndiceRespiratorio() {
+            const map = parseFloat(document.getElementById('map').value) || 0;
+            const fio2Percent = parseFloat(document.getElementById('fio2').value) || 0;
+            const fio2 = fio2Percent / 100; // Converter porcentagem para fração decimal
+            const po2 = parseFloat(document.getElementById('po2').value) || 0;
+            
+            if (map > 0 && fio2Percent > 0 && po2 > 0) {
+                const pao2Fio2 = po2 / fio2;
+                const ir = (map * fio2 * 100) / pao2Fio2;
+                document.getElementById('indiceRespiratorio').textContent = ir.toFixed(1);
+                document.getElementById('indiceRespiratorioInterpretation').textContent = 'Índice Respiratório';
+            } else {
+                document.getElementById('indiceRespiratorio').textContent = '-';
+                document.getElementById('indiceRespiratorioInterpretation').textContent = 'Dados insuficientes';
+            }
+        }
+
+        // Função para calcular Índice de Ventilação
+        function calcularIndiceVentilacao() {
+            const pip = parseFloat(document.getElementById('pip').value) || 0;
+            const peep = parseFloat(document.getElementById('peep').value) || 0;
+            const freqResp = parseFloat(document.getElementById('freqResp').value) || 0;
+            
+            if (pip > 0 && peep >= 0 && freqResp > 0) {
+                const iv = (pip - peep) * freqResp / 1000;
+                document.getElementById('indiceVentilacao').textContent = iv.toFixed(2);
+                document.getElementById('indiceVentilacaoInterpretation').textContent = 'Índice de Ventilação';
+            } else {
+                document.getElementById('indiceVentilacao').textContent = '-';
+                document.getElementById('indiceVentilacaoInterpretation').textContent = 'Dados insuficientes';
+            }
+        }
+
+        // Função para calcular Gradiente A-a
+        function calcularGradienteAa() {
+            const fio2Percent = parseFloat(document.getElementById('fio2').value) || 0;
+            const fio2 = fio2Percent / 100; // Converter porcentagem para fração decimal
+            const pco2 = parseFloat(document.getElementById('pco2').value) || 0;
+            const po2 = parseFloat(document.getElementById('po2').value) || 0;
+            const temperatura = parseFloat(document.getElementById('temperatura').value) || 37;
+            const pressaoAtm = parseFloat(document.getElementById('pressaoAtm').value) || 760;
+            
+            if (fio2Percent > 0 && pco2 > 0 && po2 > 0) {
+                const pH2O = 47 * Math.pow(10, (temperatura - 37) * 0.1);
+                const RQ = 0.8;
+                const pao2 = (pressaoAtm - pH2O) * fio2 - (pco2 / RQ);
+                const gradienteAa = pao2 - po2;
+                
+                document.getElementById('gradienteAa').textContent = gradienteAa.toFixed(1);
+                
+                let interpretacao = '';
+                if (gradienteAa <= 5) {
+                    interpretacao = 'Normal';
+                } else if (gradienteAa <= 35) {
+                    interpretacao = 'Levemente aumentado';
+                } else {
+                    interpretacao = 'Aumentado';
+                }
+                
+                document.getElementById('gradienteAaInterpretation').textContent = interpretacao;
+            } else {
+                document.getElementById('gradienteAa').textContent = '-';
+                document.getElementById('gradienteAaInterpretation').textContent = 'Dados insuficientes';
+            }
+        }
+
+        // Função para calcular Relação PaO2/PAO2
+        function calcularRelacaoPao2Pao2() {
+            const fio2Percent = parseFloat(document.getElementById('fio2').value) || 0;
+            const fio2 = fio2Percent / 100; // Converter porcentagem para fração decimal
+            const pco2 = parseFloat(document.getElementById('pco2').value) || 0;
+            const po2 = parseFloat(document.getElementById('po2').value) || 0;
+            const temperatura = parseFloat(document.getElementById('temperatura').value) || 37;
+            const pressaoAtm = parseFloat(document.getElementById('pressaoAtm').value) || 760;
+            
+            if (fio2Percent > 0 && pco2 > 0 && po2 > 0) {
+                const pH2O = 47 * Math.pow(10, (temperatura - 37) * 0.1);
+                const RQ = 0.8;
+                const pao2 = (pressaoAtm - pH2O) * fio2 - (pco2 / RQ);
+                const relacao = po2 / pao2;
+                
+                document.getElementById('relacaoPao2Pao2').textContent = relacao.toFixed(3);
+                
+                let interpretacao = '';
+                if (relacao >= 0.21) {
+                    interpretacao = 'Normal';
+                } else {
+                    interpretacao = 'Considerar Surfactante';
+                }
+                
+                document.getElementById('relacaoPao2Pao2Interpretation').textContent = interpretacao;
+            } else {
+                document.getElementById('relacaoPao2Pao2').textContent = '-';
+                document.getElementById('relacaoPao2Pao2Interpretation').textContent = 'Dados insuficientes';
+            }
+        }
+
+        // Função para calcular PaO2/FiO2
+        function calcularPao2Fio2() {
+            const po2 = parseFloat(document.getElementById('po2').value) || 0;
+            const fio2Percent = parseFloat(document.getElementById('fio2').value) || 0;
+            const fio2 = fio2Percent / 100; // Converter porcentagem para fração decimal
+            
+            if (po2 > 0 && fio2Percent > 0) {
+                const pao2Fio2 = po2 / fio2;
+                document.getElementById('pao2Fio2').textContent = pao2Fio2.toFixed(1);
+                
+                let interpretacao = '';
+                if (pao2Fio2 > 300) {
+                    interpretacao = 'Normal';
+                } else if (pao2Fio2 >= 200) {
+                    interpretacao = 'Leve';
+                } else if (pao2Fio2 >= 100) {
+                    interpretacao = 'Moderado';
+                } else {
+                    interpretacao = 'Grave';
+                }
+                
+                document.getElementById('pao2Fio2Interpretation').textContent = interpretacao;
+            } else {
+                document.getElementById('pao2Fio2').textContent = '-';
+                document.getElementById('pao2Fio2Interpretation').textContent = 'Dados insuficientes';
+            }
+        }
+
+        // Função para calcular SatO2/FiO2
+        function calcularSato2Fio2() {
+            const sato2 = parseFloat(document.getElementById('sato2').value) || 0;
+            const fio2Percent = parseFloat(document.getElementById('fio2').value) || 0;
+            const fio2 = fio2Percent / 100; // Converter porcentagem para fração decimal
+            
+            if (sato2 > 0 && fio2Percent > 0) {
+                const sato2Fio2 = sato2 / fio2;
+                document.getElementById('sato2Fio2').textContent = sato2Fio2.toFixed(1);
+                
+                let interpretacao = '';
+                if (sato2Fio2 > 350) {
+                    interpretacao = 'Normal';
+                } else if (sato2Fio2 >= 315) {
+                    interpretacao = 'Equivale a PaO2/FiO2 300';
+                } else if (sato2Fio2 >= 235) {
+                    interpretacao = 'Equivale a PaO2/FiO2 200';
+                } else {
+                    interpretacao = 'Baixo';
+                }
+                
+                document.getElementById('sato2Fio2Interpretation').textContent = interpretacao;
+            } else {
+                document.getElementById('sato2Fio2').textContent = '-';
+                document.getElementById('sato2Fio2Interpretation').textContent = 'Dados insuficientes';
+            }
+        }
+
+        // Função para calcular Relação I:E
+        function calcularRelacaoIE() {
+            const tempoInsp = parseFloat(document.getElementById('tempoInsp').value) || 0;
+            const tempoExp = parseFloat(document.getElementById('tempoExp').value) || 0;
+            
+            if (tempoInsp > 0 && tempoExp > 0) {
+                const relacaoIE = tempoInsp / tempoExp;
+                document.getElementById('relacaoIE').textContent = relacaoIE.toFixed(2);
+                document.getElementById('relacaoIEInterpretation').textContent = `1:${(1/relacaoIE).toFixed(1)}`;
+            } else {
+                document.getElementById('relacaoIE').textContent = '-';
+                document.getElementById('relacaoIEInterpretation').textContent = 'Dados insuficientes';
+            }
+        }
+
+        // Função principal para calcular tudo
+        function calcularTudo() {
+            calcularPAO2();
+            calcularIndiceOxigenacao();
+            calcularIndiceRespiratorio();
+            calcularIndiceVentilacao();
+            calcularGradienteAa();
+            calcularRelacaoPao2Pao2();
+            calcularPao2Fio2();
+            calcularSato2Fio2();
+            calcularRelacaoIE();
+        }
+
+        // Função para gerar relatório UTF-8 sem acentos
+        function gerarRelatorio() {
+            const nome = document.getElementById('nome').value || 'Paciente';
+            const dataAvaliacao = document.getElementById('dataAvaliacao').value || new Date().toISOString().split('T')[0];
+            const horarioAvaliacao = document.getElementById('horarioAvaliacao').value || new Date().toTimeString().split(' ')[0];
+            
+            const fio2 = document.getElementById('fio2').value || '0';
+            const map = document.getElementById('map').value || '0';
+            const pip = document.getElementById('pip').value || '0';
+            const peep = document.getElementById('peep').value || '0';
+            const tempoInsp = document.getElementById('tempoInsp').value || '0';
+            const tempoExp = document.getElementById('tempoExp').value || '0';
+            const freqResp = document.getElementById('freqResp').value || '0';
+            const pco2 = document.getElementById('pco2').value || '0';
+            const po2 = document.getElementById('po2').value || '0';
+            const sato2 = document.getElementById('sato2').value || '0';
+            const temperatura = document.getElementById('temperatura').value || '37';
+            const altitude = document.getElementById('altitude').value || '0';
+            const pressaoAtm = document.getElementById('pressaoAtm').value || '760';
+            
+            const pao2 = document.getElementById('pao2').textContent;
+            const indiceOxigenacao = document.getElementById('indiceOxigenacao').textContent;
+            const indiceRespiratorio = document.getElementById('indiceRespiratorio').textContent;
+            const indiceVentilacao = document.getElementById('indiceVentilacao').textContent;
+            const gradienteAa = document.getElementById('gradienteAa').textContent;
+            const relacaoPao2Pao2 = document.getElementById('relacaoPao2Pao2').textContent;
+            const pao2Fio2 = document.getElementById('pao2Fio2').textContent;
+            const sato2Fio2 = document.getElementById('sato2Fio2').textContent;
+            const relacaoIE = document.getElementById('relacaoIE').textContent;
+            
+            const agora = new Date();
+            const dataHora = agora.toLocaleString('pt-BR');
+            
+            let relatorio = `RESUMO INFORMATIVO — INDICES E GRADIENTES VENTILATORIOS (EDUCATIVO)\n`;
+            relatorio += `===============================================\n\n`;
+            
+            relatorio += `DADOS DO PACIENTE\n`;
+            relatorio += `-----------------\n`;
+            relatorio += `Data/Hora: ${dataHora}\n`;
+            relatorio += `Nome: ${nome}\n`;
+            relatorio += `Data da Avaliacao: ${dataAvaliacao}\n`;
+            relatorio += `Horario da Avaliacao: ${horarioAvaliacao}\n\n`;
+            
+            relatorio += `PARAMETROS VENTILATORIOS\n`;
+            relatorio += `------------------------\n`;
+            relatorio += `FiO2: ${fio2}%\n`;
+            relatorio += `MAP: ${map} cmH2O\n`;
+            relatorio += `PIP: ${pip} cmH2O\n`;
+            relatorio += `PEEP: ${peep} cmH2O\n`;
+            relatorio += `Tempo Inspiratorio: ${tempoInsp} s\n`;
+            relatorio += `Tempo Expiratorio: ${tempoExp} s\n`;
+            relatorio += `Frequencia Respiratoria: ${freqResp} rpm\n\n`;
+            
+            relatorio += `GASOMETRIA\n`;
+            relatorio += `----------\n`;
+            relatorio += `pCO2: ${pco2} mmHg\n`;
+            relatorio += `pO2: ${po2} mmHg\n`;
+            relatorio += `SatO2: ${sato2}%\n\n`;
+            
+            relatorio += `PARAMETROS AMBIENTAIS\n`;
+            relatorio += `---------------------\n`;
+            relatorio += `Temperatura: ${temperatura}°C\n`;
+            relatorio += `Altitude: ${altitude} m\n`;
+            relatorio += `Pressao Atmosferica: ${pressaoAtm} mmHg\n\n`;
+            
+            relatorio += `CALCULOS REALIZADOS\n`;
+            relatorio += `-------------------\n`;
+            relatorio += `Pressao Alveolar de O2 (PAO2): ${pao2} mmHg\n`;
+            relatorio += `Indice de Oxigenacao (IO): ${indiceOxigenacao}\n`;
+            relatorio += `Indice Respiratorio (IR): ${indiceRespiratorio}\n`;
+            relatorio += `Indice de Ventilacao (IV): ${indiceVentilacao}\n`;
+            relatorio += `Gradiente A-a: ${gradienteAa} mmHg\n`;
+            relatorio += `Relacao PaO2/PAO2: ${relacaoPao2Pao2}\n`;
+            relatorio += `PaO2/FiO2: ${pao2Fio2}\n`;
+            relatorio += `SatO2/FiO2: ${sato2Fio2}\n`;
+            relatorio += `Relacao I:E: ${relacaoIE}\n\n`;
+            
+            relatorio += `FORMULAS UTILIZADAS\n`;
+            relatorio += `------------------\n`;
+            relatorio += `PAO2 = (P_atm - P_H2O) x FiO2 - (pCO2 / RQ)\n`;
+            relatorio += `IO = (MAP x FiO2 x 100) / PaO2\n`;
+            relatorio += `IR = (MAP x FiO2 x 100) / (PaO2 / FiO2)\n`;
+            relatorio += `IV = (PIP - PEEP) x Freq_Resp / 1000\n`;
+            relatorio += `Grad A-a = PAO2 - PaO2\n`;
+            relatorio += `Rel PaO2/PAO2 = PaO2 / PAO2\n`;
+            relatorio += `PaO2/FiO2 = PaO2 / FiO2\n`;
+            relatorio += `SatO2/FiO2 = SatO2 / FiO2\n`;
+            relatorio += `I:E = Tempo_Insp / Tempo_Exp\n\n`;
+            
+            relatorio += `OBSERVACOES IMPORTANTES\n`;
+            relatorio += `----------------------\n`;
+            relatorio += `- IO >= 20: Considerar NO inalatorio\n`;
+            relatorio += `- IO >= 40: Considerar ECMO (mortalidade 80%)\n`;
+            relatorio += `- Gradiente A-a > 610 mmHg por > 8h: Mortalidade 78%\n`;
+            relatorio += `- Relacao PaO2/PAO2 < 0.21: Considerar Surfactante\n`;
+            relatorio += `- Sempre correlacionar com o quadro clinico\n`;
+            relatorio += `- Monitorar evolucao dos parametros\n\n`;
+            
+            relatorio += `REFERENCIAS\n`;
+            relatorio += `-----------\n`;
+            relatorio += `1. Gattinoni L, et al. Lung recruitment in patients with ARDS. N Engl J Med. 2006.\n`;
+            relatorio += `2. Rice TW, et al. Comparison of SpO2/FIO2 and PaO2/FIO2 ratios. Chest. 2007.\n`;
+            relatorio += `3. Murray JF, et al. Expanded definition of ARDS. Am Rev Respir Dis. 1988.\n`;
+            relatorio += `4. Radiometer. Blood gas oxymetry reference manual. 1997.\n`;
+            relatorio += `5. Van Marter LJ. Persistent pulmonary hypertension of the newborn. 2008.\n`;
+            relatorio += `6. Walsh MC, Stork EK. Persistent pulmonary hypertension. Clin Perinatol. 2001.\n`;
+            relatorio += `7. Dakshinamurti S. Pathophysiologic mechanisms of PPHN. Pediatr Pulmonol. 2005.\n`;
+            relatorio += `8. Greenspan JS, et al. Pulmonary sequelae in ECMO infants. Pediatr Pulmonol. 1977.\n`;
+            relatorio += `9. Barbosa AP, et al. Insuficiencia ventilatoria aguda. Ed Atheneu, 2010.\n\n`;
+            
+            relatorio += `DETALHES TECNICOS\n`;
+            relatorio += `-----------------\n`;
+            relatorio += `Calculadora: Indices e Gradientes Ventilatorios - NeoPedCalc\n`;
+            relatorio += `Data de Geracao: ${dataHora}\n`;
+            relatorio += `Formato: UTF-8 (compativel com sistemas medicos)\n`;
+            relatorio = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorio;
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorio += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                relatorio += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+            
+            // Copiar para a área de transferência
+            navigator.clipboard.writeText(relatorio).then(function() {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(function(err) {
+                if (typeof window.neopedCopyFail === 'function') window.neopedCopyFail(); else alert('Nao foi possivel copiar automaticamente. Revise o texto e copie manualmente para uso informativo.');
+                // Fallback: mostrar em modal
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                    background: rgba(0,0,0,0.8); z-index: 10000; display: flex; 
+                    align-items: center; justify-content: center; padding: 20px;
+                `;
+                modal.innerHTML = `
+                    <div style="background: white; padding: 30px; border-radius: 10px; max-width: 80%; max-height: 80%; overflow: auto;">
+                        <h3>Texto informativo gerado</h3>
+                        <pre style="white-space: pre-wrap; font-family: monospace; font-size: 12px;">${window.neopedEscapeHtml(relatorio)}</pre>
+                        <button onclick="this.parentElement.parentElement.remove()" aria-label="Fechar" style="margin-top: 20px; padding: 10px 20px; background: #6b7280; color: white; border: none; border-radius: 5px; cursor: pointer;">&times;</button>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            });
+        }
+
+        // Inicializar cálculos
+        calcularTudo();
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+</html>

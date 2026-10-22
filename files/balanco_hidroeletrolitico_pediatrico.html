@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>NeoPedCalc — Balanço hidroeletrolítico pediátrico (educativo)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 0;
+            padding: 0;
+            background: #f6f7fb;
+            color: #111;
+            width: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        header {
+            padding: 18px 16px;
+            background: #fff;
+            border-bottom: 1px solid #e7e7ee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            font-size: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e7e7ee;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #d9d9e6;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .section h3 {
+            font-size: 14px;
+            margin: 0 0 15px 0;
+            color: #111;
+            font-weight: 800;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .input-grid, .electrolyte-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .alert-box {
+            background: #fff3cd;
+            border: 1px solid #e5e7eb;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .alert-box h3 { margin: 0 0 5px 0; font-size: 15px; }
+
+        .results-container {
+            margin-top: 20px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .result-card {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .result-card h3 {
+            font-size: 12px;
+            color: #666;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: 900;
+            color: #111;
+        }
+
+        .result-description {
+            font-size: 12px;
+            color: #374151;
+            margin-top: 4px;
+        }
+
+        .balance-card {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .balance-value { font-size: 32px; font-weight: 900; }
+        .balance-positive { color: #2ecc71; }
+        .balance-negative { color: #e74c3c; }
+        .balance-neutral { color: #374151; }
+
+        .electrolyte-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .electrolyte-table th, .electrolyte-table td {
+            border: 1px solid #e7e7ee;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .electrolyte-table th {
+            background: #f8f9fa;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #e5e7eb;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        .info {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .patient-info {
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #2e7d32;
+        }
+
+        .field-readonly { background: #f1f2f6; color: #666; cursor: not-allowed; }
+
+        .action-btn, .btn {
+            background: #111;
+            color: #fff;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .btn-report { background: #111; }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #374151;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        .is-hidden { display: none; }
+
+        /* Modal Styles */
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-info {
+            background: rgba(17, 17, 17, 0.1);
+            color: #111;
+            border: 2px solid #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-info:hover {
+            background: #111;
+            color: #fff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 { margin: 0; font-size: 22px; }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close:hover { transform: rotate(90deg); }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-body h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .modal-body h3:first-child { margin-top: 0; }
+        .modal-body p { line-height: 1.6; margin-bottom: 15px; color: #34495e; }
+        .modal-body ul, .modal-body ol { margin: 10px 0; padding-left: 25px; }
+        .modal-body li { margin-bottom: 8px; line-height: 1.5; }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .formula-box strong { color: #2c3e50; }
+
+        .reference-box {
+            background: #e8f5e9;
+            border-left: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .reference-box strong { color: #27ae60; }
+
+        @media (max-width: 768px) {
+            .modal { padding: 10px; }
+            .modal-content { width: 95%; max-height: 95vh; }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/neoped-responsive.css">
+<link rel="stylesheet" href="../css/neoped-modern.css">
+</head>
+
+<body>
+    <header>
+        <h1>Balanço Hidroeletrolítico Pediátrico</h1>
+        <p>NeoPedCalc - Monitoramento de Líquidos e Eletrólitos</p>
+        <div class="header-actions">
+                <button type="button" class="btn-info" onclick="abrirModal()">
+                Como usar            </button>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="card">
+
+                <div class="form-container">
+                    <form id="balancoForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="nome">Nome do Paciente:</label>
+                                <input type="text" id="nome" placeholder="Ex: João Silva">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="idade">Idade (anos):</label>
+                                <input type="number" id="idade" step="0.1" min="0" max="18" placeholder="Ex: 5.2"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="peso">Peso (kg):</label>
+                                <input type="number" id="peso" step="0.001" min="0.1" max="200" placeholder="Ex: 20.500"
+                                    required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="altura">Altura (cm):</label>
+                                <input type="number" id="altura" step="0.1" min="30" max="200" placeholder="Ex: 110.5">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="horas">Período do Balanço (horas):</label>
+                                <input type="number" id="horas" min="1" max="24" placeholder="Ex: 24" required>
+                            </div>
+                        </div>
+
+                        <div id="patientInfo" class="patient-info is-hidden">
+                            <strong>Informações do Paciente:</strong>
+                            <div id="patientDetails"></div>
+                        </div>
+
+                        <!-- GANHOS -->
+                        <div class="section">
+                            <h3>GANHOS</h3>
+
+                            <div class="form-group">
+                                <label>Soros:</label>
+                                <div class="input-grid">
+                                    <div class="form-group">
+                                        <label for="ringerLactato">Ringer Lactato (ml):</label>
+                                        <input type="number" id="ringerLactato" min="0" step="0.1"
+                                            placeholder="Ex: 100">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ringerSimples">Ringer Simples (ml):</label>
+                                        <input type="number" id="ringerSimples" min="0" step="0.1" placeholder="Ex: 50">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="soroFisiologico">Soro Fisiológico (ml):</label>
+                                        <input type="number" id="soroFisiologico" min="0" step="0.1"
+                                            placeholder="Ex: 200">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sorosGlicosados">Soros Glicosados (ml):</label>
+                                        <input type="number" id="sorosGlicosados" min="0" step="0.1"
+                                            placeholder="Ex: 300">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="outrosSoros">Outros (Hemod, etc) (ml):</label>
+                                        <input type="number" id="outrosSoros" min="0" step="0.1" placeholder="Ex: 25">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Eletrólitos Intrínsecos dos Soros (calculados automaticamente):</label>
+                                <div class="electrolyte-grid">
+                                    <div class="form-group">
+                                        <label for="naIntrinseco">Na (mEq):</label>
+                                        <input type="number" id="naIntrinseco" readonly class="field-readonly">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="kIntrinseco">K (mEq):</label>
+                                        <input type="number" id="kIntrinseco" readonly class="field-readonly">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="clIntrinseco">Cl (mEq):</label>
+                                        <input type="number" id="clIntrinseco" readonly class="field-readonly">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="hco3Intrinseco">HCO3 (mEq):</label>
+                                        <input type="number" id="hco3Intrinseco" readonly class="field-readonly">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Eletrólitos Adicionais (extras):</label>
+                                <div class="electrolyte-grid">
+                                    <div class="form-group">
+                                        <label for="naAdicional">Na (mEq):</label>
+                                        <input type="number" id="naAdicional" min="0" step="0.1" placeholder="Ex: 10">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="kAdicional">K (mEq):</label>
+                                        <input type="number" id="kAdicional" min="0" step="0.1" placeholder="Ex: 5">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="mgAdicional">Mg (mEq):</label>
+                                        <input type="number" id="mgAdicional" min="0" step="0.1" placeholder="Ex: 2">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="clAdicional">Cl (mEq):</label>
+                                        <input type="number" id="clAdicional" min="0" step="0.1" placeholder="Ex: 8">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="hco3Adicional">HCO3 (mEq):</label>
+                                        <input type="number" id="hco3Adicional" min="0" step="0.1" placeholder="Ex: 3">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="caAdicional">Ca (mEq):</label>
+                                        <input type="number" id="caAdicional" min="0" step="0.1" placeholder="Ex: 1">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="aguaEndogena">Água Endógena (ml):</label>
+                                <input type="number" id="aguaEndogena" min="0" step="0.1" placeholder="Ex: 50">
+                            </div>
+                        </div>
+
+                        <!-- PERDAS -->
+                        <div class="section">
+                            <h3>PERDAS</h3>
+
+                            <div class="form-group">
+                                <label for="diurese">Diurese (ml):</label>
+                                <input type="number" id="diurese" min="0" step="0.1" placeholder="Ex: 800">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Suco Gástrico (sem bile):</label>
+                                <div class="electrolyte-grid">
+                                    <div class="form-group">
+                                        <label for="sgAgua">Água (ml):</label>
+                                        <input type="number" id="sgAgua" min="0" step="1" placeholder="Ex: 500">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sgNa">Na (mEq):</label>
+                                        <input type="number" id="sgNa" min="0" step="0.1" placeholder="Ex: 20">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sgK">K (mEq):</label>
+                                        <input type="number" id="sgK" min="0" step="0.1" placeholder="Ex: 5">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sgCl">Cl (mEq):</label>
+                                        <input type="number" id="sgCl" min="0" step="0.1" placeholder="Ex: 25">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Suco Gástrico, Pancreático e Biliar:</label>
+                                <div class="electrolyte-grid">
+                                    <div class="form-group">
+                                        <label for="spbAgua">Água (ml):</label>
+                                        <input type="number" id="spbAgua" min="0" step="1" placeholder="Ex: 300">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="spbNa">Na (mEq):</label>
+                                        <input type="number" id="spbNa" min="0" step="0.1" placeholder="Ex: 15">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="spbK">K (mEq):</label>
+                                        <input type="number" id="spbK" min="0" step="0.1" placeholder="Ex: 8">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="spbHco3">HCO3 (mEq):</label>
+                                        <input type="number" id="spbHco3" min="0" step="0.1" placeholder="Ex: 12">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Ileostomia e Diarreia:</label>
+                                <div class="electrolyte-grid">
+                                    <div class="form-group">
+                                        <label for="ileoAgua">Água (ml):</label>
+                                        <input type="number" id="ileoAgua" min="0" step="1" placeholder="Ex: 200">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ileoNa">Na (mEq):</label>
+                                        <input type="number" id="ileoNa" min="0" step="0.1" placeholder="Ex: 10">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ileoK">K (mEq):</label>
+                                        <input type="number" id="ileoK" min="0" step="0.1" placeholder="Ex: 6">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ileoCl">Cl (mEq):</label>
+                                        <input type="number" id="ileoCl" min="0" step="0.1" placeholder="Ex: 8">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ileoHco3">HCO3 (mEq):</label>
+                                        <input type="number" id="ileoHco3" min="0" step="0.1" placeholder="Ex: 5">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Outras Perdas:</label>
+                                <div class="input-grid">
+                                    <div class="form-group">
+                                        <label for="diarreiaLeve">Diarreia Leve:</label>
+                                        <select id="diarreiaLeve" onchange="calcularPerdasAutomaticas()">
+                                            <option value="0">Não</option>
+                                            <option value="1">Sim (50 ml/dia)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="diarreiaModerada">Diarreia Moderada:</label>
+                                        <select id="diarreiaModerada" onchange="calcularPerdasAutomaticas()">
+                                            <option value="0">Não</option>
+                                            <option value="1">Sim (100 ml/dia)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="diarreiaGrave">Diarreia Grave:</label>
+                                        <select id="diarreiaGrave" onchange="calcularPerdasAutomaticas()">
+                                            <option value="0">Não</option>
+                                            <option value="1">Sim (200 ml/dia)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="perspiracaoInsensivel">Perspiração Insensível:</label>
+                                        <select id="perspiracaoInsensivel" onchange="calcularPerdasAutomaticas()">
+                                            <option value="0">Não</option>
+                                            <option value="1">Sim (300 ml/dia)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="fezesSemDiarreia">Fezes sem Diarreia:</label>
+                                        <select id="fezesSemDiarreia" onchange="calcularPerdasAutomaticas()">
+                                            <option value="0">Não</option>
+                                            <option value="1">Sim (20 ml/dia)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="calorAmbiente">Calor Ambiente e Sudorese:</label>
+                                        <select id="calorAmbiente" onchange="calcularPerdasAutomaticas()">
+                                            <option value="0">Não</option>
+                                            <option value="1">Sim (150 ml/dia)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="calorFebre">Calor + Febre + Sudorese:</label>
+                                        <select id="calorFebre" onchange="calcularPerdasAutomaticas()">
+                                            <option value="0">Não</option>
+                                            <option value="1">Sim (250 ml/dia)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="hiperventilacao">Hiperventilação Pulmonar:</label>
+                                        <select id="hiperventilacao" onchange="calcularPerdasAutomaticas()">
+                                            <option value="0">Não</option>
+                                            <option value="1">Sim (100 ml/dia)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="vomitos">Vômitos:</label>
+                                        <select id="vomitos" onchange="calcularPerdasAutomaticas()">
+                                            <option value="0">Não</option>
+                                            <option value="1">Sim (80 ml/dia)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="fototerapia">Fototerapia:</label>
+                                        <select id="fototerapia" onchange="calcularPerdasAutomaticas()">
+                                            <option value="0">Não</option>
+                                            <option value="1">Sim (30 ml/dia)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sangramento">Sangramento:</label>
+                                        <select id="sangramento" onchange="calcularPerdasAutomaticas()">
+                                            <option value="0">Não</option>
+                                            <option value="1">Sim (10 ml/dia)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn">Calcular Balanço Hidroeletrolítico</button>
+                    </form>
+
+                    <div id="results" class="results-container">
+                        <div class="results-grid">
+                            <div class="result-card">
+                                <h3>Total de Líquidos Ganhos</h3>
+                                <div class="result-value" id="totalGanhos">0.0</div>
+                                <div class="result-description">ml/dia</div>
+                            </div>
+
+                            <div class="result-card">
+                                <h3>Total de Líquidos Perdidos</h3>
+                                <div class="result-value" id="totalPerdas">0.0</div>
+                                <div class="result-description">ml/dia</div>
+                            </div>
+
+                            <div class="result-card">
+                                <h3>Diurese</h3>
+                                <div class="result-value" id="diureseResultado">0.0</div>
+                                <div class="result-description">ml/kg/hora</div>
+                            </div>
+
+                            <div class="result-card">
+                                <h3>Necessidade Hídrica Diária</h3>
+                                <div class="result-value" id="necessidadeHidrica">0.0</div>
+                                <div class="result-description">ml/dia</div>
+                            </div>
+                        </div>
+
+                        <div class="balance-card">
+                            <h3>Balanço Hídrico</h3>
+                            <div class="balance-value" id="balancoHidrico">0.0</div>
+                            <div class="result-description" id="interpretacaoBalanco">ml</div>
+                        </div>
+
+                        <div class="result-card">
+                            <h3>Balanço Eletrolítico</h3>
+                            <div class="table-wrap">
+                                <table class="electrolyte-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Eletrólito</th>
+                                            <th>Ganhos (mEq)</th>
+                                            <th>Perdas (mEq)</th>
+                                            <th>Balanço (mEq)</th>
+                                            <th>mEq/kg</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Na</strong></td>
+                                            <td id="naGanhos">0</td>
+                                            <td id="naPerdas">0</td>
+                                            <td id="naBalanco">0</td>
+                                            <td id="naPorKg">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>K</strong></td>
+                                            <td id="kGanhos">0</td>
+                                            <td id="kPerdas">0</td>
+                                            <td id="kBalanco">0</td>
+                                            <td id="kPorKg">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Cl</strong></td>
+                                            <td id="clGanhos">0</td>
+                                            <td id="clPerdas">0</td>
+                                            <td id="clBalanco">0</td>
+                                            <td id="clPorKg">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>HCO3</strong></td>
+                                            <td id="hco3Ganhos">0</td>
+                                            <td id="hco3Perdas">0</td>
+                                            <td id="hco3Balanco">0</td>
+                                            <td id="hco3PorKg">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Ca</strong></td>
+                                            <td id="caGanhos">0</td>
+                                            <td id="caPerdas">0</td>
+                                            <td id="caBalanco">0</td>
+                                            <td id="caPorKg">0</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="info" id="interpretacaoClinica">
+                            <strong>Interpretação Clínica:</strong>
+                            <div id="interpretacaoTexto"></div>
+                        </div>
+                        <button type="button" id="gerarRelatorio" class="btn btn-report">
+                            Copiar texto informativo
+                        </button>
+                    </div>
+
+                    <div class="warning">
+                        <strong>Atenção:</strong> Esta calculadora é apenas para fins educacionais.
+                        Sempre consulte as diretrizes clínicas atuais e um pediatra para avaliações clínicas.
+                    </div>
+
+                    <div class="info">
+                        <strong>Parâmetros de Referência:</strong><br>
+                        - <strong>Necessidade Hídrica:</strong> 100-150 ml/kg/dia (crianças), 80-120 ml/kg/dia
+                        (adolescentes)<br>
+                        - <strong>Diurese:</strong> 1-3 ml/kg/hora<br>
+                        - <strong>Balanço:</strong> Ligeiramente positivo (10-20 ml/kg/dia)<br>
+                        - <strong>Eletrólitos:</strong> Na 2-4 mEq/kg/dia, K 1-3 mEq/kg/dia<br><br>
+                        <strong>Componentes:</strong><br>
+                        - <strong>Água Endógena:</strong> Produção metabólica de água<br>
+                        - <strong>Perspiração Insensível:</strong> Perdas através da pele e respiração<br>
+                        - <strong>Sucos Digestivos:</strong> Perdas através do trato gastrointestinal
+                    </div>
+                </div> <!-- End form-container -->
+            </div> <!-- End card -->
+
+            <div class="footer">
+                NeoPedCalc &copy; <span data-neoped-year></span> - Balanço Hidroeletrolítico Pediátrico
+            </div>
+        </div> <!-- End wrap -->
+
+            <!-- Modal de Informações -->
+            <div id="modalInfo" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Como usar — Balanço hidroeletrolítico pediátrico (educativo)</h2>
+                        <span class="close" onclick="fecharModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <h3>Objetivo (educativo)</h3>
+                        <p>Esta calculadora auxilia no controle do balanço hidroeletrolítico em crianças, fornecendo
+                            análise de entrada e saída de líquidos, necessidades hídricas e eletrolíticas, e
+                            monitoramento do estado de hidratação baseado em protocolos pediátricos estabelecidos.</p>
+
+                        <h3>Formulas Principais</h3>
+                        <div class="formula-box">
+                            <strong>Balanco Hidrico = Entrada - Saida</strong><br><br>
+                            <strong>Necessidades Hidricas por Idade:</strong><br>
+                            - <strong>0-10 kg:</strong> 100 mL/kg/dia<br>
+                            - <strong>11-20 kg:</strong> 1000 + 50x(peso-10) mL/dia<br>
+                            - <strong>>20 kg:</strong> 1500 + 20x(peso-20) mL/dia<br><br>
+                            <strong>Necessidades Eletroliticas:</strong><br>
+                            - <strong>Sodio:</strong> 2-4 mEq/kg/dia<br>
+                            - <strong>Potassio:</strong> 2-3 mEq/kg/dia<br>
+                            - <strong>Cloro:</strong> 2-4 mEq/kg/dia<br><br>
+                            <strong>Perdas Insensiveis:</strong><br>
+                            - <strong>Termo:</strong> 15-30 mL/kg/dia<br>
+                            - <strong>Febre:</strong> +12% por C > 37C<br>
+                            - <strong>Hiperventilacao:</strong> +20-30%
+                        </div>
+
+                        <h3>Parâmetros Avaliados</h3>
+                        <ul>
+                            <li><strong>Entrada:</strong> Líquidos IV, oral, medicamentos</li>
+                            <li><strong>Saída:</strong> Diurese, fezes, vômitos, perdas insensíveis</li>
+                            <li><strong>Peso:</strong> Monitoramento diário</li>
+                            <li><strong>Idade:</strong> Anos e meses</li>
+                            <li><strong>Superfície Corporal:</strong> Calculada</li>
+                            <li><strong>Eletrólitos:</strong> Na, K, Cl, Mg</li>
+                            <li><strong>Balanço:</strong> Positivo, negativo, equilibrado</li>
+                            <li><strong>Estado:</strong> Hidratação e eletrólitos</li>
+                        </ul>
+
+                        <h3>Instruções de Uso</h3>
+                        <ol>
+                            <li><strong>Insira o Peso:</strong> Em kg</li>
+                            <li><strong>Informe a Idade:</strong> Anos e meses</li>
+                            <li><strong>Insira Entrada:</strong> Líquidos e eletrólitos</li>
+                            <li><strong>Insira Saída:</strong> Diurese e outras perdas</li>
+                            <li><strong>Calcule:</strong> Sistema calcula automaticamente</li>
+                            <li><strong>Interprete:</strong> Balanço e necessidades</li>
+                        </ol>
+
+                        <h3>Interpretação do Balanço</h3>
+                        <ul>
+                            <li><strong>Balanço Positivo:</strong> Retenção de líquidos</li>
+                            <li><strong>Balanço Negativo:</strong> Perda de líquidos</li>
+                            <li><strong>Balanço Equilibrado:</strong> Entrada = Saída</li>
+                            <li><strong>Peso:</strong> Aumento, diminuição, estável</li>
+                            <li><strong>Diurese:</strong> Adequada, inadequada</li>
+                            <li><strong>Eletrólitos:</strong> Normais, alterados</li>
+                            <li><strong>Estado:</strong> Hidratado, desidratado</li>
+                            <li><strong>Necessidades:</strong> Ajustes necessários</li>
+                        </ul>
+
+                        <h3>Considerações Especiais Pediátricas</h3>
+                        <ul>
+                            <li><strong>Idade:</strong> Necessidades variam por faixa etária</li>
+                            <li><strong>Peso:</strong> Cálculos baseados em peso</li>
+                            <li><strong>Doenças:</strong> Sepse, gastroenterite, cardiopatias</li>
+                            <li><strong>Medicações:</strong> Diuréticos, vasopressores</li>
+                            <li><strong>Cirurgia:</strong> Perdas operatórias</li>
+                            <li><strong>Ambiente:</strong> Temperatura, umidade</li>
+                            <li><strong>Atividade:</strong> Exercício, febre</li>
+                            <li><strong>Alimentação:</strong> Via oral, enteral, parenteral</li>
+                        </ul>
+
+                        <h3>Sinais de Desidratação</h3>
+                        <ul>
+                            <li><strong>Leve (3-5%):</strong> Sede, mucosas secas</li>
+                            <li><strong>Moderada (6-9%):</strong> Turgor diminuído, oligúria</li>
+                            <li><strong>Grave (>10%):</strong> Choque, coma</li>
+                            <li><strong>Peso:</strong> Perda > 3% do peso</li>
+                            <li><strong>Fontanela:</strong> Abaixada (lactentes)</li>
+                            <li><strong>Diurese:</strong>
+                                < 1 mL/kg/h</li>
+                            <li><strong>Densidade Urina:</strong> > 1.020</li>
+                            <li><strong>Hematócrito:</strong> Elevado</li>
+                        </ul>
+
+                        <h3>Sinais de Sobrecarga Hídrica</h3>
+                        <ul>
+                            <li><strong>Peso:</strong> Ganho excessivo</li>
+                            <li><strong>Edema:</strong> Periférico, pulmonar</li>
+                            <li><strong>Dispneia:</strong> Taquipneia</li>
+                            <li><strong>Hepatomegalia:</strong> Congestão hepática</li>
+                            <li><strong>Diurese:</strong> Aumentada</li>
+                            <li><strong>Densidade Urina:</strong>
+                                < 1.005</li>
+                            <li><strong>Hematócrito:</strong> Diminuído</li>
+                            <li><strong>Eletrólitos:</strong> Diluídos</li>
+                        </ul>
+
+                        <h3>Distúrbios Eletrolíticos</h3>
+                        <ul>
+                            <li><strong>Hiponatremia:</strong> Na < 135 mEq/L</li>
+                            <li><strong>Hipernatremia:</strong> Na > 145 mEq/L</li>
+                            <li><strong>Hipocalemia:</strong> K < 3.5 mEq/L</li>
+                            <li><strong>Hipercalemia:</strong> K > 5.5 mEq/L</li>
+                            <li><strong>Hipocalcemia:</strong> Ca < 8.5 mg/dL</li>
+                            <li><strong>Hipercalcemia:</strong> Ca > 10.5 mg/dL</li>
+                            <li><strong>Hipomagnesemia:</strong> Mg < 1.8 mg/dL</li>
+                            <li><strong>Hipermagnesemia:</strong> Mg > 2.4 mg/dL</li>
+                        </ul>
+
+                        <h3>Limitações e Considerações</h3>
+                        <ul>
+                            <li>Não substitui avaliação clínica</li>
+                            <li>Requer contexto clínico</li>
+                            <li>Variações individuais</li>
+                            <li>Fatores não incluídos</li>
+                            <li>Monitoramento contínuo</li>
+                            <li>Medições precisas necessárias</li>
+                            <li>Interpretação experiente</li>
+                            <li>Ajuste individual</li>
+                        </ul>
+
+                        <div class="reference-box">
+                            <strong>Referências:</strong><br>
+                            - Kliegman RM, et al. Nelson textbook of pediatrics. 21st ed. Elsevier; 2020.<br>
+                            - Feld LG, et al. Clinical practice guideline: maintenance intravenous fluids in children.
+                            Pediatrics. 2018;142(6):e20183083.<br>
+                            - Holliday MA, et al. The maintenance need for water in parenteral fluid therapy.
+                            Pediatrics. 1957;19(5):823-832.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalInfo').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalInfo').style.display = 'none';
+        }
+
+        window.onclick = function (event) {
+            var modal = document.getElementById('modalInfo');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // Concentrações padrão de eletrólitos (mEq/ml)
+        const concentracoesEletrolitos = {
+            // Suco Gástrico (sem bile)
+            sucoGastrico: {
+                na: 0.06,    // mEq/ml
+                k: 0.01,     // mEq/ml
+                cl: 0.085    // mEq/ml
+            },
+            // Suco Gástrico, Pancreático e Biliar
+            sucoPancreatico: {
+                na: 0.14,    // mEq/ml
+                k: 0.005,    // mEq/ml
+                cl: 0.1,     // mEq/ml
+                hco3: 0.025  // mEq/ml
+            },
+            // Ileostomia e Diarreia
+            ileostomia: {
+                na: 0.12,    // mEq/ml
+                k: 0.02,     // mEq/ml
+                cl: 0.09,    // mEq/ml
+                hco3: 0.03   // mEq/ml
+            },
+            // Soros padrão
+            soros: {
+                ringerLactato: {
+                    na: 0.13,   // mEq/ml
+                    k: 0.004,   // mEq/ml
+                    cl: 0.109,  // mEq/ml
+                    hco3: 0.028 // mEq/ml (como lactato)
+                },
+                ringerSimples: {
+                    na: 0.147,  // mEq/ml
+                    k: 0.004,   // mEq/ml
+                    cl: 0.155   // mEq/ml
+                },
+                soroFisiologico: {
+                    na: 0.154,  // mEq/ml
+                    cl: 0.154   // mEq/ml
+                }
+            }
+        };
+
+        // Função para calcular superfície corporal
+        function calcularSuperficieCorporal(peso, altura) {
+            // Usar altura estimada baseada na idade se não fornecida
+            if (!altura) {
+                altura = idade * 6 + 77; // Fórmula aproximada para altura
+            }
+            return Math.sqrt((peso * altura) / 3600);
+        }
+
+        // Função para calcular necessidade hídrica diária (Regra de Holliday-Segar)
+        function calcularNecessidadeHidrica(peso, idade) {
+            // Lactentes pequenos (< 1 ano) podem necessitar de limites um pouco maiores dependendo do protocolo,
+            // mas a regra estrita de Holliday-Segar baseada no peso é a mais universal e segura.
+            if (peso <= 10) {
+                return peso * 100;
+            } else if (peso <= 20) {
+                return 1000 + ((peso - 10) * 50);
+            } else {
+                return 1500 + ((peso - 20) * 20);
+            }
+        }
+
+        // Função para calcular eletrólitos automaticamente baseado no volume
+        function calcularEletrolitosAutomaticos(volume, tipo) {
+            const conc = concentracoesEletrolitos[tipo];
+            if (!conc || !volume) return { na: 0, k: 0, cl: 0, hco3: 0 };
+
+            return {
+                na: (volume * conc.na) || 0,
+                k: (volume * conc.k) || 0,
+                cl: (volume * conc.cl) || 0,
+                hco3: (volume * conc.hco3) || 0
+            };
+        }
+
+        // Função para calcular eletrólitos dos soros automaticamente
+        function calcularEletrolitosSoros(volume, tipo) {
+            const conc = concentracoesEletrolitos.soros[tipo];
+            if (!conc || !volume) return { na: 0, k: 0, cl: 0, hco3: 0 };
+
+            return {
+                na: (volume * conc.na) || 0, // Volume já em ml
+                k: (volume * conc.k) || 0,
+                cl: (volume * conc.cl) || 0,
+                hco3: (volume * conc.hco3) || 0
+            };
+        }
+
+        // Função para calcular e exibir eletrólitos intrínsecos dos soros
+        function calcularEletrolitosIntrinsecos() {
+            const ringerLactato = parseFloat(document.getElementById('ringerLactato').value) || 0;
+            const ringerSimples = parseFloat(document.getElementById('ringerSimples').value) || 0;
+            const soroFisiologico = parseFloat(document.getElementById('soroFisiologico').value) || 0;
+
+            // Calcular eletrólitos de cada tipo de soro
+            const eletrolitosRL = calcularEletrolitosSoros(ringerLactato, 'ringerLactato');
+            const eletrolitosRS = calcularEletrolitosSoros(ringerSimples, 'ringerSimples');
+            const eletrolitosSF = calcularEletrolitosSoros(soroFisiologico, 'soroFisiologico');
+
+            // Somar todos os eletrólitos intrínsecos
+            const naTotal = eletrolitosRL.na + eletrolitosRS.na + eletrolitosSF.na;
+            const kTotal = eletrolitosRL.k + eletrolitosRS.k + eletrolitosSF.k;
+            const clTotal = eletrolitosRL.cl + eletrolitosRS.cl + eletrolitosSF.cl;
+            const hco3Total = eletrolitosRL.hco3 + eletrolitosRS.hco3 + eletrolitosSF.hco3;
+
+            // Atualizar campos readonly
+            document.getElementById('naIntrinseco').value = naTotal.toFixed(1);
+            document.getElementById('kIntrinseco').value = kTotal.toFixed(1);
+            document.getElementById('clIntrinseco').value = clTotal.toFixed(1);
+            document.getElementById('hco3Intrinseco').value = hco3Total.toFixed(1);
+        }
+
+        // Função para calcular perdas automáticas baseadas em Sim/Não
+        function calcularPerdasAutomaticas() {
+            // Valores padrão para cada tipo de perda (ml/dia)
+            const perdasPadrao = {
+                diarreiaLeve: 50,
+                diarreiaModerada: 100,
+                diarreiaGrave: 200,
+                perspiracaoInsensivel: 300,
+                fezesSemDiarreia: 20,
+                calorAmbiente: 150,
+                calorFebre: 250,
+                hiperventilacao: 100,
+                vomitos: 80,
+                fototerapia: 30,
+                sangramento: 10
+            };
+
+            // Calcular totais baseados nas seleções
+            let totalPerdas = 0;
+            Object.keys(perdasPadrao).forEach(tipo => {
+                const select = document.getElementById(tipo);
+                if (select && select.value === '1') {
+                    totalPerdas += perdasPadrao[tipo];
+                }
+            });
+
+            // Atualizar display se existir
+            const totalPerdasElement = document.getElementById('totalPerdasAutomaticas');
+            if (totalPerdasElement) {
+                totalPerdasElement.textContent = totalPerdas.toFixed(1);
+            }
+        }
+
+        // Função para interpretar balanço hídrico
+        function interpretarBalanco(balanco, peso, necessidade) {
+            const balancoPorKg = balanco / peso;
+            const percentualNecessidade = (balanco / necessidade) * 100;
+
+            if (balanco > necessidade * 0.2) {
+                return {
+                    status: "Positivo excessivo",
+                    classe: "balance-positive",
+                    interpretacao: "Risco de sobrecarga hídrica. Monitorar sinais de edema."
+                };
+            } else if (balanco > necessidade * 0.1) {
+                return {
+                    status: "Positivo adequado",
+                    classe: "balance-positive",
+                    interpretacao: "Balanço hídrico adequado para crescimento."
+                };
+            } else if (balanco > -necessidade * 0.1) {
+                return {
+                    status: "Equilibrado",
+                    classe: "balance-neutral",
+                    interpretacao: "Balanço hídrico equilibrado."
+                };
+            } else {
+                return {
+                    status: "Negativo",
+                    classe: "balance-negative",
+                    interpretacao: "Risco de desidratação. Avaliar necessidade de reposição."
+                };
+            }
+        }
+
+        // Função para atualizar informações do paciente
+        function updatePatientInfo() {
+            const nome = document.getElementById('nome').value;
+            const idade = parseFloat(document.getElementById('idade').value);
+            const peso = parseFloat(document.getElementById('peso').value);
+            const altura = parseFloat(document.getElementById('altura').value);
+
+            if (idade && peso) {
+                const superficie = calcularSuperficieCorporal(peso, altura);
+                const necessidade = calcularNecessidadeHidrica(peso, idade);
+
+                document.getElementById('patientDetails').innerHTML = `
+                    <strong>Nome:</strong> ${window.neopedEscapeHtml(nome || 'Não informado')}<br>
+                    <strong>Idade:</strong> ${idade} anos<br>
+                    <strong>Peso:</strong> ${peso} kg<br>
+                    <strong>Altura:</strong> ${altura ? altura + ' cm' : 'Estimada pela idade'}<br>
+                    <strong>Superfície Corporal:</strong> ${superficie.toFixed(2)} m²<br>
+                    <strong>Necessidade Hídrica:</strong> ${necessidade.toFixed(0)} ml/dia
+                `;
+                document.getElementById('patientInfo').style.display = 'block';
+            }
+        }
+
+        // Event listeners para atualizar informações em tempo real
+        document.getElementById('nome').addEventListener('input', updatePatientInfo);
+        document.getElementById('idade').addEventListener('input', updatePatientInfo);
+        document.getElementById('peso').addEventListener('input', updatePatientInfo);
+        document.getElementById('altura').addEventListener('input', updatePatientInfo);
+
+        // Event listeners para cálculo automático de eletrólitos
+        document.getElementById('sgAgua').addEventListener('input', function () {
+            const volume = parseFloat(this.value) || 0;
+            const eletrolitos = calcularEletrolitosAutomaticos(volume, 'sucoGastrico');
+            document.getElementById('sgNa').value = eletrolitos.na.toFixed(1);
+            document.getElementById('sgK').value = eletrolitos.k.toFixed(1);
+            document.getElementById('sgCl').value = eletrolitos.cl.toFixed(1);
+        });
+
+        document.getElementById('spbAgua').addEventListener('input', function () {
+            const volume = parseFloat(this.value) || 0;
+            const eletrolitos = calcularEletrolitosAutomaticos(volume, 'sucoPancreatico');
+            document.getElementById('spbNa').value = eletrolitos.na.toFixed(1);
+            document.getElementById('spbK').value = eletrolitos.k.toFixed(1);
+            document.getElementById('spbCl').value = eletrolitos.cl.toFixed(1);
+            document.getElementById('spbHco3').value = eletrolitos.hco3.toFixed(1);
+        });
+
+        document.getElementById('ileoAgua').addEventListener('input', function () {
+            const volume = parseFloat(this.value) || 0;
+            const eletrolitos = calcularEletrolitosAutomaticos(volume, 'ileostomia');
+            document.getElementById('ileoNa').value = eletrolitos.na.toFixed(1);
+            document.getElementById('ileoK').value = eletrolitos.k.toFixed(1);
+            document.getElementById('ileoCl').value = eletrolitos.cl.toFixed(1);
+            document.getElementById('ileoHco3').value = eletrolitos.hco3.toFixed(1);
+        });
+
+        // Event listeners para soros - calcular eletrólitos intrínsecos
+        document.getElementById('ringerLactato').addEventListener('input', calcularEletrolitosIntrinsecos);
+        document.getElementById('ringerSimples').addEventListener('input', calcularEletrolitosIntrinsecos);
+        document.getElementById('soroFisiologico').addEventListener('input', calcularEletrolitosIntrinsecos);
+
+        // Event listener para o formulário
+        document.getElementById('balancoForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Obter dados do formulário
+            const idade = parseFloat(document.getElementById('idade').value);
+            const peso = parseFloat(document.getElementById('peso').value);
+            const horas = parseFloat(document.getElementById('horas').value);
+
+            // Tratamento contra retornos de NaN e Infinity silenciosos no relatório
+            if (isNaN(idade) || isNaN(peso) || isNaN(horas) || peso <= 0 || horas <= 0 || idade < 0) {
+                alert('Variáveis Obrigatórias Inválidas: Preencha corretamente os campos de Idade (>=0.1), Peso (>0) e Período de Balanço em Horas (>0) antes de calcular.');
+                document.getElementById('results').style.display = 'none';
+                return;
+            }
+
+            // Ganhos - Soros
+            const ringerLactato = parseFloat(document.getElementById('ringerLactato').value) || 0;
+            const ringerSimples = parseFloat(document.getElementById('ringerSimples').value) || 0;
+            const soroFisiologico = parseFloat(document.getElementById('soroFisiologico').value) || 0;
+            const sorosGlicosados = parseFloat(document.getElementById('sorosGlicosados').value) || 0;
+            const outrosSoros = parseFloat(document.getElementById('outrosSoros').value) || 0;
+
+            // Ganhos - Eletrólitos intrínsecos dos soros
+            const naIntrinseco = parseFloat(document.getElementById('naIntrinseco').value) || 0;
+            const kIntrinseco = parseFloat(document.getElementById('kIntrinseco').value) || 0;
+            const clIntrinseco = parseFloat(document.getElementById('clIntrinseco').value) || 0;
+            const hco3Intrinseco = parseFloat(document.getElementById('hco3Intrinseco').value) || 0;
+
+            // Ganhos - Eletrólitos adicionais
+            const naAdicional = parseFloat(document.getElementById('naAdicional').value) || 0;
+            const kAdicional = parseFloat(document.getElementById('kAdicional').value) || 0;
+            const mgAdicional = parseFloat(document.getElementById('mgAdicional').value) || 0;
+            const clAdicional = parseFloat(document.getElementById('clAdicional').value) || 0;
+            const hco3Adicional = parseFloat(document.getElementById('hco3Adicional').value) || 0;
+            const caAdicional = parseFloat(document.getElementById('caAdicional').value) || 0;
+
+            // Total de eletrólitos ganhos
+            const naGanho = naIntrinseco + naAdicional;
+            const kGanho = kIntrinseco + kAdicional;
+            const mgGanho = mgAdicional; // Mg só vem dos adicionais
+            const clGanho = clIntrinseco + clAdicional;
+            const hco3Ganho = hco3Intrinseco + hco3Adicional;
+            const caGanho = caAdicional; // Ca só vem dos adicionais
+
+            // Ganhos - Água endógena
+            const aguaEndogena = parseFloat(document.getElementById('aguaEndogena').value) || 0;
+
+            // Perdas - Diurese
+            const diurese = parseFloat(document.getElementById('diurese').value) || 0;
+
+            // Perdas - Suco gástrico sem bile
+            const sgAgua = parseFloat(document.getElementById('sgAgua').value) || 0;
+            const sgNa = parseFloat(document.getElementById('sgNa').value) || 0;
+            const sgK = parseFloat(document.getElementById('sgK').value) || 0;
+            const sgCl = parseFloat(document.getElementById('sgCl').value) || 0;
+
+            // Perdas - Suco gástrico, pancreático e biliar
+            const spbAgua = parseFloat(document.getElementById('spbAgua').value) || 0;
+            const spbNa = parseFloat(document.getElementById('spbNa').value) || 0;
+            const spbK = parseFloat(document.getElementById('spbK').value) || 0;
+            const spbHco3 = parseFloat(document.getElementById('spbHco3').value) || 0;
+
+            // Perdas - Ileostomia e diarreia
+            const ileoAgua = parseFloat(document.getElementById('ileoAgua').value) || 0;
+            const ileoNa = parseFloat(document.getElementById('ileoNa').value) || 0;
+            const ileoK = parseFloat(document.getElementById('ileoK').value) || 0;
+            const ileoCl = parseFloat(document.getElementById('ileoCl').value) || 0;
+            const ileoHco3 = parseFloat(document.getElementById('ileoHco3').value) || 0;
+
+            // Perdas - Outras (calculadas automaticamente)
+            const perdasPadrao = {
+                diarreiaLeve: 50,
+                diarreiaModerada: 100,
+                diarreiaGrave: 200,
+                perspiracaoInsensivel: 300,
+                fezesSemDiarreia: 20,
+                calorAmbiente: 150,
+                calorFebre: 250,
+                hiperventilacao: 100,
+                vomitos: 80,
+                fototerapia: 30,
+                sangramento: 10
+            };
+
+            let diarreiaLeve = 0, diarreiaModerada = 0, diarreiaGrave = 0;
+            let perspiracaoInsensivel = 0, fezesSemDiarreia = 0, calorAmbiente = 0;
+            let calorFebre = 0, hiperventilacao = 0, vomitos = 0;
+            let fototerapia = 0, sangramento = 0;
+
+            Object.keys(perdasPadrao).forEach(tipo => {
+                const select = document.getElementById(tipo);
+                if (select && select.value === '1') {
+                    switch (tipo) {
+                        case 'diarreiaLeve': diarreiaLeve = perdasPadrao[tipo]; break;
+                        case 'diarreiaModerada': diarreiaModerada = perdasPadrao[tipo]; break;
+                        case 'diarreiaGrave': diarreiaGrave = perdasPadrao[tipo]; break;
+                        case 'perspiracaoInsensivel': perspiracaoInsensivel = perdasPadrao[tipo]; break;
+                        case 'fezesSemDiarreia': fezesSemDiarreia = perdasPadrao[tipo]; break;
+                        case 'calorAmbiente': calorAmbiente = perdasPadrao[tipo]; break;
+                        case 'calorFebre': calorFebre = perdasPadrao[tipo]; break;
+                        case 'hiperventilacao': hiperventilacao = perdasPadrao[tipo]; break;
+                        case 'vomitos': vomitos = perdasPadrao[tipo]; break;
+                        case 'fototerapia': fototerapia = perdasPadrao[tipo]; break;
+                        case 'sangramento': sangramento = perdasPadrao[tipo]; break;
+                    }
+                }
+            });
+
+            // Calcular totais
+            const totalSoros = ringerLactato + ringerSimples + soroFisiologico + sorosGlicosados + outrosSoros;
+            const totalGanhos = totalSoros + aguaEndogena;
+
+            const totalPerdasLiquidos = diurese + sgAgua + spbAgua + ileoAgua +
+                diarreiaLeve + diarreiaModerada + diarreiaGrave + perspiracaoInsensivel +
+                fezesSemDiarreia + calorAmbiente + calorFebre + hiperventilacao +
+                vomitos + fototerapia + sangramento;
+
+            // Calcular eletrólitos perdidos
+            const naPerdas = sgNa + spbNa + ileoNa;
+            const kPerdas = sgK + spbK + ileoK;
+            const clPerdas = sgCl + ileoCl;
+            const hco3Perdas = spbHco3 + ileoHco3;
+            const caPerdas = 0; // Não especificado nas perdas
+
+            // Calcular balanços
+            const balancoHidrico = totalGanhos - totalPerdasLiquidos;
+            const naBalanco = naGanho - naPerdas;
+            const kBalanco = kGanho - kPerdas;
+            const clBalanco = clGanho - clPerdas;
+            const hco3Balanco = hco3Ganho - hco3Perdas;
+            const caBalanco = caGanho - caPerdas;
+
+            // Calcular por kg
+            const naPorKg = naBalanco / peso;
+            const kPorKg = kBalanco / peso;
+            const clPorKg = clBalanco / peso;
+            const hco3PorKg = hco3Balanco / peso;
+            const caPorKg = caBalanco / peso;
+
+            // Calcular necessidade hídrica e diurese
+            const necessidadeHidrica = calcularNecessidadeHidrica(peso, idade);
+            const diuresePorKgHora = (diurese / peso) / horas;
+
+            // Interpretar balanço
+            const interpretacao = interpretarBalanco(balancoHidrico, peso, necessidadeHidrica);
+
+            // Exibir resultados
+            document.getElementById('totalGanhos').textContent = totalGanhos.toFixed(1);
+            document.getElementById('totalPerdas').textContent = totalPerdasLiquidos.toFixed(1);
+            document.getElementById('diureseResultado').textContent = diuresePorKgHora.toFixed(2);
+            document.getElementById('necessidadeHidrica').textContent = necessidadeHidrica.toFixed(0);
+
+            // Balanço hídrico
+            document.getElementById('balancoHidrico').textContent = balancoHidrico.toFixed(1);
+            document.getElementById('balancoHidrico').className = `balance-value ${interpretacao.classe}`;
+            document.getElementById('interpretacaoBalanco').textContent = interpretacao.status;
+
+            // Tabela de eletrólitos
+            document.getElementById('naGanhos').textContent = naGanho.toFixed(1);
+            document.getElementById('naPerdas').textContent = naPerdas.toFixed(1);
+            document.getElementById('naBalanco').textContent = naBalanco.toFixed(1);
+            document.getElementById('naPorKg').textContent = naPorKg.toFixed(2);
+
+            document.getElementById('kGanhos').textContent = kGanho.toFixed(1);
+            document.getElementById('kPerdas').textContent = kPerdas.toFixed(1);
+            document.getElementById('kBalanco').textContent = kBalanco.toFixed(1);
+            document.getElementById('kPorKg').textContent = kPorKg.toFixed(2);
+
+            document.getElementById('clGanhos').textContent = clGanho.toFixed(1);
+            document.getElementById('clPerdas').textContent = clPerdas.toFixed(1);
+            document.getElementById('clBalanco').textContent = clBalanco.toFixed(1);
+            document.getElementById('clPorKg').textContent = clPorKg.toFixed(2);
+
+            document.getElementById('hco3Ganhos').textContent = hco3Ganho.toFixed(1);
+            document.getElementById('hco3Perdas').textContent = hco3Perdas.toFixed(1);
+            document.getElementById('hco3Balanco').textContent = hco3Balanco.toFixed(1);
+            document.getElementById('hco3PorKg').textContent = hco3PorKg.toFixed(2);
+
+            document.getElementById('caGanhos').textContent = caGanho.toFixed(1);
+            document.getElementById('caPerdas').textContent = caPerdas.toFixed(1);
+            document.getElementById('caBalanco').textContent = caBalanco.toFixed(1);
+            document.getElementById('caPorKg').textContent = caPorKg.toFixed(2);
+
+            // Interpretação clínica
+            document.getElementById('interpretacaoTexto').innerHTML = `
+                <strong>Status Hídrico:</strong> ${interpretacao.status}<br>
+                <strong>Interpretação:</strong> ${interpretacao.interpretacao}<br>
+                <strong>Balanço por kg/dia:</strong> ${(balancoHidrico / peso).toFixed(1)} ml/kg/dia<br>
+                <strong>Percentual da Necessidade:</strong> ${((balancoHidrico / necessidadeHidrica) * 100).toFixed(1)}%
+            `;
+
+            // Mostrar resultados
+            document.getElementById('results').style.display = 'block';
+        });
+
+        // Função para gerar relatório
+        function gerarRelatorio() {
+            // Obter dados do formulário
+            const nome = document.getElementById('nome').value;
+            const idade = parseFloat(document.getElementById('idade').value);
+            const peso = parseFloat(document.getElementById('peso').value);
+            const altura = parseFloat(document.getElementById('altura').value);
+            const horas = parseFloat(document.getElementById('horas').value);
+
+            // Ganhos - Soros
+            const ringerLactato = parseFloat(document.getElementById('ringerLactato').value) || 0;
+            const ringerSimples = parseFloat(document.getElementById('ringerSimples').value) || 0;
+            const soroFisiologico = parseFloat(document.getElementById('soroFisiologico').value) || 0;
+            const sorosGlicosados = parseFloat(document.getElementById('sorosGlicosados').value) || 0;
+            const outrosSoros = parseFloat(document.getElementById('outrosSoros').value) || 0;
+
+            // Ganhos - Eletrólitos intrínsecos dos soros
+            const naIntrinseco = parseFloat(document.getElementById('naIntrinseco').value) || 0;
+            const kIntrinseco = parseFloat(document.getElementById('kIntrinseco').value) || 0;
+            const clIntrinseco = parseFloat(document.getElementById('clIntrinseco').value) || 0;
+            const hco3Intrinseco = parseFloat(document.getElementById('hco3Intrinseco').value) || 0;
+
+            // Ganhos - Eletrólitos adicionais
+            const naAdicional = parseFloat(document.getElementById('naAdicional').value) || 0;
+            const kAdicional = parseFloat(document.getElementById('kAdicional').value) || 0;
+            const mgAdicional = parseFloat(document.getElementById('mgAdicional').value) || 0;
+            const clAdicional = parseFloat(document.getElementById('clAdicional').value) || 0;
+            const hco3Adicional = parseFloat(document.getElementById('hco3Adicional').value) || 0;
+            const caAdicional = parseFloat(document.getElementById('caAdicional').value) || 0;
+
+            // Total de eletrólitos ganhos
+            const naGanho = naIntrinseco + naAdicional;
+            const kGanho = kIntrinseco + kAdicional;
+            const mgGanho = mgAdicional;
+            const clGanho = clIntrinseco + clAdicional;
+            const hco3Ganho = hco3Intrinseco + hco3Adicional;
+            const caGanho = caAdicional;
+
+            // Ganhos - Água endógena
+            const aguaEndogena = parseFloat(document.getElementById('aguaEndogena').value) || 0;
+
+            // Perdas - Diurese
+            const diurese = parseFloat(document.getElementById('diurese').value) || 0;
+
+            // Perdas - Suco gástrico sem bile
+            const sgAgua = parseFloat(document.getElementById('sgAgua').value) || 0;
+            const sgNa = parseFloat(document.getElementById('sgNa').value) || 0;
+            const sgK = parseFloat(document.getElementById('sgK').value) || 0;
+            const sgCl = parseFloat(document.getElementById('sgCl').value) || 0;
+
+            // Perdas - Suco gástrico, pancreático e biliar
+            const spbAgua = parseFloat(document.getElementById('spbAgua').value) || 0;
+            const spbNa = parseFloat(document.getElementById('spbNa').value) || 0;
+            const spbK = parseFloat(document.getElementById('spbK').value) || 0;
+            const spbHco3 = parseFloat(document.getElementById('spbHco3').value) || 0;
+
+            // Perdas - Ileostomia e diarreia
+            const ileoAgua = parseFloat(document.getElementById('ileoAgua').value) || 0;
+            const ileoNa = parseFloat(document.getElementById('ileoNa').value) || 0;
+            const ileoK = parseFloat(document.getElementById('ileoK').value) || 0;
+            const ileoCl = parseFloat(document.getElementById('ileoCl').value) || 0;
+            const ileoHco3 = parseFloat(document.getElementById('ileoHco3').value) || 0;
+
+            // Perdas - Outras
+            const diarreiaLeve = parseFloat(document.getElementById('diarreiaLeve').value) || 0;
+            const diarreiaModerada = parseFloat(document.getElementById('diarreiaModerada').value) || 0;
+            const diarreiaGrave = parseFloat(document.getElementById('diarreiaGrave').value) || 0;
+            const perspiracaoInsensivel = parseFloat(document.getElementById('perspiracaoInsensivel').value) || 0;
+            const fezesSemDiarreia = parseFloat(document.getElementById('fezesSemDiarreia').value) || 0;
+            const calorAmbiente = parseFloat(document.getElementById('calorAmbiente').value) || 0;
+            const calorFebre = parseFloat(document.getElementById('calorFebre').value) || 0;
+            const hiperventilacao = parseFloat(document.getElementById('hiperventilacao').value) || 0;
+            const vomitos = parseFloat(document.getElementById('vomitos').value) || 0;
+            const fototerapia = parseFloat(document.getElementById('fototerapia').value) || 0;
+            const sangramento = parseFloat(document.getElementById('sangramento').value) || 0;
+
+            // Recalcular valores
+            const totalSoros = ringerLactato + ringerSimples + soroFisiologico + sorosGlicosados + outrosSoros;
+            const totalGanhos = totalSoros + aguaEndogena;
+
+            const totalPerdasLiquidos = diurese + sgAgua + spbAgua + ileoAgua +
+                diarreiaLeve + diarreiaModerada + diarreiaGrave + perspiracaoInsensivel +
+                fezesSemDiarreia + calorAmbiente + calorFebre + hiperventilacao +
+                vomitos + fototerapia + sangramento;
+
+            // Calcular eletrólitos perdidos
+            const naPerdas = sgNa + spbNa + ileoNa;
+            const kPerdas = sgK + spbK + ileoK;
+            const clPerdas = sgCl + ileoCl;
+            const hco3Perdas = spbHco3 + ileoHco3;
+            const caPerdas = 0;
+
+            // Calcular balanços
+            const balancoHidrico = totalGanhos - totalPerdasLiquidos;
+            const naBalanco = naGanho - naPerdas;
+            const kBalanco = kGanho - kPerdas;
+            const clBalanco = clGanho - clPerdas;
+            const hco3Balanco = hco3Ganho - hco3Perdas;
+            const caBalanco = caGanho - caPerdas;
+
+            // Calcular por kg
+            const naPorKg = naBalanco / peso;
+            const kPorKg = kBalanco / peso;
+            const clPorKg = clBalanco / peso;
+            const hco3PorKg = hco3Balanco / peso;
+            const caPorKg = caBalanco / peso;
+
+            // Calcular necessidade hídrica e diurese
+            const necessidadeHidrica = calcularNecessidadeHidrica(peso, idade);
+            const diuresePorKgHora = (diurese / peso) / horas;
+
+            // Interpretar balanço
+            const interpretacao = interpretarBalanco(balancoHidrico, peso, necessidadeHidrica);
+
+            // Gerar relatório em texto simples
+            let relatorio = `RESUMO INFORMATIVO — BALANCO HIDROELETROLITICO PEDIATRICO (EDUCATIVO)
+===============================================
+
+DADOS DO PACIENTE:
+- Nome: ${nome || 'Nao informado'}
+- Idade: ${idade} anos
+- Peso: ${peso} kg
+- Altura: ${altura ? altura + ' cm' : 'Estimada pela idade'}
+- Superficie corporal: ${calcularSuperficieCorporal(peso, altura).toFixed(2)} m2
+- Periodo de monitoramento: ${horas} horas
+
+GANHOS DE LIQUIDOS (ml):
+- Ringer Lactato: ${ringerLactato}
+- Ringer Simples: ${ringerSimples}
+- Soro Fisiologico: ${soroFisiologico}
+- Soros Glicosados: ${sorosGlicosados}
+- Outros soros: ${outrosSoros}
+- Agua endogena: ${aguaEndogena}
+- TOTAL GANHOS: ${totalGanhos.toFixed(1)} ml
+
+PERDAS DE LIQUIDOS (ml):
+- Diurese: ${diurese}
+- Suco gastrico sem bile: ${sgAgua}
+- Suco gastrico/pancreatico/biliar: ${spbAgua}
+- Ileostomia/diarreia: ${ileoAgua}
+- Diarreia leve: ${diarreiaLeve}
+- Diarreia moderada: ${diarreiaModerada}
+- Diarreia grave: ${diarreiaGrave}
+- Perspiracao insensivel: ${perspiracaoInsensivel}
+- Fezes sem diarreia: ${fezesSemDiarreia}
+- Calor ambiente: ${calorAmbiente}
+- Calor + febre: ${calorFebre}
+- Hiperventilacao: ${hiperventilacao}
+- Vomitos: ${vomitos}
+- Fototerapia: ${fototerapia}
+- Sangramento: ${sangramento}
+- TOTAL PERDAS: ${totalPerdasLiquidos.toFixed(1)} ml
+
+BALANCO HIDRICO:
+- Balanco liquido: ${balancoHidrico.toFixed(1)} ml
+- Status: ${interpretacao.status}
+- Interpretacao: ${interpretacao.interpretacao}
+- Necessidade hidrica: ${necessidadeHidrica.toFixed(0)} ml/dia
+- Diurese: ${diuresePorKgHora.toFixed(2)} ml/kg/hora
+
+BALANCO ELETROLITICO:
+- Na: Intrinseco ${naIntrinseco.toFixed(1)} + Adicional ${naAdicional.toFixed(1)} = Total ${naGanho.toFixed(1)} mEq, Perdas ${naPerdas.toFixed(1)} mEq, Balanco ${naBalanco.toFixed(1)} mEq (${naPorKg.toFixed(2)} mEq/kg)
+- K: Intrinseco ${kIntrinseco.toFixed(1)} + Adicional ${kAdicional.toFixed(1)} = Total ${kGanho.toFixed(1)} mEq, Perdas ${kPerdas.toFixed(1)} mEq, Balanco ${kBalanco.toFixed(1)} mEq (${kPorKg.toFixed(2)} mEq/kg)
+- Cl: Intrinseco ${clIntrinseco.toFixed(1)} + Adicional ${clAdicional.toFixed(1)} = Total ${clGanho.toFixed(1)} mEq, Perdas ${clPerdas.toFixed(1)} mEq, Balanco ${clBalanco.toFixed(1)} mEq (${clPorKg.toFixed(2)} mEq/kg)
+- HCO3: Intrinseco ${hco3Intrinseco.toFixed(1)} + Adicional ${hco3Adicional.toFixed(1)} = Total ${hco3Ganho.toFixed(1)} mEq, Perdas ${hco3Perdas.toFixed(1)} mEq, Balanco ${hco3Balanco.toFixed(1)} mEq (${hco3PorKg.toFixed(2)} mEq/kg)
+- Mg: Adicional ${mgAdicional.toFixed(1)} mEq
+- Ca: Adicional ${caAdicional.toFixed(1)} mEq
+
+OBSERVACOES:
+- Necessidade hidrica baseada na idade e peso
+- Balanco positivo adequado: 10-20 ml/kg/dia
+- Diurese normal: 1-3 ml/kg/hora
+- Eletrolitos normais: Na 2-4 mEq/kg/dia, K 1-3 mEq/kg/dia
+- Monitorar sinais de sobrecarga ou desidratacao
+
+Data: ${new Date().toLocaleDateString('pt-BR')}
+Hora: ${new Date().toLocaleTimeString('pt-BR')}`;
+
+            relatorio = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorio;
+            if (typeof window.neopedLegalReportFooter === 'function') {
+                relatorio += '\n' + window.neopedLegalReportFooter().trim();
+            } else {
+                relatorio += '\n\n—\nNeoPedCalc · Uso educativo e informativo. Nao substitui julgamento clinico. Revise antes de qualquer uso.';
+            }
+
+            // Copiar para área de transferência
+            navigator.clipboard.writeText(relatorio).then(() => {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }).catch(() => {
+                // Fallback para navegadores mais antigos
+                const textArea = document.createElement('textarea');
+                textArea.value = relatorio;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            });
+        }
+
+        // Event listener para o botão de relatório
+        document.addEventListener('DOMContentLoaded', function () {
+            const botaoRelatorio = document.getElementById('gerarRelatorio');
+            if (botaoRelatorio) {
+                botaoRelatorio.addEventListener('click', gerarRelatorio);
+                console.log('Event listener do relatório adicionado com sucesso');
+            } else {
+                console.log('Botão de relatório não encontrado');
+            }
+        });
+
+    </script>
+<script src="../js/neoped-datetime-fix.js"></script>
+<script src="../js/neoped-nav.js"></script>
+</body>
+
+</html>
