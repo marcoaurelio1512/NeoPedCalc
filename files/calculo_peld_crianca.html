@@ -689,9 +689,9 @@
             <div class="formula-section">
                 <h4>Formula do PELD Score</h4>
                 <div class="formula">
-                    PELD = 0.436 x ln(Bilirrubina) + 0.957 x ln(INR) - 0.687 x ln(Albumina) + 0.480 x Crescimento + 0.667 x Colangite
+                    PELD = 10 x [0.480 x ln(Bilirrubina) + 1.857 x ln(INR) - 0.687 x ln(Albumina) + 0.436 x (Idade < 1 ano) + 0.667 x (Crescimento < -2 DP)]
                     <br><br>
-                    <strong>Se idade < 12 meses:</strong> PELD = PELD + 0.436
+                    Valores laboratoriais menores que 1,0 são considerados 1,0 (OPTN). A colangite bacteriana é registrada no relatório, mas não faz parte da fórmula do PELD.
                 </div>
             </div>
         </div>
@@ -930,17 +930,17 @@
                 return;
             }
 
-            // Calcular PELD Score
-            let peldScore = 0.436 * Math.log(bilirrubina) + 
-                           0.957 * Math.log(inr) - 
-                           0.687 * Math.log(albumina) + 
-                           0.480 * crescimento + 
-                           0.667 * colangite;
-
-            // Ajuste para idade < 12 meses
-            if (idadeMeses < 12) {
-                peldScore += 0.436;
-            }
+            // PELD (OPTN/UNOS): 10 x [0.480 ln(bilirrubina) + 1.857 ln(INR) - 0.687 ln(albumina)
+            //                         + 0.436 (idade < 1 ano) + 0.667 (crescimento < -2 DP)]
+            // Valores laboratoriais < 1,0 são considerados 1,0. Colangite não faz parte da fórmula.
+            const labMinimo = valor => Math.max(valor, 1);
+            let peldScore = 10 * (
+                0.480 * Math.log(labMinimo(bilirrubina)) +
+                1.857 * Math.log(labMinimo(inr)) -
+                0.687 * Math.log(labMinimo(albumina)) +
+                (idadeMeses < 12 ? 0.436 : 0) +
+                0.667 * crescimento
+            );
 
             // Arredondar para 1 casa decimal
             peldScore = Math.round(peldScore * 10) / 10;

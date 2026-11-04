@@ -54,6 +54,10 @@
     'Formula do PELD Score': ['PELD Score Formula', 'Fórmula de la puntuación PELD'],
     'PELD = 0.436 x ln(Bilirrubina) + 0.957 x ln(INR) - 0.687 x ln(Albumina) + 0.480 x Crescimento + 0.667 x Colangite': ['PELD = 0.436 x ln(Bilirubin) + 0.957 x ln(INR) - 0.687 x ln(Albumin) + 0.480 x Growth + 0.667 x Cholangitis', 'PELD = 0.436 x ln(bilirrubina) + 0.957 x ln(INR) - 0.687 x ln(albúmina) + 0.480 x crecimiento + 0.667 x colangitis'],
     'Se idade < 12 meses:': ['If age < 12 months:', 'Si la edad es < 12 meses:'],
+    'Valores laboratoriais menores que 1,0 são considerados 1,0 (OPTN). A colangite bacteriana é registrada no relatório, mas não faz parte da fórmula do PELD.': [
+      'Laboratory values below 1.0 are set to 1.0 (OPTN). Bacterial cholangitis is recorded in the report but is not part of the PELD formula.',
+      'Los valores de laboratorio menores de 1,0 se consideran 1,0 (OPTN). La colangitis bacteriana se registra en el informe, pero no forma parte de la fórmula PELD.'
+    ],
     'PELD = PELD + 0.436': ['PELD = PELD + 0.436', 'PELD = PELD + 0.436'],
 
     // Modal

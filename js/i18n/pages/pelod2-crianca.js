@@ -153,7 +153,8 @@
       'Use commas to list several values; the system picks the worst one according to the parameter rule',
       'Use comas para listar varios valores; el sistema elige el peor según la regla del parámetro'
     ],
-    'Informe FiO₂ como fração (ex.: 0,6 para 60%)': ['Enter FiO₂ as a fraction (e.g., 0.6 for 60%)', 'Indique la FiO₂ como fracción (ej.: 0,6 para 60%)'],
+    'Informe FiO₂ como fração, com ponto decimal (ex.: 0.6 para 60%); a vírgula separa valores da lista': ['Enter FiO₂ as a fraction with a decimal point (e.g., 0.6 for 60%); commas separate list values', 'Indique la FiO₂ como fracción con punto decimal (ej.: 0.6 para 60%); la coma separa los valores de una lista'],
+    'FiO₂ deve ser uma fração entre 0.21 e 1.0, com ponto decimal (ex.: 0.6 para 60%). A vírgula separa valores de uma lista (ex.: 0.4,0.6).': ['FiO₂ must be a fraction between 0.21 and 1.0 with a decimal point (e.g., 0.6 for 60%). Commas separate list values (e.g., 0.4,0.6).', 'La FiO₂ debe ser una fracción entre 0.21 y 1.0 con punto decimal (ej.: 0.6 para 60%). La coma separa los valores de una lista (ej.: 0.4,0.6).'],
     'Clique em': ['Click', 'Haga clic en'],
     'para ver total, tabela de contribuição e valor do modelo logístico': [
       'to see the total, the contribution table and the logistic model value',

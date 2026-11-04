@@ -551,7 +551,7 @@
 
         // Função para remover acentos e caracteres especiais
         function removerAcentos(texto) {
-            return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            return String(texto == null ? '' : texto).normalize('NFD').replace(/[\u0300-\u036f]/g, '')
                 .replace(/[^\w\s]/g, '')
                 .replace(/\s+/g, ' ');
         }

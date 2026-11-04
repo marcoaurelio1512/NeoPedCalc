@@ -1074,11 +1074,13 @@
             
             // Calcular o volume total real digitado (baseado nas linhas de entrada)
             let volumeEntradaReal = 0;
+            let volumeEntradaPlanejado = 0; // digitado ou, se vazio, a alíquota sugerida (placeholder)
             linhasExistentes.forEach(row => {
                 if (row.dataset.tipo === 'entrada') {
                     const volumeInput = row.cells[3].querySelector('input[type="number"]');
                     const valor = parseFloat(volumeInput.value) || 0; // Apenas valores digitados, não placeholder
                     volumeEntradaReal += valor;
+                    volumeEntradaPlanejado += valor || parseFloat(volumeInput.placeholder) || 0;
                 }
             });
             

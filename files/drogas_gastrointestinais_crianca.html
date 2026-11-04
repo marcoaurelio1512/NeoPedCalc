@@ -1050,8 +1050,25 @@
                     let unidadeConcentracao = 'mg'; // Default
                     
                     // Padrão 1: "40 mg/5ml" -> concentração = 40/5 = 8 mg/ml
+                    // Padrão 0: volume/massa, ex. "Ampola 10ml/240mg" -> 240/10 = 24 mg/ml
+                    // (antes caía no fallback e virava 240 mg/ml: volume 10x menor)
+                    const matchVolMassa = apresentacao.match(/(\d+(?:[.,]\d+)?)\s*ml\s*\/\s*(\d+(?:[.,]\d+)?)\s*(mcg|mg)\b/i);
+                    // Padrão mcg: "500mcg/ml" ou "500 mcg/2 ml"
+                    const matchMcg = apresentacao.match(/(\d+(?:[.,]\d+)?)\s*mcg\s*\/\s*(\d+(?:[.,]\d+)?)?\s*ml/i);
                     const match1 = apresentacao.match(/(\d+(?:[.,]\d+)?)\s*mg\s*\/\s*(\d+(?:[.,]\d+)?)\s*ml/i);
-                    if (match1) {
+                    if (matchVolMassa) {
+                        const volume = parseFloat(matchVolMassa[1].replace(',', '.'));
+                        const massa = parseFloat(matchVolMassa[2].replace(',', '.'));
+                        concentracaoNum = volume > 0 ? massa / volume : 0;
+                        unidadeConcentracao = matchVolMassa[3].toLowerCase();
+                    }
+                    else if (matchMcg) {
+                        const massa = parseFloat(matchMcg[1].replace(',', '.'));
+                        const volume = matchMcg[2] ? parseFloat(matchMcg[2].replace(',', '.')) : 1;
+                        concentracaoNum = volume > 0 ? massa / volume : 0;
+                        unidadeConcentracao = 'mcg';
+                    }
+                    else if (match1) {
                         const numerador = parseFloat(match1[1].replace(',', '.'));
                         const denominador = parseFloat(match1[2].replace(',', '.'));
                         concentracaoNum = numerador / denominador;
@@ -1286,7 +1303,7 @@
 
         // Função para remover acentos
         function removerAcentos(texto) {
-            return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            return String(texto == null ? '' : texto).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         }
 
         function formatarNumero(valor) {

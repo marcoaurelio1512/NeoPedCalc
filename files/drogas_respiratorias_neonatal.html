@@ -1462,7 +1462,7 @@
         // Função para remover acentos
         function removerAcentos(texto) {
             if (!texto) return '';
-            return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            return String(texto == null ? '' : texto).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         }
 
         function formatarNumero(valor) {

@@ -740,7 +740,7 @@
                 <ol>
                     <li>Preencha os piores valores de cada parâmetro nas últimas 24 h (ou janela definida pelo seu serviço)</li>
                     <li>Use vírgula para listar vários valores; o sistema escolhe o pior conforme a regra do parâmetro</li>
-                    <li>Informe FiO₂ como fração (ex.: 0,6 para 60%)</li>
+                    <li>Informe FiO₂ como fração, com ponto decimal (ex.: 0.6 para 60%); a vírgula separa valores da lista</li>
                     <li>Clique em <strong>Calcular PELOD-2</strong> para ver total, tabela de contribuição e valor do modelo logístico</li>
                     <li>Use <strong>Copiar texto</strong> apenas como rascunho educativo — revise antes de arquivar</li>
                 </ol>
@@ -968,6 +968,12 @@
             const pao2 = selecionarPiorValor(pao2_in, 'min');
             const fio2_in = processarListaOuValor(document.getElementById('fio2').value);
             const fio2 = selecionarPiorValor(fio2_in, 'max');
+            // "0,6" vira a lista [0, 6]; sem esta checagem o cálculo usaria FiO2 = 6 sem avisar.
+            const fio2Valores = Array.isArray(fio2_in) ? fio2_in : [fio2_in];
+            if (fio2Valores.some(v => !Number.isNaN(v) && (v < 0.21 || v > 1))) {
+                alert('FiO₂ deve ser uma fração entre 0.21 e 1.0, com ponto decimal (ex.: 0.6 para 60%). A vírgula separa valores de uma lista (ex.: 0.4,0.6).');
+                return;
+            }
             const paco2_in = processarListaOuValor(document.getElementById('paco2').value);
             const paco2 = selecionarPiorValor(paco2_in, 'max');
 

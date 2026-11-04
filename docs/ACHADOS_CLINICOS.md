@@ -2,14 +2,29 @@
 
 Levantamento feito durante a tradução para inglês e espanhol (novembro de 2026). A tradução **não alterou** nenhum texto em português nem a lógica de cálculo: estes problemas já existiam no conteúdo original e aparecem nos três idiomas. Cada item precisa de revisão médica antes de qualquer correção.
 
+## Situação das correções
+
+Os itens marcados com ✅ já foram corrigidos no código (e nos dicionários de tradução), com resultado conferido nos três idiomas:
+
+| Página | Correção |
+|---|---|
+| Drogas (7 páginas com o mesmo leitor de apresentação) | Apresentações volume/massa ("Ampola 10ml/240mg", "Xarope 5ml/1.5mg") e mcg/ml passaram a ser lidas corretamente. Aminofilina 528 mg: 2,2 → 22,0 mL |
+| PELD | Fórmula OPTN: 10 × [0,480·ln(bilirrubina) + 1,857·ln(INR) − 0,687·ln(albumina) + 0,436·(idade < 1 ano) + 0,667·(crescimento < −2 DP)], com laboratório < 1,0 considerado 1,0 |
+| PELOD-2 | FiO₂ fora de 0,21–1,0 (ex.: "0,6" lido como lista 0 e 6) agora gera aviso e não calcula; a ajuda pede ponto decimal |
+| Drogas (9 páginas) | `removerAcentos` aceita números: as drogas respiratórias neonatais voltaram a calcular e copiar o relatório |
+| Exsanguineotransfusão | O botão "Gerar Relatório" voltou a funcionar |
+| Policitemia | Adicionar linha de entrada não gera mais erro |
+
+**Pendentes de decisão clínica** (precisam que o médico responsável defina o comportamento correto): coeficientes do PIM3, PRISM III e PELOD-2; concentração de atropina da RCP Neonatal (0,1 × 0,5 mg/mL) e adrenalina endotraqueal; fórmula de clearance do VancoCalc; doses de penicilina na meningite (antibióticos neonatais); arredondamento de doses pequenas ("0.0"); classificação da DBP; cortes do SNAPPE-II, do Murray e do Finnegan; arginina no Neofax.
+
 ## 1. Críticos: cálculo ou dose possivelmente errados
 
-- Drogas respiratórias (criança): AMINOFILINA "Ampola 10ml/240mg" lida como 240 mg/mL → 528 mg = 2,2 mL em vez de 22 mL (erro de 10×)
-- PELD: FÓRMULA ERRADA — código 0,436·ln(bili)+0,957·ln(INR)−0,687·ln(alb)+0,480·crescimento+0,667·colangite+0,436(<12m), sem ×10; publicada: 10×[0,480·ln(bili)+1,857·ln(INR)−0,687·ln(alb)+0,436(<1a)+0,667(crescimento<−2DP)]; colangite não é variável; resultados −1 a 2, sempre "Score baixo"; modal mostra outra fórmula
+- ✅ **Corrigido.** Drogas respiratórias (criança): AMINOFILINA "Ampola 10ml/240mg" lida como 240 mg/mL → 528 mg = 2,2 mL em vez de 22 mL (erro de 10×)
+- ✅ **Corrigido** (fórmula OPTN; colangite deixou de entrar no escore). PELD: FÓRMULA ERRADA — código 0,436·ln(bili)+0,957·ln(INR)−0,687·ln(alb)+0,480·crescimento+0,667·colangite+0,436(<12m), sem ×10; publicada: 10×[0,480·ln(bili)+1,857·ln(INR)−0,687·ln(alb)+0,436(<1a)+0,667(crescimento<−2DP)]; colangite não é variável; resultados −1 a 2, sempre "Score baixo"; modal mostra outra fórmula
 - PIM3: coeficientes inventados, não é o PIM3 publicado (Straney 2013) — sem BE, modelo errado; modal lista variáveis não coletadas; cita Slater 2003 (é PIM2)
 - PRISM III: não é o PRISM III publicado (sem faixas por idade, variáveis inventadas como "coma profundo", modelo logístico inventado); modal 24 h/0–74 × form 12 h
-- PELOD-2: limiares e coeficientes (−4,0 + 0,12×escore) ≠ Leteurtre 2013 (−6,61 + 0,47×escore); sem pupilas/ventilação/PAM e creatinina por idade; RISCO: modal manda digitar FiO2 "0,6" mas vírgula é separador de lista → lido como 0 e 6 → usa FiO2 = 6
-- Drogas respiratórias neonatais: removerAcentos(dados.intervalo) num número → erro "texto.normalize is not a function" → resultado e relatório falham EM PORTUGUÊS para quase todas as drogas (exceto nirsevimabe/palivizumabe)
+- ✅ **Corrigido só o risco de FiO₂** (validação 0,21–1,0 e ajuda com ponto decimal); os coeficientes continuam pendentes. PELOD-2: limiares e coeficientes (−4,0 + 0,12×escore) ≠ Leteurtre 2013 (−6,61 + 0,47×escore); sem pupilas/ventilação/PAM e creatinina por idade; RISCO: modal manda digitar FiO2 "0,6" mas vírgula é separador de lista → lido como 0 e 6 → usa FiO2 = 6
+- ✅ **Corrigido.** Drogas respiratórias neonatais: removerAcentos(dados.intervalo) num número → erro "texto.normalize is not a function" → resultado e relatório falham EM PORTUGUÊS para quase todas as drogas (exceto nirsevimabe/palivizumabe)
 
 ## 2. Importantes: resultado, relatório ou fluxo inconsistente
 
@@ -32,9 +47,9 @@ Levantamento feito durante a tradução para inglês e espanhol (novembro de 202
 - Índices ventilatórios: Índice Respiratório (MAP×FiO2×100)/(PaO2/FiO2) não padrão; Índice de Ventilação (PIP−PEEP)×FR/1000 ≠ modal ≠ padrão PIP×FR×PaCO2/1000; gradiente A-a normal 2–5 (tela) × <15 (modal); OI ≤10 "SDR leve" × modal <5 normal; fórmula de vapor d'água incomum; Greenspan 1977 (provável 1997)
 - Ventilação neonatal: mesma tabela questionável (PaO2 baixa → baixar PIP/FR; PaCO2 alta → subir FiO2/PEEP); complacência/resistência constantes; relatório sem nota padrão
 - pSOFA: respiratório chega a 8 (total até 28 vs "0–24"); PAM/creatinina não ajustadas por idade apesar de dizer; cardiovascular usa faixas de VIS
-- Exsanguineotransfusão: botão "Gerar Relatório" QUEBRA em todos os idiomas (relatorio += em const, linha ~2316: trocar const→let); >3,5 kg tela 5–10 mL/kg × relatório sempre 20 mL; aviso de peso 0,1–20 kg × campo até 10 kg; modal descreve campos inexistentes
+- ✅ **Corrigido só o relatório que quebrava** (const → let). Exsanguineotransfusão: botão "Gerar Relatório" QUEBRA em todos os idiomas (relatorio += em const, linha ~2316: trocar const→let); >3,5 kg tela 5–10 mL/kg × relatório sempre 20 mL; aviso de peso 0,1–20 kg × campo até 10 kg; modal descreve campos inexistentes
 - DBP: classificação não segue NIH 2001/Jensen 2019 (O2 → leve, CPAP → moderada, VM → grave, sem suporte → sem DBP; NIH: O2 aos 28 d e ar ambiente às 36 sem = DBP leve); data de nascimento sai 1 dia antes (fuso horário)
-- Policitemia: adicionarLinha() usa volumeEntradaPlanejado inexistente → adicionar linha "ENTRADA" gera erro (ReferenceError)
+- ✅ **Corrigido.** Policitemia: adicionarLinha() usa volumeEntradaPlanejado inexistente → adicionar linha "ENTRADA" gera erro (ReferenceError)
 - Drogas respiratórias neonatais: intervalos padrão 30/720 fora do select (alerta em ataques, nirsevimabe, palivizumabe); ipratrópio "mcg/dose" fora do select → dose 0; palivizumabe/Beyfortus volume 0 mL; DART 3+3+4 d (publicado 0,15/0,10/0,05/0,02 em 3/3/2/2); cafeína manutenção "infusão contínua"; Infasurf 135 mg/kg (7,5 mL/kg; bula ~3 mL/kg); aminofilina ">55 sem IPM"; modal "auxiliando na prescrição"
 - Drogas GI/neuro neonatais: toFixed(1) — fentanil "0.0 mg", ranitidina 1,2 kg "0.0 mL" (real 0,036); lactulose "ml/kg/dose" fora do select; idade "0.0"; <32 sem "pré-termo extremo"
 - SNAPPE-II: PaO2/FiO2 calculado com FiO2 fração (60/0,6 = 100) mas faixas de pontos 0,3–2,5 → com valores reais SEMPRE 0 ponto; peso 750–999 g = 5 pontos (publicado: 10)
