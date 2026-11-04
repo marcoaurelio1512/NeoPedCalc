@@ -339,9 +339,11 @@ window.neopedEscapeHtml = function (value) {
     }
 
     window.neopedLegalReportFooter = function () {
+      var i18n = window.NEOPED_I18N;
+      var text = 'NeoPedCalc · Uso exclusivamente educacional e informativo. Não realiza diagnóstico nem prescreve tratamento. Interpretação e decisão clínica: responsabilidade do profissional de saúde. Gerado em';
       return (
-        '\n\n—\nNeoPedCalc · Uso exclusivamente educacional e informativo. Não realiza diagnóstico nem prescreve tratamento. Interpretação e decisão clínica: responsabilidade do profissional de saúde. Gerado em ' +
-        new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) +
+        '\n\n—\n' + (i18n ? i18n.t(text) : text) + ' ' +
+        new Date().toLocaleString(i18n ? i18n.locale : 'pt-BR', { dateStyle: 'short', timeStyle: 'short' }) +
         '.'
       );
     };
@@ -382,6 +384,7 @@ window.neopedEscapeHtml = function (value) {
       var home = document.createElement('a'); home.href = getHomeUrl(); home.innerHTML = '<strong>✚ NeoPedCalc</strong>';
       var library = document.createElement('a'); library.href = getAppBase() + 'selecao_calculadoras.html'; library.textContent = 'Todas as calculadoras →';
       brand.append(home, library); document.body.prepend(brand);
+      if (window.NEOPED_I18N) { window.NEOPED_I18N.mountSwitcher(brand, { dark: true, before: library }); window.NEOPED_I18N.refresh(); }
       injectNav();
     }
     if (typeof window.atualizarScore === 'function' && document.getElementById('apgarForm')) {

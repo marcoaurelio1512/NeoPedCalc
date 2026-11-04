@@ -18,6 +18,7 @@
   let favoritesOnly = false;
   let category = '';
   let memory = {};
+  const t = text => (window.NEOPED_I18N ? window.NEOPED_I18N.t(text) : text);
   const normalize = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   function readFavorites() {
     const result = {};
@@ -46,7 +47,7 @@
     const focusedUrl = document.activeElement?.dataset.favoriteUrl;
     render();
     if (focusedUrl) [...document.querySelectorAll('[data-favorite-url]')].find(el => el.dataset.favoriteUrl === focusedUrl)?.focus();
-    window.neopedToast?.(active ? 'Adicionado aos favoritos.' : 'Removido dos favoritos.');
+    window.neopedToast?.(t(active ? 'Adicionado aos favoritos.' : 'Removido dos favoritos.'));
   }
   function element(tag, className, text) {
     const el = document.createElement(tag);
@@ -54,15 +55,20 @@
     if (text) el.textContent = text;
     return el;
   }
+  // Busca pelo nome original e pelo traduzido, para funcionar em qualquer idioma.
+  function searchText(entry) {
+    const specialty = entry.specialty === 'neonatal' ? 'neonatologia' : 'pediatria';
+    return [entry.title, entry.category, specialty].flatMap(text => [text, t(text)]).join(' ');
+  }
   const search = document.getElementById('catalog-search');
   const results = document.getElementById('catalog-results');
   const categories = [...new Set(entries.map(e => e.category))];
   function render() {
     const favorites = readFavorites();
     const query = normalize(search.value.trim());
-    const visible = entries.filter(entry => (!category || entry.category === category) && (!favoritesOnly || favorites[entry.url]) && normalize(entry.title + ' ' + entry.category + ' ' + (entry.specialty === 'neonatal' ? 'neonatologia' : 'pediatria')).includes(query));
-    document.getElementById('results-count').textContent = visible.length + (visible.length === 1 ? ' ferramenta' : ' ferramentas');
-    document.getElementById('results-title').textContent = favoritesOnly ? 'Seus favoritos' : (category || 'Todas as áreas');
+    const visible = entries.filter(entry => (!category || entry.category === category) && (!favoritesOnly || favorites[entry.url]) && normalize(searchText(entry)).includes(query));
+    document.getElementById('results-count').textContent = t(visible.length === 1 ? '1 ferramenta' : visible.length + ' ferramentas');
+    document.getElementById('results-title').textContent = t(favoritesOnly ? 'Seus favoritos' : (category || 'Todas as áreas'));
     document.getElementById('favorites-count').textContent = entries.filter(entry => favorites[entry.url]).length;
     document.getElementById('catalog-empty').hidden = visible.length > 0;
     results.replaceChildren();
@@ -70,20 +76,20 @@
       const items = visible.filter(entry => entry.category === name);
       if (!items.length) return;
       const section = element('section', 'np-calc-group');
-      section.append(element('h3', '', name));
+      section.append(element('h3', '', t(name)));
       const grid = element('div', 'np-calc-grid');
       items.forEach(entry => {
         const card = element('article', 'np-calc-card');
         const link = element('a');
         link.href = entry.url;
-        link.append(element('h4', '', entry.title));
+        link.append(element('h4', '', t(entry.title)));
         const meta = element('div', 'np-calc-meta');
-        meta.append(element('span', '', entry.specialty === 'neonatal' ? 'Neonatal' : 'Pediátrica'), element('span', '', 'Consulta educacional'));
+        meta.append(element('span', '', t(entry.specialty === 'neonatal' ? 'Neonatal' : 'Pediátrica')), element('span', '', t('Consulta educacional')));
         link.append(meta);
         const star = element('button', 'np-star', favorites[entry.url] ? '★' : '☆');
         star.type = 'button';
         star.dataset.favoriteUrl = entry.url;
-        star.setAttribute('aria-label', (favorites[entry.url] ? 'Remover dos favoritos: ' : 'Adicionar aos favoritos: ') + entry.title);
+        star.setAttribute('aria-label', t(favorites[entry.url] ? 'Remover dos favoritos' : 'Adicionar aos favoritos') + ': ' + t(entry.title));
         star.setAttribute('aria-pressed', String(Boolean(favorites[entry.url])));
         star.addEventListener('click', () => toggleFavorite(entry));
         const arrow = element('span', 'np-calc-arrow', '↗');
@@ -97,7 +103,7 @@
     const filters = document.getElementById('category-filters');
     filters.replaceChildren();
     ['', ...categories].forEach(name => {
-      const button = element('button', 'np-category', name || 'Todas as áreas');
+      const button = element('button', 'np-category', t(name || 'Todas as áreas'));
       button.type = 'button';
       button.setAttribute('aria-pressed', String(category === name));
       button.append(element('span', '', String(name ? entries.filter(e => e.category === name).length : entries.length)));
@@ -124,5 +130,6 @@
     if (event.key === '/' && !event.ctrlKey && !event.metaKey && !/input|textarea|select/i.test(event.target.tagName)) { event.preventDefault(); search.focus(); }
   });
   window.addEventListener('storage', () => { memory = {}; render(); });
+  document.addEventListener('neoped:langchange', render);
   render();
 })();

@@ -130,7 +130,7 @@
       if (!price?.active || price.amount === null) return;
       const small = document.createElement('small');
       small.textContent = el.dataset.price === 'monthly' ? 'cobrança mensal' : 'cobrança anual';
-      el.textContent = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: price.currency.toUpperCase() }).format(price.amount/100);
+      el.textContent = new Intl.NumberFormat(window.NEOPED_I18N?.locale || 'pt-BR', { style: 'currency', currency: price.currency.toUpperCase() }).format(price.amount/100);
       el.append(small);
     });
     if (config.demo) {
