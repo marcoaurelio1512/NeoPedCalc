@@ -146,6 +146,16 @@
     navigator.clipboard.writeText = function (text) { return writeText(translateMessage(text)); };
   }
 
+  if (typeof navigator.share === 'function') {
+    var nativeShare = navigator.share.bind(navigator);
+    navigator.share = function (data) {
+      if (!data || typeof data !== 'object') return nativeShare(data);
+      var copy = {};
+      Object.keys(data).forEach(function (k) { copy[k] = (k === 'text' || k === 'title') ? translateMessage(data[k]) : data[k]; });
+      return nativeShare(copy);
+    };
+  }
+
   function selectedText() {
     var el = document.activeElement;
     if (el && /^(TEXTAREA|INPUT)$/.test(el.tagName) && typeof el.selectionStart === 'number') {
@@ -209,8 +219,18 @@
     var key = normalizeKey(raw);
     if (!key) return raw;
     var out = lookup(key, to);
-    if (out == null) return raw;
-    return raw.match(/^\s*/)[0] + out + raw.match(/\s*$/)[0];
+    if (out == null) return localizeDates(raw, to);
+    return localizeDates(raw.match(/^\s*/)[0] + out + raw.match(/\s*$/)[0], to);
+  }
+
+  // O app só gera datas no formato brasileiro (dd/mm/aaaa). Em inglês, "03/11/2026" seria lido como
+  // 11 de março; por isso, em inglês, elas viram ISO (2026-11-03). Espanhol usa dd/mm/aaaa nativamente.
+  var BR_DATE = /\b(0?[1-9]|[12]\d|3[01])\/(0?[1-9]|1[0-2])\/(\d{4})\b/g;
+  function localizeDates(text, to) {
+    if (to !== 'en' || text.indexOf('/') === -1) return text;
+    return text.replace(BR_DATE, function (m, d, mo, y) {
+      return y + '-' + (mo.length === 1 ? '0' + mo : mo) + '-' + (d.length === 1 ? '0' + d : d);
+    });
   }
 
   function isSkipped(el) {
@@ -226,28 +246,48 @@
     return saved && saved.out === current ? saved.src : current;
   }
 
+  /** <option> sem value usa o texto visível como valor; fixa o valor original para a lógica não mudar. */
+  function pinOptionValue(el) {
+    if (el.tagName === 'OPTION' && !el.hasAttribute('value')) el.setAttribute('value', el.value);
+  }
+
   function translateTextNode(node) {
     if (!node.parentNode || isSkipped(node.parentNode)) return;
+    if (lang !== 'pt') pinOptionValue(node.parentNode);
     var src = sourceOf(textMemory.get(node), node.data);
-    if (!HAS_LETTERS.test(src)) return;
-    var out = translateBlock(src);
+    if (!HAS_LETTERS.test(src) && !(lang === 'en' && /\d\/\d{1,2}\/\d{4}/.test(src))) return;
+    var out = translateBlock(src, node.parentNode);
     textMemory.set(node, { src: src, out: out });
     if (node.data !== out) node.data = out;
   }
 
-  /** Texto inteiro primeiro; se não houver tradução e houver quebras de linha (<pre>, relatórios), linha a linha. */
-  function translateBlock(text) {
-    var out = t(text);
-    if (out !== text || text.indexOf('\n') === -1) return out;
-    return translateMessage(text);
+  function preservesLineBreaks(el) {
+    if (el.tagName === 'PRE') return true;
+    var ws = window.getComputedStyle ? window.getComputedStyle(el).whiteSpace : '';
+    return /^pre/.test(ws) || ws === 'break-spaces';
+  }
+
+  /**
+   * Em elementos que exibem as quebras de linha (<pre>, white-space: pre*), cada linha é traduzida
+   * separadamente (a não ser que o bloco inteiro tenha entrada exata). Nos demais, quebras no código-fonte
+   * HTML são só espaço e o texto é traduzido inteiro.
+   */
+  function translateBlock(text, parent) {
+    if (lang === 'pt') return text;
+    if (text.indexOf('\n') === -1 || !/\S\s*\n\s*\S/.test(text) || !preservesLineBreaks(parent)) return t(text);
+    var exact = lookupExact(normalizeKey(text), lang);
+    return exact != null ? exact : translateMessage(text);
   }
 
   function translateAttrs(el) {
-    if (isSkipped(el)) return;
+    // Em <textarea> o conteúdo é do usuário, mas placeholder/title/aria-label são da interface.
+    var scope = el.tagName === 'TEXTAREA' ? el.parentNode : el;
+    if (!scope || scope.nodeType !== 1 || isSkipped(scope)) return;
     var saved = attrMemory.get(el) || {};
     var next = {};
     var isButtonInput = el.tagName === 'INPUT' && /^(button|submit|reset)$/i.test(el.type);
-    (isButtonInput ? ATTRS.concat('value') : ATTRS).forEach(function (name) {
+    var names = isButtonInput ? ATTRS.concat('value') : (el.tagName === 'OPTGROUP' ? ATTRS.concat('label') : ATTRS);
+    names.forEach(function (name) {
       if (!el.hasAttribute(name)) return;
       var current = el.getAttribute(name);
       var src = sourceOf(saved[name], current);
@@ -292,7 +332,7 @@
   function watch() {
     if (observer || !document.body) return;
     observer = new MutationObserver(onMutations);
-    observer.observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ATTRS.concat('value') });
+    observer.observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ATTRS.concat('value', 'label') });
   }
 
   function applyAll() {

@@ -105,5 +105,50 @@
   i18n.registerPatterns([
     [/^(\d+) pontos$/, '$1 points', '$1 puntos']
   ]);
+  // Relatório copiado (rótulos do template, sem acentos)
+  i18n.register({
+    'ESCALA DE SEDACAO 1-5 (NEOPEDCALC, EDUCATIVO)': ['SEDATION SCALE 1-5 (NEOPEDCALC, EDUCATIONAL)', 'ESCALA DE SEDACIÓN 1-5 (NEOPEDCALC, EDUCATIVO)'],
+    'NOTA: Nao prescreve sedacao. Escala simplificada desta pagina (1-5), nao identica a Ramsay original de 6 niveis.': ['NOTE: Does not prescribe sedation. Simplified scale used on this page (1-5), not identical to the original 6-level Ramsay scale.', 'NOTA: No prescribe sedación. Escala simplificada de esta página (1-5), no idéntica a la escala de Ramsay original de 6 niveles.'],
+    'Identificacao': ['Identification', 'Identificación'],
+    '(nao informada)': ['(not provided)', '(no informada)'],
+    'Data da avaliacao': ['Assessment date', 'Fecha de la evaluación'],
+    'Hora': ['Time', 'Hora'],
+    'DADOS (opcional)': ['DATA (optional)', 'DATOS (opcional)'],
+    'Data de nascimento': ['Date of birth', 'Fecha de nacimiento'],
+    'Idade': ['Age', 'Edad'],
+    'ano': ['year', 'año'],
+    'anos': ['years', 'años'],
+    'mês': ['month', 'mes'],
+    'mêses': ['months', 'meses'],
+    'dia': ['day', 'día'],
+    'dias': ['days', 'días'],
+    'REGISTRO NA TELA': ['ON-SCREEN RECORD', 'REGISTRO EN PANTALLA'],
+    'Descricao do nivel': ['Level description', 'Descripción del nivel'],
+    'Comatoso': ['Comatose', 'Comatoso'],
+    'não responde ao estímulo': ['no response to stimulus', 'no responde al estímulo'],
+    'Adormecido': ['Asleep', 'Dormido'],
+    'desperta com estímulo': ['awakens with stimulus', 'despierta con el estímulo'],
+    'Calmo': ['Calm', 'Tranquilo'],
+    'cateteres sem risco': ['catheters not at risk', 'catéteres sin riesgo'],
+    'Agitado': ['Agitated', 'Agitado'],
+    'cateteres em risco': ['catheters at risk', 'catéteres en riesgo'],
+    'Agitação extrema': ['Extreme agitation', 'Agitación extrema'],
+    'incontrolável, debatendo-se': ['uncontrollable, thrashing', 'incontrolable, forcejeando'],
+    'Desconhecido': ['Unknown', 'Desconocido'],
+    'Pontuacao escolhida': ['Selected score', 'Puntuación elegida'],
+    'Observacoes': ['Notes', 'Observaciones'],
+    'DESCRICAO EDUCATIVA (NAO E CONDUTA)': ['EDUCATIONAL DESCRIPTION (NOT A MANAGEMENT RECOMMENDATION)', 'DESCRIPCIÓN EDUCATIVA (NO ES CONDUCTA)'],
+    'NIVEIS DESTA INTERFACE': ['LEVELS IN THIS INTERFACE', 'NIVELES DE ESTA INTERFAZ'],
+    '1: Comatoso — nao responde ao estimulo': ['1: Comatose — no response to stimulus', '1: Comatoso — no responde al estímulo'],
+    '2: Adormecido — desperta com estimulo': ['2: Asleep — awakens with stimulus', '2: Dormido — despierta con el estímulo'],
+    '3: Calmo — cateteres sem risco (texto da tela)': ['3: Calm — catheters not at risk (screen text)', '3: Tranquilo — catéteres sin riesgo (texto de la pantalla)'],
+    '4: Agitado — cateteres em risco (texto da tela)': ['4: Agitated — catheters at risk (screen text)', '4: Agitado — catéteres en riesgo (texto de la pantalla)'],
+    '5: Agitacao extrema (texto da tela)': ['5: Extreme agitation (screen text)', '5: Agitación extrema (texto de la pantalla)'],
+    'Referencia historica': ['Historical reference', 'Referencia histórica'],
+    'Texto gerado em': ['Text generated on', 'Texto generado el']
+  });
+  i18n.registerPatterns([
+    [/^- Pontuacao escolhida: (\d+) \(1 a 5 nesta implementacao\)$/, '- Selected score: $1 (1 to 5 in this implementation)', '- Puntuación elegida: $1 (1 a 5 en esta implementación)']
+  ]);
   i18n.markPageTranslated();
 })(window.NEOPED_I18N);

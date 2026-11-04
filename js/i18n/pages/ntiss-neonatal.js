@@ -186,5 +186,77 @@
     'Pode ser influenciado por práticas locais': ['May be influenced by local practices', 'Puede estar influenciado por prácticas locales']
   });
 
+  // ===== Texto informativo copiado (gerarECopiarRelatorio)
+  // "- Ventilação mecânica (convencional) (3pts)" e "- Respiratório: 4 pontos": item/categoria traduzidos inteiros.
+  var itemLine = function (target) {
+    return function (m, label, n) { return '- ' + i18n.t(label, target) + ' (' + n + 'pts)'; };
+  };
+  var categoryLine = function (target, word) {
+    return function (m, cat, n) { return '- ' + i18n.t(cat, target) + ': ' + n + ' ' + word; };
+  };
+  i18n.registerPatterns([
+    [/^- (.+) \((\d+)pts\)$/, itemLine('en'), itemLine('es')],
+    [/^- (.+): (\d+) pontos$/, categoryLine('en', 'points'), categoryLine('es', 'puntos')],
+    [/^- Idade Gestacional Corrigida: (\d+) sem (\d+) dias$/,
+      '- Corrected Gestational Age: $1 wk $2 days', '- Edad gestacional corregida: $1 sem $2 días']
+  ]);
+
+  i18n.register({
+    'NTISS (EDUCATIVO)': ['NTISS (EDUCATIONAL)', 'NTISS (EDUCATIVO)'],
+    'Paciente': ['Patient', 'Paciente'],
+    'Identificação': ['Identification', 'Identificación'],
+    'Hora': ['Time', 'Hora'],
+    'Dia de Vida': ['Day of Life', 'Día de vida'],
+    'DADOS DO PACIENTE': ['PATIENT DATA', 'DATOS DEL PACIENTE'],
+    'Idade em Dias': ['Age in Days', 'Edad en días'],
+    'INTERVENÇÕES SELECIONADAS (Últimas 24h):': ['SELECTED INTERVENTIONS (Last 24h):', 'INTERVENCIONES SELECCIONADAS (Últimas 24 h):'],
+    'RESULTADOS NTISS': ['NTISS RESULTS', 'RESULTADOS NTISS'],
+    'Total de Intervenções': ['Total Interventions', 'Total de intervenciones'],
+    'pontos': ['points', 'puntos'],
+    'PONTUAÇÃO POR CATEGORIA': ['SCORE BY CATEGORY', 'PUNTUACIÓN POR CATEGORÍA'],
+    'INTERPRETAÇÃO': ['INTERPRETATION', 'INTERPRETACIÓN'],
+    'O NTISS avalia a intensidade de intervenções terapêuticas nas últimas 24 horas.': [
+      'NTISS assesses the intensity of therapeutic interventions over the last 24 hours.',
+      'El NTISS evalúa la intensidad de las intervenciones terapéuticas en las últimas 24 horas.'
+    ],
+    'Maior pontuação indica maior consumo de recursos e intensidade terapêutica.': [
+      'A higher score indicates greater resource use and therapeutic intensity.',
+      'Una mayor puntuación indica mayor consumo de recursos e intensidad terapéutica.'
+    ],
+    'Uso educativo para comparação entre pacientes e acompanhamento temporal; não define conduta de forma automática.': [
+      'Educational use for comparison between patients and tracking over time; does not automatically define management.',
+      'Uso educativo para la comparación entre pacientes y el seguimiento en el tiempo; no define la conducta de forma automática.'
+    ],
+    'CRITÉRIOS NTISS (Exemplos):': ['NTISS CRITERIA (Examples):', 'CRITERIOS NTISS (Ejemplos):'],
+    'Respiratório: O₂ baixo fluxo=1pt, CPAP/VNI=2pts, VM=3pts, VM alta freq=4pts': [
+      'Respiratory: Low-flow O₂=1pt, CPAP/NIV=2pts, MV=3pts, High-frequency MV=4pts',
+      'Respiratorio: O₂ de bajo flujo=1pt, CPAP/VNI=2pts, VM=3pts, VM de alta frecuencia=4pts'
+    ],
+    'Cardiovascular: Cateter umbilical=2pts, PICC=2pts, Drogas vasoativas=3pts': [
+      'Cardiovascular: Umbilical catheter=2pts, PICC=2pts, Vasoactive drugs=3pts',
+      'Cardiovascular: Catéter umbilical=2pts, PICC=2pts, Fármacos vasoactivos=3pts'
+    ],
+    'Procedimentos: Transfusão CH=3pts, DVE=4pts, Diálise peritoneal=4pts': [
+      'Procedures: PRBC transfusion=3pts, EVD=4pts, Peritoneal dialysis=4pts',
+      'Procedimientos: Transfusión de CH=3pts, DVE=4pts, Diálisis peritoneal=4pts'
+    ],
+    'Nutrição: NPT=3pts, NE sonda=1pt': [
+      'Nutrition: TPN=3pts, Tube EN=1pt',
+      'Nutrición: NPT=3pts, NE por sonda=1pt'
+    ],
+    'Medicações: ATB IV=2pts, Antifúngico=3pts': [
+      'Medications: IV antibiotic=2pts, Antifungal=3pts',
+      'Medicaciones: ATB IV=2pts, Antifúngico=3pts'
+    ],
+    'Monitorização: Gasometrias=1pt, EEG/aEEG=3pts': [
+      'Monitoring: Blood gases=1pt, EEG/aEEG=3pts',
+      'Monitorización: Gasometrías=1pt, EEG/aEEG=3pts'
+    ],
+    'Referência: NTISS - Neonatal Therapeutic Intervention Scoring System para avaliação de intensidade terapêutica neonatal.': [
+      'Reference: NTISS - Neonatal Therapeutic Intervention Scoring System for assessing neonatal therapeutic intensity.',
+      'Referencia: NTISS - Neonatal Therapeutic Intervention Scoring System para la evaluación de la intensidad terapéutica neonatal.'
+    ]
+  });
+
   i18n.markPageTranslated();
 })(window.NEOPED_I18N);

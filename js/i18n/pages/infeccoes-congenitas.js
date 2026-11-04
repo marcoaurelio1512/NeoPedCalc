@@ -364,7 +364,7 @@
     'Sem prescrição antiviral específica.': ['No specific antiviral prescription.', 'Sin prescripción antiviral específica.']
   });
 
-  // ===== Prescrição e texto pronto (<pre>): traduzidos linha a linha, em trechos separados por ": " e " | "
+  // ===== Prescrição e texto pronto (<pre>): o núcleo traduz linha a linha, em trechos (": ", " | ", " - "...)
   i18n.register({
     'SÍFILIS CONGÊNITA — AVALIAÇÃO E CONDUTA': ['CONGENITAL SYPHILIS — ASSESSMENT AND MANAGEMENT', 'SÍFILIS CONGÉNITA — EVALUACIÓN Y CONDUCTA'],
     'TOXOPLASMOSE CONGÊNITA — AVALIAÇÃO E CONDUTA': ['CONGENITAL TOXOPLASMOSIS — ASSESSMENT AND MANAGEMENT', 'TOXOPLASMOSIS CONGÉNITA — EVALUACIÓN Y CONDUCTA'],
@@ -488,41 +488,19 @@
       function (m, a) { return 'Prematuro de menos de 34 semanas o menos de 2.000 g: ' + answer(a, 1); }]
   ]);
 
-  // ===== <pre> da prescrição (#rx) e do texto pronto (#texto)
-  // O tradutor geral ignora <pre>; aqui cada linha é traduzida em trechos (separados por ": " e " | "),
-  // preservando as quebras de linha. A lógica da página não é alterada.
-  var preMemory = new WeakMap();
-  var SEPARATOR = /(:\s|\s\|\s)/;
-
-  function translateLine(line) {
-    return line.split(SEPARATOR).map(function (piece, i) { return i % 2 ? piece : i18n.t(piece); }).join('');
-  }
-
-  function translatePre(pre) {
-    var saved = preMemory.get(pre);
-    var current = pre.textContent;
-    var src = saved && saved.out === current ? saved.src : current;
-    var out = i18n.lang === 'pt' ? src : src.split('\n').map(translateLine).join('\n');
-    preMemory.set(pre, { src: src, out: out });
-    if (current !== out) pre.textContent = out;
-  }
-
-  function translateAllPre() {
-    document.querySelectorAll('#rx pre, pre#texto').forEach(translatePre);
-  }
-
-  function watchPre() {
-    var observer = new MutationObserver(translateAllPre);
-    ['rx', 'texto'].forEach(function (id) {
-      var el = document.getElementById(id);
-      if (el) observer.observe(el, { childList: true, subtree: true, characterData: true });
-    });
-    document.addEventListener('neoped:langchange', translateAllPre);
-    translateAllPre();
-  }
-
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watchPre);
-  else watchPre();
+  // Os <pre> da prescrição (#rx) e do texto pronto (#texto) são traduzidos linha a linha pelo núcleo.
+  // Linhas "rótulo: valor" cujo rótulo tem números ou cujo valor contém " — ": o núcleo partiria a linha
+  // nos números/travessões antes do ":"; aqui rótulo e valor são traduzidos inteiros, separadamente.
+  var WHOLE_LABELS = ['Classificação', 'Conduta', 'Sulfadiazina', 'Leucovorina', 'Zidovudina via oral', 'Lamivudina via oral', 'Nevirapina via oral', '- Ataque (2 dias)', '- Manutenção', '- 0–14 dias', '- 15–28 dias', '- 1ª semana', '- 2ª–4ª semana'];
+  var escapeRe = function (text) { return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); };
+  var labelRule = new RegExp('^(' + WHOLE_LABELS.map(escapeRe).join('|') + '): (.+)$');
+  var byLabel = function (target) {
+    return function (m, label, value) { return i18n.t(label, target) + ': ' + i18n.t(value, target); };
+  };
+  i18n.registerPatterns([[labelRule, byLabel('en'), byLabel('es')]]);
+  i18n.register({
+    'VDRL seriado: 1, 3, 6 e 12 meses.': ['Serial VDRL: 1, 3, 6 and 12 months.', 'VDRL seriado: 1, 3, 6 y 12 meses.']
+  });
 
   i18n.markPageTranslated();
 })(window.NEOPED_I18N);

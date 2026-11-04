@@ -304,6 +304,51 @@
     [/^75% a 100%$/, '75% to 100%', '75% a 100%'],
     [/^(\d+) a (\d+) mmHg$/, '$1 to $2 mmHg', '$1 a $2 mmHg']
   );
+
+  // ===== Texto informativo copiado/compartilhado (generateTransferReport): rótulos como no modelo.
+  BANDS.forEach(function (band) {
+    var parts = band.split(' a ');
+    patterns.push([
+      new RegExp('^Faixa de mortalidade \\(literatura TRIPS, ate 7 dias apos transporte\\): ' + esc(band) + '$'),
+      'Mortality range (TRIPS literature, up to 7 days after transport): ' + range('en', parts[0], parts[1]),
+      'Rango de mortalidad (literatura TRIPS, hasta 7 días después del transporte): ' + range('es', parts[0], parts[1])
+    ]);
+  });
+  patterns.push(
+    [/^Faixa de mortalidade \(literatura TRIPS, ate 7 dias apos transporte\): fora da faixa configurada$/,
+      'Mortality range (TRIPS literature, up to 7 days after transport): outside the configured range',
+      'Rango de mortalidad (literatura TRIPS, hasta 7 días después del transporte): fuera del rango configurado']
+  );
+  // Idades ("4 dia(s)", "30 sem + 4 dia(s)"): rótulo e valor traduzidos separadamente, com as regras acima.
+  var byLabel = function (target) {
+    return function (m, label, value) { return i18n.t(label, target) + ': ' + i18n.t(value, target); };
+  };
+  patterns.push(
+    [/^(Idade cronológica|IG ao nascimento|IG corrigida): (.+)$/, byLabel('en'), byLabel('es')],
+    [/^- sem \+ - dia\(s\)$/, '- wk + - day(s)', '- sem + - día(s)']
+  );
+  i18n.register({
+    'DADOS DA TELA + CALIFORNIA TRIPS (EDUCATIVO)': ['SCREEN DATA + CALIFORNIA TRIPS (EDUCATIONAL)', 'DATOS DE LA PANTALLA + CALIFORNIA TRIPS (EDUCATIVO)'],
+    'NOTA: Texto gerado automaticamente a partir dos campos preenchidos. Revisar antes de arquivar, enviar ou usar como documento oficial. Nao prescreve transporte nem tratamento.': [
+      'NOTE: Text generated automatically from the completed fields. Review before filing, sending or using it as an official document. It does not prescribe transport or treatment.',
+      'NOTA: Texto generado automáticamente a partir de los campos completados. Revisar antes de archivar, enviar o usar como documento oficial. No prescribe transporte ni tratamiento.'
+    ],
+    'RN': ['Newborn', 'RN'],
+    'Identificacao hospitalar / ID': ['Hospital identification / ID', 'Identificación hospitalaria / ID'],
+    'Idade cronológica': ['Chronological age', 'Edad cronológica'],
+    'IG ao nascimento': ['GA at birth', 'EG al nacer'],
+    'IG corrigida': ['Corrected GA', 'EG corregida'],
+    'Peso atual': ['Current weight', 'Peso actual'],
+    'Data/hora da saída': ['Departure date/time', 'Fecha/hora de salida'],
+    'Data/hora da chegada': ['Arrival date/time', 'Fecha/hora de llegada'],
+    'Registro clínico / hipótese (assistente):': ['Clinical notes / working hypothesis (attending clinician):', 'Registro clínico / hipótesis (médico tratante):'],
+    'Descricao educativa (nao e conduta):': ['Educational description (not a management plan):', 'Descripción educativa (no es una conducta):'],
+    'Intercorrencias / observacoes do transporte:': ['Transport events / notes:', 'Incidencias / observaciones del transporte:'],
+    'NeoPedCalc — ferramenta educacional. Confirmar tudo com avaliacao clinica e protocolo institucional.': [
+      'NeoPedCalc — educational tool. Confirm everything with clinical assessment and institutional protocol.',
+      'NeoPedCalc — herramienta educativa. Confirmar todo con la evaluación clínica y el protocolo institucional.'
+    ]
+  });
   i18n.registerPatterns(patterns);
 
   i18n.markPageTranslated();

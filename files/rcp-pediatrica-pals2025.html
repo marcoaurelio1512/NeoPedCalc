@@ -4395,7 +4395,7 @@
 
             botoes.forEach(btn => {
                 // Verifica se o botão exibe "Marcado"
-                if (btn.textContent.trim() === "Marcado") {
+                if (btn.textContent.trim() === "Marcado" || (window.NEOPED_I18N && btn.textContent.trim() === window.NEOPED_I18N.t("Marcado"))) {
                     // Reseta o texto do botão
                     btn.textContent = "Marcar Realizado";
 
@@ -6991,7 +6991,7 @@
         document.body.appendChild(script);
     })();
 </script>
-<script src="../js/neoped-i18n.js"></script><script src="../js/i18n/common.js"></script>
+<script src="../js/neoped-i18n.js"></script><script src="../js/i18n/common.js"></script><script src="../js/i18n/pages/rcp-pediatrica-pals2025.js"></script><script src="../js/i18n/pages/rcp-pediatrica-pals2025-2.js"></script><script src="../js/i18n/pages/rcp-pediatrica-pals2025-3.js"></script>
 </body>
 
 </html>

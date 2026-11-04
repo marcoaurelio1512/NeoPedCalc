@@ -185,5 +185,66 @@
   });
   i18n.registerPatterns(patterns);
 
+  // ===== Texto informativo copiado (gerarECopiarRelatorio)
+  var descriptions = {};
+  RESP.concat(NOCI).forEach(function (d) { descriptions[d[0]] = [d[1], d[2]]; });
+  i18n.register(descriptions);
+
+  // "- Status Respiratório: VM invasiva (9 pontos)": rótulo e descrição traduzidos; o número é mantido.
+  var withPoints = function (target, word) {
+    return function (m, head, n) { return i18n.t(head, target) + ' (' + n + ' ' + word + ')'; };
+  };
+  i18n.registerPatterns([
+    [/^(.+) \((\d+) pontos\)$/, withPoints('en', 'points'), withPoints('es', 'puntos')],
+    [/^- Idade Gestacional Corrigida: (\d+) sem (\d+) dias$/,
+      '- Corrected Gestational Age: $1 wk $2 days', '- Edad gestacional corregida: $1 sem $2 días']
+  ]);
+
+  i18n.register({
+    'TRIPS-II (EDUCATIVO)': ['TRIPS-II (EDUCATIONAL)', 'TRIPS-II (EDUCATIVO)'],
+    'Paciente': ['Patient', 'Paciente'],
+    'Hora': ['Time', 'Hora'],
+    'DADOS DO PACIENTE': ['PATIENT DATA', 'DATOS DEL PACIENTE'],
+    'Idade em Dias': ['Age in Days', 'Edad en días'],
+    'DADOS DO TRANSPORTE/ADMISSÃO': ['TRANSPORT/ADMISSION DATA', 'DATOS DEL TRANSPORTE/INGRESO'],
+    'pontos': ['points', 'puntos'],
+    'RESULTADOS': ['RESULTS', 'RESULTADOS'],
+    'Nível de Risco': ['Risk Level', 'Nivel de riesgo'],
+    'INTERPRETAÇÃO': ['INTERPRETATION', 'INTERPRETACIÓN'],
+    'O TRIPS-II avalia a estabilidade fisiológica durante transporte neonatal.': [
+      'TRIPS-II assesses physiological stability during neonatal transport.',
+      'El TRIPS-II evalúa la estabilidad fisiológica durante el transporte neonatal.'
+    ],
+    'Valores mais altos indicam maior instabilidade e risco durante o transporte.': [
+      'Higher values indicate greater instability and risk during transport.',
+      'Los valores más altos indican mayor inestabilidad y riesgo durante el transporte.'
+    ],
+    'Classificação usada nesta página: 0-10 baixo risco, 11-20 intermediário, >20 alto risco (interpretação educativa; não define conduta automaticamente).': [
+      'Classification used on this page: 0-10 low risk, 11-20 intermediate, >20 high risk (educational interpretation; does not automatically define management).',
+      'Clasificación utilizada en esta página: 0-10 riesgo bajo, 11-20 intermedio, >20 riesgo alto (interpretación educativa; no define la conducta automáticamente).'
+    ],
+    'CRITÉRIOS DE PONTUAÇÃO TRIPS-II': ['TRIPS-II SCORING CRITERIA', 'CRITERIOS DE PUNTUACIÓN TRIPS-II'],
+    '- Temperatura: 30.0-35.9°C=6pts, 36.0-36.4°C=3pts, 36.5-37.5°C=0pts, 37.6-38.5°C=2pts, 38.6-40.5°C=4pts': [
+      '- Temperature: 30.0-35.9°C=6pts, 36.0-36.4°C=3pts, 36.5-37.5°C=0pts, 37.6-38.5°C=2pts, 38.6-40.5°C=4pts',
+      '- Temperatura: 30.0-35.9°C=6pts, 36.0-36.4°C=3pts, 36.5-37.5°C=0pts, 37.6-38.5°C=2pts, 38.6-40.5°C=4pts'
+    ],
+    '- PAS: ≤30mmHg=8pts, 31-40mmHg=5pts, 41-50mmHg=3pts, >50mmHg=0pts': [
+      '- SBP: ≤30mmHg=8pts, 31-40mmHg=5pts, 41-50mmHg=3pts, >50mmHg=0pts',
+      '- PAS: ≤30mmHg=8pts, 31-40mmHg=5pts, 41-50mmHg=3pts, >50mmHg=0pts'
+    ],
+    '- Status Respiratório: Ar ambiente=0pts, O₂ baixo fluxo=3pts, CPAP/VNI=6pts, VM=9pts, VM FiO₂≥0.6=12pts': [
+      '- Respiratory Status: Room air=0pts, Low-flow O₂=3pts, CPAP/NIV=6pts, MV=9pts, MV FiO₂≥0.6=12pts',
+      '- Estado respiratorio: Aire ambiente=0pts, O₂ de bajo flujo=3pts, CPAP/VNI=6pts, VM=9pts, VM FiO₂≥0.6=12pts'
+    ],
+    '- Resposta à Dor: Vigil/reage=0pts, Letárgico=4pts, Mínima resposta=8pts, Sem resposta=12pts': [
+      '- Response to Pain: Alert/responds=0pts, Lethargic=4pts, Minimal response=8pts, No response=12pts',
+      '- Respuesta al dolor: Vigil/reacciona=0pts, Letárgico=4pts, Respuesta mínima=8pts, Sin respuesta=12pts'
+    ],
+    'Referência: TRIPS-II - Transport Risk Index of Physiological Stability para avaliação de estabilidade durante transporte neonatal.': [
+      'Reference: TRIPS-II - Transport Risk Index of Physiological Stability for assessing stability during neonatal transport.',
+      'Referencia: TRIPS-II - Transport Risk Index of Physiological Stability para la evaluación de la estabilidad durante el transporte neonatal.'
+    ]
+  });
+
   i18n.markPageTranslated();
 })(window.NEOPED_I18N);

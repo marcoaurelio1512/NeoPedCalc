@@ -364,9 +364,120 @@
       var items = EXTRA.filter(function (_, i) { return mask & (1 << i); });
       var join = function (col) { return items.map(function (item) { return item[col]; }).join(', '); };
       rules.push([new RegExp('^' + prefix[0] + join(0) + '\\)$'), prefix[1] + join(1) + ')', prefix[2] + join(2) + ')']);
+      // Mesma linha no texto copiado, precedida de "- ".
+      rules.push([new RegExp('^- ' + prefix[0] + join(0) + '\\)$'), '- ' + prefix[1] + join(1) + ')', '- ' + prefix[2] + join(2) + ')']);
     }
   });
   i18n.registerPatterns(rules);
+
+  // Texto informativo copiado (gerarRelatorio): rótulos sem acento, como no modelo.
+  var JUSTIFICATIVA = [
+    ['Criterio 1A atendido - Insulto hipoxico-isquemico significativo confirmado.',
+      'Criterion 1A met - Significant hypoxic-ischemic insult confirmed.',
+      'Criterio 1A cumplido - Agresión hipóxico-isquémica significativa confirmada.'],
+    ['Criterio 1B atendido - Insulto hipoxico-isquemico significativo confirmado.',
+      'Criterion 1B met - Significant hypoxic-ischemic insult confirmed.',
+      'Criterio 1B cumplido - Agresión hipóxico-isquémica significativa confirmada.'],
+    ['Criterios alternativos atendidos - Insulto hipoxico-isquemico significativo provavel.',
+      'Alternative criteria met - Significant hypoxic-ischemic insult likely.',
+      'Criterios alternativos cumplidos - Agresión hipóxico-isquémica significativa probable.']
+  ];
+  var JUSTIFICATIVA_EXTRA = [
+    ['', '', ''],
+    [' Encefalopatia moderada/severa confirma indicacao.',
+      ' Moderate/severe encephalopathy confirms the indication.',
+      ' La encefalopatía moderada/grave confirma la indicación.'],
+    [' Encefalopatia leve - considerar beneficio vs risco.',
+      ' Mild encephalopathy - weigh benefit vs risk.',
+      ' Encefalopatía leve - considerar beneficio vs riesgo.']
+  ];
+  var report = {};
+  JUSTIFICATIVA.forEach(function (base) {
+    JUSTIFICATIVA_EXTRA.forEach(function (extra) {
+      report[base[0] + extra[0]] = [base[1] + extra[1], base[2] + extra[2]];
+    });
+  });
+  i18n.register(report);
+
+  i18n.register({
+    'AVALIACAO DE ANOXIA NEONATAL (EDUCATIVO)': ['NEONATAL HYPOXIC-ISCHEMIC ASSESSMENT (EDUCATIONAL)', 'EVALUACIÓN DE LA ASFIXIA NEONATAL (EDUCATIVO)'],
+    'DADOS DO PACIENTE': ['PATIENT DATA', 'DATOS DEL PACIENTE'],
+    'Data/Hora da Avaliacao': ['Assessment Date/Time', 'Fecha/hora de la evaluación'],
+    'Nome do RN': ['Newborn name', 'Nombre del RN'],
+    'Data de Nascimento': ['Date of Birth', 'Fecha de nacimiento'],
+    'Nao informado': ['Not provided', 'No informado'],
+    'Nao informada': ['Not provided', 'No informada'],
+    'Nao informado g': ['Not provided', 'No informado'],
+    'Nao informada semanas': ['Not provided', 'No informada'],
+    'Peso': ['Weight', 'Peso'],
+    'Idade Gestacional': ['Gestational Age', 'Edad gestacional'],
+    'semanas': ['weeks', 'semanas'],
+    'Avaliador': ['Assessor', 'Evaluador'],
+    'CRITERIO DE ELEGIBILIDADE': ['ELIGIBILITY CRITERION', 'CRITERIO DE ELEGIBILIDAD'],
+    'ELEGIVEL: Recem-nascido A TERMO (>=37 semanas)': ['ELIGIBLE: TERM newborn (>=37 weeks)', 'ELEGIBLE: Recién nacido A TÉRMINO (>=37 semanas)'],
+    'NAO ELEGIVEL: Prematuro (<37 semanas) - Este protocolo e valido apenas para recem-nascidos a termo': [
+      'NOT ELIGIBLE: Preterm (<37 weeks) - This protocol is valid only for term newborns',
+      'NO ELEGIBLE: Prematuro (<37 semanas) - Este protocolo es válido solo para recién nacidos a término'
+    ],
+    'RESULTADO DA AVALIACAO': ['ASSESSMENT RESULT', 'RESULTADO DE LA EVALUACIÓN'],
+    'JUSTIFICATIVA': ['RATIONALE', 'JUSTIFICACIÓN'],
+    'CRITERIOS ATENDIDOS': ['CRITERIA MET', 'CRITERIOS CUMPLIDOS'],
+    '- Criterio 1A: pH < 7.0 ou excesso de base > -16 mEq/L': ['- Criterion 1A: pH < 7.0 or base excess > -16 mEq/L', '- Criterio 1A: pH < 7.0 o exceso de base > -16 mEq/L'],
+    '- Criterio 1A marcado mas valores nao confirmam (pH >= 7.0 e excesso de base >= -16)': [
+      '- Criterion 1A checked but values do not confirm it (pH >= 7.0 and base excess >= -16)',
+      '- Criterio 1A marcado pero los valores no lo confirman (pH >= 7.0 y exceso de base >= -16)'
+    ],
+    '- Criterio 1B marcado mas valores nao confirmam (pH fora da faixa 7.0-7.15 ou excesso de base fora da faixa -12 a -16)': [
+      '- Criterion 1B checked but values do not confirm it (pH outside the 7.0-7.15 range or base excess outside the -12 to -16 range)',
+      '- Criterio 1B marcado pero los valores no lo confirman (pH fuera del rango 7.0-7.15 o exceso de base fuera del rango -12 a -16)'
+    ],
+    'NIVEL DE ENCEFALOPATIA (SARNAT)': ['ENCEPHALOPATHY LEVEL (SARNAT)', 'GRADO DE ENCEFALOPATÍA (SARNAT)'],
+    'Nivel': ['Level', 'Grado'],
+    'Leve': ['Mild', 'Leve'],
+    'Moderado': ['Moderate', 'Moderado'],
+    'Severo': ['Severe', 'Grave'],
+    'DADOS LABORATORIAIS': ['LABORATORY DATA', 'DATOS DE LABORATORIO'],
+    'Excesso de Base': ['Base Excess', 'Exceso de base'],
+    'Apgar 10 minutos': ['10-minute Apgar', 'Apgar a los 10 minutos'],
+    'RECOMENDACOES': ['RECOMMENDATIONS', 'RECOMENDACIONES'],
+    'DETALHES TECNICOS': ['TECHNICAL DETAILS', 'DETALLES TÉCNICOS'],
+    'Total de Criterios Avaliados': ['Total Criteria Assessed', 'Total de criterios evaluados'],
+    'Data de Geracao': ['Generated on', 'Fecha de generación'],
+    'OBSERVACOES IMPORTANTES': ['IMPORTANT NOTES', 'OBSERVACIONES IMPORTANTES'],
+    '- Esta avaliacao e baseada em criterios estabelecidos para hipotermia terapeutica': [
+      '- This assessment is based on established criteria for therapeutic hypothermia',
+      '- Esta evaluación se basa en criterios establecidos para la hipotermia terapéutica'
+    ],
+    '- E fundamental confirmar o insulto hipoxico-isquemico antes da indicacao': [
+      '- It is essential to confirm the hypoxic-ischemic insult before the indication',
+      '- Es fundamental confirmar la agresión hipóxico-isquémica antes de la indicación'
+    ],
+    '- A decisao final deve ser baseada na avaliacao clinica completa': [
+      '- The final decision must be based on the complete clinical assessment',
+      '- La decisión final debe basarse en la evaluación clínica completa'
+    ],
+    '- Considerar sempre os riscos vs beneficios da terapia': [
+      '- Always weigh the risks vs benefits of the therapy',
+      '- Considerar siempre los riesgos frente a los beneficios de la terapia'
+    ],
+    '- Seguimento neurologico a longo prazo e essencial': [
+      '- Long-term neurologic follow-up is essential',
+      '- El seguimiento neurológico a largo plazo es esencial'
+    ],
+    '- IMPORTANTE: Este protocolo e valido APENAS para recem-nascidos A TERMO (>=37 semanas)': [
+      '- IMPORTANT: This protocol is valid ONLY for TERM newborns (>=37 weeks)',
+      '- IMPORTANTE: Este protocolo es válido SOLO para recién nacidos A TÉRMINO (>=37 semanas)'
+    ],
+    '- Bebes prematuros NAO devem ser incluidos neste protocolo de hipotermia terapeutica': [
+      '- Preterm infants must NOT be included in this therapeutic hypothermia protocol',
+      '- Los recién nacidos prematuros NO deben incluirse en este protocolo de hipotermia terapéutica'
+    ],
+    '- Para prematuros, considerar protocolos especificos e suporte clinico adequado': [
+      '- For preterm infants, consider specific protocols and appropriate clinical support',
+      '- En prematuros, considerar protocolos específicos y soporte clínico adecuado'
+    ],
+    'REFERENCIAS': ['REFERENCES', 'REFERENCIAS']
+  });
 
   i18n.markPageTranslated();
 })(window.NEOPED_I18N);

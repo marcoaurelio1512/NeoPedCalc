@@ -200,5 +200,35 @@
     'Plágio é crime. Não copie nossas páginas.': ['Plagiarism is a crime. Do not copy our pages.', 'El plagio es un delito. No copie nuestras páginas.'],
     'Não copie este site': ['Do not copy this site', 'No copie este sitio']
   });
+  // Relatório copiado (rótulos do template, sem acentos)
+  i18n.register({
+    'AVALIACAO CLINICA DA IDADE GESTACIONAL (EDUCATIVO)': ['CLINICAL ASSESSMENT OF GESTATIONAL AGE (EDUCATIONAL)', 'EVALUACIÓN CLÍNICA DE LA EDAD GESTACIONAL (EDUCATIVO)'],
+    'DADOS DO PACIENTE': ['PATIENT DATA', 'DATOS DEL PACIENTE'],
+    'Nome': ['Name', 'Nombre'],
+    'Não informado': ['Not provided', 'No informado'],
+    'Não informada': ['Not provided', 'No informada'],
+    'Não informada semanas': ['Not provided', 'No informada'],
+    'Não informada dias': ['Not provided', 'No informada'],
+    'Idade Gestacional': ['Gestational age', 'Edad gestacional'],
+    'Idade Gestacional Corrigida': ['Corrected gestational age', 'Edad gestacional corregida'],
+    'RESULTADOS DO SCORE DE BALLARD': ['BALLARD SCORE RESULTS', 'RESULTADOS DE LA PUNTUACIÓN DE BALLARD'],
+    'Score Neuromuscular': ['Neuromuscular score', 'Puntuación neuromuscular'],
+    'Score Fisico': ['Physical score', 'Puntuación física'],
+    'Score Total': ['Total score', 'Puntuación total'],
+    'Idade Gestacional Calculada': ['Calculated gestational age', 'Edad gestacional calculada'],
+    'Não calculada': ['Not calculated', 'No calculada'],
+    'OBSERVACOES': ['NOTES', 'OBSERVACIONES'],
+    'Avaliacao baseada no New Ballard Score': ['Assessment based on the New Ballard Score', 'Evaluación basada en el New Ballard Score'],
+    'Referencia': ['Reference', 'Referencia'],
+    'Relatorio gerado em': ['Report generated on', 'Informe generado el']
+  });
+  i18n.registerPatterns([
+    [/^Idade Gestacional Corrigida: (\d+)s(\d+)d semanas$/, 'Corrected gestational age: $1w $2d', 'Edad gestacional corregida: $1 s $2 d']
+  ]);
+  // Relatório copiado (rótulos do template, sem acentos)
+  i18n.register({
+    'Data de Nascimento': ['Date of birth', 'Fecha de nacimiento'],
+    'Idade em Dias': ['Age in days', 'Edad en días']
+  });
   i18n.markPageTranslated();
 })(window.NEOPED_I18N);

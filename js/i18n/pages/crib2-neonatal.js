@@ -93,5 +93,36 @@
     'Subestima risco em prematuros extremos': ['Underestimates risk in extremely preterm infants', 'Subestima el riesgo en prematuros extremos'],
     'Não considera qualidade dos cuidados': ['Does not consider quality of care', 'No considera la calidad de la atención']
   });
+  // Relatório copiado (rótulos do template, sem acentos)
+  i18n.register({
+    'CRIB-II (EDUCATIVO)': ['CRIB-II (EDUCATIONAL)', 'CRIB-II (EDUCATIVO)'],
+    'Data': ['Date', 'Fecha'],
+    'Hora': ['Time', 'Hora'],
+    'DADOS CLINICOS (Primeira hora de vida/UTI Neonatal):': ['CLINICAL DATA (First hour of life/NICU):', 'DATOS CLÍNICOS (Primera hora de vida/UCI neonatal):'],
+    'Peso ao Nascer': ['Birth weight', 'Peso al nacer'],
+    'pontos': ['points', 'puntos'],
+    'ponto': ['point', 'punto'],
+    'Sexo: Masculino': ['Sex: Male', 'Sexo: Masculino'],
+    'Sexo: Feminino': ['Sex: Female', 'Sexo: Femenino'],
+    'Temperatura na Admissao': ['Admission temperature', 'Temperatura al ingreso'],
+    'Idade Gestacional': ['Gestational age', 'Edad gestacional'],
+    'semanas': ['weeks', 'semanas'],
+    'RESULTADOS': ['RESULTS', 'RESULTADOS'],
+    'Pontuacao CRIB-II': ['CRIB-II score', 'Puntuación CRIB-II'],
+    'Probabilidade de Obito': ['Probability of death', 'Probabilidad de muerte'],
+    'Classificacao de Risco': ['Risk classification', 'Clasificación del riesgo'],
+    'Risco Intermediario': ['Intermediate Risk', 'Riesgo intermedio'],
+    'INTERPRETACAO': ['INTERPRETATION', 'INTERPRETACIÓN'],
+    'O CRIB-II avalia o risco de mortalidade neonatal nas primeiras 12 horas de vida.': ['CRIB-II assesses the risk of neonatal mortality in the first 12 hours of life.', 'El CRIB-II evalúa el riesgo de mortalidad neonatal en las primeras 12 horas de vida.'],
+    'Valores mais altos indicam maior risco de obito hospitalar.': ['Higher values indicate a greater risk of in-hospital death.', 'Los valores más altos indican mayor riesgo de muerte hospitalaria.'],
+    'Modelo logistico: p = 1 / (1 + e^(-(-6.476 + 0.45 * CRIB-II)))': ['Logistic model: p = 1 / (1 + e^(-(-6.476 + 0.45 * CRIB-II)))', 'Modelo logístico: p = 1 / (1 + e^(-(-6.476 + 0.45 * CRIB-II)))'],
+    'CRITERIOS DE PONTUACAO CRIB-II': ['CRIB-II SCORING CRITERIA', 'CRITERIOS DE PUNTUACIÓN CRIB-II'],
+    '- Peso: menor ou igual a 750g=7pts, 751-1000g=5pts, 1001-1500g=3pts, 1501-2500g=1pts, maior que 2500g=0pts': ['- Weight: less than or equal to 750g=7pts, 751-1000g=5pts, 1001-1500g=3pts, 1501-2500g=1pts, greater than 2500g=0pts', '- Peso: menor o igual a 750g=7pts, 751-1000g=5pts, 1001-1500g=3pts, 1501-2500g=1pts, mayor que 2500g=0pts'],
+    '- Sexo: Masculino=1pt, Feminino=0pts': ['- Sex: Male=1pt, Female=0pts', '- Sexo: Masculino=1pt, Femenino=0pts'],
+    '- Temperatura: 30-35.9 C=2pts, 36.0-36.4 C=1pt, 36.5-37.5 C=0pts, 37.6-40.5 C=1pt': ['- Temperature: 30-35.9 C=2pts, 36.0-36.4 C=1pt, 36.5-37.5 C=0pts, 37.6-40.5 C=1pt', '- Temperatura: 30-35.9 C=2pts, 36.0-36.4 C=1pt, 36.5-37.5 C=0pts, 37.6-40.5 C=1pt'],
+    '- Base Excess: menor ou igual a -12.0=3pts, -11.9 a -8.0=2pts, -7.9 a -4.0=1pt, maior que -4.0=0pts': ['- Base Excess: less than or equal to -12.0=3pts, -11.9 to -8.0=2pts, -7.9 to -4.0=1pt, greater than -4.0=0pts', '- Exceso de base: menor o igual a -12.0=3pts, -11.9 a -8.0=2pts, -7.9 a -4.0=1pt, mayor que -4.0=0pts'],
+    '- Idade Gestacional: menor ou igual a 26sem=6pts, 26.1-28sem=4pts, 28.1-32sem=2pts, maior que 32sem=0pts': ['- Gestational age: less than or equal to 26wk=6pts, 26.1-28wk=4pts, 28.1-32wk=2pts, greater than 32wk=0pts', '- Edad gestacional: menor o igual a 26sem=6pts, 26.1-28sem=4pts, 28.1-32sem=2pts, mayor que 32sem=0pts'],
+    'Referencia': ['Reference', 'Referencia']
+  });
   i18n.markPageTranslated();
 })(window.NEOPED_I18N);

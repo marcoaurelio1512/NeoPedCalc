@@ -101,5 +101,36 @@
     'Qualidade:': ['Quality:', 'Calidad:'],
     'Monitoramento de outcomes': ['Outcome monitoring', 'Monitoreo de resultados']
   });
+  // Relatório copiado (rótulos do template, sem acentos)
+  i18n.register({
+    'SNAP-II / SNAPPE-II (EDUCATIVO)': ['SNAP-II / SNAPPE-II (EDUCATIONAL)', 'SNAP-II / SNAPPE-II (EDUCATIVO)'],
+    'Data': ['Date', 'Fecha'],
+    'Hora': ['Time', 'Hora'],
+    'DADOS CLÍNICOS E FISIOLÓGICOS (Primeiras 12h de UTI Neonatal):': ['CLINICAL AND PHYSIOLOGICAL DATA (First 12 h in the NICU):', 'DATOS CLÍNICOS Y FISIOLÓGICOS (Primeras 12 h en la UCI neonatal):'],
+    'Convulsões Múltiplas: Sim': ['Multiple seizures: Yes', 'Convulsiones múltiples: Sí'],
+    'Convulsões Múltiplas: Não': ['Multiple seizures: No', 'Convulsiones múltiples: No'],
+    'DADOS PERINATAIS': ['PERINATAL DATA', 'DATOS PERINATALES'],
+    'Pequeno para Idade Gestacional: Sim': ['Small for gestational age: Yes', 'Pequeño para la edad gestacional: Sí'],
+    'Pequeno para Idade Gestacional: Não': ['Small for gestational age: No', 'Pequeño para la edad gestacional: No'],
+    'RESULTADOS': ['RESULTS', 'RESULTADOS'],
+    'Risco de Mortalidade Observado': ['Observed mortality risk', 'Riesgo de mortalidad observado'],
+    'Risco de Mortalidade Calculado': ['Calculated mortality risk', 'Riesgo de mortalidad calculado'],
+    'INTERPRETAÇÃO': ['INTERPRETATION', 'INTERPRETACIÓN'],
+    'O SNAP-II avalia a gravidade fisiológica nas primeiras 12 horas de internação.': ['SNAP-II assesses physiological severity in the first 12 hours of admission.', 'El SNAP-II evalúa la gravedad fisiológica en las primeras 12 horas de ingreso.'],
+    'O SNAPPE-II incorpora fatores perinatais ao SNAP-II para melhor predição de mortalidade.': ['SNAPPE-II adds perinatal factors to SNAP-II for better mortality prediction.', 'El SNAPPE-II incorpora factores perinatales al SNAP-II para una mejor predicción de la mortalidad.'],
+    'Valores mais altos indicam maior gravidade e risco de mortalidade.': ['Higher values indicate greater severity and mortality risk.', 'Los valores más altos indican mayor gravedad y riesgo de mortalidad.'],
+    'CRITÉRIOS DE PONTUAÇÃO SNAP-II': ['SNAP-II SCORING CRITERIA', 'CRITERIOS DE PUNTUACIÓN SNAP-II'],
+    '- PAM: <20mmHg=10pts, 20-29.9mmHg=5pts, ≥30mmHg=0pts': ['- MAP: <20mmHg=10pts, 20-29.9mmHg=5pts, ≥30mmHg=0pts', '- PAM: <20mmHg=10pts, 20-29.9mmHg=5pts, ≥30mmHg=0pts'],
+    '- Temperatura: <35°C=10pts, 35-35.6°C=5pts, >35.6°C=0pts': ['- Temperature: <35°C=10pts, 35-35.6°C=5pts, >35.6°C=0pts', '- Temperatura: <35°C=10pts, 35-35.6°C=5pts, >35.6°C=0pts'],
+    '- Convulsões: Sim=19pts, Não=0pts': ['- Seizures: Yes=19pts, No=0pts', '- Convulsiones: Sí=19pts, No=0pts'],
+    '- Diurese: <0.1=18pts, 0.1-0.9=5pts, ≥1.0=0pts': ['- Urine output: <0.1=18pts, 0.1-0.9=5pts, ≥1.0=0pts', '- Diuresis: <0.1=18pts, 0.1-0.9=5pts, ≥1.0=0pts'],
+    'CRITÉRIOS ADICIONAIS SNAPPE-II': ['ADDITIONAL SNAPPE-II CRITERIA', 'CRITERIOS ADICIONALES SNAPPE-II'],
+    '- Peso: <750g=12pts, 750-999g=5pts, ≥1000g=0pts': ['- Weight: <750g=12pts, 750-999g=5pts, ≥1000g=0pts', '- Peso: <750g=12pts, 750-999g=5pts, ≥1000g=0pts'],
+    '- PIG: Sim=4pts, Não=0pts': ['- SGA: Yes=4pts, No=0pts', '- PEG: Sí=4pts, No=0pts'],
+    'Referência': ['Reference', 'Referencia']
+  });
+  i18n.registerPatterns([
+    [/^- Apgar 5º minuto: (-?\d+(?:\.\d+)?) \((\d+) pontos\)$/, '- 5-minute Apgar: $1 ($2 points)', '- Apgar al 5.º minuto: $1 ($2 puntos)']
+  ]);
   i18n.markPageTranslated();
 })(window.NEOPED_I18N);

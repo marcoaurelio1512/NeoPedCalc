@@ -194,5 +194,34 @@
     ];
   }));
 
+  // Relatório copiado (rótulos do template, sem acentos)
+  i18n.register({
+    'nSOFA (EDUCATIVO)': ['nSOFA (EDUCATIONAL)', 'nSOFA (EDUCATIVO)'],
+    'Paciente': ['Patient', 'Paciente'],
+    'Hora': ['Time', 'Hora'],
+    'DADOS DO PACIENTE': ['PATIENT DATA', 'DATOS DEL PACIENTE'],
+    'Idade em Dias': ['Age in days', 'Edad en días'],
+    'AVALIAÇÃO nSOFA': ['nSOFA ASSESSMENT', 'EVALUACIÓN nSOFA'],
+    'pontos': ['points', 'puntos'],
+    'VM invasiva': ['Invasive MV', 'VM invasiva'],
+    'VM FiO₂ ≥0,60': ['MV FiO₂ ≥0.60', 'VM FiO₂ ≥0,60'],
+    'CPAP/VNI': ['CPAP/NIV', 'CPAP/VNI'],
+    'RESULTADOS': ['RESULTS', 'RESULTADOS'],
+    'Nível de Risco': ['Risk level', 'Nivel de riesgo'],
+    'INTERPRETAÇÃO': ['INTERPRETATION', 'INTERPRETACIÓN'],
+    'O nSOFA avalia sequencialmente a falência de órgãos em recém-nascidos.': ['nSOFA sequentially assesses organ failure in newborns.', 'El nSOFA evalúa de forma secuencial la falla orgánica en recién nacidos.'],
+    'Valores mais altos indicam maior disfunção orgânica.': ['Higher values indicate greater organ dysfunction.', 'Los valores más altos indican mayor disfunción orgánica.'],
+    'Classificação: 0-3 baixo risco, 4-6 intermediário, ≥7 alto risco.': ['Classification: 0-3 low risk, 4-6 intermediate, ≥7 high risk.', 'Clasificación: 0-3 riesgo bajo, 4-6 intermedio, ≥7 riesgo alto.'],
+    'CRITÉRIOS nSOFA': ['nSOFA CRITERIA', 'CRITERIOS nSOFA'],
+    'Sistema Respiratório (máx 8pts):': ['Respiratory system (max 8pts):', 'Sistema respiratorio (máx. 8pts):'],
+    '- Suporte: Ar ambiente=0pts, O₂ baixo=1pt, CPAP/VNI=2pts, VM=3pts, VM FiO₂≥0.6=4pts': ['- Support: Room air=0pts, low-flow O₂=1pt, CPAP/NIV=2pts, MV=3pts, MV FiO₂≥0.6=4pts', '- Soporte: Aire ambiente=0pts, O₂ bajo flujo=1pt, CPAP/VNI=2pts, VM=3pts, VM FiO₂≥0.6=4pts'],
+    'Sistema Cardiovascular (máx 9pts):': ['Cardiovascular system (max 9pts):', 'Sistema cardiovascular (máx. 9pts):'],
+    'Sistema Hematológico (máx 3pts):': ['Hematologic system (max 3pts):', 'Sistema hematológico (máx. 3pts):'],
+    '- Plaquetas: ≤49k=3pts, 50-99k=2pts, 100-149k=1pt, ≥150k=0pts': ['- Platelets: ≤49k=3pts, 50-99k=2pts, 100-149k=1pt, ≥150k=0pts', '- Plaquetas: ≤49k=3pts, 50-99k=2pts, 100-149k=1pt, ≥150k=0pts'],
+    'Referência: nSOFA - Neonatal Sequential Organ Failure Assessment para avaliação sequencial de falência de órgãos em recém-nascidos.': ['Reference: nSOFA - Neonatal Sequential Organ Failure Assessment for sequential assessment of organ failure in newborns.', 'Referencia: nSOFA - Neonatal Sequential Organ Failure Assessment para la evaluación secuencial de la falla orgánica en recién nacidos.']
+  });
+  i18n.registerPatterns([
+    [/^- Idade Gestacional Corrigida: (\d+) sem (\d+) dias$/, '- Corrected gestational age: $1 wk $2 d', '- Edad gestacional corregida: $1 sem $2 días']
+  ]);
   i18n.markPageTranslated();
 })(window.NEOPED_I18N);

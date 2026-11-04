@@ -1,0 +1,235 @@
+/* Medicações Neonatais — NEOFAX 2024 (files/Neofax_2024.html) — [inglês, espanhol].
+   Parte 1: interface, resultados, histórico, relatório copiado e modal "Como usar".
+   Os nomes dos medicamentos e os campos de texto das dosagens estão em neofax-2024-2.js. */
+(function (i18n) {
+  'use strict';
+  if (!i18n) return;
+  i18n.register({
+    // Cabeçalho
+    'NeoPedCalc — NEOFAX 2024 (educativo)': ['NeoPedCalc — NEOFAX 2024 (educational)', 'NeoPedCalc — NEOFAX 2024 (educativo)'],
+    'Medicações Neonatais': ['Neonatal Medications', 'Medicamentos neonatales'],
+    'Calculadora de Doses Baseada no NEOFAX 2024': ['Dose Calculator Based on NEOFAX 2024', 'Calculadora de dosis basada en NEOFAX 2024'],
+    'Como usar': ['How to use', 'Cómo usar'],
+
+    // Dados do paciente
+    'Dados do Paciente': ['Patient Data', 'Datos del paciente'],
+    'Nome do Paciente:': ['Patient Name:', 'Nombre del paciente:'],
+    'Data de Nascimento': ['Date of Birth', 'Fecha de nacimiento'],
+    'Peso (kg):': ['Weight (kg):', 'Peso (kg):'],
+    'Idade Gestacional ao Nascer (semanas):': ['Gestational Age at Birth (weeks):', 'Edad gestacional al nacer (semanas):'],
+    'Idade Gestacional ao Nascer': ['Gestational Age at Birth', 'Edad gestacional al nacer'],
+    'Idade Gestacional Corrigida': ['Corrected Gestational Age', 'Edad gestacional corregida'],
+    'Idade em Dias': ['Age in Days', 'Edad en días'],
+    'Digite o nome': ['Enter the name', 'Escriba el nombre'],
+    'Ex: 2.500': ['e.g., 2.500', 'Ej.: 2.500'],
+    'Ex: 32': ['e.g., 32', 'Ej.: 32'],
+    'Ex: 5': ['e.g., 5', 'Ej.: 5'],
+    'Calculada automaticamente': ['Calculated automatically', 'Calculada automáticamente'],
+
+    // Seleção de medicamento e dose
+    'Seleção de Medicamento': ['Medication Selection', 'Selección de medicamento'],
+    'Medicamento': ['Medication', 'Medicamento'],
+    'Selecione um medicamento': ['Select a medication', 'Seleccione un medicamento'],
+    'Range de Dose Disponível:': ['Available Dose Range:', 'Rango de dosis disponible:'],
+    'Prioridade de Cálculo:': ['Calculation Priority:', 'Prioridad de cálculo:'],
+    'Dose Personalizada': ['Custom Dose', 'Dosis personalizada'],
+    '(se preenchida)': ['(if filled in)', '(si se completa)'],
+    'Dose Específica': ['Specific Dose', 'Dosis específica'],
+    '(selecionada acima)': ['(selected above)', '(seleccionada arriba)'],
+    'Dose Automática': ['Automatic Dose', 'Dosis automática'],
+    '(baseada na idade gestacional)': ['(based on gestational age)', '(basada en la edad gestacional)'],
+    'Unidade:': ['Unit:', 'Unidad:'],
+    'Atenção:': ['Caution:', 'Atención:'],
+    'Se você preencher a': ['If you fill in the', 'Si usted completa la'],
+    ', ela terá prioridade sobre a dose específica selecionada. Deixe em branco para usar a dose específica.': [
+      ', it will take priority over the selected specific dose. Leave it blank to use the specific dose.',
+      ', esta tendrá prioridad sobre la dosis específica seleccionada. Déjela en blanco para usar la dosis específica.'
+    ],
+    'Duração da Infusão:': ['Infusion Duration:', 'Duración de la infusión:'],
+    'Infusão Contínua': ['Continuous Infusion', 'Infusión continua'],
+    '6 horas': ['6 hours', '6 horas'],
+    '12 horas': ['12 hours', '12 horas'],
+    '18 horas': ['18 hours', '18 horas'],
+    '24 horas': ['24 hours', '24 horas'],
+    'Calcular Dose': ['Calculate Dose', 'Calcular dosis'],
+    '(Recomendada)': ['(Recommended)', '(Recomendada)'],
+    'Recomendada': ['Recommended', 'Recomendada'],
+
+    // Resultados (texto montado em JS: "A cada 8 horas", "2.40 mg total", "0.10 mL/hora")
+    'Resultados dos Cálculos': ['Calculation Results', 'Resultados de los cálculos'],
+    'A cada': ['Every', 'Cada'],
+    'mL/hora': ['mL/hour', 'mL/hora'],
+    'mL total (': ['mL total (', 'mL total ('],
+
+    // Histórico
+    'Histórico de Cálculos': ['Calculation History', 'Historial de cálculos'],
+    'Nenhum cálculo realizado ainda.': ['No calculations performed yet.', 'Aún no se ha realizado ningún cálculo.'],
+    'Remover': ['Remove', 'Eliminar'],
+    'Peso': ['Weight', 'Peso'],
+    'kg | IG Corrigida': ['kg | Corrected GA', 'kg | EG corregida'],
+    'semanas e': ['weeks and', 'semanas y'],
+    'Gerar Relatório': ['Generate Report', 'Generar informe'],
+
+    // Referência
+    'Referência': ['Reference', 'Referencia'],
+    'Esta calculadora utiliza as dosagens e protocolos estabelecidos no NEOFAX 2024 para recém-nascidos, considerando idade gestacional, peso e idade pós-natal para ajuste de doses.': [
+      'This calculator uses the dosages and protocols established in NEOFAX 2024 for newborns, taking gestational age, weight and postnatal age into account for dose adjustment.',
+      'Esta calculadora utiliza las dosis y los protocolos establecidos en NEOFAX 2024 para recién nacidos, considerando la edad gestacional, el peso y la edad posnatal para el ajuste de dosis.'
+    ],
+
+    // Alertas
+    'Nenhum cálculo foi realizado ainda. Execute pelo menos um cálculo antes de gerar o relatório.': [
+      'No calculation has been performed yet. Run at least one calculation before generating the report.',
+      'Aún no se ha realizado ningún cálculo. Realice al menos un cálculo antes de generar el informe.'
+    ],
+
+    // Relatório copiado (rótulos sem acento, como no código)
+    'RELATORIO - MEDICACOES NEONATAIS': ['REPORT - NEONATAL MEDICATIONS', 'INFORME - MEDICAMENTOS NEONATALES'],
+    'DADOS DO PACIENTE': ['PATIENT DATA', 'DATOS DEL PACIENTE'],
+    'Data/Hora': ['Date/Time', 'Fecha/hora'],
+    'Nome': ['Name', 'Nombre'],
+    'Paciente': ['Patient', 'Paciente'],
+    'Não informada': ['Not provided', 'No informada'],
+    'Não informado': ['Not provided', 'No informado'],
+    'Não calculada': ['Not calculated', 'No calculada'],
+    'CALCULOS REALIZADOS': ['CALCULATIONS PERFORMED', 'CÁLCULOS REALIZADOS'],
+    'CALCULO': ['CALCULATION', 'CÁLCULO'],
+    'Dosagens Calculadas': ['Calculated Dosages', 'Dosis calculadas'],
+    'Dose': ['Dose', 'Dosis'],
+    'Dose Calculada': ['Calculated Dose', 'Dosis calculada'],
+    'Intervalo': ['Interval', 'Intervalo'],
+    'Intervalo: A cada': ['Interval: Every', 'Intervalo: Cada'],
+    'Miligramas Totais': ['Total Milligrams', 'Miligramos totales'],
+    'Volume': ['Volume', 'Volumen'],
+    'Volume Total': ['Total Volume', 'Volumen total'],
+    'Apresentacao': ['Presentation', 'Presentación'],
+    'Condicao': ['Condition', 'Condición'],
+    'Condicao: IG': ['Condition: GA', 'Condición: EG'],
+    'DETALHOS TECNICOS': ['TECHNICAL DETAILS', 'DETALLES TÉCNICOS'],
+    'Total de Calculos': ['Total Calculations', 'Total de cálculos'],
+    'Data de Geracao': ['Generated On', 'Fecha de generación'],
+    'Referencia: NEOFAX': ['Reference: NEOFAX', 'Referencia: NEOFAX'],
+    'OBSERVACOES IMPORTANTES': ['IMPORTANT NOTES', 'OBSERVACIONES IMPORTANTES'],
+    'Verificar sempre a apresentacao da droga antes da administracao': ['Always check the drug presentation before administration', 'Verificar siempre la presentación del fármaco antes de la administración'],
+    'Confirmar calculos com farmaceutico quando necessario': ['Confirm calculations with a pharmacist when necessary', 'Confirmar los cálculos con el farmacéutico cuando sea necesario'],
+    'Monitorar resposta terapeutica e efeitos adversos': ['Monitor therapeutic response and adverse effects', 'Monitorizar la respuesta terapéutica y los efectos adversos'],
+    'Ajustar dose conforme resposta clinica': ['Adjust the dose according to clinical response', 'Ajustar la dosis según la respuesta clínica'],
+    'Atencao especial para neonatos: monitorar funcao hepatica e renal': ['Special attention in neonates: monitor hepatic and renal function', 'Atención especial en neonatos: monitorizar la función hepática y renal'],
+    'Verificar limites maximos diarios para cada droga': ['Check the maximum daily limits for each drug', 'Verificar los límites máximos diarios de cada fármaco'],
+    'Considerar idade gestacional corrigida para ajuste de doses': ['Consider corrected gestational age when adjusting doses', 'Considerar la edad gestacional corregida para el ajuste de dosis'],
+    'Monitorar niveis sericos quando indicado': ['Monitor serum levels when indicated', 'Monitorizar los niveles séricos cuando esté indicado'],
+    'Seguir protocolos de seguranca medicamentosa': ['Follow medication safety protocols', 'Seguir los protocolos de seguridad de medicamentos'],
+    'REFERENCIAS': ['REFERENCES', 'REFERENCIAS'],
+    'Protocolos de Seguranca Medicamentosa em Neonatologia': ['Medication Safety Protocols in Neonatology', 'Protocolos de seguridad de medicamentos en neonatología'],
+    'Guias de Pratica Clinica em Neonatologia': ['Clinical Practice Guidelines in Neonatology', 'Guías de práctica clínica en neonatología'],
+
+    // Modal "Como usar"
+    'Como usar — NEOFAX 2024 (educativo)': ['How to use — NEOFAX 2024 (educational)', 'Cómo usar — NEOFAX 2024 (educativo)'],
+    'Objetivo (educativo)': ['Purpose (educational)', 'Objetivo (educativo)'],
+    'Esta calculadora é baseada no NEOFAX 2024 (37ª edição), um manual de referência amplamente utilizado para dosagem de medicamentos em recém-nascidos, incluindo mais de 100 medicamentos diferentes.': [
+      'This calculator is based on NEOFAX 2024 (37th edition), a widely used reference manual for drug dosing in newborns, covering more than 100 different medications.',
+      'Esta calculadora se basa en NEOFAX 2024 (37.ª edición), un manual de referencia ampliamente utilizado para la dosificación de medicamentos en recién nacidos, que incluye más de 100 medicamentos diferentes.'
+    ],
+    'Metodologia de Cálculo': ['Calculation Methodology', 'Metodología de cálculo'],
+    'Fórmula Geral:': ['General Formula:', 'Fórmula general:'],
+    'Dose Total = Peso (kg) × Dose por kg': ['Total Dose = Weight (kg) × Dose per kg', 'Dosis total = Peso (kg) × Dosis por kg'],
+    'Intervalo = Definido pela idade gestacional e dias de vida': ['Interval = Defined by gestational age and days of life', 'Intervalo = Definido por la edad gestacional y los días de vida'],
+    'Doses por dia = 24 horas / Intervalo (horas)': ['Doses per day = 24 hours / Interval (hours)', 'Dosis por día = 24 horas / Intervalo (horas)'],
+    'Dose diária total = Dose Total × Doses por dia': ['Total daily dose = Total Dose × Doses per day', 'Dosis diaria total = Dosis total × Dosis por día'],
+    'Fatores de Ajuste:': ['Adjustment Factors:', 'Factores de ajuste:'],
+    '- Idade gestacional (≤29, 30-34, ≥35 semanas)': ['- Gestational age (≤29, 30-34, ≥35 weeks)', '- Edad gestacional (≤29, 30-34, ≥35 semanas)'],
+    '- Idade pós-natal (0-7 dias, 8-28 dias, ≥29 dias)': ['- Postnatal age (0-7 days, 8-28 days, ≥29 days)', '- Edad posnatal (0-7 días, 8-28 días, ≥29 días)'],
+    '- Peso corporal (kg)': ['- Body weight (kg)', '- Peso corporal (kg)'],
+    '- Indicação clínica específica': ['- Specific clinical indication', '- Indicación clínica específica'],
+    'Categorização do Paciente': ['Patient Categorization', 'Categorización del paciente'],
+    'Os recém-nascidos são categorizados conforme:': ['Newborns are categorized by:', 'Los recién nacidos se categorizan según:'],
+    'Idade Gestacional:': ['Gestational Age:', 'Edad gestacional:'],
+    'Prematuro extremo (≤29 semanas)': ['Extremely preterm (≤29 weeks)', 'Prematuro extremo (≤29 semanas)'],
+    'Prematuro moderado (30-34 semanas)': ['Moderately preterm (30-34 weeks)', 'Prematuro moderado (30-34 semanas)'],
+    'Recém-nascido a termo (≥35 semanas)': ['Term newborn (≥35 weeks)', 'Recién nacido a término (≥35 semanas)'],
+    'Idade Pós-Natal:': ['Postnatal Age:', 'Edad posnatal:'],
+    '0-7 dias de vida': ['0-7 days of life', '0-7 días de vida'],
+    '8-28 dias de vida': ['8-28 days of life', '8-28 días de vida'],
+    '≥29 dias de vida': ['≥29 days of life', '≥29 días de vida'],
+    'Indicações Especiais:': ['Special Indications:', 'Indicaciones especiales:'],
+    'Imunossuprimido': ['Immunocompromised', 'Inmunodeprimido'],
+    'Meningoencefalite': ['Meningoencephalitis', 'Meningoencefalitis'],
+    'Outras indicações específicas': ['Other specific indications', 'Otras indicaciones específicas'],
+    'Instruções de Uso': ['Instructions for Use', 'Instrucciones de uso'],
+    'Informe o peso atual em quilogramas com até 3 casas decimais (ex: 2.350 kg)': [
+      'Enter the current weight in kilograms with up to 3 decimal places (e.g., 2.350 kg)',
+      'Indique el peso actual en kilogramos con hasta 3 decimales (ej.: 2.350 kg)'
+    ],
+    'Idade Gestacional (semanas):': ['Gestational Age (weeks):', 'Edad gestacional (semanas):'],
+    'Informe a idade gestacional ao nascer (ex: 32 semanas)': ['Enter the gestational age at birth (e.g., 32 weeks)', 'Indique la edad gestacional al nacer (ej.: 32 semanas)'],
+    'Dias de Vida:': ['Days of Life:', 'Días de vida:'],
+    'Informe quantos dias de vida pós-natal o recém-nascido possui (ex: 5 dias)': [
+      'Enter how many postnatal days of life the newborn has (e.g., 5 days)',
+      'Indique cuántos días de vida posnatal tiene el recién nacido (ej.: 5 días)'
+    ],
+    'Selecione o medicamento desejado da lista (100+ opções disponíveis)': ['Select the desired medication from the list (100+ options available)', 'Seleccione el medicamento deseado de la lista (más de 100 opciones disponibles)'],
+    'Indicação:': ['Indication:', 'Indicación:'],
+    'Selecione a indicação clínica específica (se aplicável)': ['Select the specific clinical indication (if applicable)', 'Seleccione la indicación clínica específica (si corresponde)'],
+    'Clique em': ['Click', 'Haga clic en'],
+    'para obter os resultados': ['to get the results', 'para obtener los resultados'],
+    'Use o botão': ['Use the', 'Use el botón'],
+    'para criar um relatório completo em texto simples': ['button to create a complete plain-text report', 'para crear un informe completo en texto simple'],
+    'Interpretação dos Resultados': ['Interpreting the Results', 'Interpretación de los resultados'],
+    'Dose por Peso:': ['Dose per Weight:', 'Dosis por peso:'],
+    'Dose recomendada por quilograma de peso corporal': ['Recommended dose per kilogram of body weight', 'Dosis recomendada por kilogramo de peso corporal'],
+    'Dose Total:': ['Total Dose:', 'Dosis total:'],
+    'Dose total a ser administrada em cada aplicação': ['Total dose to be given at each administration', 'Dosis total que se administra en cada aplicación'],
+    'Tempo entre as doses (em horas)': ['Time between doses (in hours)', 'Tiempo entre dosis (en horas)'],
+    'Doses por Dia:': ['Doses per Day:', 'Dosis por día:'],
+    'Número de administrações diárias': ['Number of daily administrations', 'Número de administraciones diarias'],
+    'Dose Diária Total:': ['Total Daily Dose:', 'Dosis diaria total:'],
+    'Quantidade total do medicamento administrada em 24 horas': ['Total amount of the medication given in 24 hours', 'Cantidad total del medicamento administrada en 24 horas'],
+    'mg (miligramas) ou UI (unidades internacionais)': ['mg (milligrams) or IU (international units)', 'mg (miligramos) o UI (unidades internacionales)'],
+    'Considerações Importantes': ['Important Considerations', 'Consideraciones importantes'],
+    'As doses do NEOFAX são baseadas em evidências científicas e consenso de especialistas': ['NEOFAX doses are based on scientific evidence and expert consensus', 'Las dosis de NEOFAX se basan en evidencia científica y consenso de expertos'],
+    'Prematuros extremos têm função renal e hepática imatura - doses geralmente menores e intervalos maiores': [
+      'Extremely preterm infants have immature renal and hepatic function - doses are usually lower and intervals longer',
+      'Los prematuros extremos tienen función renal y hepática inmadura - dosis generalmente menores e intervalos mayores'
+    ],
+    'Conforme o recém-nascido cresce, as doses são ajustadas para refletir a maturação dos sistemas': ['As the newborn grows, doses are adjusted to reflect organ system maturation', 'A medida que el recién nacido crece, las dosis se ajustan para reflejar la maduración de los sistemas'],
+    'Monitorar função renal através de creatinina sérica': ['Monitor renal function with serum creatinine', 'Monitorizar la función renal mediante la creatinina sérica'],
+    'Considerar ajustes em casos de disfunção renal ou hepática': ['Consider adjustments in renal or hepatic dysfunction', 'Considerar ajustes en casos de disfunción renal o hepática'],
+    'Alguns medicamentos têm indicações especiais que alteram a dose (ex: meningoencefalite, imunossuprimido)': [
+      'Some medications have special indications that change the dose (e.g., meningoencephalitis, immunocompromised)',
+      'Algunos medicamentos tienen indicaciones especiales que modifican la dosis (ej.: meningoencefalitis, inmunodeprimido)'
+    ],
+    'Reavaliar doses regularmente conforme o paciente cresce': ['Reassess doses regularly as the patient grows', 'Reevaluar las dosis periódicamente a medida que el paciente crece'],
+    'Considerar interações medicamentosas': ['Consider drug interactions', 'Considerar las interacciones medicamentosas'],
+    'Monitorar sinais de toxicidade específicos de cada medicamento': ['Monitor for the specific signs of toxicity of each medication', 'Monitorizar los signos de toxicidad específicos de cada medicamento'],
+    'Categorias de Medicamentos Disponíveis': ['Available Medication Categories', 'Categorías de medicamentos disponibles'],
+    'Antibióticos:': ['Antibiotics:', 'Antibióticos:'],
+    'Ampicilina, Gentamicina, Vancomicina, Cefalosporinas, Carbapenêmicos, etc.': ['Ampicillin, Gentamicin, Vancomycin, Cephalosporins, Carbapenems, etc.', 'Ampicilina, gentamicina, vancomicina, cefalosporinas, carbapenémicos, etc.'],
+    'Antifúngicos:': ['Antifungals:', 'Antifúngicos:'],
+    'Fluconazol, Anfotericina B, Caspofungina': ['Fluconazole, Amphotericin B, Caspofungin', 'Fluconazol, anfotericina B, caspofungina'],
+    'Antivirais:': ['Antivirals:', 'Antivirales:'],
+    'Aciclovir, Ganciclovir, Foscarnet': ['Acyclovir, Ganciclovir, Foscarnet', 'Aciclovir, ganciclovir, foscarnet'],
+    'Cardiovasculares:': ['Cardiovascular:', 'Cardiovasculares:'],
+    'Dopamina, Dobutamina, Adrenalina, Noradrenalina, Milrinona': ['Dopamine, Dobutamine, Epinephrine, Norepinephrine, Milrinone', 'Dopamina, dobutamina, adrenalina, noradrenalina, milrinona'],
+    'Anticonvulsivantes:': ['Anticonvulsants:', 'Anticonvulsivos:'],
+    'Fenobarbital, Fenitoína, Levetiracetam, Topiramato': ['Phenobarbital, Phenytoin, Levetiracetam, Topiramate', 'Fenobarbital, fenitoína, levetiracetam, topiramato'],
+    'Sedativos:': ['Sedatives:', 'Sedantes:'],
+    'Midazolam, Fentanil, Morfina': ['Midazolam, Fentanyl, Morphine', 'Midazolam, fentanilo, morfina'],
+    'Diuréticos:': ['Diuretics:', 'Diuréticos:'],
+    'Furosemida, Espironolactona, Hidroclorotiazida': ['Furosemide, Spironolactone, Hydrochlorothiazide', 'Furosemida, espironolactona, hidroclorotiazida'],
+    'Outros:': ['Others:', 'Otros:'],
+    'Cafeína, Teofilina, Insulina, Surfactante, etc.': ['Caffeine, Theophylline, Insulin, Surfactant, etc.', 'Cafeína, teofilina, insulina, surfactante, etc.'],
+    'Sobre o NEOFAX': ['About NEOFAX', 'Acerca de NEOFAX'],
+    'O NEOFAX é um manual de referência amplamente utilizado em unidades de terapia intensiva neonatal, contendo:': [
+      'NEOFAX is a reference manual widely used in neonatal intensive care units, containing:',
+      'NEOFAX es un manual de referencia ampliamente utilizado en las unidades de cuidados intensivos neonatales, que contiene:'
+    ],
+    'Doses baseadas em idade gestacional e pós-natal': ['Doses based on gestational and postnatal age', 'Dosis basadas en la edad gestacional y posnatal'],
+    'Indicações e contraindicações': ['Indications and contraindications', 'Indicaciones y contraindicaciones'],
+    'Interações medicamentosas': ['Drug interactions', 'Interacciones medicamentosas'],
+    'Monitoramento terapêutico': ['Therapeutic monitoring', 'Monitorización terapéutica'],
+    'Efeitos adversos': ['Adverse effects', 'Efectos adversos'],
+    'Recomendações de ajuste de dose': ['Dose adjustment recommendations', 'Recomendaciones de ajuste de dosis'],
+    'Referências:': ['References:', 'Referencias:']
+  });
+  i18n.markPageTranslated();
+})(window.NEOPED_I18N);
