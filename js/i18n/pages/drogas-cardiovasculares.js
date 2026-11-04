@@ -191,6 +191,10 @@
     'UI/kg': ['IU/kg', 'UI/kg'],
     'UI/ml': ['IU/ml', 'UI/ml'],
     'UI/kg/bolus': ['IU/kg/bolus', 'UI/kg/bolo'],
+    // Vasopressina em unidades (dose total em UI; concentração final da solução)
+    'UI': ['IU', 'UI'],
+    'Solução final': ['Final solution', 'Solución final'],
+    'concentracao final da solucao': ['final solution concentration', 'concentración final de la solución'],
     'mg/kg/dia': ['mg/kg/day', 'mg/kg/día'],
     'mg/dose': ['mg/dose', 'mg/dosis'],
     'Apresentação da Droga:': ['Drug Concentration:', 'Presentación del fármaco:'],
@@ -308,6 +312,9 @@
   });
 
   i18n.registerPatterns([
+    // Vasopressina (valores de formatarNumeroClinico, já com ponto decimal).
+    [/^(\d+(?:\.\d+)?) UI$/, '$1 IU', '$1 UI'],
+    [/^Solução final: (\d+(?:\.\d+)?) UI\/ml$/, 'Final solution: $1 IU/ml', 'Solución final: $1 UI/ml'],
     [/^Aviso Clínico: Você selecionou uma dosagem de Neonato\/Lactente menor para um paciente de aproximadamente (\d+(?:\.\d+)?) anos\. Avalie as preparações alternativas para faixas etárias maiores\.$/,
       'Clinical Warning: You selected a Neonate/younger Infant dose for a patient of approximately $1 years. Consider the alternative preparations for older age groups.',
       'Aviso clínico: Seleccionó una dosis de neonato/lactante menor para un paciente de aproximadamente $1 años. Evalúe las preparaciones alternativas para grupos de edad mayores.']

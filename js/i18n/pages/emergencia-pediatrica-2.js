@@ -200,7 +200,7 @@
     'Ataque: 1 a 5mcg/kg · Manutenção: 3 a 10 mcg/kg/hora': ['Loading dose: 1 to 5mcg/kg · Maintenance: 3 to 10 mcg/kg/hour', 'Dosis de carga: 1 a 5mcg/kg · Mantenimiento: 3 a 10 mcg/kg/hora'],
     'Ataque: 10mcg/kg (Infundir em 10 min) · Manutenção: 0,1 a 10 mcg/kg/min': ['Loading dose: 10mcg/kg (Infuse over 10 min) · Maintenance: 0.1 to 10 mcg/kg/min', 'Dosis de carga: 10mcg/kg (Infundir en 10 min) · Mantenimiento: 0,1 a 10 mcg/kg/min'],
     'Ataque 2 a 5mg/kg · Manutenção 10 a 100mcg/kg/min · 1 a 5 mg/kg/h': ['Loading dose 2 to 5mg/kg · Maintenance 10 to 100mcg/kg/min · 1 to 5 mg/kg/h', 'Dosis de carga 2 a 5mg/kg · Mantenimiento 10 a 100mcg/kg/min · 1 a 5 mg/kg/h'],
-    'Ataque: 0,4 a 1U/kg · Manutenção: 0,00002 a 0,002U/kg/min': ['Loading dose: 0.4 to 1U/kg · Maintenance: 0.00002 to 0.002U/kg/min', 'Dosis de carga: 0,4 a 1U/kg · Mantenimiento: 0,00002 a 0,002U/kg/min']
+    'Ataque: 0,4 a 1 UI/kg · Manutenção: 0,00002 a 0,002 UI/kg/min': ['Loading dose: 0.4 to 1 IU/kg · Maintenance: 0.00002 to 0.002 IU/kg/min', 'Dosis de carga: 0,4 a 1 UI/kg · Mantenimiento: 0,00002 a 0,002 UI/kg/min']
   });
 
   // ===== Máximos (todos listados: também servem para separar o bloco do cálculo)
@@ -242,7 +242,7 @@
     'Máx: 150mg/dose': ['Max: 150mg/dose', 'Máx.: 150mg/dosis'],
     'Máx: 500mcg': ['Max: 500mcg', 'Máx.: 500mcg'],
     'Máx:100 mg': ['Max:100 mg', 'Máx.:100 mg'],
-    'Dose máx bolus: 40U': ['Max bolus dose: 40U', 'Dosis máx. en bolo: 40U']
+    'Dose máx bolus: 40 UI': ['Max bolus dose: 40 IU', 'Dosis máx. en bolo: 40 UI']
   };
   i18n.register(MAXES);
 
@@ -380,13 +380,14 @@
   function alt(list) { return list.slice().sort(byLength).map(escapeRe).join('|'); }
 
   var N = '\\d+(?:\\.\\d+)?';
-  var UNIT = '(?:mcg\\/kg\\/min|mcg\\/min|mcg\\/h|mg\\/h|mg\\/dia|U\\/min|mEq|mcg|mg|ml|g|J|U)';
+  var UNIT = '(?:mcg\\/kg\\/min|mcg\\/min|mcg\\/h|mg\\/h|mg\\/dia|UI\\/min|U\\/min|mEq|mcg|mg|ml|g|J|UI|U)';
   var AMOUNT = N + '(?: a ' + N + ')? ' + UNIT;
   var VALUE = AMOUNT + '(?: \\(' + AMOUNT + '(?: se solução 50mg\\/ml)?\\)| = ' + N + ' ml da 1:10\\.000| = ' + N + ' ml da 1:1000| ≈ ' + N + ' ml| por dose)?';
 
   function value(v, i) {
     if (i === 0) {
       return v.replace(/(\d) a (\d)/g, '$1 to $2')
+        .replace(/ UI(?=\/min| |$)/g, ' IU')
         .replace(/ mg\/dia$/, ' mg/day')
         .replace(' se solução 50mg/ml', ' if 50mg/ml solution')
         .replace(' ml da 1:10.000', ' ml of 1:10,000')
@@ -443,6 +444,9 @@
     [new RegExp('^(' + VALUE + ')$'), bare(0), bare(1)],
     [/^Cálculo para (\d+(?:\.\d+)?) kg:$/, 'Calculation for $1 kg:', 'Cálculo para $1 kg:']
   ]);
+
+  // Apresentação da vasopressina (unidades internacionais: IU em inglês).
+  i18n.register({ 'Encrise® · 20 UI/ml': ['Encrise® · 20 IU/ml', 'Encrise® · 20 UI/ml'] });
 
   i18n.markPageTranslated();
 })(window.NEOPED_I18N);

@@ -235,33 +235,6 @@
             color: var(--primary-color);
         }
 
-        .risk-indicator {
-            display: inline-block;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .risk-low {
-            background: rgba(39, 174, 96, 0.1);
-            color: var(--success-color);
-            border: 2px solid rgba(39, 174, 96, 0.3);
-        }
-
-        .risk-medium {
-            background: rgba(243, 156, 18, 0.1);
-            color: var(--warning-color);
-            border: 2px solid rgba(243, 156, 18, 0.3);
-        }
-
-        .risk-high {
-            background: rgba(231, 76, 60, 0.1);
-            color: var(--danger-color);
-            border: 2px solid rgba(231, 76, 60, 0.3);
-        }
 
         .report-section {
             background: var(--card-background);
@@ -641,7 +614,7 @@
 
             <div class="info-box">
                 <h4>Informações Importantes</h4>
-                <p>O PIM3 usa dados coletados entre o primeiro contato presencial com a equipe da UTI pediátrica e a primeira hora após a chegada à UTI. Para as variáveis fisiológicas, registre o primeiro valor medido nesse período.</p>
+                <p>Registre o primeiro valor de cada variável medido entre o primeiro contato presencial (não por telefone) com um médico da UTI pediátrica ou da equipe de transporte pediátrico e 1 hora após a chegada à UTI. Use o primeiro valor desse período, não o pior. O primeiro contato pode ocorrer na própria UTI, no pronto-socorro, na enfermaria ou em outro hospital (transporte).</p>
             </div>
 
             <h3 class="subsection-title">Variáveis clínicas</h3>
@@ -668,7 +641,7 @@
                         <option value="0">Não</option>
                         <option value="1">Sim</option>
                     </select>
-                    <span class="unit">Inclui CPAP ou BiPAP por máscara/nasal e ventilação por pressão negativa, em qualquer momento da primeira hora</span>
+                    <span class="unit">Em qualquer momento da primeira hora na UTI; inclui CPAP ou BiPAP por máscara ou nasal e ventilação por pressão negativa</span>
                 </div>
                 <div class="form-group">
                     <label for="recovery">Recuperação de cirurgia ou procedimento como principal motivo da admissão</label>
@@ -713,12 +686,12 @@
                 <div class="form-group">
                     <label for="pao2">PaO₂</label>
                     <input type="number" id="pao2" step="0.1" placeholder="Ex.: 80">
-                    <span class="unit">Sangue arterial; em branco se desconhecida (termo = 0)</span>
+                    <span class="unit">Sangue arterial; em branco se desconhecida (FiO₂ × 100 / PaO₂ = 0,23)</span>
                 </div>
                 <div class="form-group">
                     <label for="fio2">FiO₂</label>
                     <input type="number" id="fio2" min="0.21" max="1" step="0.01" placeholder="Ex.: 0.5">
-                    <span class="unit">fração (0.21-1.0) no momento da gasometria; em branco se desconhecida</span>
+                    <span class="unit">fração (0.21-1.0) no momento da PaO₂, se O₂ por tubo endotraqueal ou head box; em branco se desconhecida</span>
                 </div>
             </div>
 
@@ -795,8 +768,7 @@
                 <span class="result-label">Categoria de diagnóstico considerada:</span>
                 <span class="result-value" id="res_dx">-</span>
             </div>
-            <div id="indicador_risco" style="text-align: center; margin-top: 15px;"></div>
-            <p class="result-note">Faixas de risco didáticas desta calculadora; o PIM3 fornece uma probabilidade contínua e não define faixas de risco.</p>
+            <p class="result-note">O PIM3 fornece apenas uma probabilidade contínua e não define faixas de risco. Foi desenvolvido para ajuste de risco e comparação entre grupos de pacientes (óbitos esperados, razão de mortalidade padronizada), não para decisões individuais (Straney et al., 2013).</p>
         </div>
 
         <div class="report-section">
@@ -840,10 +812,13 @@
 
                 <h3>Regras de preenchimento</h3>
                 <ul>
-                    <li>Registre o primeiro valor medido entre o primeiro contato presencial com a equipe da UTI e a primeira hora após a chegada à UTI.</li>
-                    <li><strong>PAS:</strong> desconhecida = 120 mmHg; parada cardíaca = 0 mmHg; choque com PA não mensurável = 30 mmHg.</li>
-                    <li><strong>PaO₂ e FiO₂:</strong> se qualquer uma for desconhecida, o termo FiO₂ × 100 / PaO₂ vale 0. PaO₂ em kPa é convertida para mmHg (× 7.50062).</li>
-                    <li><strong>Base excess:</strong> se desconhecido, o termo vale 0. Usa-se o valor absoluto (BE −10 e BE +10 contribuem igualmente).</li>
+                    <li><strong>Período de coleta:</strong> primeiro valor de cada variável medido entre o primeiro contato presencial (não por telefone) com um médico da UTI pediátrica ou da equipe de transporte pediátrico e 1 hora após a chegada à UTI (não o pior valor).</li>
+                    <li><strong>PAS:</strong> desconhecida = 120 mmHg; parada cardíaca = 0 mmHg; choque com PA tão baixa que não pode ser medida = 30 mmHg.</li>
+                    <li><strong>Pupilas:</strong> marque apenas se ambas &gt; 3 mm e fixas à luz; não marque se causado por fármacos, toxinas ou lesão ocular local.</li>
+                    <li><strong>Ventilação mecânica:</strong> em qualquer momento da primeira hora na UTI; inclui CPAP ou BiPAP por máscara ou nasal e ventilação por pressão negativa.</li>
+                    <li><strong>Admissão eletiva:</strong> admissão (ou cirurgia) que poderia ser adiada por mais de 6 horas sem efeito adverso.</li>
+                    <li><strong>PaO₂ e FiO₂:</strong> PaO₂ arterial; FiO₂ no momento da PaO₂, se O₂ por tubo endotraqueal ou head box. Se PaO₂ ou FiO₂ for desconhecida, usa-se FiO₂ × 100 / PaO₂ = 0,23 (valor padrão do PIM3; no PIM2 era 0). PaO₂ em kPa é convertida para mmHg (× 7.50062).</li>
+                    <li><strong>Base excess:</strong> sangue arterial ou capilar; se desconhecido, o termo vale 0. Usa-se o valor absoluto (BE −10 e BE +10 contribuem igualmente).</li>
                     <li><strong>Recuperação pós-procedimento:</strong> marque apenas quando a recuperação de cirurgia ou procedimento for o principal motivo da admissão; as três opções são mutuamente exclusivas.</li>
                     <li><strong>Diagnósticos:</strong> marque todos os que se aplicam; o cálculo usa apenas a categoria de maior risco (muito alto &gt; alto &gt; baixo).</li>
                 </ul>
@@ -860,12 +835,8 @@
                 <h3>Interpretação dos Resultados</h3>
                 <ul>
                     <li>O resultado é a probabilidade estimada de morte hospitalar (0-100%).</li>
-                    <li>Faixas didáticas exibidas por esta calculadora (não definidas pelo PIM3):</li>
-                    <li><strong>&lt; 5%:</strong> Baixo risco de mortalidade</li>
-                    <li><strong>5% a &lt; 15%:</strong> Risco intermediário de mortalidade</li>
-                    <li><strong>15% a &lt; 30%:</strong> Alto risco de mortalidade</li>
-                    <li><strong>≥ 30%:</strong> Muito alto risco de mortalidade</li>
-                    <li><strong>Comparação:</strong> Útil para comparar pacientes e centros</li>
+                    <li>O PIM3 não define faixas de risco; por isso esta calculadora não classifica o resultado.</li>
+                    <li><strong>Uso previsto:</strong> a soma das probabilidades de um grupo de pacientes dá o número esperado de óbitos; óbitos observados ÷ esperados = razão de mortalidade padronizada, usada para comparar UTIs.</li>
                 </ul>
 
                 <h3>Considerações Importantes</h3>
@@ -873,12 +844,11 @@
                     <li>Complementar à avaliação clínica, não substituto</li>
                     <li>Aplicável a crianças admitidas em UTIP</li>
                     <li>Considerar fatores não incluídos no escore</li>
-                    <li>Reavaliar conforme evolução clínica</li>
+                    <li>Calculado uma vez por admissão, com dados da primeira hora; não é um escore de acompanhamento diário</li>
                 </ul>
 
                 <h3>Aplicações Clínicas</h3>
                 <ul>
-                    <li><strong>Prognóstico:</strong> Estimativa de mortalidade</li>
                     <li><strong>Comparação entre UTIPs:</strong> Ajuste de risco</li>
                     <li><strong>Pesquisa:</strong> Classificação de gravidade</li>
                     <li><strong>Qualidade:</strong> Monitoramento de outcomes</li>
@@ -944,13 +914,8 @@
             fio2Min: 0.21, fio2Max: 1,
             pao2MinMmHg: 10, pao2MaxMmHg: 700
         });
-        // Faixas didáticas desta calculadora (o PIM3 não define faixas)
-        const RISK_BANDS = Object.freeze([
-            { max: 0.05, label: 'Baixo Risco', cls: 'risk-low' },
-            { max: 0.15, label: 'Risco Intermediário', cls: 'risk-medium' },
-            { max: 0.30, label: 'Alto Risco', cls: 'risk-high' },
-            { max: Infinity, label: 'Muito Alto Risco', cls: 'risk-high' }
-        ]);
+        // FiO2 x 100 / PaO2 usado quando PaO2 ou FiO2 é desconhecida (regra do PIM3; no PIM2 era 0)
+        const RATIO_DEFAULT = 0.23;
 
         const DIAGNOSES = Object.freeze([
             { id: 'dx_arrest', cat: 'veryHigh', rep: 'Parada cardiaca antes da admissao na UTI' },
@@ -1140,14 +1105,10 @@
                 mv: e.mv ? c.mv : 0,
                 be: e.be === null ? 0 : c.absBe * Math.abs(e.be),
                 sbp: c.sbp * sbp + c.sbpSquaredPer1000 * (sbp * sbp / 1000),
-                oxi: e.oxi.ratio === null ? 0 : c.fio2Pao2 * e.oxi.ratio,
+                oxi: c.fio2Pao2 * (e.oxi.ratio === null ? RATIO_DEFAULT : e.oxi.ratio),
                 recovery: e.recovery === 'none' ? 0 : c[e.recovery],
                 dx: e.dx.categoria === 'none' ? 0 : c[e.dx.categoria]
             });
-        }
-
-        function classificarRisco(probabilidade) {
-            return RISK_BANDS.find(b => probabilidade < b.max);
         }
 
         function definirTexto(id, texto) {
@@ -1160,11 +1121,9 @@
             definirTexto('res_logit', r.logit.toFixed(4));
             definirTexto('res_sbp', `${e.sbp.value} mmHg`);
             definirTexto('res_be', e.be === null ? '0 (não informado)' : `${Math.abs(e.be)} mmol/L`);
-            definirTexto('res_ratio', e.oxi.ratio === null ? '0 (não informado)' : e.oxi.ratio.toFixed(3));
+            definirTexto('res_ratio', e.oxi.ratio === null ? '0.23 (não informado; valor padrão do PIM3)' : e.oxi.ratio.toFixed(3));
             definirTexto('res_recovery', RECOVERY_TEXT[e.recovery].ui);
             definirTexto('res_dx', DX_CATEGORY_TEXT[e.dx.categoria].ui);
-            document.getElementById('indicador_risco').innerHTML =
-                `<span class="risk-indicator ${r.risco.cls}">${r.risco.label}</span>`;
         }
 
         // Função para calcular PIM3
@@ -1177,10 +1136,7 @@
             const termos = calcularTermos(entradas);
             const logit = Object.values(termos).reduce((soma, v) => soma + v, 0);
             const probabilidade = Math.exp(logit) / (1 + Math.exp(logit));
-            ultimoResultado = Object.freeze({
-                entradas, termos, logit, probabilidade,
-                risco: classificarRisco(probabilidade)
-            });
+            ultimoResultado = Object.freeze({ entradas, termos, logit, probabilidade });
             exibirResultado(ultimoResultado);
         }
 
@@ -1209,7 +1165,7 @@
                 `- Base excess: ${e.be === null ? 'nao informado' : `${e.be} mmol/L`}`,
                 `- PaO2: ${e.oxi.ratio === null ? 'nao informado' : `${pao2Bruta} ${unit}`}`,
                 `- FiO2: ${e.oxi.ratio === null ? 'nao informado' : e.oxi.fio2}`,
-                `- FiO2 x 100 / PaO2: ${e.oxi.ratio === null ? '0 (nao informado)' : e.oxi.ratio.toFixed(3)}`,
+                `- FiO2 x 100 / PaO2: ${e.oxi.ratio === null ? '0.23 (nao informado; valor padrao do PIM3)' : e.oxi.ratio.toFixed(3)}`,
                 `- Recuperacao pos-procedimento: ${RECOVERY_TEXT[e.recovery].rep}`,
                 `- Categoria de diagnostico considerada: ${DX_CATEGORY_TEXT[e.dx.categoria].rep}`,
                 '- Diagnosticos marcados:',
@@ -1254,15 +1210,14 @@
                 'RESULTADOS:',
                 `- Logit do modelo: ${r.logit.toFixed(4)}`,
                 `- PIM3 - Probabilidade de Mortalidade: ${(r.probabilidade * 100).toFixed(2)}%`,
-                `- Nivel de Risco: ${r.risco.label}`,
-                '- Faixas de risco didaticas desta calculadora, nao definidas pelo modelo original.',
+                '- O PIM3 nao define faixas de risco; a probabilidade serve para comparacao entre grupos de pacientes, nao para decisoes individuais.',
                 '',
                 'CONTRIBUICAO DE CADA TERMO AO LOGIT:',
                 ...linhasTermos(r.termos),
                 'Probabilidade de morte = e^logit / (1 + e^logit)',
                 '',
                 'INTERPRETACAO:',
-                'O PIM3 estima a probabilidade de morte hospitalar de criancas admitidas em UTI pediatrica, com dados coletados entre o primeiro contato com a equipe da UTI e a primeira hora apos a chegada. Foi desenvolvido para ajuste de risco e comparacao entre grupos de pacientes; nao deve orientar decisoes individuais de tratamento.',
+                'O PIM3 estima a probabilidade de morte hospitalar de criancas admitidas em UTI pediatrica, com o primeiro valor de cada variavel medido entre o primeiro contato presencial com um medico da UTI (ou da equipe de transporte) e 1 hora apos a chegada a UTI. Foi desenvolvido para ajuste de risco e comparacao entre grupos de pacientes; nao deve orientar decisoes individuais de tratamento.',
                 '',
                 'Referencia: Straney L, Clements A, Parslow RC, et al. Paediatric Index of Mortality 3: an updated model for predicting mortality in pediatric intensive care. Pediatr Crit Care Med 2013; 14(7): 673-681.'
             ].filter(linha => linha !== null).join('\n');
@@ -1338,7 +1293,6 @@
 
             ['probabilidade_mortalidade', 'res_logit', 'res_sbp', 'res_be', 'res_ratio', 'res_recovery', 'res_dx']
                 .forEach(id => definirTexto(id, '-'));
-            document.getElementById('indicador_risco').innerHTML = '';
             ultimoResultado = null;
         }
 

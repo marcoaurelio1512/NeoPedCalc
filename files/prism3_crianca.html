@@ -245,33 +245,6 @@
             color: var(--primary-color);
         }
 
-        .risk-indicator {
-            display: inline-block;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .risk-low {
-            background: rgba(39, 174, 96, 0.1);
-            color: var(--success-color);
-            border: 2px solid rgba(39, 174, 96, 0.3);
-        }
-
-        .risk-medium {
-            background: rgba(243, 156, 18, 0.1);
-            color: var(--warning-color);
-            border: 2px solid rgba(243, 156, 18, 0.3);
-        }
-
-        .risk-high {
-            background: rgba(231, 76, 60, 0.1);
-            color: var(--danger-color);
-            border: 2px solid rgba(231, 76, 60, 0.3);
-        }
 
         .report-section {
             background: var(--card-background);
@@ -567,7 +540,7 @@
     <div class="container">
         <div class="header">
             <h1>PRISM III - Pediatric Risk of Mortality</h1>
-            <p>Apoio educativo: escore PRISM III publicado (Pollack et al., 1996) com os piores valores das primeiras 12 horas em UTI pediátrica</p>
+            <p>Apoio educativo: escore PRISM III publicado (Pollack et al., 1996) com os piores valores das primeiras 12 ou 24 horas em UTI pediátrica</p>
             <div class="header-actions">
                 <button type="button" class="btn-info" onclick="abrirModal()">
                     Como usar
@@ -604,9 +577,9 @@
                     <select id="faixa_etaria">
                         <option value="">Selecione</option>
                         <option value="neonato">Neonato (0 a &lt;1 mês)</option>
-                        <option value="lactente">Lactente (1 a 12 meses)</option>
-                        <option value="crianca">Criança (&gt;12 meses a 12 anos)</option>
-                        <option value="adolescente">Adolescente (&gt;12 anos)</option>
+                        <option value="lactente">Lactente (≥ 1 a 12 meses)</option>
+                        <option value="crianca">Criança (&gt; 12 a 144 meses)</option>
+                        <option value="adolescente">Adolescente (&gt; 144 meses)</option>
                     </select>
                     <span class="unit">preenchida automaticamente pela data de nascimento; pode ser ajustada</span>
                 </div>
@@ -618,7 +591,7 @@
 
             <div class="info-box">
                 <h4>Informações Importantes</h4>
-                <p>Informe os <strong>piores valores</strong> do período escolhido (PRISM III-12: primeiras 12 horas de internação na UTI pediátrica). Campos em branco são considerados normais (0 ponto). Os pontos de corte de PAS, frequência cardíaca, creatinina, BUN e TTPa dependem da faixa etária.</p>
+                <p>Informe os <strong>piores valores</strong> (mais anormais) do período escolhido: primeiras 12 horas (PRISM III-12) ou primeiras 24 horas (PRISM III-24) de internação na UTI pediátrica. Campos em branco são considerados normais (0 ponto). Os pontos de corte de PAS, frequência cardíaca, creatinina, BUN e TTPa dependem da faixa etária.</p>
             </div>
 
             <div class="form-grid">
@@ -642,17 +615,17 @@
                 <div class="form-group">
                     <label for="hr_max">Frequência cardíaca máxima</label>
                     <input type="number" id="hr_max" step="1" min="0" placeholder="Ex.: 160">
-                    <span class="unit">bpm</span>
+                    <span class="unit">bpm; não avaliar durante choro ou agitação iatrogênica</span>
                 </div>
                 <div class="form-group">
                     <label for="temp_min">Temperatura mínima</label>
                     <input type="number" id="temp_min" step="0.1" placeholder="Ex.: 35.2">
-                    <span class="unit">°C</span>
+                    <span class="unit">°C (retal, oral, sanguínea ou axilar)</span>
                 </div>
                 <div class="form-group">
                     <label for="temp_max">Temperatura máxima</label>
                     <input type="number" id="temp_max" step="0.1" placeholder="Ex.: 38.5">
-                    <span class="unit">°C</span>
+                    <span class="unit">°C (retal, oral, sanguínea ou axilar)</span>
                 </div>
                 <div class="form-group">
                     <label for="mental">Estado mental</label>
@@ -660,6 +633,7 @@
                         <option value="0">Normal ou Glasgow ≥ 8</option>
                         <option value="1">Estupor/coma (Glasgow &lt; 8)</option>
                     </select>
+                    <span class="unit">Só em doença aguda do SNC conhecida ou suspeita; não avaliar até 2 h após sedação, paralisia ou anestesia (se contínuas, use o estado anterior a elas)</span>
                 </div>
                 <div class="form-group">
                     <label for="pupils">Reflexos pupilares</label>
@@ -668,6 +642,7 @@
                         <option value="1">Uma pupila fixa</option>
                         <option value="2">Ambas as pupilas fixas</option>
                     </select>
+                    <span class="unit">Pupila fixa = &gt; 3 mm e não reativa; não avaliar após dilatação pupilar iatrogênica (fármacos)</span>
                 </div>
             </div>
 
@@ -676,12 +651,12 @@
                 <div class="form-group">
                     <label for="ph_min">pH mínimo</label>
                     <input type="number" id="ph_min" step="0.01" placeholder="Ex.: 7.18">
-                    <span class="unit">pior acidose</span>
+                    <span class="unit">pior acidose (arterial, venoso ou capilar)</span>
                 </div>
                 <div class="form-group">
                     <label for="ph_max">pH máximo</label>
                     <input type="number" id="ph_max" step="0.01" placeholder="Ex.: 7.45">
-                    <span class="unit">pior alcalose</span>
+                    <span class="unit">pior alcalose (arterial, venoso ou capilar)</span>
                 </div>
                 <div class="form-group">
                     <label for="tco2_min">CO₂ total mínimo</label>
@@ -696,12 +671,12 @@
                 <div class="form-group">
                     <label for="pco2_max">PCO₂ máxima</label>
                     <input type="number" id="pco2_max" step="0.1" min="0" placeholder="Ex.: 55">
-                    <span class="unit">mmHg</span>
+                    <span class="unit">mmHg (arterial, venosa ou capilar)</span>
                 </div>
                 <div class="form-group">
                     <label for="pao2_min">PaO₂ mínima</label>
                     <input type="number" id="pao2_min" step="0.1" min="0" placeholder="Ex.: 80">
-                    <span class="unit">mmHg (sangue arterial)</span>
+                    <span class="unit">mmHg (apenas sangue arterial)</span>
                 </div>
             </div>
 
@@ -733,6 +708,7 @@
                         <option value="bun">BUN (nitrogênio ureico) mg/dL</option>
                         <option value="ureia">Ureia mg/dL (BUN = ureia ÷ 2,14)</option>
                     </select>
+                    <span class="unit">Conversão de unidade para laboratórios que informam ureia; não faz parte do PRISM III</span>
                 </div>
             </div>
 
@@ -815,7 +791,7 @@
                 <h3>Como o escore é calculado</h3>
                 <div class="formula-box">
                     <strong>PRISM III = subescore neurológico + subescore não neurológico</strong><br><br>
-                    Use os piores valores das primeiras 12 horas na UTI pediátrica (PRISM III-12). A opção PRISM III-24 usa as primeiras 24 horas com a mesma pontuação.<br><br>
+                    Use os piores valores (mais anormais) das primeiras 12 horas na UTI pediátrica (PRISM III-12) ou das primeiras 24 horas (PRISM III-24); a pontuação das variáveis é a mesma nos dois períodos.<br><br>
                     Subescore neurológico: estado mental + reflexos pupilares.<br>
                     Subescore não neurológico: demais variáveis.<br><br>
                     Cada variável pontua uma única vez; campos em branco valem 0 ponto.
@@ -823,19 +799,19 @@
 
                 <h3>Faixas etárias</h3>
                 <ul>
-                    <li>Neonato: 0 a &lt;1 mês</li>
-                    <li>Lactente: 1 a 12 meses</li>
-                    <li>Criança: &gt;12 meses a 12 anos</li>
-                    <li>Adolescente: &gt;12 anos</li>
+                    <li>Neonato: 0 a &lt; 1 mês</li>
+                    <li>Lactente: ≥ 1 a ≤ 12 meses</li>
+                    <li>Criança: &gt; 12 a ≤ 144 meses</li>
+                    <li>Adolescente: &gt; 144 meses</li>
                 </ul>
 
                 <h3>Cardiovascular / Neurológico</h3>
                 <ul>
                     <li><strong>PAS (mmHg):</strong> neonato 40-55 = 3, &lt;40 = 7; lactente 45-65 = 3, &lt;45 = 7; criança 55-75 = 3, &lt;55 = 7; adolescente 65-85 = 3, &lt;65 = 7</li>
-                    <li><strong>Temperatura:</strong> &lt;33 °C ou &gt;40 °C = 3</li>
-                    <li><strong>Estado mental:</strong> estupor/coma (Glasgow &lt; 8) = 5</li>
-                    <li><strong>Frequência cardíaca (bpm):</strong> neonato e lactente 215-225 = 3, &gt;225 = 4; criança 185-205 = 3, &gt;205 = 4; adolescente 145-155 = 3, &gt;155 = 4</li>
-                    <li><strong>Reflexos pupilares:</strong> uma pupila fixa = 7; ambas fixas = 11</li>
+                    <li><strong>Temperatura:</strong> &lt;33 °C ou &gt;40 °C = 3 (retal, oral, sanguínea ou axilar)</li>
+                    <li><strong>Estado mental:</strong> estupor/coma (Glasgow &lt; 8) = 5. Avaliar só em doença aguda do SNC conhecida ou suspeita; não avaliar até 2 h após sedação, paralisia ou anestesia; se contínuas, use o estado imediatamente anterior a elas</li>
+                    <li><strong>Frequência cardíaca (bpm):</strong> neonato e lactente 215-225 = 3, &gt;225 = 4; criança 185-205 = 3, &gt;205 = 4; adolescente 145-155 = 3, &gt;155 = 4 (não avaliar durante choro ou agitação iatrogênica)</li>
+                    <li><strong>Reflexos pupilares:</strong> uma pupila fixa = 7; ambas fixas = 11. Pupila fixa = &gt; 3 mm e não reativa; não avaliar após dilatação pupilar iatrogênica</li>
                 </ul>
 
                 <h3>Ácido-base / Gasometria</h3>
@@ -844,7 +820,8 @@
                     <li><strong>pH (alcalose):</strong> 7,48-7,55 = 2; &gt;7,55 = 3</li>
                     <li><strong>PCO₂ (mmHg):</strong> 50-75 = 1; &gt;75 = 3</li>
                     <li><strong>CO₂ total:</strong> &gt;34 mmol/L = 4</li>
-                    <li><strong>PaO₂ (mmHg):</strong> 42-49,9 = 3; &lt;42 = 6</li>
+                    <li><strong>PaO₂ (mmHg):</strong> 42-49,9 = 3; &lt;42 = 6 (apenas sangue arterial)</li>
+                    <li>pH e PCO₂ podem ser arteriais, venosos ou capilares</li>
                 </ul>
 
                 <h3>Bioquímica</h3>
@@ -852,7 +829,8 @@
                     <li><strong>Glicose:</strong> &gt;200 mg/dL (&gt;11,0 mmol/L) = 2</li>
                     <li><strong>Potássio:</strong> &gt;6,9 mmol/L = 3</li>
                     <li><strong>Creatinina:</strong> neonato &gt;0,85 mg/dL = 2; lactente e criança &gt;0,90 mg/dL = 2; adolescente &gt;1,30 mg/dL = 2</li>
-                    <li><strong>BUN:</strong> neonato &gt;11,9 mg/dL = 3; demais faixas &gt;14,9 mg/dL = 3 (ureia ÷ 2,14 ≈ BUN)</li>
+                    <li><strong>BUN:</strong> neonato &gt;11,9 mg/dL = 3; demais faixas &gt;14,9 mg/dL = 3</li>
+                    <li><strong>Ureia:</strong> se o laboratório informa ureia, a página converte BUN = ureia ÷ 2,14. É apenas uma conversão de unidade, não faz parte do PRISM III</li>
                 </ul>
 
                 <h3>Hematologia</h3>
@@ -860,6 +838,14 @@
                     <li><strong>Leucócitos:</strong> &lt;3.000/mm³ = 4</li>
                     <li><strong>TP ou TTPa:</strong> TP &gt;22 s ou TTPa &gt;57 s = 3 (neonato: TP &gt;22 s ou TTPa &gt;85 s)</li>
                     <li><strong>Plaquetas:</strong> 100.000-200.000/mm³ = 2; 50.000-99.999/mm³ = 4; &lt;50.000/mm³ = 5</li>
+                </ul>
+
+                <h3>Critérios de exclusão (Pollack et al.)</h3>
+                <ul>
+                    <li>Permanência na UTI pediátrica &lt; 2 horas</li>
+                    <li>Admissão em RCP contínua sem obter sinais vitais estáveis por pelo menos 2 horas</li>
+                    <li>Admissões de rotina que poderiam ser cuidadas em outro setor do hospital</li>
+                    <li>Pacientes readmitidos são pontuados como novos pacientes</li>
                 </ul>
 
                 <h3>Interpretação dos Resultados</h3>
@@ -914,9 +900,9 @@
         // PRISM III publicado: Pollack MM, Patel KM, Ruttimann UE. Crit Care Med 1996;24:743-752.
         const PRISM3_GRUPOS = Object.freeze({
             neonato:     { rotulo: 'Neonato (0 a <1 mês)',          sbp: [40, 55], hr: [215, 225], creat: 0.85, bun: 11.9, ptt: 85 },
-            lactente:    { rotulo: 'Lactente (1 a 12 meses)',       sbp: [45, 65], hr: [215, 225], creat: 0.90, bun: 14.9, ptt: 57 },
-            crianca:     { rotulo: 'Criança (>12 meses a 12 anos)', sbp: [55, 75], hr: [185, 205], creat: 0.90, bun: 14.9, ptt: 57 },
-            adolescente: { rotulo: 'Adolescente (>12 anos)',        sbp: [65, 85], hr: [145, 155], creat: 1.30, bun: 14.9, ptt: 57 }
+            lactente:    { rotulo: 'Lactente (≥ 1 a 12 meses)',     sbp: [45, 65], hr: [215, 225], creat: 0.90, bun: 14.9, ptt: 57 },
+            crianca:     { rotulo: 'Criança (> 12 a 144 meses)',    sbp: [55, 75], hr: [185, 205], creat: 0.90, bun: 14.9, ptt: 57 },
+            adolescente: { rotulo: 'Adolescente (> 144 meses)',     sbp: [65, 85], hr: [145, 155], creat: 1.30, bun: 14.9, ptt: 57 }
         });
         const UREIA_PARA_BUN = 2.14;
         const PUPILAS_ROTULO = ['Ambas reativas', 'Uma pupila fixa', 'Ambas as pupilas fixas'];
@@ -938,7 +924,7 @@
             return r;
         }
 
-        // Faixa etária PRISM III: neonato <1 mês; lactente 1-12 meses; criança >12 meses-12 anos; adolescente >12 anos
+        // Faixa etária PRISM III (Pollack 1996): neonato 0 a <1 mês; lactente >=1 a <=12 meses; criança >12 a <=144 meses; adolescente >144 meses
         function faixaPorDatas(nascimento, avaliacao) {
             if (!nascimento || !avaliacao || avaliacao < nascimento) return '';
             if (avaliacao < somarMeses(nascimento, 1)) return 'neonato';
@@ -1187,6 +1173,8 @@
                 'A equacao de probabilidade de obito do PRISM III e proprietaria (licenciada) e nao e reproduzida aqui.',
                 'Escores mais altos indicam maior risco de mortalidade.',
                 'Campos nao informados foram considerados normais (0 ponto).',
+                'Definicoes (Pollack 1996): pupila fixa = > 3 mm e nao reativa (nao avaliar apos dilatacao iatrogenica); estupor/coma = Glasgow < 8 (nao avaliar ate 2 h apos sedacao, paralisia ou anestesia).',
+                (document.getElementById('bun_unit').value === 'ureia' && document.getElementById('bun').value.trim() !== '') ? 'Ureia convertida em BUN (ureia / 2,14): conversao de unidade, nao faz parte do PRISM III.' : '',
                 obs ? `\n- Observacoes: ${obs}` : '',
                 '',
                 'Referencia: Pollack MM, Patel KM, Ruttimann UE. PRISM III: an updated Pediatric Risk of Mortality score. Crit Care Med 1996;24(5):743-752.'

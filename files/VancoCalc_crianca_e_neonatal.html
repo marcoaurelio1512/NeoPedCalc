@@ -399,8 +399,8 @@
 
             <h4>Recém-nascidos</h4>
             <ul>
-                <li><strong>Clearance:</strong> Fórmula de Schwartz (Neonato): (0,33 × comprimento) / creatinina
-                    (comprimento em cm)</li>
+                <li><strong>Clearance:</strong> Fórmula de Schwartz (Neonato): (k × comprimento) / creatinina
+                    (comprimento em cm); k = 0,33 pré-termo (IG ao nascer < 37 semanas) ou 0,45 termo (IG ao nascer ≥ 37 semanas)</li>
                 <li><strong>Vd:</strong> 0,9 × peso</li>
             </ul>
 
@@ -440,6 +440,7 @@
                 campos += '<div class="form-group"><label for="creatinina">Creatinina sérica (mg/dL):</label><input type="number" id="creatinina" step="0.01" required></div>';
             } else if (faixa === "neonatal") {
                 campos += '<div class="form-group"><label for="idadeDias">Idade pós-natal (dias):</label><input type="number" id="idadeDias" step="0.1" required></div>';
+                campos += '<div class="form-group"><label for="igSemanas">Idade gestacional ao nascer (semanas):</label><input type="number" id="igSemanas" step="0.1" min="' + IG_MIN_SEMANAS + '" max="' + IG_MAX_SEMANAS + '" required oninput="atualizarClassificacaoIG()"><div id="igClassificacao" class="result-item" aria-live="polite"></div></div>';
                 campos += '<div class="form-group"><label for="peso">Peso (kg):</label><input type="number" id="peso" step="0.001" required></div>';
                 campos += '<div class="form-group"><label for="altura">Comprimento (cm):</label><input type="number" id="altura" step="0.1" required></div>';
                 campos += '<div class="form-group"><label for="creatinina">Creatinina sérica (mg/dL):</label><input type="number" id="creatinina" step="0.01" required></div>';
@@ -452,16 +453,55 @@
 
             form.innerHTML = campos;
             botoes.style.display = "block";
+            if (faixa === "neonatal") atualizarClassificacaoIG();
         }
 
-        // Schwartz (beira-leito): CrCl (mL/min/1,73 m²) = k × altura/comprimento (cm) / creatinina (mg/dL).
+        // Schwartz: CrCl (mL/min/1,73 m²) = k × altura/comprimento (cm) / creatinina (mg/dL).
+        // Criança: k = 0,413 (Schwartz beira-leito). Neonato: k depende da idade gestacional ao nascer:
+        // 0,33 pré-termo (IG < 37 semanas) e 0,45 termo (IG ≥ 37 semanas).
         // Fonte única para a tela e o relatório copiado.
-        const K_SCHWARTZ = { crianca: 0.413, neonatal: 0.33 };
+        const K_SCHWARTZ = { crianca: 0.413, neonatalPreTermo: 0.33, neonatalTermo: 0.45 };
+        const IG_TERMO_SEMANAS = 37;
+        const IG_MIN_SEMANAS = 22;
+        const IG_MAX_SEMANAS = 44;
+        const MSG_IG_INVALIDA = "Informe a idade gestacional ao nascer (22 a 44 semanas).";
 
-        function calcularClearanceSchwartz(faixa, alturaCm, creatininaMgDl) {
-            const k = K_SCHWARTZ[faixa];
-            if (!k) return 0;
-            return (k * alturaCm) / creatininaMgDl;
+        function igValida(igSemanas) {
+            return Number.isFinite(igSemanas) && igSemanas >= IG_MIN_SEMANAS && igSemanas <= IG_MAX_SEMANAS;
+        }
+
+        // Retorna { k, rotulo } ou null quando a faixa/IG não permite definir k.
+        function obterKSchwartz(faixa, igSemanas) {
+            if (faixa === "crianca") return { k: K_SCHWARTZ.crianca, rotulo: "Criança, Schwartz beira-leito" };
+            if (faixa !== "neonatal" || !igValida(igSemanas)) return null;
+            return igSemanas < IG_TERMO_SEMANAS
+                ? { k: K_SCHWARTZ.neonatalPreTermo, rotulo: "Pré-termo, IG < 37 semanas" }
+                : { k: K_SCHWARTZ.neonatalTermo, rotulo: "Termo, IG ≥ 37 semanas" };
+        }
+
+        // Retorna { clearance, k, rotulo } ou null.
+        function calcularClearanceSchwartz(faixa, alturaCm, creatininaMgDl, igSemanas) {
+            const ks = obterKSchwartz(faixa, igSemanas);
+            if (!ks) return null;
+            return { clearance: (ks.k * alturaCm) / creatininaMgDl, k: ks.k, rotulo: ks.rotulo };
+        }
+
+        function lerIGSemanas() {
+            const campo = document.getElementById("igSemanas");
+            return campo ? parseFloat(campo.value) : NaN;
+        }
+
+        function textoKSchwartz(ks) {
+            return `${ks.k} (${ks.rotulo})`;
+        }
+
+        function atualizarClassificacaoIG() {
+            const alvo = document.getElementById("igClassificacao");
+            if (!alvo) return;
+            const ks = obterKSchwartz("neonatal", lerIGSemanas());
+            alvo.innerHTML = ks
+                ? `<strong>Constante de Schwartz (k):</strong> ${textoKSchwartz(ks)}`
+                : MSG_IG_INVALIDA;
         }
 
         function calcular() {
@@ -481,7 +521,12 @@
                 return;
             }
 
-            clearance = calcularClearanceSchwartz(faixa, altura, creat);
+            const schwartz = calcularClearanceSchwartz(faixa, altura, creat, lerIGSemanas());
+            if (!schwartz) {
+                alert(MSG_IG_INVALIDA);
+                return;
+            }
+            clearance = schwartz.clearance;
 
             const kel = Math.log(cpeak / ctrough) / t;
             const vd = faixa === "neonatal" ? 0.9 * parseFloat(document.getElementById("peso").value) : 0.7 * clearance;
@@ -490,6 +535,7 @@
             document.getElementById("resultado").innerHTML = `
                 <div class="results">
                     <h3>Resultados</h3>
+                    <div class="result-item"><strong>Constante de Schwartz (k):</strong> ${textoKSchwartz(schwartz)}</div>
                     <div class="result-item"><strong>Clearance estimado:</strong> ${clearance.toFixed(2)} mL/min/1,73 m²</div>
                     <div class="result-item"><strong>Volume de distribuicao (Vd):</strong> ${vd.toFixed(2)} L</div>
                     <div class="result-item"><strong>Taxa de eliminacao (kel):</strong> ${kel.toFixed(4)} 1/h</div>
@@ -552,7 +598,18 @@ ${interpretarResultados(clearance, vd, kel, auc)}
             const t = parseFloat(document.getElementById("t").value);
             const tau = parseFloat(document.getElementById("tau").value);
 
-            let clearance = 0;
+            const igSemanas = lerIGSemanas();
+            const schwartz = calcularClearanceSchwartz(
+                faixa,
+                parseFloat(document.getElementById("altura").value),
+                parseFloat(document.getElementById("creatinina").value),
+                igSemanas
+            );
+            if (!schwartz) {
+                alert(MSG_IG_INVALIDA);
+                return;
+            }
+            const clearance = schwartz.clearance;
             let dadosPaciente = "";
 
             if (faixa === "crianca") {
@@ -560,7 +617,6 @@ ${interpretarResultados(clearance, vd, kel, auc)}
                 const altura = parseFloat(document.getElementById("altura").value);
                 const peso = parseFloat(document.getElementById("peso").value);
                 const creat = parseFloat(document.getElementById("creatinina").value);
-                clearance = calcularClearanceSchwartz(faixa, altura, creat);
 
                 dadosPaciente = `DADOS DO PACIENTE:
 - Faixa etaria: Crianca
@@ -573,11 +629,11 @@ ${interpretarResultados(clearance, vd, kel, auc)}
                 const peso = parseFloat(document.getElementById("peso").value);
                 const comprimento = parseFloat(document.getElementById("altura").value);
                 const creat = parseFloat(document.getElementById("creatinina").value);
-                clearance = calcularClearanceSchwartz(faixa, comprimento, creat);
 
                 dadosPaciente = `DADOS DO PACIENTE:
 - Faixa etaria: Recem-nascido
 - Idade pos-natal: ${idadeDias.toFixed(1)} dias
+- Idade gestacional ao nascer: ${igSemanas.toFixed(1)} semanas
 - Peso: ${peso.toFixed(3)} kg
 - Comprimento: ${comprimento.toFixed(1)} cm
 - Creatinina serica: ${creat.toFixed(2)} mg/dL`;
@@ -631,6 +687,7 @@ PARAMETROS FARMACOCINETICOS:
 - Intervalo de dosagem: ${tau.toFixed(0)} horas
 
 RESULTADOS CALCULADOS:
+- Constante de Schwartz (k): ${textoKSchwartz(schwartz)}
 - Clearance estimado: ${clearance.toFixed(2)} mL/min/1,73 m²
 - Volume de distribuicao (Vd): ${vd.toFixed(2)} L
 - Taxa de eliminacao (kel): ${kel.toFixed(4)} 1/h
@@ -700,7 +757,8 @@ Gerado por: NeoPedCalc - VancoCalc
                 <div class="formula-box">
                     <strong>1. Clearance (CL):</strong><br>
                     Criança: CL = (0.413 × Altura) / Creatinina<br>
-                    Neonato: CL = (0.33 × Comprimento) / Creatinina<br>
+                    Neonato: CL = (k × Comprimento) / Creatinina<br>
+                    k = 0.33 pré-termo (IG ao nascer < 37 semanas); k = 0.45 termo (IG ao nascer ≥ 37 semanas)<br>
                     (Schwartz; altura/comprimento em cm, creatinina em mg/dL; resultado em mL/min/1,73 m²)<br><br>
 
                     <strong>2. Taxa de Eliminação (kel):</strong><br>
@@ -720,7 +778,7 @@ Gerado por: NeoPedCalc - VancoCalc
                     <li><strong>Preencha os dados do paciente:</strong>
                         <ul>
                             <li>Criança: Idade (anos), Altura (cm), Peso (kg), Creatinina sérica (mg/dL)</li>
-                            <li>Neonato: Idade pós-natal (dias), Peso (kg), Comprimento (cm), Creatinina sérica (mg/dL)</li>
+                            <li>Neonato: Idade pós-natal (dias), Idade gestacional ao nascer (semanas), Peso (kg), Comprimento (cm), Creatinina sérica (mg/dL)</li>
                         </ul>
                     </li>
                     <li><strong>Informe os níveis séricos:</strong>

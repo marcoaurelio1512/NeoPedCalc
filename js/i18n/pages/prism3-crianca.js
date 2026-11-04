@@ -5,10 +5,6 @@
   i18n.register({
     // Título e cabeçalho
     'NeoPedCalc — PRISM III pediátrico (educativo)': ['NeoPedCalc — Pediatric PRISM III (educational)', 'NeoPedCalc — PRISM III pediátrico (educativo)'],
-    'Apoio educativo: escore PRISM III publicado (Pollack et al., 1996) com os piores valores das primeiras 12 horas em UTI pediátrica': [
-      'Educational support: published PRISM III score (Pollack et al., 1996) using the worst values of the first 12 hours in the pediatric ICU',
-      'Apoyo educativo: puntuación PRISM III publicada (Pollack et al., 1996) con los peores valores de las primeras 12 horas en la UCI pediátrica'
-    ],
     'Como usar': ['How to use', 'Cómo usar'],
 
     // Dados do paciente
@@ -29,9 +25,6 @@
     'Faixa etária PRISM III': ['PRISM III age group', 'Grupo etario PRISM III'],
     'Selecione': ['Select', 'Seleccione'],
     'Neonato (0 a <1 mês)': ['Neonate (0 to <1 month)', 'Neonato (0 a <1 mes)'],
-    'Lactente (1 a 12 meses)': ['Infant (1 to 12 months)', 'Lactante (1 a 12 meses)'],
-    'Criança (>12 meses a 12 anos)': ['Child (>12 months to 12 years)', 'Niño (>12 meses a 12 años)'],
-    'Adolescente (>12 anos)': ['Adolescent (>12 years)', 'Adolescente (>12 años)'],
     'preenchida automaticamente pela data de nascimento; pode ser ajustada': [
       'filled in automatically from the date of birth; can be adjusted',
       'se completa automáticamente a partir de la fecha de nacimiento; puede ajustarse'
@@ -42,10 +35,6 @@
     'Informações Importantes': ['Important Information', 'Información importante'],
     'Informe os': ['Enter the', 'Indique los'],
     'piores valores': ['worst values', 'peores valores'],
-    'do período escolhido (PRISM III-12: primeiras 12 horas de internação na UTI pediátrica). Campos em branco são considerados normais (0 ponto). Os pontos de corte de PAS, frequência cardíaca, creatinina, BUN e TTPa dependem da faixa etária.': [
-      'of the selected period (PRISM III-12: first 12 hours of pediatric ICU stay). Blank fields are considered normal (0 points). The SBP, heart rate, creatinine, BUN and PTT cutoffs depend on the age group.',
-      'del período elegido (PRISM III-12: primeras 12 horas de internación en la UCI pediátrica). Los campos en blanco se consideran normales (0 puntos). Los puntos de corte de PAS, frecuencia cardíaca, creatinina, BUN y TTPa dependen del grupo etario.'
-    ],
     'Período de observação': ['Observation period', 'Período de observación'],
     'PRISM III-12 (primeiras 12 h)': ['PRISM III-12 (first 12 h)', 'PRISM III-12 (primeras 12 h)'],
     'PRISM III-24 (primeiras 24 h)': ['PRISM III-24 (first 24 h)', 'PRISM III-24 (primeras 24 h)'],
@@ -66,13 +55,10 @@
     'Ácido-base / Gasometria': ['Acid-base / Blood gases', 'Ácido-base / Gasometría'],
     'pH mínimo': ['Lowest pH', 'pH mínimo'],
     'pH máximo': ['Highest pH', 'pH máximo'],
-    'pior acidose': ['worst acidosis', 'peor acidosis'],
-    'pior alcalose': ['worst alkalosis', 'peor alcalosis'],
     'CO₂ total mínimo': ['Lowest total CO₂', 'CO₂ total mínimo'],
     'CO₂ total máximo': ['Highest total CO₂', 'CO₂ total máximo'],
     'PCO₂ máxima': ['Highest PCO₂', 'PCO₂ máxima'],
     'PaO₂ mínima': ['Lowest PaO₂', 'PaO₂ mínima'],
-    'mmHg (sangue arterial)': ['mmHg (arterial blood)', 'mmHg (sangre arterial)'],
     'Bioquímica': ['Chemistry', 'Bioquímica'],
     'Glicose máxima': ['Highest glucose', 'Glucosa máxima'],
     'Potássio máximo': ['Highest potassium', 'Potasio máximo'],
@@ -148,34 +134,19 @@
     ],
     'Como o escore é calculado': ['How the score is calculated', 'Cómo se calcula la puntuación'],
     'PRISM III = subescore neurológico + subescore não neurológico': ['PRISM III = neurologic subscore + non-neurologic subscore', 'PRISM III = subpuntuación neurológica + subpuntuación no neurológica'],
-    'Use os piores valores das primeiras 12 horas na UTI pediátrica (PRISM III-12). A opção PRISM III-24 usa as primeiras 24 horas com a mesma pontuação.': [
-      'Use the worst values of the first 12 hours in the pediatric ICU (PRISM III-12). The PRISM III-24 option uses the first 24 hours with the same scoring.',
-      'Utilice los peores valores de las primeras 12 horas en la UCI pediátrica (PRISM III-12). La opción PRISM III-24 usa las primeras 24 horas con la misma puntuación.'
-    ],
     'Subescore neurológico: estado mental + reflexos pupilares.': ['Neurologic subscore: mental status + pupillary reflexes.', 'Subpuntuación neurológica: estado mental + reflejos pupilares.'],
     'Subescore não neurológico: demais variáveis.': ['Non-neurologic subscore: all other variables.', 'Subpuntuación no neurológica: las demás variables.'],
     'Cada variável pontua uma única vez; campos em branco valem 0 ponto.': ['Each variable is scored only once; blank fields score 0 points.', 'Cada variable puntúa una sola vez; los campos en blanco valen 0 puntos.'],
     'Faixas etárias': ['Age groups', 'Grupos etarios'],
-    'Neonato: 0 a <1 mês': ['Neonate: 0 to <1 month', 'Neonato: 0 a <1 mes'],
-    'Lactente: 1 a 12 meses': ['Infant: 1 to 12 months', 'Lactante: 1 a 12 meses'],
-    'Criança: >12 meses a 12 anos': ['Child: >12 months to 12 years', 'Niño: >12 meses a 12 años'],
-    'Adolescente: >12 anos': ['Adolescent: >12 years', 'Adolescente: >12 años'],
     'PAS (mmHg):': ['Systolic BP (mmHg):', 'PAS (mmHg):'],
     'neonato 40-55 = 3, <40 = 7; lactente 45-65 = 3, <45 = 7; criança 55-75 = 3, <55 = 7; adolescente 65-85 = 3, <65 = 7': [
       'neonate 40-55 = 3, <40 = 7; infant 45-65 = 3, <45 = 7; child 55-75 = 3, <55 = 7; adolescent 65-85 = 3, <65 = 7',
       'neonato 40-55 = 3, <40 = 7; lactante 45-65 = 3, <45 = 7; niño 55-75 = 3, <55 = 7; adolescente 65-85 = 3, <65 = 7'
     ],
     'Temperatura:': ['Temperature:', 'Temperatura:'],
-    '<33 °C ou >40 °C = 3': ['<33 °C or >40 °C = 3', '<33 °C o >40 °C = 3'],
     'Estado mental:': ['Mental status:', 'Estado mental:'],
-    'estupor/coma (Glasgow < 8) = 5': ['stupor/coma (GCS < 8) = 5', 'estupor/coma (Glasgow < 8) = 5'],
     'Frequência cardíaca (bpm):': ['Heart rate (bpm):', 'Frecuencia cardíaca (lpm):'],
-    'neonato e lactente 215-225 = 3, >225 = 4; criança 185-205 = 3, >205 = 4; adolescente 145-155 = 3, >155 = 4': [
-      'neonate and infant 215-225 = 3, >225 = 4; child 185-205 = 3, >205 = 4; adolescent 145-155 = 3, >155 = 4',
-      'neonato y lactante 215-225 = 3, >225 = 4; niño 185-205 = 3, >205 = 4; adolescente 145-155 = 3, >155 = 4'
-    ],
     'Reflexos pupilares:': ['Pupillary reflexes:', 'Reflejos pupilares:'],
-    'uma pupila fixa = 7; ambas fixas = 11': ['one fixed pupil = 7; both fixed = 11', 'una pupila fija = 7; ambas fijas = 11'],
     'Acidose:': ['Acidosis:', 'Acidosis:'],
     'pH 7,0-7,28 ou CO₂ total 5-16,9 mmol/L = 2; pH <7,0 ou CO₂ total <5 mmol/L = 6 (conta-se apenas o pior dos dois)': [
       'pH 7.0-7.28 or total CO₂ 5-16.9 mmol/L = 2; pH <7.0 or total CO₂ <5 mmol/L = 6 (only the worse of the two is counted)',
@@ -188,7 +159,6 @@
     'CO₂ total:': ['Total CO₂:', 'CO₂ total:'],
     '>34 mmol/L = 4': ['>34 mmol/L = 4', '>34 mmol/L = 4'],
     'PaO₂ (mmHg):': ['PaO₂ (mmHg):', 'PaO₂ (mmHg):'],
-    '42-49,9 = 3; <42 = 6': ['42-49.9 = 3; <42 = 6', '42-49,9 = 3; <42 = 6'],
     'Glicose:': ['Glucose:', 'Glucosa:'],
     '>200 mg/dL (>11,0 mmol/L) = 2': ['>200 mg/dL (>11.0 mmol/L) = 2', '>200 mg/dL (>11,0 mmol/L) = 2'],
     'Potássio:': ['Potassium:', 'Potasio:'],
@@ -199,10 +169,6 @@
       'neonato >0,85 mg/dL = 2; lactante y niño >0,90 mg/dL = 2; adolescente >1,30 mg/dL = 2'
     ],
     'BUN:': ['BUN:', 'BUN:'],
-    'neonato >11,9 mg/dL = 3; demais faixas >14,9 mg/dL = 3 (ureia ÷ 2,14 ≈ BUN)': [
-      'neonate >11.9 mg/dL = 3; other age groups >14.9 mg/dL = 3 (urea ÷ 2.14 ≈ BUN)',
-      'neonato >11,9 mg/dL = 3; demás grupos >14,9 mg/dL = 3 (urea ÷ 2,14 ≈ BUN)'
-    ],
     'Leucócitos:': ['WBC count:', 'Leucocitos:'],
     '<3.000/mm³ = 4': ['<3,000/mm³ = 4', '<3.000/mm³ = 4'],
     'TP ou TTPa:': ['PT or PTT:', 'TP o TTPa:'],
@@ -282,7 +248,147 @@
     'Escores mais altos indicam maior risco de mortalidade.': ['Higher scores indicate a higher risk of mortality.', 'Las puntuaciones más altas indican mayor riesgo de mortalidad.'],
     'Campos nao informados foram considerados normais (0 ponto).': ['Fields not entered were considered normal (0 points).', 'Los campos no informados se consideraron normales (0 puntos).'],
     'Observacoes': ['Notes', 'Observaciones'],
-    'Referencia': ['Reference', 'Referencia']
+    'Referencia': ['Reference', 'Referencia'],
+    'Apoio educativo: escore PRISM III publicado (Pollack et al., 1996) com os piores valores das primeiras 12 ou 24 horas em UTI pediátrica': [
+      'Educational support: published PRISM III score (Pollack et al., 1996) using the worst values of the first 12 or 24 hours in the pediatric ICU',
+      'Apoyo educativo: puntuación PRISM III publicada (Pollack et al., 1996) con los peores valores de las primeras 12 o 24 horas en la UCI pediátrica'
+    ],
+    'Lactente (≥ 1 a 12 meses)': [
+      'Infant (≥ 1 to 12 months)',
+      'Lactante (≥ 1 a 12 meses)'
+    ],
+    'Criança (> 12 a 144 meses)': [
+      'Child (> 12 to 144 months)',
+      'Niño (> 12 a 144 meses)'
+    ],
+    'Adolescente (> 144 meses)': [
+      'Adolescent (> 144 months)',
+      'Adolescente (> 144 meses)'
+    ],
+    '(mais anormais) do período escolhido: primeiras 12 horas (PRISM III-12) ou primeiras 24 horas (PRISM III-24) de internação na UTI pediátrica. Campos em branco são considerados normais (0 ponto). Os pontos de corte de PAS, frequência cardíaca, creatinina, BUN e TTPa dependem da faixa etária.': [
+      '(most abnormal) of the selected period: first 12 hours (PRISM III-12) or first 24 hours (PRISM III-24) of pediatric ICU stay. Blank fields are considered normal (0 points). The SBP, heart rate, creatinine, BUN and PTT cutoffs depend on the age group.',
+      '(más anormales) del período elegido: primeras 12 horas (PRISM III-12) o primeras 24 horas (PRISM III-24) de internación en la UCI pediátrica. Los campos en blanco se consideran normales (0 puntos). Los puntos de corte de PAS, frecuencia cardíaca, creatinina, BUN y TTPa dependen del grupo etario.'
+    ],
+    'bpm; não avaliar durante choro ou agitação iatrogênica': [
+      'bpm; do not assess during crying or iatrogenic agitation',
+      'lpm; no evaluar durante el llanto o la agitación iatrogénica'
+    ],
+    '°C (retal, oral, sanguínea ou axilar)': [
+      '°C (rectal, oral, blood or axillary)',
+      '°C (rectal, oral, sanguínea o axilar)'
+    ],
+    'Só em doença aguda do SNC conhecida ou suspeita; não avaliar até 2 h após sedação, paralisia ou anestesia (se contínuas, use o estado anterior a elas)': [
+      'Only with known or suspected acute CNS disease; do not assess within 2 h of sedation, paralysis or anesthesia (if continuous, use the status before them)',
+      'Solo con enfermedad aguda del SNC conocida o sospechada; no evaluar hasta 2 h después de sedación, parálisis o anestesia (si son continuas, use el estado previo a ellas)'
+    ],
+    'Pupila fixa = > 3 mm e não reativa; não avaliar após dilatação pupilar iatrogênica (fármacos)': [
+      'Fixed pupil = > 3 mm and nonreactive; do not assess after iatrogenic pupillary dilation (drugs)',
+      'Pupila fija = > 3 mm y no reactiva; no evaluar tras dilatación pupilar iatrogénica (fármacos)'
+    ],
+    'pior acidose (arterial, venoso ou capilar)': [
+      'worst acidosis (arterial, venous or capillary)',
+      'peor acidosis (arterial, venoso o capilar)'
+    ],
+    'pior alcalose (arterial, venoso ou capilar)': [
+      'worst alkalosis (arterial, venous or capillary)',
+      'peor alcalosis (arterial, venoso o capilar)'
+    ],
+    'mmHg (arterial, venosa ou capilar)': [
+      'mmHg (arterial, venous or capillary)',
+      'mmHg (arterial, venosa o capilar)'
+    ],
+    'mmHg (apenas sangue arterial)': [
+      'mmHg (arterial blood only)',
+      'mmHg (solo sangre arterial)'
+    ],
+    'Conversão de unidade para laboratórios que informam ureia; não faz parte do PRISM III': [
+      'Unit conversion for laboratories that report urea; not part of PRISM III',
+      'Conversión de unidades para laboratorios que informan urea; no forma parte del PRISM III'
+    ],
+    'Use os piores valores (mais anormais) das primeiras 12 horas na UTI pediátrica (PRISM III-12) ou das primeiras 24 horas (PRISM III-24); a pontuação das variáveis é a mesma nos dois períodos.': [
+      'Use the worst (most abnormal) values of the first 12 hours in the pediatric ICU (PRISM III-12) or of the first 24 hours (PRISM III-24); variable scoring is the same in both periods.',
+      'Utilice los peores valores (más anormales) de las primeras 12 horas en la UCI pediátrica (PRISM III-12) o de las primeras 24 horas (PRISM III-24); la puntuación de las variables es la misma en ambos períodos.'
+    ],
+    'Neonato: 0 a < 1 mês': [
+      'Neonate: 0 to < 1 month',
+      'Neonato: 0 a < 1 mes'
+    ],
+    'Lactente: ≥ 1 a ≤ 12 meses': [
+      'Infant: ≥ 1 to ≤ 12 months',
+      'Lactante: ≥ 1 a ≤ 12 meses'
+    ],
+    'Criança: > 12 a ≤ 144 meses': [
+      'Child: > 12 to ≤ 144 months',
+      'Niño: > 12 a ≤ 144 meses'
+    ],
+    'Adolescente: > 144 meses': [
+      'Adolescent: > 144 months',
+      'Adolescente: > 144 meses'
+    ],
+    '<33 °C ou >40 °C = 3 (retal, oral, sanguínea ou axilar)': [
+      '<33 °C or >40 °C = 3 (rectal, oral, blood or axillary)',
+      '<33 °C o >40 °C = 3 (rectal, oral, sanguínea o axilar)'
+    ],
+    'estupor/coma (Glasgow < 8) = 5. Avaliar só em doença aguda do SNC conhecida ou suspeita; não avaliar até 2 h após sedação, paralisia ou anestesia; se contínuas, use o estado imediatamente anterior a elas': [
+      'stupor/coma (GCS < 8) = 5. Assess only with known or suspected acute CNS disease; do not assess within 2 h of sedation, paralysis or anesthesia; if continuous, use the status immediately before them',
+      'estupor/coma (Glasgow < 8) = 5. Evaluar solo con enfermedad aguda del SNC conocida o sospechada; no evaluar hasta 2 h después de sedación, parálisis o anestesia; si son continuas, use el estado inmediatamente previo a ellas'
+    ],
+    'neonato e lactente 215-225 = 3, >225 = 4; criança 185-205 = 3, >205 = 4; adolescente 145-155 = 3, >155 = 4 (não avaliar durante choro ou agitação iatrogênica)': [
+      'neonate and infant 215-225 = 3, >225 = 4; child 185-205 = 3, >205 = 4; adolescent 145-155 = 3, >155 = 4 (do not assess during crying or iatrogenic agitation)',
+      'neonato y lactante 215-225 = 3, >225 = 4; niño 185-205 = 3, >205 = 4; adolescente 145-155 = 3, >155 = 4 (no evaluar durante el llanto o la agitación iatrogénica)'
+    ],
+    'uma pupila fixa = 7; ambas fixas = 11. Pupila fixa = > 3 mm e não reativa; não avaliar após dilatação pupilar iatrogênica': [
+      'one fixed pupil = 7; both fixed = 11. Fixed pupil = > 3 mm and nonreactive; do not assess after iatrogenic pupillary dilation',
+      'una pupila fija = 7; ambas fijas = 11. Pupila fija = > 3 mm y no reactiva; no evaluar tras dilatación pupilar iatrogénica'
+    ],
+    '42-49,9 = 3; <42 = 6 (apenas sangue arterial)': [
+      '42-49.9 = 3; <42 = 6 (arterial blood only)',
+      '42-49,9 = 3; <42 = 6 (solo sangre arterial)'
+    ],
+    'pH e PCO₂ podem ser arteriais, venosos ou capilares': [
+      'pH and PCO₂ may be arterial, venous or capillary',
+      'El pH y la PCO₂ pueden ser arteriales, venosos o capilares'
+    ],
+    'neonato >11,9 mg/dL = 3; demais faixas >14,9 mg/dL = 3': [
+      'neonate >11.9 mg/dL = 3; other age groups >14.9 mg/dL = 3',
+      'neonato >11,9 mg/dL = 3; demás grupos >14,9 mg/dL = 3'
+    ],
+    'Ureia:': [
+      'Urea:',
+      'Urea:'
+    ],
+    'se o laboratório informa ureia, a página converte BUN = ureia ÷ 2,14. É apenas uma conversão de unidade, não faz parte do PRISM III': [
+      'if the laboratory reports urea, the page converts BUN = urea ÷ 2.14. This is only a unit conversion, not part of PRISM III',
+      'si el laboratorio informa urea, la página convierte BUN = urea ÷ 2,14. Es solo una conversión de unidades, no forma parte del PRISM III'
+    ],
+    'Critérios de exclusão (Pollack et al.)': [
+      'Exclusion criteria (Pollack et al.)',
+      'Criterios de exclusión (Pollack et al.)'
+    ],
+    'Permanência na UTI pediátrica < 2 horas': [
+      'Pediatric ICU stay < 2 hours',
+      'Estancia en la UCI pediátrica < 2 horas'
+    ],
+    'Admissão em RCP contínua sem obter sinais vitais estáveis por pelo menos 2 horas': [
+      'Admission in continuous CPR without achieving stable vital signs for at least 2 hours',
+      'Ingreso en RCP continua sin lograr signos vitales estables durante al menos 2 horas'
+    ],
+    'Admissões de rotina que poderiam ser cuidadas em outro setor do hospital': [
+      'Routine admissions that could be cared for in another hospital location',
+      'Ingresos de rutina que podrían atenderse en otro sector del hospital'
+    ],
+    'Pacientes readmitidos são pontuados como novos pacientes': [
+      'Readmitted patients are scored as new patients',
+      'Los pacientes reingresados se puntúan como pacientes nuevos'
+    ],
+    'Definicoes (Pollack 1996): pupila fixa = > 3 mm e nao reativa (nao avaliar apos dilatacao iatrogenica); estupor/coma = Glasgow < 8 (nao avaliar ate 2 h apos sedacao, paralisia ou anestesia': [
+      'Definitions (Pollack 1996): fixed pupil = > 3 mm and nonreactive (do not assess after iatrogenic dilation); stupor/coma = GCS < 8 (do not assess within 2 h of sedation, paralysis or anesthesia',
+      'Definiciones (Pollack 1996): pupila fija = > 3 mm y no reactiva (no evaluar tras dilatación iatrogénica); estupor/coma = Glasgow < 8 (no evaluar hasta 2 h después de sedación, parálisis o anestesia'
+    ],
+    'Ureia convertida em BUN (ureia / 2,14): conversao de unidade, nao faz parte do PRISM III': [
+      'Urea converted to BUN (urea / 2.14): unit conversion, not part of PRISM III',
+      'Urea convertida en BUN (urea / 2,14): conversión de unidades, no forma parte del PRISM III'
+    ]
   });
   // Linhas do relatório "- rótulo: valor = N pts" (rótulos com números/parênteses não passam pelos fallbacks).
   var esc = function (x) { return x.replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&'); };
@@ -295,9 +401,9 @@
   };
   i18n.registerPatterns([
     [/^- Faixa etaria: Neonato \(0 a <1 mês\)$/, '- Age group: Neonate (0 to <1 month)', '- Grupo etario: Neonato (0 a <1 mes)'],
-    [/^- Faixa etaria: Lactente \(1 a 12 meses\)$/, '- Age group: Infant (1 to 12 months)', '- Grupo etario: Lactante (1 a 12 meses)'],
-    [/^- Faixa etaria: Criança \(>12 meses a 12 anos\)$/, '- Age group: Child (>12 months to 12 years)', '- Grupo etario: Niño (>12 meses a 12 años)'],
-    [/^- Faixa etaria: Adolescente \(>12 anos\)$/, '- Age group: Adolescent (>12 years)', '- Grupo etario: Adolescente (>12 años)'],
+    [/^- Faixa etaria: Lactente \(≥ 1 a 12 meses\)$/, '- Age group: Infant (≥ 1 to 12 months)', '- Grupo etario: Lactante (≥ 1 a 12 meses)'],
+    [/^- Faixa etaria: Criança \(> 12 a 144 meses\)$/, '- Age group: Child (> 12 to 144 months)', '- Grupo etario: Niño (> 12 a 144 meses)'],
+    [/^- Faixa etaria: Adolescente \(> 144 meses\)$/, '- Age group: Adolescent (> 144 months)', '- Grupo etario: Adolescente (> 144 meses)'],
     linha('Estado mental', 'Mental status', 'Estado mental', 'Estupor/coma (Glasgow < 8)', 'Stupor/coma (GCS < 8)', 'Estupor/coma (Glasgow < 8)'),
     linha('Estado mental', 'Mental status', 'Estado mental', 'Normal ou Glasgow ≥ 8', 'Normal or GCS ≥ 8', 'Normal o Glasgow ≥ 8'),
     linha('Reflexos pupilares', 'Pupillary reflexes', 'Reflejos pupilares', 'Ambas reativas', 'Both reactive', 'Ambas reactivas'),

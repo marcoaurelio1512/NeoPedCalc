@@ -245,33 +245,6 @@
             color: var(--primary-color);
         }
 
-        .risk-indicator {
-            display: inline-block;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .risk-low {
-            background: rgba(39, 174, 96, 0.1);
-            color: var(--success-color);
-            border: 2px solid rgba(39, 174, 96, 0.3);
-        }
-
-        .risk-medium {
-            background: rgba(243, 156, 18, 0.1);
-            color: var(--warning-color);
-            border: 2px solid rgba(243, 156, 18, 0.3);
-        }
-
-        .risk-high {
-            background: rgba(231, 76, 60, 0.1);
-            color: var(--danger-color);
-            border: 2px solid rgba(231, 76, 60, 0.3);
-        }
 
         .report-section {
             background: var(--card-background);
@@ -615,7 +588,7 @@
                 <div class="form-group">
                     <label for="dia_uti">Dia de UTI</label>
                     <input type="number" id="dia_uti" min="1" max="120" step="1" placeholder="Ex.: 1">
-                    <span class="unit">dias</span>
+                    <span class="unit">dias contados em intervalos de 24 h desde a admissão (dia 1 = primeiras 24 h)</span>
                 </div>
             </div>
         </div>
@@ -625,7 +598,7 @@
             
             <div class="info-box">
                 <h4>Informações importantes</h4>
-                <p>O PELOD-2 deve ser calculado com base nos <strong>piores valores do dia</strong> para cada variável. Para cada parâmetro, use o valor que representa a maior disfunção observada durante as 24 horas. Você pode inserir valores únicos ou listas separadas por vírgula — o sistema seleciona automaticamente o pior valor conforme a regra (mínimo ou máximo, conforme o parâmetro).</p>
+                <p>O PELOD-2 deve ser calculado com base nos <strong>piores valores do dia</strong> para cada variável: se uma variável foi medida mais de uma vez no intervalo de 24 horas, use o pior valor; se não foi medida, ela é considerada normal (Leteurtre et al., 2013). Você pode inserir valores únicos ou listas separadas por vírgula — o sistema seleciona automaticamente o pior valor conforme a regra (mínimo ou máximo, conforme o parâmetro).</p>
                 <p style="margin-top:10px;"><strong>Uso desta tela:</strong> apoio ao ensino e registro informativo. O número percentual associado ao total é uma <strong>transformação logística do escore</strong> derivada da publicação de referência — <strong>não é probabilidade clínica individual</strong> nem critério isolado de conduta.</p>
             </div>
 
@@ -634,16 +607,17 @@
                 <div class="form-group">
                     <label for="gcs">Escala de Coma de Glasgow (GCS)</label>
                     <input type="text" id="gcs" placeholder="Ex.: 7 ou lista: 9,7,8">
-                    <span class="unit">pior valor do dia (quanto menor, pior)</span>
+                    <span class="unit">menor valor do dia; se sedado, registre o Glasgow estimado antes da sedação; avaliar só em doença aguda do SNC conhecida ou suspeita</span>
                 </div>
                 <div class="form-group">
                     <label for="pupilas">Reação pupilar</label>
                     <select id="pupilas">
                         <option value="">Selecione</option>
                         <option value="reativas">Ambas reativas</option>
+                        <option value="uma">Uma fixa, outra reativa</option>
                         <option value="fixas">Ambas fixas</option>
                     </select>
-                    <span class="unit">pupilas fixas bilateralmente pontuam 5</span>
+                    <span class="unit">só ambas fixas pontuam 5; uma pupila fixa pontua 0. Pupila não reativa deve ter &gt; 3 mm; não avaliar após dilatação pupilar iatrogênica</span>
                 </div>
             </div>
 
@@ -652,7 +626,7 @@
                 <div class="form-group">
                     <label for="map">Pressão Arterial Média (PAM)</label>
                     <input type="text" id="map" placeholder="Ex.: 48 ou lista: 55,48,52">
-                    <span class="unit">mmHg (pior valor do dia)</span>
+                    <span class="unit">mmHg (pior valor do dia); não avaliar durante choro ou agitação iatrogênica</span>
                 </div>
                 <div class="form-group">
                     <label for="lactate">Lactato</label>
@@ -666,7 +640,7 @@
                 <div class="form-group">
                     <label for="pao2">PaO₂</label>
                     <input type="text" id="pao2" placeholder="Ex.: 70 ou lista: 85,70,90">
-                    <span class="unit">mmHg (pior valor do dia)</span>
+                    <span class="unit">mmHg, apenas sangue arterial (pior valor do dia)</span>
                 </div>
                 <div class="form-group">
                     <label for="fio2">FiO₂</label>
@@ -676,7 +650,7 @@
                 <div class="form-group">
                     <label for="paco2">PaCO₂</label>
                     <input type="text" id="paco2" placeholder="Ex.: 60 ou lista: 50,60,55">
-                    <span class="unit">mmHg (pior valor do dia)</span>
+                    <span class="unit">mmHg, arterial, capilar ou venosa (pior valor do dia)</span>
                 </div>
                 <div class="form-group">
                     <label for="ventilacao">Ventilação invasiva</label>
@@ -685,7 +659,15 @@
                         <option value="nao">Não</option>
                         <option value="sim">Sim</option>
                     </select>
-                    <span class="unit">ventilação mecânica invasiva (intubação ou traqueostomia)</span>
+                    <span class="unit">ventilação mecânica invasiva (intubação ou traqueostomia); ventilação por máscara não é considerada invasiva</span>
+                </div>
+                <div class="form-group">
+                    <label for="cianotica">Cardiopatia cianótica?</label>
+                    <select id="cianotica">
+                        <option value="nao">Não</option>
+                        <option value="sim">Sim</option>
+                    </select>
+                    <span class="unit">na cardiopatia cianótica, a relação PaO₂/FiO₂ é considerada normal (0 ponto)</span>
                 </div>
             </div>
 
@@ -721,7 +703,7 @@
 
             <div class="form-group">
                 <label for="obs">Observações</label>
-                <input type="text" id="obs" placeholder="Sedação? Ventilação? Contexto clínico">
+                <input type="text" id="obs" placeholder="Contexto clínico, medicações, etc.">
             </div>
 
             <div class="button-group">
@@ -770,7 +752,7 @@
                     <strong>Total = pontos neurológicos + cardiovasculares + renais + respiratórios + hematológicos</strong> (10 variáveis, total de 0 a 33 pontos; Leteurtre et al., 2013).<br><br>
                     <strong>Neurológico</strong><br>
                     • Glasgow: ≥ 11 = 0; 5–10 = 1; 3–4 = 4<br>
-                    • Reação pupilar: ambas reativas = 0; ambas fixas = 5<br><br>
+                    • Reação pupilar: ambas reativas = 0; ambas fixas = 5 (uma pupila fixa = 0)<br><br>
                     <strong>Cardiovascular</strong><br>
                     • Lactato (mmol/L): &lt; 5,0 = 0; 5,0–10,9 = 1; ≥ 11,0 = 4<br>
                     • PAM (mmHg) por faixa etária, pontos 0 / 2 / 3 / 6:<br>
@@ -783,7 +765,7 @@
                     <strong>Renal</strong><br>
                     • Creatinina (µmol/L) ≥ limiar da idade = 2, abaixo = 0: 0 a &lt; 1 mês ≥ 70; 1–11 meses ≥ 23; 12–23 meses ≥ 35; 24–59 meses ≥ 51; 60–143 meses ≥ 59; ≥ 144 meses ≥ 93 (mg/dL × 88,4 = µmol/L)<br><br>
                     <strong>Respiratório</strong><br>
-                    • PaO₂ (mmHg)/FiO₂: ≥ 61 = 0; ≤ 60 = 2<br>
+                    • PaO₂ (mmHg)/FiO₂: ≥ 61 = 0; ≤ 60 = 2 (considerada normal na cardiopatia cianótica)<br>
                     • PaCO₂ (mmHg): ≤ 58 = 0; 59–94 = 1; ≥ 95 = 3<br>
                     • Ventilação invasiva: não = 0; sim = 3<br><br>
                     <strong>Hematológico</strong><br>
@@ -793,9 +775,21 @@
                     <strong>Variável não informada:</strong> conta 0 ponto e é listada abaixo do resultado.
                 </div>
 
+                <h3>Regras de coleta (Leteurtre et al., 2013, Tabela 6)</h3>
+                <ul>
+                    <li><strong>Janela:</strong> pior valor de cada variável no dia da avaliação (intervalos de 24 h contados desde a admissão). Variável não medida é considerada normal.</li>
+                    <li><strong>Dias:</strong> o estudo de derivação coletou os dias 1, 2, 5, 8, 12, 16 e 18 e a alta da UTI; o PELOD-2 pode ser calculado diariamente.</li>
+                    <li><strong>Glasgow:</strong> use o menor valor; se o paciente estiver sedado, registre o Glasgow estimado antes da sedação. Avalie apenas pacientes com doença aguda do SNC conhecida ou suspeita.</li>
+                    <li><strong>Pupilas:</strong> pupila não reativa deve ter &gt; 3 mm; não avaliar após dilatação pupilar iatrogênica. Apenas ambas fixas pontuam (5); uma pupila fixa pontua 0.</li>
+                    <li><strong>PAM:</strong> não avaliar durante choro ou agitação iatrogênica.</li>
+                    <li><strong>PaO₂:</strong> apenas sangue arterial; a relação PaO₂/FiO₂ é considerada normal na cardiopatia cianótica. <strong>PaCO₂:</strong> arterial, capilar ou venosa.</li>
+                    <li><strong>Ventilação invasiva:</strong> ventilação por máscara não é considerada invasiva.</li>
+                    <li><strong>População do estudo:</strong> foram excluídos maiores de 18 anos e recém-nascidos prematuros (&lt; 37 semanas) admitidos ao nascer; dados das últimas 4 horas de vida foram descartados.</li>
+                </ul>
+
                 <h3>Instruções de uso</h3>
                 <ol>
-                    <li>Preencha os piores valores de cada parâmetro nas últimas 24 h (ou janela definida pelo seu serviço)</li>
+                    <li>Preencha o pior valor de cada parâmetro no dia da avaliação (intervalo de 24 h)</li>
                     <li>Informe a data de nascimento ou escolha a faixa etária: os limiares de PAM e creatinina dependem da idade</li>
                     <li>Use vírgula para listar vários valores; o sistema escolhe o pior conforme a regra do parâmetro (menor valor para Glasgow, PAM, PaO₂, leucócitos e plaquetas; maior valor para lactato, FiO₂, PaCO₂ e creatinina)</li>
                     <li>Informe FiO₂ como fração, com ponto decimal (ex.: 0.6 para 60%); a vírgula separa valores da lista</li>
@@ -809,8 +803,8 @@
                 <h3>Considerações importantes</h3>
                 <ul>
                     <li>Qualidade e sincronia dos exames influenciam o total</li>
-                    <li>Evolução seriada do escore pode ser discutida na literatura; a decisão de frequência de coleta é assistencial</li>
-                    <li>Comorbidades e terapias (ex.: sedação) alteram a leitura dos parâmetros — não estão “corrigidas” automaticamente nesta tela</li>
+                    <li>O PELOD-2 pode ser calculado diariamente para acompanhar a evolução da disfunção orgânica</li>
+                    <li>Sedação: registre o Glasgow estimado antes da sedação (regra da publicação); a tela não faz essa correção automaticamente</li>
                 </ul>
 
                 <h3>Uso pretendido (informativo)</h3>
@@ -871,6 +865,7 @@
 
         // Pontuação por variável. Cada faixa começa no limite inferior publicado.
         function pontosGCS(v) { return v >= 11 ? 0 : (v >= 5 ? 1 : 4); }
+        // Só "ambas fixas" pontua (5); uma pupila fixa = 0 (Leteurtre 2013, Tabela 6).
         function pontosPupilas(v) { return v === 'fixas' ? 5 : 0; }
         function pontosLactato(v) { return v >= 11 ? 4 : (v >= 5 ? 1 : 0); }
         function pontosPAM(v, faixa) {
@@ -910,64 +905,75 @@
             return 5;
         }
 
-        // Função para calcular idade em anos, meses e dias
+        // Data local (sem fuso) a partir de "aaaa-mm-dd".
+        function parseDataLocal(iso) {
+            if (!iso) return null;
+            const [a, m, d] = iso.split('-').map(Number);
+            return (a && m && d) ? new Date(a, m - 1, d) : null;
+        }
+
+        // Recalcula idade e faixa etária sempre que a data de nascimento OU a data da avaliação muda.
         function calcularIdade() {
             const dataNascimento = document.getElementById('data_nascimento').value;
             const dataAvaliacao = document.getElementById('data_avaliacao').value;
+            const nascimento = parseDataLocal(dataNascimento);
+            const avaliacao = parseDataLocal(dataAvaliacao);
+            const campoIdade = document.getElementById('idade_completa');
+            const campoFaixa = document.getElementById('faixa_etaria');
 
-            if (dataNascimento && dataAvaliacao) {
-                const nascimento = new Date(dataNascimento);
-                const avaliacao = new Date(dataAvaliacao);
-                
-                let anos = avaliacao.getFullYear() - nascimento.getFullYear();
-                let meses = avaliacao.getMonth() - nascimento.getMonth();
-                let dias = avaliacao.getDate() - nascimento.getDate();
-                
-                if (dias < 0) {
-                    meses--;
-                    const ultimoMes = new Date(avaliacao.getFullYear(), avaliacao.getMonth(), 0);
-                    dias += ultimoMes.getDate();
-                }
-                
-                if (meses < 0) {
-                    anos--;
-                    meses += 12;
-                }
-                
-                let idadeTexto = '';
-                if (anos > 0) {
-                    idadeTexto += `${anos} ano${anos > 1 ? 's' : ''}`;
-                }
-                if (meses > 0) {
-                    if (idadeTexto) idadeTexto += ', ';
-                    idadeTexto += `${meses} mês${meses > 1 ? 'es' : ''}`;
-                }
-                if (dias > 0 || (!anos && !meses)) {
-                    if (idadeTexto) idadeTexto += ', ';
-                    idadeTexto += `${dias} dia${dias > 1 ? 's' : ''}`;
-                }
-                
-                document.getElementById('idade_completa').value = idadeTexto || '0 dias';
-
-                const totalMeses = idadeEmMeses(dataNascimento, dataAvaliacao);
-                if (totalMeses >= 0) {
-                    document.getElementById('faixa_etaria').value = String(faixaPorMeses(totalMeses));
-                }
+            if (!nascimento || !avaliacao) return;
+            if (avaliacao < nascimento) {
+                campoIdade.value = '';
+                campoFaixa.value = '';
+                return;
             }
+
+            let anos = avaliacao.getFullYear() - nascimento.getFullYear();
+            let meses = avaliacao.getMonth() - nascimento.getMonth();
+            let dias = avaliacao.getDate() - nascimento.getDate();
+
+            if (dias < 0) {
+                meses--;
+                const ultimoMes = new Date(avaliacao.getFullYear(), avaliacao.getMonth(), 0);
+                dias += ultimoMes.getDate();
+            }
+
+            if (meses < 0) {
+                anos--;
+                meses += 12;
+            }
+
+            let idadeTexto = '';
+            if (anos > 0) {
+                idadeTexto += `${anos} ano${anos > 1 ? 's' : ''}`;
+            }
+            if (meses > 0) {
+                if (idadeTexto) idadeTexto += ', ';
+                idadeTexto += `${meses} ${meses > 1 ? 'meses' : 'mês'}`;
+            }
+            if (dias > 0 || (!anos && !meses)) {
+                if (idadeTexto) idadeTexto += ', ';
+                idadeTexto += `${dias} dia${dias > 1 ? 's' : ''}`;
+            }
+
+            campoIdade.value = idadeTexto || '0 dias';
+            campoFaixa.value = String(faixaPorMeses(idadeEmMeses(dataNascimento, dataAvaliacao)));
         }
 
-        // Preencher data e hora atuais
+        // Preencher data e hora atuais (data local)
         function preencherDataAtual() {
             const hoje = new Date();
-            const dataAtual = hoje.toISOString().split('T')[0];
+            const pad = n => String(n).padStart(2, '0');
+            const dataAtual = `${hoje.getFullYear()}-${pad(hoje.getMonth() + 1)}-${pad(hoje.getDate())}`;
             const horaAtual = hoje.toTimeString().slice(0, 5);
-            
+
             if (!document.getElementById('data_avaliacao').value) {
                 document.getElementById('data_avaliacao').value = dataAtual;
             }
             if (!document.getElementById('hora_avaliacao').value) {
                 document.getElementById('hora_avaliacao').value = horaAtual;
             }
+            calcularIdade();
         }
 
         // Função para processar lista ou valor único
@@ -1011,6 +1017,7 @@
                 fio2: lerPior('fio2', 'max'),
                 paco2: lerPior('paco2', 'max'),
                 ventilacao: document.getElementById('ventilacao').value,
+                cianotica: document.getElementById('cianotica').value === 'sim',
                 creatinine: lerPior('creatinine', 'max'),
                 creatUnidade: document.getElementById('creat_unidade').value,
                 platelets: lerPior('platelets', 'min'),
@@ -1047,7 +1054,7 @@
                 if (presente) itens.push({ dominio, nome, valor: valorTxt, pts });
                 else faltantes.push(nome);
             };
-            const pupLabel = { reativas: 'Ambas reativas', fixas: 'Ambas fixas' };
+            const pupLabel = { reativas: 'Ambas reativas', uma: 'Uma fixa, outra reativa', fixas: 'Ambas fixas' };
             const ventLabel = { nao: 'Não', sim: 'Sim' };
 
             add('Neurológico', 'Glasgow', temValor(e.gcs), temValor(e.gcs) ? fmt(e.gcs) : '', temValor(e.gcs) ? pontosGCS(e.gcs) : 0);
@@ -1066,7 +1073,9 @@
 
             const temPF = temValor(e.pao2) && temValor(e.fio2);
             const pf = temPF ? e.pao2 / e.fio2 : NaN;
-            add('Respiratório', 'PaO₂/FiO₂', temPF, temPF ? pf.toFixed(0) : '', temPF ? pontosPF(pf) : 0);
+            // Cardiopatia cianótica: PaO2/FiO2 considerada normal (Leteurtre 2013, Tabela 6).
+            const pfTxt = temPF ? (e.cianotica ? `${pf.toFixed(0)} (cardiopatia cianótica: considerada normal)` : pf.toFixed(0)) : '';
+            add('Respiratório', 'PaO₂/FiO₂', temPF, pfTxt, temPF && !e.cianotica ? pontosPF(pf) : 0);
             add('Respiratório', 'PaCO₂', temValor(e.paco2), temValor(e.paco2) ? `${fmt(e.paco2)} mmHg` : '', temValor(e.paco2) ? pontosPaCO2(e.paco2) : 0);
             add('Respiratório', 'Ventilação invasiva', e.ventilacao !== '', ventLabel[e.ventilacao] || '', pontosVentilacao(e.ventilacao));
             add('Hematológico', 'Leucócitos', temValor(e.wbc), temValor(e.wbc) ? `${fmt(e.wbc)} ×10⁹/L` : '', temValor(e.wbc) ? pontosLeucocitos(e.wbc) : 0);
@@ -1136,7 +1145,8 @@
             const pupilas = document.getElementById('pupilas').value;
             const ventilacao = document.getElementById('ventilacao').value;
             const creatUnidade = document.getElementById('creat_unidade').value === 'umol' ? 'umol/L' : 'mg/dL';
-            const pupTxt = { reativas: 'ambas reativas', fixas: 'ambas fixas' }[pupilas] || '-';
+            const pupTxt = { reativas: 'ambas reativas', uma: 'uma fixa, outra reativa', fixas: 'ambas fixas' }[pupilas] || '-';
+            const cianTxt = document.getElementById('cianotica').value === 'sim' ? 'sim (PaO2/FiO2 considerada normal)' : 'nao';
             const ventTxt = { nao: 'nao', sim: 'sim' }[ventilacao] || '-';
             var legalFoot = (typeof window.neopedLegalReportFooter === 'function') ? window.neopedLegalReportFooter() : '';
 
@@ -1171,6 +1181,7 @@ VARIAVEIS INSERIDAS (piores valores do dia, conforme tela)
 - FiO2: ${document.getElementById('fio2').value || '-'}
 - PaCO2: ${document.getElementById('paco2').value || '-'} mmHg
 - Ventilacao invasiva: ${ventTxt}
+- Cardiopatia cianotica: ${cianTxt}
 - Leucocitos: ${document.getElementById('wbc').value || '-'} x10^9/L
 - Plaquetas: ${document.getElementById('platelets').value || '-'} x10^9/L
 ${obs ? `Observacoes: ${obs}` : ''}
@@ -1186,7 +1197,7 @@ O PELOD-2 quantifica disfuncao organica em criancas criticas segundo criterios p
 TABELA DE PONTOS (PELOD-2 publicado, Leteurtre 2013)
 ----------------------------------------------------
 - GCS: >=11=0; 5-10=1; 3-4=4
-- Reacao pupilar: ambas reativas=0; ambas fixas=5
+- Reacao pupilar: ambas reativas=0; ambas fixas=5 (uma pupila fixa=0)
 - Lactato (mmol/L): <5,0=0; 5,0-10,9=1; >=11,0=4
 - PAM (mmHg), pontos 0/2/3/6 por faixa etaria:
   0 a <1 mes: >=46 / 31-45 / 17-30 / <=16
@@ -1196,11 +1207,18 @@ TABELA DE PONTOS (PELOD-2 publicado, Leteurtre 2013)
   60-143 meses: >=65 / 49-64 / 36-48 / <=35
   >=144 meses: >=67 / 52-66 / 38-51 / <=37
 - Creatinina (umol/L) >= limiar da idade = 2: <1 mes 70; 1-11 meses 23; 12-23 meses 35; 24-59 meses 51; 60-143 meses 59; >=144 meses 93 (mg/dL x 88,4 = umol/L)
-- PaO2/FiO2 (mmHg): >=61=0; <=60=2
+- PaO2/FiO2 (mmHg): >=61=0; <=60=2 (considerada normal na cardiopatia cianotica)
 - PaCO2 (mmHg): <=58=0; 59-94=1; >=95=3
 - Ventilacao invasiva: nao=0; sim=3
 - Leucocitos (x10^9/L): >2=0; <=2=2
 - Plaquetas (x10^9/L): >=142=0; 77-141=1; <=76=2
+
+REGRAS DE COLETA (Leteurtre 2013)
+---------------------------------
+- Pior valor de cada variavel no dia (intervalo de 24 h); variavel nao medida = normal.
+- Glasgow: menor valor; se sedado, Glasgow estimado antes da sedacao.
+- Pupila nao reativa > 3 mm; nao avaliar apos dilatacao iatrogenica.
+- PaO2 apenas arterial; ventilacao por mascara nao e invasiva.
 
 Referencia: Leteurtre S, et al. PELOD-2: an update of the PEdiatric logistic organ dysfunction score. Crit Care Med. 2013;41(7):1761-73.` + legalFoot;
 
@@ -1244,7 +1262,7 @@ Referencia: Leteurtre S, et al. PELOD-2: an update of the PEdiatric logistic org
                 'nome', 'data_nascimento', 'data_avaliacao', 
                 'hora_avaliacao', 'idade_completa', 'faixa_etaria', 'dia_uti', 'gcs',
                 'pupilas', 'map', 'lactate', 'pao2', 'fio2', 'paco2', 'ventilacao',
-                'creatinine', 'creat_unidade', 'platelets', 'wbc', 'obs'
+                'cianotica', 'creatinine', 'creat_unidade', 'platelets', 'wbc', 'obs'
             ];
 
             campos.forEach(campo => {
@@ -1264,8 +1282,9 @@ Referencia: Leteurtre S, et al. PELOD-2: an update of the PEdiatric logistic org
         }
 
         // Event listeners
-        document.getElementById('data_nascimento').addEventListener('change', calcularIdade);
-        document.getElementById('data_avaliacao').addEventListener('change', calcularIdade);
+        ['data_nascimento', 'data_avaliacao'].forEach(id => {
+            ['change', 'input'].forEach(evt => document.getElementById(id).addEventListener(evt, calcularIdade));
+        });
 
         // Preencher data atual ao carregar
         window.addEventListener('load', preencherDataAtual);

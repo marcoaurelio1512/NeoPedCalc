@@ -931,6 +931,17 @@
         // Variável para debounce do cálculo automático
         let timeoutCalculo = null;
 
+        // Vasopressina é dosada em unidades (UI): dose total em UI e volume em ml, sem conversão mg/mcg.
+        // Vale apenas quando a unidade escolhida é em UI (UI/kg/hora, UI/kg, UI/kg/bolus).
+        function ehVasopressinaEmUI(drogaSelecionada, unidade) {
+            return drogaSelecionada === 'vasopressina' && typeof unidade === 'string' && unidade.indexOf('UI/') === 0;
+        }
+
+        // Dose total em UI no tempo escolhido (infusão por hora) ou da dose única/bolus.
+        function calcularDoseTotalUI(unidade, dose, peso, tempoInfusaoHoras) {
+            return unidade === 'UI/kg/hora' ? dose * peso * tempoInfusaoHoras : dose * peso;
+        }
+
         // Função para cálculo automático com debounce (sem atualizar histórico)
         function calcularDrogasAutomatico() {
             if (timeoutCalculo) {
@@ -1734,6 +1745,13 @@
                 }
             }
 
+            // Vasopressina: dose total em UI e concentração final da solução (UI/ml) quando há diluição.
+            const vasopressinaUI = ehVasopressinaEmUI(drogaSelecionada, unidade);
+            const doseTotalUI = vasopressinaUI ? calcularDoseTotalUI(unidade, dose, peso, tempoInfusao) : null;
+            const concentracaoSolucaoUIMl = (vasopressinaUI && unidade === 'UI/kg/hora' && volumeInfusao > 0)
+                ? doseTotalUI / volumeInfusao
+                : null;
+
             // Calcular velocidade de infusão
             let velocidadeInfusao = 0;
             if (unidade === 'mcg/kg/min') {
@@ -1764,8 +1782,10 @@
                 tempoInfusao: tempoInfusao,
                 velocidadeInfusao: velocidadeInfusao,
                 doseTotal: 0,
-                doseTotalMg: doseTotalMg,
-                doseTotalMcg: doseTotalMcg,
+                doseTotalMg: vasopressinaUI ? null : doseTotalMg,
+                doseTotalMcg: vasopressinaUI ? null : doseTotalMcg,
+                doseTotalUI: doseTotalUI,
+                concentracaoSolucaoUIMl: concentracaoSolucaoUIMl,
                 volumeDroga: volumeDroga,
                 droga: droga || { observacoes: 'Informações não disponíveis' }
             };
@@ -1810,10 +1830,14 @@
             document.getElementById('dosagemCalculada').textContent = formatarNumeroClinico(dose);
             document.getElementById('unidadeDosagem').textContent = unidade;
 
-            // 3. Dose total no tempo escolhido (mostrar em mg e mcg)
-            const doseTotalTexto = `${formatarNumeroClinico(resultado.doseTotalMg)} mg (${formatarNumeroClinico(resultado.doseTotalMcg)} mcg)`;
+            // 3. Dose total no tempo escolhido (mg e mcg; vasopressina em UI)
+            const doseTotalTexto = resultado.doseTotalUI !== null
+                ? `${formatarNumeroClinico(resultado.doseTotalUI)} UI`
+                : `${formatarNumeroClinico(resultado.doseTotalMg)} mg (${formatarNumeroClinico(resultado.doseTotalMcg)} mcg)`;
             document.getElementById('doseTotalResultado').textContent = doseTotalTexto;
-            document.getElementById('unidadeDoseTotal').textContent = '';
+            document.getElementById('unidadeDoseTotal').textContent = resultado.concentracaoSolucaoUIMl !== null
+                ? `Solução final: ${formatarNumeroClinico(resultado.concentracaoSolucaoUIMl)} UI/ml`
+                : '';
 
             // 4. Volume da droga (ml) - preservar volumes pequenos
             let volumeFormatado;
@@ -1852,6 +1876,8 @@
                     doseTotal: resultado.doseTotal,
                     doseTotalMg: resultado.doseTotalMg,
                     doseTotalMcg: resultado.doseTotalMcg,
+                    doseTotalUI: resultado.doseTotalUI,
+                    concentracaoSolucaoUIMl: resultado.concentracaoSolucaoUIMl,
                     volumeDroga: resultado.volumeDroga,
                     apresentacao: apresentacao || 'N/A',
                     volume: volumeInfusao,
@@ -2025,6 +2051,14 @@ ${foot ? foot.trim() : '(Rodape legal NeoPedCalc indisponivel neste contexto.)'}
             });
         }
 
+        // Dose total no relatório: UI para vasopressina; mg (mcg) para as demais drogas.
+        function textoDoseTotalRelatorio(calculo) {
+            if (calculo.doseTotalUI !== null && calculo.doseTotalUI !== undefined) {
+                return `${calculo.doseTotalUI ? formatarNumeroClinico(calculo.doseTotalUI) : 'n/a'} UI`;
+            }
+            return `${calculo.doseTotalMg ? formatarNumeroClinico(calculo.doseTotalMg) : 'n/a'} mg (${calculo.doseTotalMcg ? formatarNumeroClinico(calculo.doseTotalMcg) : 'n/a'} mcg)`;
+        }
+
         // Função para gerar relatório
         function gerarRelatorio() {
             if (historicoCalculos.length === 0) {
@@ -2053,7 +2087,7 @@ calculo ${index + 1}:`;
 droga utilizada:
 1. nome da droga: ${removerAcentos(calculo.droga)}
 2. dosagem escolhida: ${formatarNumeroClinico(calculo.dose)} ${removerAcentos(calculo.unidade)}
-3. dose total no tempo escolhido: ${calculo.doseTotalMg ? formatarNumeroClinico(calculo.doseTotalMg) : 'n/a'} mg (${calculo.doseTotalMcg ? formatarNumeroClinico(calculo.doseTotalMcg) : 'n/a'} mcg)
+3. dose total no tempo escolhido: ${textoDoseTotalRelatorio(calculo)}
 4. volume da droga: ${calculo.volumeDroga ? formatarNumeroClinico(calculo.volumeDroga) : 'n/a'} ml
 5. velocidade de infusao: ${calculo.velocidade ? formatarNumeroClinico(calculo.velocidade) : 'n/a'} ml/h
 6. informacoes da droga: ${removerAcentos(calculo.observacoes)}
@@ -2062,7 +2096,8 @@ detalhes tecnicos:
 - apresentacao: ${removerAcentos(calculo.apresentacao)}
 - volume de infusao: ${formatarNumeroClinico(calculo.volume)} ml
 - tempo de infusao: ${formatarNumero(calculo.tempoInfusao)} horas
-- velocidade de infusao: ${calculo.velocidade ? formatarNumeroClinico(calculo.velocidade) : 'n/a'} ml/h
+- velocidade de infusao: ${calculo.velocidade ? formatarNumeroClinico(calculo.velocidade) : 'n/a'} ml/h${calculo.concentracaoSolucaoUIMl ? `
+- concentracao final da solucao: ${formatarNumeroClinico(calculo.concentracaoSolucaoUIMl)} UI/ml` : ''}
 
 ----------------------------------------
 `;

@@ -31,10 +31,6 @@
     // Dados da admissão — variáveis do PIM3
     'Dados da Admissão (Primeira Hora)': ['Admission Data (First Hour)', 'Datos del ingreso (primera hora)'],
     'Informações Importantes': ['Important Information', 'Información importante'],
-    'O PIM3 usa dados coletados entre o primeiro contato presencial com a equipe da UTI pediátrica e a primeira hora após a chegada à UTI. Para as variáveis fisiológicas, registre o primeiro valor medido nesse período.': [
-      'PIM3 uses data collected from the first face-to-face contact with the pediatric ICU team until the first hour after arrival in the ICU. For physiological variables, record the first value measured during this period.',
-      'El PIM3 utiliza datos recogidos desde el primer contacto presencial con el equipo de la UCI pediátrica hasta la primera hora después de la llegada a la UCI. Para las variables fisiológicas, registre el primer valor medido en ese período.'
-    ],
     'Variáveis clínicas': ['Clinical variables', 'Variables clínicas'],
     'Variáveis fisiológicas': ['Physiological variables', 'Variables fisiológicas'],
     'Diagnósticos': ['Diagnoses', 'Diagnósticos'],
@@ -54,10 +50,6 @@
       'Electivo: ingreso que podría posponerse más de 6 horas sin efecto adverso'
     ],
     'Ventilação mecânica na primeira hora?': ['Mechanical ventilation in the first hour?', '¿Ventilación mecánica en la primera hora?'],
-    'Inclui CPAP ou BiPAP por máscara/nasal e ventilação por pressão negativa, em qualquer momento da primeira hora': [
-      'Includes mask or nasal CPAP or BiPAP and negative-pressure ventilation, at any time during the first hour',
-      'Incluye CPAP o BiPAP por mascarilla/nasal y ventilación con presión negativa, en cualquier momento de la primera hora'
-    ],
     'Recuperação de cirurgia ou procedimento como principal motivo da admissão': [
       'Recovery from surgery or a procedure as the main reason for admission',
       'Recuperación de cirugía o procedimiento como motivo principal del ingreso'
@@ -79,11 +71,6 @@
       'mmol/L, sangre arterial o capilar; en blanco si se desconoce (término = 0)'
     ],
     'Unidade de PaO₂': ['PaO₂ Unit', 'Unidad de PaO₂'],
-    'Sangue arterial; em branco se desconhecida (termo = 0)': ['Arterial blood; leave blank if unknown (term = 0)', 'Sangre arterial; en blanco si se desconoce (término = 0)'],
-    'fração (0.21-1.0) no momento da gasometria; em branco se desconhecida': [
-      'fraction (0.21-1.0) at the time of the blood gas; leave blank if unknown',
-      'fracción (0.21-1.0) en el momento de la gasometría; en blanco si se desconoce'
-    ],
     'Marque todos os que se aplicam. Apenas a categoria de maior risco entra no cálculo (muito alto > alto > baixo).': [
       'Check all that apply. Only the highest-risk category is used in the calculation (very high > high > low).',
       'Marque todos los que correspondan. Solo la categoría de mayor riesgo entra en el cálculo (muy alto > alto > bajo).'
@@ -141,14 +128,6 @@
     'Alto risco': ['High risk', 'Alto riesgo'],
     'Baixo risco': ['Low risk', 'Bajo riesgo'],
     'Nenhuma': ['None', 'Ninguna'],
-    'Baixo Risco': ['Low Risk', 'Riesgo bajo'],
-    'Risco Intermediário': ['Intermediate Risk', 'Riesgo intermedio'],
-    'Alto Risco': ['High Risk', 'Riesgo alto'],
-    'Muito Alto Risco': ['Very High Risk', 'Riesgo muy alto'],
-    'Faixas de risco didáticas desta calculadora; o PIM3 fornece uma probabilidade contínua e não define faixas de risco.': [
-      'Teaching risk bands of this calculator; PIM3 provides a continuous probability and does not define risk bands.',
-      'Rangos de riesgo didácticos de esta calculadora; el PIM3 proporciona una probabilidad continua y no define rangos de riesgo.'
-    ],
     'Texto informativo para prontuário eletrônico (revisar)': ['Informational text for the electronic health record (review)', 'Texto informativo para la historia clínica electrónica (revisar)'],
     'Gerar e copiar texto informativo': ['Generate and copy informational text', 'Generar y copiar texto informativo'],
 
@@ -177,25 +156,9 @@
     'Logit = soma dos termos acima': ['Logit = sum of the terms above', 'Logit = suma de los términos anteriores'],
     'Probabilidade de morte = e^logit / (1 + e^logit)': ['Probability of death = e^logit / (1 + e^logit)', 'Probabilidad de muerte = e^logit / (1 + e^logit)'],
     'Regras de preenchimento': ['Data entry rules', 'Reglas de registro'],
-    'Registre o primeiro valor medido entre o primeiro contato presencial com a equipe da UTI e a primeira hora após a chegada à UTI.': [
-      'Record the first value measured between the first face-to-face contact with the ICU team and the first hour after arrival in the ICU.',
-      'Registre el primer valor medido entre el primer contacto presencial con el equipo de la UCI y la primera hora después de la llegada a la UCI.'
-    ],
     'PAS:': ['SBP:', 'PAS:'],
-    'desconhecida = 120 mmHg; parada cardíaca = 0 mmHg; choque com PA não mensurável = 30 mmHg.': [
-      'unknown = 120 mmHg; cardiac arrest = 0 mmHg; shock with unmeasurable BP = 30 mmHg.',
-      'desconocida = 120 mmHg; paro cardíaco = 0 mmHg; shock con PA no medible = 30 mmHg.'
-    ],
     'PaO₂ e FiO₂:': ['PaO₂ and FiO₂:', 'PaO₂ y FiO₂:'],
-    'se qualquer uma for desconhecida, o termo FiO₂ × 100 / PaO₂ vale 0. PaO₂ em kPa é convertida para mmHg (× 7.50062).': [
-      'if either is unknown, the FiO₂ × 100 / PaO₂ term is 0. PaO₂ in kPa is converted to mmHg (× 7.50062).',
-      'si cualquiera de las dos se desconoce, el término FiO₂ × 100 / PaO₂ vale 0. La PaO₂ en kPa se convierte a mmHg (× 7.50062).'
-    ],
     'Base excess:': ['Base excess:', 'Exceso de base:'],
-    'se desconhecido, o termo vale 0. Usa-se o valor absoluto (BE −10 e BE +10 contribuem igualmente).': [
-      'if unknown, the term is 0. The absolute value is used (BE −10 and BE +10 contribute equally).',
-      'si se desconoce, el término vale 0. Se usa el valor absoluto (EB −10 y EB +10 contribuyen por igual).'
-    ],
     'marque apenas quando a recuperação de cirurgia ou procedimento for o principal motivo da admissão; as três opções são mutuamente exclusivas.': [
       'select only when recovery from surgery or a procedure is the main reason for admission; the three options are mutually exclusive.',
       'márquela solo cuando la recuperación de una cirugía o procedimiento sea el motivo principal del ingreso; las tres opciones son mutuamente excluyentes.'
@@ -218,23 +181,11 @@
     'para obter a probabilidade de morte.': ['to obtain the probability of death.', 'para obtener la probabilidad de muerte.'],
     'Interpretação dos Resultados': ['Interpretation of Results', 'Interpretación de los resultados'],
     'O resultado é a probabilidade estimada de morte hospitalar (0-100%).': ['The result is the estimated probability of in-hospital death (0-100%).', 'El resultado es la probabilidad estimada de muerte hospitalaria (0-100%).'],
-    'Faixas didáticas exibidas por esta calculadora (não definidas pelo PIM3):': ['Teaching bands shown by this calculator (not defined by PIM3):', 'Rangos didácticos mostrados por esta calculadora (no definidos por el PIM3):'],
-    'Baixo risco de mortalidade': ['Low risk of mortality', 'Bajo riesgo de mortalidad'],
-    'Risco intermediário de mortalidade': ['Intermediate risk of mortality', 'Riesgo intermedio de mortalidad'],
-    'Alto risco de mortalidade': ['High risk of mortality', 'Alto riesgo de mortalidad'],
-    'Muito alto risco de mortalidade': ['Very high risk of mortality', 'Riesgo muy alto de mortalidad'],
-    '5% a < 15%:': ['5% to < 15%:', '5% a < 15%:'],
-    '15% a < 30%:': ['15% to < 30%:', '15% a < 30%:'],
-    'Comparação:': ['Comparison:', 'Comparación:'],
-    'Útil para comparar pacientes e centros': ['Useful for comparing patients and centers', 'Útil para comparar pacientes y centros'],
     'Considerações Importantes': ['Important Considerations', 'Consideraciones importantes'],
     'Complementar à avaliação clínica, não substituto': ['Complements clinical assessment; does not replace it', 'Complementa la evaluación clínica, no la sustituye'],
     'Aplicável a crianças admitidas em UTIP': ['Applicable to children admitted to the PICU', 'Aplicable a niños ingresados en la UCIP'],
     'Considerar fatores não incluídos no escore': ['Consider factors not included in the score', 'Considerar factores no incluidos en la puntuación'],
-    'Reavaliar conforme evolução clínica': ['Reassess according to the clinical course', 'Reevaluar según la evolución clínica'],
     'Aplicações Clínicas': ['Clinical Applications', 'Aplicaciones clínicas'],
-    'Prognóstico:': ['Prognosis:', 'Pronóstico:'],
-    'Estimativa de mortalidade': ['Mortality estimate', 'Estimación de la mortalidad'],
     'Comparação entre UTIPs:': ['Comparison between PICUs:', 'Comparación entre UCIP:'],
     'Ajuste de risco': ['Risk adjustment', 'Ajuste de riesgo'],
     'Pesquisa:': ['Research:', 'Investigación:'],
@@ -299,11 +250,6 @@
     'RESULTADOS:': ['RESULTS:', 'RESULTADOS:'],
     'Logit do modelo': ['Model logit', 'Logit del modelo'],
     'Probabilidade de Mortalidade': ['Probability of Mortality', 'Probabilidad de mortalidad'],
-    'Nivel de Risco': ['Risk Level', 'Nivel de riesgo'],
-    'Faixas de risco didaticas desta calculadora, nao definidas pelo modelo original': [
-      'Teaching risk bands of this calculator, not defined by the original model',
-      'Rangos de riesgo didácticos de esta calculadora, no definidos por el modelo original'
-    ],
     'CONTRIBUICAO DE CADA TERMO AO LOGIT:': ['CONTRIBUTION OF EACH TERM TO THE LOGIT:', 'CONTRIBUCIÓN DE CADA TÉRMINO AL LOGIT:'],
     'Intercepto': ['Intercept', 'Intercepto'],
     'Termo do base excess': ['Base excess term', 'Término de exceso de base'],
@@ -311,11 +257,107 @@
     'Termo de oxigenacao': ['Oxygenation term', 'Término de oxigenación'],
     'Categoria de diagnostico': ['Diagnosis category', 'Categoría diagnóstica'],
     'INTERPRETACAO:': ['INTERPRETATION:', 'INTERPRETACIÓN:'],
-    'O PIM3 estima a probabilidade de morte hospitalar de criancas admitidas em UTI pediatrica, com dados coletados entre o primeiro contato com a equipe da UTI e a primeira hora apos a chegada. Foi desenvolvido para ajuste de risco e comparacao entre grupos de pacientes; nao deve orientar decisoes individuais de tratamento.': [
-      'PIM3 estimates the probability of in-hospital death for children admitted to a pediatric ICU, using data collected between the first contact with the ICU team and the first hour after arrival. It was developed for risk adjustment and comparison between groups of patients; it should not guide individual treatment decisions.',
-      'El PIM3 estima la probabilidad de muerte hospitalaria de niños ingresados en una UCI pediátrica, con datos recogidos entre el primer contacto con el equipo de la UCI y la primera hora después de la llegada. Se desarrolló para el ajuste de riesgo y la comparación entre grupos de pacientes; no debe orientar decisiones terapéuticas individuales.'
+    'Referencia': ['Reference', 'Referencia'],
+    'Registre o primeiro valor de cada variável medido entre o primeiro contato presencial (não por telefone) com um médico da UTI pediátrica ou da equipe de transporte pediátrico e 1 hora após a chegada à UTI. Use o primeiro valor desse período, não o pior. O primeiro contato pode ocorrer na própria UTI, no pronto-socorro, na enfermaria ou em outro hospital (transporte).': [
+      'Record the first value of each variable measured between the first face-to-face (not telephone) contact with a doctor from the pediatric ICU or the pediatric transport team and 1 hour after arrival in the ICU. Use the first value in this period, not the worst. The first contact may occur in the ICU itself, the emergency department, a ward or another hospital (transport).',
+      'Registre el primer valor de cada variable medido entre el primer contacto presencial (no telefónico) con un médico de la UCI pediátrica o del equipo de transporte pediátrico y 1 hora después de la llegada a la UCI. Use el primer valor de ese período, no el peor. El primer contacto puede ocurrir en la propia UCI, en urgencias, en una sala de hospitalización o en otro hospital (transporte).'
     ],
-    'Referencia': ['Reference', 'Referencia']
+    'Em qualquer momento da primeira hora na UTI; inclui CPAP ou BiPAP por máscara ou nasal e ventilação por pressão negativa': [
+      'At any time during the first hour in the ICU; includes mask or nasal CPAP or BiPAP and negative-pressure ventilation',
+      'En cualquier momento de la primera hora en la UCI; incluye CPAP o BiPAP por mascarilla o nasal y ventilación con presión negativa'
+    ],
+    'Sangue arterial; em branco se desconhecida (FiO₂ × 100 / PaO₂ = 0,23)': [
+      'Arterial blood; leave blank if unknown (FiO₂ × 100 / PaO₂ = 0.23)',
+      'Sangre arterial; en blanco si se desconoce (FiO₂ × 100 / PaO₂ = 0,23)'
+    ],
+    'fração (0.21-1.0) no momento da PaO₂, se O₂ por tubo endotraqueal ou head box; em branco se desconhecida': [
+      'fraction (0.21-1.0) at the time of the PaO₂, if oxygen via endotracheal tube or head box; leave blank if unknown',
+      'fracción (0.21-1.0) en el momento de la PaO₂, si O₂ por tubo endotraqueal o head box; en blanco si se desconoce'
+    ],
+    '0.23 (não informado; valor padrão do PIM3)': [
+      '0.23 (not entered; PIM3 default value)',
+      '0.23 (no informado; valor por defecto del PIM3)'
+    ],
+    'O PIM3 fornece apenas uma probabilidade contínua e não define faixas de risco. Foi desenvolvido para ajuste de risco e comparação entre grupos de pacientes (óbitos esperados, razão de mortalidade padronizada), não para decisões individuais (Straney et al., 2013).': [
+      'PIM3 provides only a continuous probability and does not define risk bands. It was developed for risk adjustment and comparison between groups of patients (expected deaths, standardized mortality ratio), not for individual decisions (Straney et al., 2013).',
+      'El PIM3 proporciona solo una probabilidad continua y no define rangos de riesgo. Se desarrolló para el ajuste de riesgo y la comparación entre grupos de pacientes (muertes esperadas, razón de mortalidad estandarizada), no para decisiones individuales (Straney et al., 2013).'
+    ],
+    'Período de coleta:': [
+      'Data collection period:',
+      'Período de recogida:'
+    ],
+    'primeiro valor de cada variável medido entre o primeiro contato presencial (não por telefone) com um médico da UTI pediátrica ou da equipe de transporte pediátrico e 1 hora após a chegada à UTI (não o pior valor).': [
+      'first value of each variable measured between the first face-to-face (not telephone) contact with a doctor from the pediatric ICU or the pediatric transport team and 1 hour after arrival in the ICU (not the worst value).',
+      'primer valor de cada variable medido entre el primer contacto presencial (no telefónico) con un médico de la UCI pediátrica o del equipo de transporte pediátrico y 1 hora después de la llegada a la UCI (no el peor valor).'
+    ],
+    'desconhecida = 120 mmHg; parada cardíaca = 0 mmHg; choque com PA tão baixa que não pode ser medida = 30 mmHg.': [
+      'unknown = 120 mmHg; cardiac arrest = 0 mmHg; shock with BP so low that it cannot be measured = 30 mmHg.',
+      'desconocida = 120 mmHg; paro cardíaco = 0 mmHg; shock con PA tan baja que no puede medirse = 30 mmHg.'
+    ],
+    'Pupilas:': [
+      'Pupils:',
+      'Pupilas:'
+    ],
+    'marque apenas se ambas > 3 mm e fixas à luz; não marque se causado por fármacos, toxinas ou lesão ocular local.': [
+      'check only if both are > 3 mm and fixed to light; do not check if caused by drugs, toxins or local eye injury.',
+      'márquelo solo si ambas miden > 3 mm y están fijas a la luz; no lo marque si se debe a fármacos, tóxicos o lesión ocular local.'
+    ],
+    'Ventilação mecânica:': [
+      'Mechanical ventilation:',
+      'Ventilación mecánica:'
+    ],
+    'em qualquer momento da primeira hora na UTI; inclui CPAP ou BiPAP por máscara ou nasal e ventilação por pressão negativa.': [
+      'at any time during the first hour in the ICU; includes mask or nasal CPAP or BiPAP and negative-pressure ventilation.',
+      'en cualquier momento de la primera hora en la UCI; incluye CPAP o BiPAP por mascarilla o nasal y ventilación con presión negativa.'
+    ],
+    'Admissão eletiva:': [
+      'Elective admission:',
+      'Ingreso electivo:'
+    ],
+    'admissão (ou cirurgia) que poderia ser adiada por mais de 6 horas sem efeito adverso.': [
+      'an admission (or operation) that could be postponed for more than 6 hours without adverse effect.',
+      'ingreso (o cirugía) que podría posponerse más de 6 horas sin efecto adverso.'
+    ],
+    'PaO₂ arterial; FiO₂ no momento da PaO₂, se O₂ por tubo endotraqueal ou head box. Se PaO₂ ou FiO₂ for desconhecida, usa-se FiO₂ × 100 / PaO₂ = 0,23 (valor padrão do PIM3; no PIM2 era 0). PaO₂ em kPa é convertida para mmHg (× 7.50062).': [
+      'arterial PaO₂; FiO₂ at the time of the PaO₂, if oxygen via endotracheal tube or head box. If PaO₂ or FiO₂ is unknown, FiO₂ × 100 / PaO₂ = 0.23 is used (PIM3 default value; in PIM2 it was 0). PaO₂ in kPa is converted to mmHg (× 7.50062).',
+      'PaO₂ arterial; FiO₂ en el momento de la PaO₂, si O₂ por tubo endotraqueal o head box. Si la PaO₂ o la FiO₂ se desconoce, se usa FiO₂ × 100 / PaO₂ = 0,23 (valor por defecto del PIM3; en el PIM2 era 0). La PaO₂ en kPa se convierte a mmHg (× 7.50062).'
+    ],
+    'sangue arterial ou capilar; se desconhecido, o termo vale 0. Usa-se o valor absoluto (BE −10 e BE +10 contribuem igualmente).': [
+      'arterial or capillary blood; if unknown, the term is 0. The absolute value is used (BE −10 and BE +10 contribute equally).',
+      'sangre arterial o capilar; si se desconoce, el término vale 0. Se usa el valor absoluto (EB −10 y EB +10 contribuyen por igual).'
+    ],
+    'O PIM3 não define faixas de risco; por isso esta calculadora não classifica o resultado.': [
+      'PIM3 does not define risk bands; therefore this calculator does not classify the result.',
+      'El PIM3 no define rangos de riesgo; por eso esta calculadora no clasifica el resultado.'
+    ],
+    'Uso previsto:': [
+      'Intended use:',
+      'Uso previsto:'
+    ],
+    'a soma das probabilidades de um grupo de pacientes dá o número esperado de óbitos; óbitos observados ÷ esperados = razão de mortalidade padronizada, usada para comparar UTIs.': [
+      'the sum of the probabilities of a group of patients gives the expected number of deaths; observed ÷ expected deaths = standardized mortality ratio, used to compare ICUs.',
+      'la suma de las probabilidades de un grupo de pacientes da el número esperado de muertes; muertes observadas ÷ esperadas = razón de mortalidad estandarizada, usada para comparar UCI.'
+    ],
+    'Calculado uma vez por admissão, com dados da primeira hora; não é um escore de acompanhamento diário': [
+      'Calculated once per admission, with first-hour data; it is not a daily monitoring score',
+      'Se calcula una vez por ingreso, con datos de la primera hora; no es una puntuación de seguimiento diario'
+    ],
+    '0.23 (nao informado; valor padrao do PIM3)': [
+      '0.23 (not entered; PIM3 default value)',
+      '0.23 (no informado; valor por defecto del PIM3)'
+    ],
+    'nao informado; valor padrao do PIM3': [
+      'not entered; PIM3 default value',
+      'no informado; valor por defecto del PIM3'
+    ],
+    'O PIM3 nao define faixas de risco; a probabilidade serve para comparacao entre grupos de pacientes, nao para decisoes individuais': [
+      'PIM3 does not define risk bands; the probability is for comparison between groups of patients, not for individual decisions',
+      'El PIM3 no define rangos de riesgo; la probabilidad sirve para comparar grupos de pacientes, no para decisiones individuales'
+    ],
+    'O PIM3 estima a probabilidade de morte hospitalar de criancas admitidas em UTI pediatrica, com o primeiro valor de cada variavel medido entre o primeiro contato presencial com um medico da UTI (ou da equipe de transporte) e 1 hora apos a chegada a UTI. Foi desenvolvido para ajuste de risco e comparacao entre grupos de pacientes; nao deve orientar decisoes individuais de tratamento.': [
+      'PIM3 estimates the probability of in-hospital death for children admitted to a pediatric ICU, using the first value of each variable measured between the first face-to-face contact with a doctor from the ICU (or the transport team) and 1 hour after arrival in the ICU. It was developed for risk adjustment and comparison between groups of patients; it should not guide individual treatment decisions.',
+      'El PIM3 estima la probabilidad de muerte hospitalaria de niños ingresados en una UCI pediátrica, con el primer valor de cada variable medido entre el primer contacto presencial con un médico de la UCI (o del equipo de transporte) y 1 hora después de la llegada a la UCI. Se desarrolló para el ajuste de riesgo y la comparación entre grupos de pacientes; no debe orientar decisiones terapéuticas individuales.'
+    ]
   });
   i18n.markPageTranslated();
 })(window.NEOPED_I18N);

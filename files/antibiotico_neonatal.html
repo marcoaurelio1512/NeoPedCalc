@@ -192,6 +192,28 @@
             font-size: 13px;
         }
 
+        .esquema-box {
+            background: #f8f9fa;
+            border: 1px solid #e7e7ee;
+            border-left: 4px solid #6b7280;
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #374151;
+            line-height: 1.6;
+        }
+
+        .esquema-box.esquema-meningite {
+            background: #eef4ff;
+            border-left-color: #1d4ed8;
+        }
+
+        .esquema-nota {
+            margin-top: 6px;
+            color: #856404;
+        }
+
         .footer {
             text-align: center;
             font-size: 12px;
@@ -400,7 +422,7 @@
                                     <option value="ceftriaxona">Ceftriaxona</option>
                                 </optgroup>
                                 <optgroup label="Carbapenems">
-                                    <option value="imipenem">Imipenem/Cilastina</option>
+                                    <option value="imipenem">Imipenem/Cilastatina</option>
                                     <option value="meropenem">Meropenem</option>
                                 </optgroup>
                                 <optgroup label="Outros Antibióticos">
@@ -468,6 +490,13 @@
                                 <div class="result-description" id="dosePesoUnit">mg/kg/dose</div>
                             </div>
                         </div>
+                        <div class="esquema-box" id="esquemaBox">
+                            <div><strong>Indicação:</strong> <span id="indicacaoTexto"></span></div>
+                            <div><strong>Esquema aplicado:</strong> <span id="esquemaTexto"></span></div>
+                            <div><strong>Faixa da tabela:</strong> <span id="faixaTexto"></span></div>
+                            <div id="fonteLinha"><strong>Fonte da dose:</strong> <span id="fonteTexto"></span></div>
+                            <div id="notaLinha" class="esquema-nota"><span id="notaTexto"></span></div>
+                        </div>
                         <button type="button" id="gerarRelatorio" class="btn"
                             style="margin-top: 20px; background: #28a745;">
                             Copiar texto informativo
@@ -511,7 +540,16 @@
                         </div>
 
                         <h3>Faixas usadas pelo app (simplificado)</h3>
-                        <p>IG ≤29 sem (0–7 vs 8–28 dias), 30–34 sem (0–7 vs ≥8 dias), ≥35 sem; indicações especiais (ex.: meningite, imunossuprimido) podem trocar a chave da tabela quando existir no medicamento.</p>
+                        <p>Dose padrão (usada em sepse neonatal): IG ≤29 sem (0–7 vs 8–28 dias), 30–34 sem (0–7 vs ≥8 dias), ≥35 sem. A tela e o texto copiado usam o mesmo cálculo.</p>
+                        <p><strong>Meningite:</strong> quando o medicamento tem dose específica para meningite na fonte citada, ela substitui a dose padrão; caso contrário, o app usa a dose padrão e informa isso no resultado.</p>
+                        <ul>
+                            <li>Ampicilina (todas as IG): 0–7 dias 100 mg/kg/dose a cada 8 h; 8–28 dias 75 mg/kg/dose a cada 6 h (300 mg/kg/dia).</li>
+                            <li>Penicilina G cristalina (todas as IG): 0–7 dias 150.000 UI/kg/dose a cada 8 h; 8–28 dias 125.000 UI/kg/dose a cada 6 h.</li>
+                            <li>Cefotaxima (idade pós-menstrual ≥37 sem): 0–7 dias 50 mg/kg/dose a cada 8 h; ≥8 dias 50 mg/kg/dose a cada 6 h. Abaixo de 37 sem, usa a dose padrão.</li>
+                            <li>Meropenem: 40 mg/kg/dose a cada 8 h.</li>
+                            <li>Demais medicamentos (ex.: gentamicina, vancomicina): sem dose específica para meningite na fonte — dose padrão.</li>
+                        </ul>
+                        <p>Meningoencefalite e imunossuprimido usam a linha própria do medicamento quando existe; sem ela, o cálculo é bloqueado.</p>
 
                         <h3>Passos na tela</h3>
                         <ol>
@@ -537,7 +575,12 @@
                             - Allegaert K, et al. Clinical pharmacology in neonates and young infants: the benefit of a
                             population-tailored approach. Expert Rev Clin Pharmacol. 2012.<br>
                             - Smits A, et al. Clinical pharmacokinetics of drugs in neonates. Expert Opin Drug Metab
-                            Toxicol. 2015.
+                            Toxicol. 2015.<br>
+                            - American Academy of Pediatrics. Table 4.2, Antibacterial Drugs for Neonates (≤28 Postnatal Days of Age). In: Kimberlin DW, et al, eds. Red Book: 2021–2024 Report of the Committee on Infectious Diseases. 32nd ed. Itasca, IL: AAP; 2021.<br>
+                            - Coggins SA, Puopolo KM. Neonatal Group B Streptococcus Disease. Pediatr Rev. 2024 (Table 3, adapted from Red Book 2021–2024 Table 4.2). PMCID: PMC10919294.<br>
+                            - Lim SY, Miller JL. Ampicillin dosing for neonatal group B streptococcal disease (review). Am J Perinatol. 2022;39(7):717-725. doi:10.1055/s-0040-1718880.<br>
+                            - NeoMed Consensus Group. Cefotaxime — neonatal medicine monograph (SESLHD, NSW).<br>
+                            - Asociación Española de Pediatría. Pediamécum: Meropenem.
                         </div>
                     </div>
                 </div>
@@ -613,10 +656,15 @@
                             "<=29_sem_8-28_dias": { dose: 50, intervalo: 12 },
                             "30-34_sem_0-7_dias": { dose: 50, intervalo: 12 },
                             "30-34_sem_>=8_dias": { dose: 50, intervalo: 8 },
-                            ">=35_sem_todos": { dose: 50, intervalo: 8 },
-                            sepse: { dose: 100, intervalo: 6 },
-                            meningite: { dose: 200, intervalo: 6 }
+                            ">=35_sem_todos": { dose: 50, intervalo: 8 }
                         },
+                        // Meningite (inclusive SGB): AAP Red Book 2021–2024, Tabela 4.2 — igual para todas as IG
+                        meningite: [
+                            { diasMax: 7, dose: 100, intervalo: 8, faixa: 'Todas as IG, 0–7 dias de vida' },
+                            { diasMin: 8, dose: 75, intervalo: 6, faixa: 'Todas as IG, 8–28 dias de vida' }
+                        ],
+                        fonteMeningite: 'AAP Red Book 2021–2024, Tabela 4.2 (meningite por SGB)',
+                        notaMeningite: 'Doses altas de ampicilina associam-se a convulsões; usar com cautela (Lim & Miller, Am J Perinatol 2022).',
                         info: "Penicilina de amplo espectro. Primeira escolha para sepse neonatal precoce.",
                         classe: "Penicilina"
                     },
@@ -648,10 +696,14 @@
                             "<=29_sem_8-28_dias": { dose: 50000, intervalo: 12 },
                             "30-34_sem_0-7_dias": { dose: 50000, intervalo: 8 },
                             "30-34_sem_>=8_dias": { dose: 50000, intervalo: 8 },
-                            ">=35_sem_todos": { dose: 50000, intervalo: 8 },
-                            sepse: { dose: 100000, intervalo: 6 },
-                            meningite: { dose: 100000, intervalo: 6 }
+                            ">=35_sem_todos": { dose: 50000, intervalo: 8 }
                         },
+                        // Penicilina G cristalina, meningite por SGB: AAP Red Book 2021–2024, Tabela 4.2 — todas as IG
+                        meningite: [
+                            { diasMax: 7, dose: 150000, intervalo: 8, faixa: 'Todas as IG, 0–7 dias de vida' },
+                            { diasMin: 8, dose: 125000, intervalo: 6, faixa: 'Todas as IG, 8–28 dias de vida' }
+                        ],
+                        fonteMeningite: 'AAP Red Book 2021–2024, Tabela 4.2 (meningite por SGB)',
                         info: "Penicilina G. Primeira escolha para infecções por estreptococos.",
                         classe: "Penicilina"
                     },
@@ -766,6 +818,13 @@
                             "30-34_sem_>=8_dias": { dose: 50, intervalo: 8 },
                             ">=35_sem_todos": { dose: 50, intervalo: 8 }
                         },
+                        // Meningite: só há intervalo específico a partir de 37 sem de idade pós-menstrual (NeoMed);
+                        // abaixo disso a fonte não traz dose de meningite maior que a padrão -> usa a linha padrão.
+                        meningite: [
+                            { pmaMin: 37, diasMax: 7, dose: 50, intervalo: 8, faixa: 'Idade pós-menstrual ≥37 sem, 0–7 dias de vida' },
+                            { pmaMin: 37, diasMin: 8, dose: 50, intervalo: 6, faixa: 'Idade pós-menstrual ≥37 sem, 8–28 dias de vida' }
+                        ],
+                        fonteMeningite: 'NeoMed Consensus Group, monografia Cefotaxima (≥37 sem pós-menstrual)',
                         info: "Cefalosporina de terceira geração. Boa penetração no SNC.",
                         classe: "Cefalosporina"
                     },
@@ -823,6 +882,11 @@
                             "30-34_sem_>=8_dias": { dose: 20, intervalo: 8 },
                             ">=35_sem_todos": { dose: 20, intervalo: 8 }
                         },
+                        // Meningite: 40 mg/kg/dose a cada 8 h (Pediamécum AEP, meropenem neonatal)
+                        meningite: [
+                            { dose: 40, intervalo: 8, faixa: 'Todas as IG e dias de vida (0–28)' }
+                        ],
+                        fonteMeningite: 'Pediamécum (AEP), meropenem — meningite neonatal',
                         info: "Carbapenem. Reservado para infecções graves e multirresistentes.",
                         classe: "Carbapenem"
                     },
@@ -1030,210 +1094,204 @@
                     return String(Number(numero.toPrecision(3)));
                 }
 
-                document.getElementById('antibioticoForm').addEventListener('submit', function (e) {
-                    e.preventDefault();
+                // ===== Fonte única de dosagem (tela E texto copiado usam esta função) =====
+                const PESO_MAX_KG = 10;
+                const IG_MIN_SEM = 22;
+                const IG_MAX_SEM = 42;
+                const DIAS_MAX = 28;
+                const INDICACOES_COM_LINHA_PROPRIA = ['meningoencefalite', 'imunossuprimido'];
+                const TEXTO_INDICACAO = {
+                    sepse: 'Sepse neonatal',
+                    meningite: 'Meningite',
+                    meningoencefalite: 'Meningoencefalite',
+                    imunossuprimido: 'Imunossuprimido'
+                };
 
-                    console.log('=== INÍCIO DO CÁLCULO ===');
-
-                    const peso = parseFloat(document.getElementById('peso').value);
-                    const idadeGestacional = parseInt(document.getElementById('idadeGestacional').value);
-                    const idadePosNatal = parseInt(document.getElementById('idadePosNatal').value);
-                    const antibiotico = document.getElementById('antibiotico').value;
-                    const indicacao = document.getElementById('indicacao').value;
-
-                    console.log('Dados de entrada:', { peso, idadeGestacional, idadePosNatal, antibiotico, indicacao });
-
-                    // VALIDAÇÃO CRÍTICA NEONATAL (Fourth-Pass Audit Fix)
-                    if (peso > 10 || peso <= 0 || isNaN(peso)) {
-                        alert('ERRO DE SEGURANÇA CLÍNICA: O peso informado (' + peso + ' kg) é inválido para a faixa neonatal. O peso máximo permitido nesta calculadora específica é 10 kg. Verifique se você digitou gramas no lugar de quilogramas (ex: digite 0.5 em vez de 500).');
-                        document.getElementById('resultado').style.display = 'none';
-                        return;
+                // Faixa padrão por IG (semanas completas) e dias de vida (dias completos)
+                function faixaPadrao(ig, dias) {
+                    if (ig <= 29) {
+                        return dias <= 7
+                            ? { chave: '<=29_sem_0-7_dias', texto: 'IG ≤29 sem, 0–7 dias de vida' }
+                            : { chave: '<=29_sem_8-28_dias', texto: 'IG ≤29 sem, 8–28 dias de vida' };
                     }
+                    if (ig <= 34) {
+                        return dias <= 7
+                            ? { chave: '30-34_sem_0-7_dias', texto: 'IG 30–34 sem, 0–7 dias de vida' }
+                            : { chave: '30-34_sem_>=8_dias', texto: 'IG 30–34 sem, ≥8 dias de vida' };
+                    }
+                    return { chave: '>=35_sem_todos', texto: 'IG ≥35 sem, 0–28 dias de vida' };
+                }
 
-                    // Determinar categoria baseada na idade gestacional e dias de vida
-                    let doseKey = '';
+                function regraAtende(regra, ig, dias) {
+                    const pma = ig + dias / 7;
+                    if (regra.diasMin !== undefined && dias < regra.diasMin) return false;
+                    if (regra.diasMax !== undefined && dias > regra.diasMax) return false;
+                    if (regra.pmaMin !== undefined && pma < regra.pmaMin) return false;
+                    return true;
+                }
 
-                    // Primeiro, verificar indicações especiais
-                    if (indicacao === 'imunossuprimido' || indicacao === 'meningoencefalite') {
-                        doseKey = indicacao;
-                    } else {
-                        // Determinar categoria baseada na idade gestacional e dias de vida
-                        if (idadeGestacional <= 29) {
-                            if (idadePosNatal <= 7) {
-                                doseKey = '<=29_sem_0-7_dias';
-                            } else {
-                                doseKey = '<=29_sem_8-28_dias';
-                            }
-                        } else if (idadeGestacional >= 30 && idadeGestacional <= 34) {
-                            if (idadePosNatal <= 7) {
-                                doseKey = '30-34_sem_0-7_dias';
-                            } else {
-                                doseKey = '30-34_sem_>=8_dias';
-                            }
-                        } else if (idadeGestacional >= 35) {
-                            doseKey = '>=35_sem_todos';
-                        } else {
-                            // Fallback para categorias antigas
-                            doseKey = idadeGestacional < 37 ? 'prematuro' : 'termo';
+                function categoriaPorIG(ig) {
+                    if (ig <= 29) return 'Prematuro extremo (≤29 semanas)';
+                    if (ig <= 34) return 'Prematuro moderado (30-34 semanas)';
+                    return 'Termo (≥35 semanas)';
+                }
+
+                function lerEntrada() {
+                    return {
+                        peso: parseFloat(document.getElementById('peso').value),
+                        igInformada: parseFloat(document.getElementById('idadeGestacional').value),
+                        diasInformados: parseFloat(document.getElementById('idadePosNatal').value),
+                        antibiotico: document.getElementById('antibiotico').value,
+                        indicacao: document.getElementById('indicacao').value
+                    };
+                }
+
+                // Retorna { ok: false, erro } ou { ok: true, ...valores }. Não altera a entrada.
+                function calcularDosagem(entrada) {
+                    const { peso, igInformada, diasInformados, antibiotico, indicacao } = entrada;
+                    if (isNaN(peso) || peso <= 0 || peso > PESO_MAX_KG) return { ok: false, erro: 'peso' };
+                    if (isNaN(igInformada) || isNaN(diasInformados) || !antibiotico || !indicacao) return { ok: false, erro: 'dados' };
+                    if (igInformada < IG_MIN_SEM || igInformada > IG_MAX_SEM || diasInformados < 0 || diasInformados > DIAS_MAX) {
+                        return { ok: false, erro: 'faixa' };
+                    }
+                    const dados = medicamentos[antibiotico];
+                    if (!dados) return { ok: false, erro: 'medicamento' };
+
+                    const ig = Math.floor(igInformada);
+                    const dias = Math.floor(diasInformados);
+                    const padrao = faixaPadrao(ig, dias);
+                    let linha = null;
+                    let esquema = '';
+                    let faixa = '';
+                    let fonte = '';
+                    let nota = '';
+
+                    if (INDICACOES_COM_LINHA_PROPRIA.includes(indicacao)) {
+                        linha = dados.doses[indicacao] || null;
+                        esquema = 'Indicação específica: ' + TEXTO_INDICACAO[indicacao];
+                        faixa = 'Linha da indicação (independe de IG/dias)';
+                    } else if (indicacao === 'meningite' && Array.isArray(dados.meningite)) {
+                        const regra = dados.meningite.find(r => regraAtende(r, ig, dias)) || null;
+                        if (regra) {
+                            linha = regra;
+                            esquema = 'Meningite — dose específica para meningite';
+                            faixa = regra.faixa;
+                            fonte = dados.fonteMeningite || '';
+                            nota = dados.notaMeningite || '';
                         }
                     }
 
-                    console.log('DoseKey calculado:', doseKey);
-
-                    const antibioticoData = medicamentos[antibiotico];
-
-                    if (!antibioticoData) {
-                        alert('Medicamento não encontrado!');
-                        return;
+                    if (!linha && !INDICACOES_COM_LINHA_PROPRIA.includes(indicacao)) {
+                        linha = dados.doses[padrao.chave] || null;
+                        esquema = indicacao === 'meningite'
+                            ? 'Padrão por IG e dias de vida (sem dose específica para meningite na fonte)'
+                            : 'Padrão por IG e dias de vida';
+                        faixa = padrao.texto;
                     }
 
-                    console.log('Doses disponíveis:', Object.keys(antibioticoData.doses));
+                    if (!linha) return { ok: false, erro: 'sem_linha' };
 
-                    // Verificar se a dose existe para a indicação
-                    if (!antibioticoData.doses[doseKey]) {
-                        console.log(`Dosagem não disponível para a chave protocolar exata: ${doseKey}.`);
-                        alert('ALERTA DE SEGURANÇA: Não foi possível calcular a dosagem exata. O cruzamento entre Indicação, Idade Gestacional e Dias de Vida deste paciente não está coberto pelo protocolo estrito do medicamento selecionado. Por segurança, o sistema bloqueou o uso automático. Consulte o Neofax ou bula.');
-                        document.getElementById('resultado').style.display = 'none';
-                        return;
+                    const ehUI = antibiotico === 'penicilina';
+                    const dosesPorDia = 24 / linha.intervalo;
+                    const doseTotal = peso * linha.dose;
+                    return {
+                        ok: true,
+                        dados,
+                        ig, dias,
+                        categoria: categoriaPorIG(ig),
+                        indicacaoTexto: TEXTO_INDICACAO[indicacao] || indicacao,
+                        esquemaMeningite: esquema.indexOf('Meningite —') === 0,
+                        esquema, faixa, fonte, nota,
+                        dosePorPeso: linha.dose,
+                        doseTotal,
+                        intervalo: linha.intervalo,
+                        dosesPorDia,
+                        doseDiaria: doseTotal * dosesPorDia,
+                        unidade: ehUI ? 'UI' : 'mg',
+                        unidadeDose: ehUI ? 'UI/kg/dose' : 'mg/kg/dose',
+                        unidadeDiaria: ehUI ? 'UI/dia' : 'mg/dia'
+                    };
+                }
+
+                const MSG_FAIXA = 'Erro: Idade gestacional deve estar entre 22 e 42 semanas e idade pós-natal entre 0 e 28 dias.';
+
+                function mensagemErroTela(erro, peso) {
+                    switch (erro) {
+                        case 'peso': return 'ERRO DE SEGURANÇA CLÍNICA: O peso informado (' + peso + ' kg) é inválido para a faixa neonatal. O peso máximo permitido nesta calculadora específica é 10 kg. Verifique se você digitou gramas no lugar de quilogramas (ex: digite 0.5 em vez de 500).';
+                        case 'faixa': return MSG_FAIXA;
+                        case 'medicamento': return 'Medicamento não encontrado!';
+                        case 'sem_linha': return 'ALERTA DE SEGURANÇA: Não foi possível calcular a dosagem exata. O cruzamento entre Indicação, Idade Gestacional e Dias de Vida deste paciente não está coberto pelo protocolo estrito do medicamento selecionado. Por segurança, o sistema bloqueou o uso automático. Consulte o Neofax ou bula.';
+                        default: return 'Erro: Dados invalidos. Verifique se todos os campos foram preenchidos.';
                     }
+                }
 
-                    const doseData = antibioticoData.doses[doseKey];
-
-                    if (!doseData) {
-                        alert('Dados de dosagem não encontrados para este medicamento!');
-                        return;
+                function mensagemErroRelatorio(erro) {
+                    switch (erro) {
+                        case 'peso': return 'ERRO: Não é possível gerar relatório para pesos superiores a 10kg em ambiente neonatal.';
+                        case 'faixa': return MSG_FAIXA;
+                        case 'medicamento': return 'Medicamento nao encontrado!';
+                        case 'sem_linha': return 'ALERTA DE SEGURANÇA: Impressão bloqueada. O cruzamento entre Indicação, Idade Gestacional e Dias de Vida deste paciente não existe nativamente no protocolo do medicamento.';
+                        default: return 'Erro: Dados invalidos. Verifique se todos os campos foram preenchidos.';
                     }
+                }
 
-                    // Calcular dosagem
-                    const dosePorPeso = doseData.dose;
-                    const doseTotal = peso * dosePorPeso;
-                    const intervalo = doseData.intervalo;
-                    const dosesPorDia = 24 / intervalo;
-                    const doseDiaria = doseTotal * dosesPorDia;
+                function exibirResultado(r) {
+                    document.getElementById('doseValue').textContent = formatarNumeroClinico(r.doseTotal, 1);
+                    document.getElementById('doseUnit').textContent = r.unidade;
+                    document.getElementById('intervaloValue').textContent = r.intervalo;
+                    document.getElementById('doseDiariaValue').textContent = formatarNumeroClinico(r.doseDiaria, 1);
+                    document.getElementById('doseDiariaUnit').textContent = r.unidadeDiaria;
+                    document.getElementById('dosePesoValue').textContent = formatarNumeroClinico(r.dosePorPeso, 1);
+                    document.getElementById('dosePesoUnit').textContent = r.unidadeDose;
 
-                    console.log('Cálculos finais:', { dosePorPeso, doseTotal, intervalo, dosesPorDia, doseDiaria });
-                    console.log('DoseKey usado:', doseKey);
-
-                    // Exibir resultados
-                    document.getElementById('doseValue').textContent = formatarNumeroClinico(doseTotal, 1);
-                    document.getElementById('doseUnit').textContent = antibiotico === 'penicilina' ? 'UI' : 'mg';
-
-                    document.getElementById('intervaloValue').textContent = intervalo;
-
-                    document.getElementById('doseDiariaValue').textContent = formatarNumeroClinico(doseDiaria, 1);
-                    document.getElementById('doseDiariaUnit').textContent = antibiotico === 'penicilina' ? 'UI/dia' : 'mg/dia';
-
-                    document.getElementById('dosePesoValue').textContent = formatarNumeroClinico(dosePorPeso, 1);
-                    document.getElementById('dosePesoUnit').textContent = antibiotico === 'penicilina' ? 'UI/kg/dose' : 'mg/kg/dose';
+                    const box = document.getElementById('esquemaBox');
+                    box.classList.toggle('esquema-meningite', r.esquemaMeningite);
+                    document.getElementById('indicacaoTexto').textContent = r.indicacaoTexto;
+                    document.getElementById('esquemaTexto').textContent = r.esquema;
+                    document.getElementById('faixaTexto').textContent = r.faixa;
+                    const fonteLinha = document.getElementById('fonteLinha');
+                    fonteLinha.style.display = r.fonte ? '' : 'none';
+                    document.getElementById('fonteTexto').textContent = r.fonte;
+                    const notaLinha = document.getElementById('notaLinha');
+                    notaLinha.style.display = r.nota ? '' : 'none';
+                    document.getElementById('notaTexto').textContent = r.nota;
 
                     document.getElementById('resultado').style.display = 'block';
+                }
+
+                document.getElementById('antibioticoForm').addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const entrada = lerEntrada();
+                    const r = calcularDosagem(entrada);
+                    if (!r.ok) {
+                        alert(mensagemErroTela(r.erro, entrada.peso));
+                        document.getElementById('resultado').style.display = 'none';
+                        return;
+                    }
+                    exibirResultado(r);
                 });
 
-                // Função para gerar relatório
+                // Função para gerar relatório (mesma função de cálculo da tela)
                 function gerarRelatorio() {
-                    // Verificar se os elementos existem antes de acessá-los
-                    const pesoElement = document.getElementById('peso');
-                    const idadeGestacionalElement = document.getElementById('idadeGestacional');
-                    const diasVidaElement = document.getElementById('idadePosNatal');
-                    const antibioticoElement = document.getElementById('antibiotico');
-                    const indicacaoElement = document.getElementById('indicacao');
-
-                    if (!pesoElement || !idadeGestacionalElement || !diasVidaElement || !antibioticoElement || !indicacaoElement) {
-                        alert('Erro: Campos obrigatorios nao encontrados. Execute o calculo primeiro.');
+                    const entrada = lerEntrada();
+                    const r = calcularDosagem(entrada);
+                    if (!r.ok) {
+                        alert(mensagemErroRelatorio(r.erro));
                         return;
                     }
-
-                    // Obter dados do formulário
-                    const peso = parseFloat(pesoElement.value);
-                    const idadeGestacional = parseFloat(idadeGestacionalElement.value);
-                    const diasVida = parseFloat(diasVidaElement.value);
-                    const antibiotico = antibioticoElement.value;
-                    const indicacao = indicacaoElement.value;
-
-                    // Verificar se os valores são válidos
-                    if (isNaN(peso) || isNaN(idadeGestacional) || isNaN(diasVida) || !antibiotico || !indicacao) {
-                        alert('Erro: Dados invalidos. Verifique se todos os campos foram preenchidos.');
-                        return;
-                    }
-
-                    // MESA DE VALIDAÇÃO (Fourth-Pass) - Recheca peso limitante para não salvar relatório falso
-                    if (peso > 10 || peso <= 0) {
-                        alert('ERRO: Não é possível gerar relatório para pesos superiores a 10kg em ambiente neonatal.');
-                        return;
-                    }
-
-                    // Recalcular valores
-                    let doseKey = '';
-                    if (idadeGestacional <= 29) {
-                        if (diasVida <= 7) {
-                            doseKey = '<=29_sem_0-7_dias';
-                        } else {
-                            doseKey = '<=29_sem_8-28_dias';
-                        }
-                    } else if (idadeGestacional <= 34) {
-                        if (diasVida <= 7) {
-                            doseKey = '30-34_sem_0-7_dias';
-                        } else {
-                            doseKey = '30-34_sem_>=8_dias';
-                        }
-                    } else {
-                        if (diasVida <= 7) {
-                            doseKey = '>=35_sem_0-7_dias';
-                        } else {
-                            doseKey = '>=35_sem_>=8_dias';
-                        }
-                    }
-
-                    // Ajustar para indicações específicas
-                    if (indicacao === 'meningite' || indicacao === 'meningoencefalite' || indicacao === 'imunossuprimido') {
-                        doseKey = indicacao;
-                    }
-
-                    const antibioticoData = medicamentos[antibiotico];
-                    if (!antibioticoData) {
-                        alert('Medicamento nao encontrado!');
-                        return;
-                    }
-
-                    console.log('Dados do medicamento:', antibioticoData);
-
-                    // Verificar se a dose existe para a indicação
-                    if (!antibioticoData.doses[doseKey]) {
-                        alert('ALERTA DE SEGURANÇA: Impressão bloqueada. O cruzamento entre Indicação, Idade Gestacional e Dias de Vida deste paciente não existe nativamente no protocolo do medicamento.');
-                        return;
-                    }
-
-                    const doseData = antibioticoData.doses[doseKey];
-                    if (!doseData) {
-                        alert('Dados de dosagem nao encontrados!');
-                        return;
-                    }
-
-                    // Calcular dosagem
-                    const dosePorPeso = doseData.dose;
-                    const doseTotal = peso * dosePorPeso;
-                    const intervalo = doseData.intervalo;
-                    const dosesPorDia = 24 / intervalo;
-                    const doseDiaria = doseTotal * dosesPorDia;
-
-                    // Determinar unidade
-                    const unidade = antibiotico === 'penicilina' ? 'UI' : 'mg';
-                    const unidadeDose = antibiotico === 'penicilina' ? 'UI/kg/dose' : 'mg/kg/dose';
-                    const unidadeDiaria = antibiotico === 'penicilina' ? 'UI/dia' : 'mg/dia';
-
-                    // Categoria do paciente
-                    let categoriaPaciente = '';
-                    if (idadeGestacional <= 29) {
-                        categoriaPaciente = 'Prematuro extremo (≤29 semanas)';
-                    } else if (idadeGestacional <= 34) {
-                        categoriaPaciente = 'Prematuro moderado (30-34 semanas)';
-                    } else {
-                        categoriaPaciente = 'Termo (≥35 semanas)';
-                    }
+                    const antibiotico = entrada.antibiotico;
+                    const antibioticoData = r.dados;
 
                     const foot = (typeof window.neopedLegalReportFooter === 'function')
                         ? window.neopedLegalReportFooter()
                         : '';
+
+                    const linhasEsquema = [
+                        `- Esquema aplicado: ${r.esquema}`,
+                        `- Faixa da tabela: ${r.faixa}`
+                    ];
+                    if (r.fonte) linhasEsquema.push(`- Fonte da dose: ${r.fonte}`);
+                    if (r.nota) linhasEsquema.push(`- Observacao: ${r.nota}`);
 
                     const relatorio = `RESUMO INFORMATIVO — Medicamento neonatal (NeoPedCalc, uso educativo)
 ===============================
@@ -1241,22 +1299,23 @@
 NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Conferir com Neofax/bulario, cultura e funcao renal/hepatica antes de qualquer decisao clinica.
 
 DADOS INFORMADOS:
-- Peso: ${peso} kg
-- Idade gestacional: ${idadeGestacional} semanas
-- Dias de vida: ${diasVida} dias
-- Categoria (rotulo do app): ${categoriaPaciente}
+- Peso: ${entrada.peso} kg
+- Idade gestacional: ${entrada.igInformada} semanas
+- Dias de vida: ${entrada.diasInformados} dias
+- Categoria (rotulo do app): ${r.categoria}
 
 MEDICAMENTO (selecao no app):
 - Nome: ${antibioticoData.nome || antibiotico}
 - Classe: ${antibioticoData.classe || 'Nao informada'}
-- Indicacao (campo): ${indicacao}
+- Indicacao (campo): ${r.indicacaoTexto}
+${linhasEsquema.join('\n')}
 
 VALORES CALCULADOS (aritmeticos a partir da tabela embutida):
-- Dose por peso: ${formatarNumeroClinico(dosePorPeso, 1)} ${unidadeDose}
-- Dose por aplicacao: ${formatarNumeroClinico(doseTotal, 1)} ${unidade}
-- Intervalo: ${intervalo} horas
-- Doses por dia (24/intervalo): ${formatarNumeroClinico(dosesPorDia, 1)}
-- Dose diaria total (extrapolacao): ${formatarNumeroClinico(doseDiaria, 1)} ${unidadeDiaria}
+- Dose por peso: ${formatarNumeroClinico(r.dosePorPeso, 1)} ${r.unidadeDose}
+- Dose por aplicacao: ${formatarNumeroClinico(r.doseTotal, 1)} ${r.unidade}
+- Intervalo: ${r.intervalo} horas
+- Doses por dia (24/intervalo): ${formatarNumeroClinico(r.dosesPorDia, 1)}
+- Dose diaria total (extrapolacao): ${formatarNumeroClinico(r.doseDiaria, 1)} ${r.unidadeDiaria}
 
 LEMBRETES EDUCATIVOS:
 - Correlacionar com cultura, clearance e protocolo institucional.
@@ -1266,8 +1325,6 @@ LEMBRETES EDUCATIVOS:
 NOTA EDUCATIVA: Revise todos os valores. A NeoPedCalc nao substitui julgamento clinico nem protocolos institucionais.
 
 ${foot ? foot.trim() : ''}`;
-
-                    const msgCopia = 'Texto copiado. Revise numeros e contexto antes de usar em registro clinico ou mensagem.';
 
                     navigator.clipboard.writeText(relatorio).then(() => {
                         if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');

@@ -25,7 +25,6 @@
     'anos': ['years', 'años'],
     'mês': ['month', 'mes'],
     'meses': ['months', 'meses'],
-    'mêses': ['months', 'meses'],
     'Observacoes': ['Notes', 'Observaciones'],
     'dia': ['day', 'día'],
     'dias': ['days', 'días'],
@@ -38,10 +37,6 @@
     'Informações importantes': ['Important information', 'Información importante'],
     'O PELOD-2 deve ser calculado com base nos': ['PELOD-2 should be calculated from the', 'El PELOD-2 debe calcularse con los'],
     'piores valores do dia': ['worst values of the day', 'peores valores del día'],
-    'para cada variável. Para cada parâmetro, use o valor que representa a maior disfunção observada durante as 24 horas. Você pode inserir valores únicos ou listas separadas por vírgula — o sistema seleciona automaticamente o pior valor conforme a regra (mínimo ou máximo, conforme o parâmetro).': [
-      'for each variable. For each parameter, use the value that represents the greatest dysfunction observed during the 24 hours. You can enter single values or comma-separated lists — the system automatically selects the worst value according to the rule (minimum or maximum, depending on the parameter).',
-      'para cada variable. Para cada parámetro, utilice el valor que represente la mayor disfunción observada durante las 24 horas. Puede introducir valores únicos o listas separadas por comas — el sistema selecciona automáticamente el peor valor según la regla (mínimo o máximo, según el parámetro).'
-    ],
     'Uso desta tela:': ['Use of this screen:', 'Uso de esta pantalla:'],
     'apoio ao ensino e registro informativo. O número percentual associado ao total é uma': [
       'teaching support and informational recording. The percentage associated with the total is a',
@@ -53,10 +48,8 @@
     'nem critério isolado de conduta.': ['nor a stand-alone criterion for management.', 'ni un criterio aislado de conducta.'],
     'Neurológico': ['Neurologic', 'Neurológico'],
     'Escala de Coma de Glasgow (GCS)': ['Glasgow Coma Scale (GCS)', 'Escala de coma de Glasgow (GCS)'],
-    'pior valor do dia (quanto menor, pior)': ['worst value of the day (lower is worse)', 'peor valor del día (cuanto menor, peor)'],
     'Cardiovascular': ['Cardiovascular', 'Cardiovascular'],
     'Pressão Arterial Média (PAM)': ['Mean Arterial Pressure (MAP)', 'Presión arterial media (PAM)'],
-    'mmHg (pior valor do dia)': ['mmHg (worst value of the day)', 'mmHg (peor valor del día)'],
     'Lactato': ['Lactate', 'Lactato'],
     'mmol/L (pior valor do dia)': ['mmol/L (worst value of the day)', 'mmol/L (peor valor del día)'],
     'Respiratório': ['Respiratory', 'Respiratorio'],
@@ -65,7 +58,6 @@
     'Plaquetas': ['Platelets', 'Plaquetas'],
     'Leucócitos': ['White blood cells', 'Leucocitos'],
     'Observações': ['Notes', 'Observaciones'],
-    'Sedação? Ventilação? Contexto clínico': ['Sedation? Ventilation? Clinical context', '¿Sedación? ¿Ventilación? Contexto clínico'],
     'Calcular PELOD-2': ['Calculate PELOD-2', 'Calcular PELOD-2'],
     'Limpar Dados': ['Clear Data', 'Borrar datos'],
 
@@ -105,10 +97,6 @@
     ', não uma “chance” individual do paciente.': [', not an individual “chance” for the patient.', ', no una “probabilidad” individual del paciente.'],
     'não uma “chance” individual do paciente.': ['not an individual “chance” for the patient.', 'no una “probabilidad” individual del paciente.'],
     'Instruções de uso': ['Instructions for use', 'Instrucciones de uso'],
-    'Preencha os piores valores de cada parâmetro nas últimas 24 h (ou janela definida pelo seu serviço)': [
-      'Enter the worst values of each parameter over the last 24 h (or the window defined by your unit)',
-      'Introduzca los peores valores de cada parámetro en las últimas 24 h (o la ventana definida por su servicio)'
-    ],
     'Use vírgula para listar vários valores; o sistema escolhe o pior conforme a regra do parâmetro': [
       'Use commas to list several values; the system picks the worst one according to the parameter rule',
       'Use comas para listar varios valores; el sistema elige el peor según la regla del parámetro'
@@ -123,14 +111,6 @@
     'não use como único critério de decisão terapêutica.': ['do not use it as the sole criterion for therapeutic decisions.', 'no lo use como único criterio de decisión terapéutica.'],
     'Considerações importantes': ['Important considerations', 'Consideraciones importantes'],
     'Qualidade e sincronia dos exames influenciam o total': ['The quality and timing of tests influence the total', 'La calidad y la sincronía de las pruebas influyen en el total'],
-    'Evolução seriada do escore pode ser discutida na literatura; a decisão de frequência de coleta é assistencial': [
-      'Serial evolution of the score may be discussed in the literature; the decision on sampling frequency is a clinical-care decision',
-      'La evolución seriada de la puntuación puede discutirse en la literatura; la decisión sobre la frecuencia de recogida es asistencial'
-    ],
-    'Comorbidades e terapias (ex.: sedação) alteram a leitura dos parâmetros — não estão “corrigidas” automaticamente nesta tela': [
-      'Comorbidities and therapies (e.g., sedation) alter the reading of the parameters — they are not automatically “corrected” on this screen',
-      'Las comorbilidades y las terapias (ej.: sedación) alteran la lectura de los parámetros — no se “corrigen” automáticamente en esta pantalla'
-    ],
     'Uso pretendido (informativo)': ['Intended use (informational)', 'Uso previsto (informativo)'],
     'Ensino de definição de disfunção orgânica pediátrica': ['Teaching the definition of pediatric organ dysfunction', 'Enseñanza de la definición de disfunción orgánica pediátrica'],
     'Padronização de registro para estudo ou auditoria interna, com ressalvas explícitas': [
@@ -186,11 +166,9 @@
     'Reação pupilar': ['Pupillary reaction', 'Reacción pupilar'],
     'Ambas reativas': ['Both reactive', 'Ambas reactivas'],
     'Ambas fixas': ['Both fixed', 'Ambas fijas'],
-    'pupilas fixas bilateralmente pontuam 5': ['bilaterally fixed pupils score 5', 'las pupilas fijas bilaterales puntúan 5'],
     'Ventilação invasiva': ['Invasive ventilation', 'Ventilación invasiva'],
     'Não': ['No', 'No'],
     'Sim': ['Yes', 'Sí'],
-    'ventilação mecânica invasiva (intubação ou traqueostomia)': ['invasive mechanical ventilation (intubation or tracheostomy)', 'ventilación mecánica invasiva (intubación o traqueostomía)'],
     'Renal': ['Renal', 'Renal'],
     'Hematológico': ['Hematologic', 'Hematológico'],
     'maior valor do dia, na unidade escolhida abaixo': ['highest value of the day, in the unit selected below', 'mayor valor del día, en la unidad elegida abajo'],
@@ -221,7 +199,6 @@
     ],
     '(10 variáveis, total de 0 a 33 pontos; Leteurtre et al., 2013).': ['(10 variables, total 0 to 33 points; Leteurtre et al., 2013).', '(10 variables, total de 0 a 33 puntos; Leteurtre et al., 2013).'],
     '• Glasgow: ≥ 11 = 0; 5–10 = 1; 3–4 = 4': ['• Glasgow Coma Score: ≥ 11 = 0; 5–10 = 1; 3–4 = 4', '• Glasgow: ≥ 11 = 0; 5–10 = 1; 3–4 = 4'],
-    '• Reação pupilar: ambas reativas = 0; ambas fixas = 5': ['• Pupillary reaction: both reactive = 0; both fixed = 5', '• Reacción pupilar: ambas reactivas = 0; ambas fijas = 5'],
     '• Lactato (mmol/L): < 5,0 = 0; 5,0–10,9 = 1; ≥ 11,0 = 4': ['• Lactatemia (mmol/L): < 5.0 = 0; 5.0–10.9 = 1; ≥ 11.0 = 4', '• Lactato (mmol/L): < 5,0 = 0; 5,0–10,9 = 1; ≥ 11,0 = 4'],
     '• PAM (mmHg) por faixa etária, pontos 0 / 2 / 3 / 6:': ['• MAP (mmHg) by age group, points 0 / 2 / 3 / 6:', '• PAM (mmHg) por grupo de edad, puntos 0 / 2 / 3 / 6:'],
     '0 a < 1 mês: ≥ 46 / 31–45 / 17–30 / ≤ 16': ['0 to < 1 month: ≥ 46 / 31–45 / 17–30 / ≤ 16', '0 a < 1 mes: ≥ 46 / 31–45 / 17–30 / ≤ 16'],
@@ -234,7 +211,6 @@
       '• Creatinine (µmol/L) ≥ age threshold = 2, below = 0: 0 to < 1 month ≥ 70; 1–11 months ≥ 23; 12–23 months ≥ 35; 24–59 months ≥ 51; 60–143 months ≥ 59; ≥ 144 months ≥ 93 (mg/dL × 88.4 = µmol/L)',
       '• Creatinina (µmol/L) ≥ umbral de la edad = 2, por debajo = 0: 0 a < 1 mes ≥ 70; 1–11 meses ≥ 23; 12–23 meses ≥ 35; 24–59 meses ≥ 51; 60–143 meses ≥ 59; ≥ 144 meses ≥ 93 (mg/dL × 88,4 = µmol/L)'
     ],
-    '• PaO₂ (mmHg)/FiO₂: ≥ 61 = 0; ≤ 60 = 2': ['• PaO₂ (mmHg)/FiO₂: ≥ 61 = 0; ≤ 60 = 2', '• PaO₂ (mmHg)/FiO₂: ≥ 61 = 0; ≤ 60 = 2'],
     '• PaCO₂ (mmHg): ≤ 58 = 0; 59–94 = 1; ≥ 95 = 3': ['• PaCO₂ (mmHg): ≤ 58 = 0; 59–94 = 1; ≥ 95 = 3', '• PaCO₂ (mmHg): ≤ 58 = 0; 59–94 = 1; ≥ 95 = 3'],
     '• Ventilação invasiva: não = 0; sim = 3': ['• Invasive ventilation: no = 0; yes = 3', '• Ventilación invasiva: no = 0; sí = 3'],
     '• Leucócitos (×10⁹/L): > 2 = 0; ≤ 2 = 2': ['• WBC count (×10⁹/L): > 2 = 0; ≤ 2 = 2', '• Leucocitos (×10⁹/L): > 2 = 0; ≤ 2 = 2'],
@@ -290,7 +266,6 @@
     'Hematologico': ['Hematologic', 'Hematológico'],
     '- (calculo nao realizado)': ['- (calculation not performed)', '- (cálculo no realizado)'],
     'TABELA DE PONTOS (PELOD-2 publicado, Leteurtre 2013)': ['POINTS TABLE (published PELOD-2, Leteurtre 2013)', 'TABLA DE PUNTOS (PELOD-2 publicado, Leteurtre 2013)'],
-    '- Reacao pupilar: ambas reativas=0; ambas fixas=5': ['- Pupillary reaction: both reactive=0; both fixed=5', '- Reacción pupilar: ambas reactivas=0; ambas fijas=5'],
     '- Lactato (mmol/L): <5,0=0; 5,0-10,9=1; >=11,0=4': ['- Lactate (mmol/L): <5.0=0; 5.0-10.9=1; >=11.0=4', '- Lactato (mmol/L): <5,0=0; 5,0-10,9=1; >=11,0=4'],
     '- PAM (mmHg), pontos 0/2/3/6 por faixa etaria:': ['- MAP (mmHg), points 0/2/3/6 by age group:', '- PAM (mmHg), puntos 0/2/3/6 por grupo de edad:'],
     '0 a <1 mes: >=46 / 31-45 / 17-30 / <=16': ['0 to <1 month: >=46 / 31-45 / 17-30 / <=16', '0 a <1 mes: >=46 / 31-45 / 17-30 / <=16'],
@@ -305,7 +280,195 @@
     ],
     '- Ventilacao invasiva: nao=0; sim=3': ['- Invasive ventilation: no=0; yes=3', '- Ventilación invasiva: no=0; sí=3'],
     '- Leucocitos (x10^9/L): >2=0; <=2=2': ['- WBC count (x10^9/L): >2=0; <=2=2', '- Leucocitos (x10^9/L): >2=0; <=2=2'],
-    '- Plaquetas (x10^9/L): >=142=0; 77-141=1; <=76=2': ['- Platelets (x10^9/L): >=142=0; 77-141=1; <=76=2', '- Plaquetas (x10^9/L): >=142=0; 77-141=1; <=76=2']
+    '- Plaquetas (x10^9/L): >=142=0; 77-141=1; <=76=2': ['- Platelets (x10^9/L): >=142=0; 77-141=1; <=76=2', '- Plaquetas (x10^9/L): >=142=0; 77-141=1; <=76=2'],
+    'dias contados em intervalos de 24 h desde a admissão (dia 1 = primeiras 24 h)': [
+      'days counted in 24-h intervals from admission (day 1 = first 24 h)',
+      'días contados en intervalos de 24 h desde el ingreso (día 1 = primeras 24 h)'
+    ],
+    'para cada variável: se uma variável foi medida mais de uma vez no intervalo de 24 horas, use o pior valor; se não foi medida, ela é considerada normal (Leteurtre et al., 2013). Você pode inserir valores únicos ou listas separadas por vírgula — o sistema seleciona automaticamente o pior valor conforme a regra (mínimo ou máximo, conforme o parâmetro).': [
+      'for each variable: if a variable was measured more than once in the 24-hour interval, use the worst value; if it was not measured, it is considered normal (Leteurtre et al., 2013). You can enter single values or comma-separated lists — the system automatically selects the worst value according to the rule (minimum or maximum, depending on the parameter).',
+      'para cada variable: si una variable se midió más de una vez en el intervalo de 24 horas, use el peor valor; si no se midió, se considera normal (Leteurtre et al., 2013). Puede introducir valores únicos o listas separadas por comas — el sistema selecciona automáticamente el peor valor según la regla (mínimo o máximo, según el parámetro).'
+    ],
+    'menor valor do dia; se sedado, registre o Glasgow estimado antes da sedação; avaliar só em doença aguda do SNC conhecida ou suspeita': [
+      'lowest value of the day; if sedated, record the estimated GCS before sedation; assess only with known or suspected acute CNS disease',
+      'valor más bajo del día; si está sedado, registre el Glasgow estimado antes de la sedación; evaluar solo con enfermedad aguda del SNC conocida o sospechada'
+    ],
+    'Uma fixa, outra reativa': [
+      'One fixed, the other reactive',
+      'Una fija, la otra reactiva'
+    ],
+    'só ambas fixas pontuam 5; uma pupila fixa pontua 0. Pupila não reativa deve ter > 3 mm; não avaliar após dilatação pupilar iatrogênica': [
+      'only both fixed scores 5; one fixed pupil scores 0. A nonreactive pupil must be > 3 mm; do not assess after iatrogenic pupillary dilation',
+      'solo ambas fijas puntúan 5; una pupila fija puntúa 0. La pupila no reactiva debe medir > 3 mm; no evaluar tras dilatación pupilar iatrogénica'
+    ],
+    'mmHg (pior valor do dia); não avaliar durante choro ou agitação iatrogênica': [
+      'mmHg (worst value of the day); do not assess during crying or iatrogenic agitation',
+      'mmHg (peor valor del día); no evaluar durante el llanto o la agitación iatrogénica'
+    ],
+    'mmHg, apenas sangue arterial (pior valor do dia)': [
+      'mmHg, arterial blood only (worst value of the day)',
+      'mmHg, solo sangre arterial (peor valor del día)'
+    ],
+    'mmHg, arterial, capilar ou venosa (pior valor do dia)': [
+      'mmHg, arterial, capillary or venous (worst value of the day)',
+      'mmHg, arterial, capilar o venosa (peor valor del día)'
+    ],
+    'ventilação mecânica invasiva (intubação ou traqueostomia); ventilação por máscara não é considerada invasiva': [
+      'invasive mechanical ventilation (intubation or tracheostomy); mask ventilation is not considered invasive',
+      'ventilación mecánica invasiva (intubación o traqueostomía); la ventilación con mascarilla no se considera invasiva'
+    ],
+    'Cardiopatia cianótica?': [
+      'Cyanotic heart disease?',
+      '¿Cardiopatía cianótica?'
+    ],
+    'na cardiopatia cianótica, a relação PaO₂/FiO₂ é considerada normal (0 ponto)': [
+      'in cyanotic heart disease, the PaO₂/FiO₂ ratio is considered normal (0 points)',
+      'en la cardiopatía cianótica, la relación PaO₂/FiO₂ se considera normal (0 puntos)'
+    ],
+    'cardiopatia cianótica: considerada normal': [
+      'cyanotic heart disease: considered normal',
+      'cardiopatía cianótica: considerada normal'
+    ],
+    '• Reação pupilar: ambas reativas = 0; ambas fixas = 5 (uma pupila fixa = 0)': [
+      '• Pupillary reaction: both reactive = 0; both fixed = 5 (one fixed pupil = 0)',
+      '• Reacción pupilar: ambas reactivas = 0; ambas fijas = 5 (una pupila fija = 0)'
+    ],
+    '• PaO₂ (mmHg)/FiO₂: ≥ 61 = 0; ≤ 60 = 2 (considerada normal na cardiopatia cianótica)': [
+      '• PaO₂ (mmHg)/FiO₂: ≥ 61 = 0; ≤ 60 = 2 (considered normal in cyanotic heart disease)',
+      '• PaO₂ (mmHg)/FiO₂: ≥ 61 = 0; ≤ 60 = 2 (se considera normal en la cardiopatía cianótica)'
+    ],
+    'Regras de coleta (Leteurtre et al., 2013, Tabela 6)': [
+      'Data collection rules (Leteurtre et al., 2013, Table 6)',
+      'Reglas de recogida (Leteurtre et al., 2013, Tabla 6)'
+    ],
+    'Janela:': [
+      'Window:',
+      'Ventana:'
+    ],
+    'pior valor de cada variável no dia da avaliação (intervalos de 24 h contados desde a admissão). Variável não medida é considerada normal.': [
+      'worst value of each variable on the day of assessment (24-h intervals counted from admission). A variable that was not measured is considered normal.',
+      'peor valor de cada variable en el día de la evaluación (intervalos de 24 h contados desde el ingreso). La variable no medida se considera normal.'
+    ],
+    'Dias:': [
+      'Days:',
+      'Días:'
+    ],
+    'o estudo de derivação coletou os dias 1, 2, 5, 8, 12, 16 e 18 e a alta da UTI; o PELOD-2 pode ser calculado diariamente.': [
+      'the derivation study collected days 1, 2, 5, 8, 12, 16 and 18 and PICU discharge; PELOD-2 can be calculated daily.',
+      'el estudio de derivación recogió los días 1, 2, 5, 8, 12, 16 y 18 y el alta de la UCI; el PELOD-2 puede calcularse diariamente.'
+    ],
+    'Glasgow:': [
+      'Glasgow Coma Score:',
+      'Glasgow:'
+    ],
+    'use o menor valor; se o paciente estiver sedado, registre o Glasgow estimado antes da sedação. Avalie apenas pacientes com doença aguda do SNC conhecida ou suspeita.': [
+      'use the lowest value; if the patient is sedated, record the estimated GCS before sedation. Assess only patients with known or suspected acute CNS disease.',
+      'use el valor más bajo; si el paciente está sedado, registre el Glasgow estimado antes de la sedación. Evalúe solo a pacientes con enfermedad aguda del SNC conocida o sospechada.'
+    ],
+    'Pupilas:': [
+      'Pupils:',
+      'Pupilas:'
+    ],
+    'pupila não reativa deve ter > 3 mm; não avaliar após dilatação pupilar iatrogênica. Apenas ambas fixas pontuam (5); uma pupila fixa pontua 0.': [
+      'a nonreactive pupil must be > 3 mm; do not assess after iatrogenic pupillary dilation. Only both fixed scores (5); one fixed pupil scores 0.',
+      'la pupila no reactiva debe medir > 3 mm; no evaluar tras dilatación pupilar iatrogénica. Solo ambas fijas puntúan (5); una pupila fija puntúa 0.'
+    ],
+    'PAM:': [
+      'MAP:',
+      'PAM:'
+    ],
+    'não avaliar durante choro ou agitação iatrogênica.': [
+      'do not assess during crying or iatrogenic agitation.',
+      'no evaluar durante el llanto o la agitación iatrogénica.'
+    ],
+    'PaO₂:': [
+      'PaO₂:',
+      'PaO₂:'
+    ],
+    'apenas sangue arterial; a relação PaO₂/FiO₂ é considerada normal na cardiopatia cianótica.': [
+      'arterial blood only; the PaO₂/FiO₂ ratio is considered normal in cyanotic heart disease.',
+      'solo sangre arterial; la relación PaO₂/FiO₂ se considera normal en la cardiopatía cianótica.'
+    ],
+    'PaCO₂:': [
+      'PaCO₂:',
+      'PaCO₂:'
+    ],
+    'arterial, capilar ou venosa.': [
+      'arterial, capillary or venous.',
+      'arterial, capilar o venosa.'
+    ],
+    'Ventilação invasiva:': [
+      'Invasive ventilation:',
+      'Ventilación invasiva:'
+    ],
+    'ventilação por máscara não é considerada invasiva.': [
+      'mask ventilation is not considered invasive.',
+      'la ventilación con mascarilla no se considera invasiva.'
+    ],
+    'População do estudo:': [
+      'Study population:',
+      'Población del estudio:'
+    ],
+    'foram excluídos maiores de 18 anos e recém-nascidos prematuros (< 37 semanas) admitidos ao nascer; dados das últimas 4 horas de vida foram descartados.': [
+      'patients over 18 years and preterm newborns (< 37 weeks) admitted at birth were excluded; data from the last 4 hours of life were discarded.',
+      'se excluyeron los mayores de 18 años y los recién nacidos prematuros (< 37 semanas) ingresados al nacer; se descartaron los datos de las últimas 4 horas de vida.'
+    ],
+    'Preencha o pior valor de cada parâmetro no dia da avaliação (intervalo de 24 h)': [
+      'Enter the worst value of each parameter on the day of assessment (24-h interval)',
+      'Introduzca el peor valor de cada parámetro en el día de la evaluación (intervalo de 24 h)'
+    ],
+    'O PELOD-2 pode ser calculado diariamente para acompanhar a evolução da disfunção orgânica': [
+      'PELOD-2 can be calculated daily to follow the course of organ dysfunction',
+      'El PELOD-2 puede calcularse diariamente para seguir la evolución de la disfunción orgánica'
+    ],
+    'Sedação: registre o Glasgow estimado antes da sedação (regra da publicação); a tela não faz essa correção automaticamente': [
+      'Sedation: record the estimated GCS before sedation (rule of the publication); this screen does not make this correction automatically',
+      'Sedación: registre el Glasgow estimado antes de la sedación (regla de la publicación); la pantalla no hace esta corrección automáticamente'
+    ],
+    'Contexto clínico, medicações, etc.': [
+      'Clinical context, medications, etc.',
+      'Contexto clínico, medicaciones, etc.'
+    ],
+    '- Reacao pupilar: uma fixa, outra reativa': [
+      '- Pupillary reaction: one fixed, the other reactive',
+      '- Reacción pupilar: una fija, la otra reactiva'
+    ],
+    '- Cardiopatia cianotica: nao': [
+      '- Cyanotic heart disease: no',
+      '- Cardiopatía cianótica: no'
+    ],
+    '- Cardiopatia cianotica: sim (PaO2/FiO2 considerada normal)': [
+      '- Cyanotic heart disease: yes (PaO2/FiO2 considered normal)',
+      '- Cardiopatía cianótica: sí (PaO2/FiO2 considerada normal)'
+    ],
+    '- Reacao pupilar: ambas reativas=0; ambas fixas=5 (uma pupila fixa=0)': [
+      '- Pupillary reaction: both reactive=0; both fixed=5 (one fixed pupil=0)',
+      '- Reacción pupilar: ambas reactivas=0; ambas fijas=5 (una pupila fija=0)'
+    ],
+    '- PaO2/FiO2 (mmHg): >=61=0; <=60=2 (considerada normal na cardiopatia cianotica)': [
+      '- PaO2/FiO2 (mmHg): >=61=0; <=60=2 (considered normal in cyanotic heart disease)',
+      '- PaO2/FiO2 (mmHg): >=61=0; <=60=2 (se considera normal en la cardiopatía cianótica)'
+    ],
+    'REGRAS DE COLETA (Leteurtre 2013)': [
+      'DATA COLLECTION RULES (Leteurtre 2013)',
+      'REGLAS DE RECOGIDA (Leteurtre 2013)'
+    ],
+    'Pior valor de cada variavel no dia (intervalo de 24 h); variavel nao medida = normal': [
+      'Worst value of each variable on the day (24-h interval); variable not measured = normal',
+      'Peor valor de cada variable en el día (intervalo de 24 h); variable no medida = normal'
+    ],
+    'Glasgow: menor valor; se sedado, Glasgow estimado antes da sedacao': [
+      'GCS: lowest value; if sedated, estimated GCS before sedation',
+      'Glasgow: valor más bajo; si está sedado, Glasgow estimado antes de la sedación'
+    ],
+    'Pupila nao reativa > 3 mm; nao avaliar apos dilatacao iatrogenica': [
+      'Nonreactive pupil > 3 mm; do not assess after iatrogenic dilation',
+      'Pupila no reactiva > 3 mm; no evaluar tras dilatación iatrogénica'
+    ],
+    'PaO2 apenas arterial; ventilacao por mascara nao e invasiva': [
+      'PaO2 arterial only; mask ventilation is not invasive',
+      'PaO2 solo arterial; la ventilación con mascarilla no es invasiva'
+    ]
   });
   i18n.registerPatterns([
     // "12 pontos (Dia 3)" — escore total com dia de UTI
