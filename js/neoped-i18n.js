@@ -66,7 +66,7 @@
     });
   }
 
-  function lookup(key, target) {
+  function lookupExact(key, target) {
     var hit = dictionary.get(key);
     if (hit) return hit[LANG_INDEX[target]];
     for (var i = 0; i < patterns.length; i++) {
@@ -75,6 +75,56 @@
     }
     return null;
   }
+
+  var AFFIX = /^([^A-Za-zÀ-ú]*)([\s\S]*?)([^A-Za-zÀ-ú]*)$/;
+  var NUMBER_SPLIT = /([<>≤≥±]?\s*-?\d+(?:[.,]\d+)*\s*)/;
+
+  /** Ignora emojis, símbolos e pontuação nas pontas: "📊 Resultado:" usa a entrada "Resultado". */
+  function lookupCore(key, target) {
+    var exact = lookupExact(key, target);
+    if (exact != null) return exact;
+    var m = key.match(AFFIX);
+    if (!m || (!m[1] && !m[3]) || !m[2]) return null;
+    var out = lookupExact(m[2], target);
+    return out == null ? null : m[1] + out + m[3];
+  }
+
+  /** Textos montados com números ("Escore total: 7 pontos") são traduzidos por trechos. */
+  function lookupFragments(key, target) {
+    var parts = key.split(NUMBER_SPLIT);
+    if (parts.length < 2) return null;
+    var changed = false;
+    var out = parts.map(function (part) {
+      var trimmed = part.trim();
+      if (!HAS_LETTERS.test(trimmed)) return part;
+      var hit = lookupCore(trimmed, target);
+      if (hit == null) return part;
+      changed = true;
+      return part.replace(trimmed, hit);
+    });
+    return changed ? out.join('') : null;
+  }
+
+  function lookup(key, target) {
+    var out = lookupCore(key, target);
+    return out != null ? out : lookupFragments(key, target);
+  }
+
+  /** Mensagens com várias linhas são traduzidas linha a linha. */
+  function translateMessage(message) {
+    if (lang === 'pt' || message == null) return message;
+    return String(message).split('\n').map(function (line) { return t(line); }).join('\n');
+  }
+
+  ['alert', 'confirm', 'prompt'].forEach(function (name) {
+    var original = window[name];
+    if (typeof original !== 'function') return;
+    window[name] = function (message) {
+      var args = Array.prototype.slice.call(arguments);
+      args[0] = translateMessage(message);
+      return original.apply(window, args);
+    };
+  });
 
   /** Traduz um texto em português para o idioma ativo (ou o informado). Sem tradução, devolve o original. */
   function t(text, target) {
@@ -114,7 +164,8 @@
     if (isSkipped(el)) return;
     var saved = attrMemory.get(el) || {};
     var next = {};
-    ATTRS.forEach(function (name) {
+    var isButtonInput = el.tagName === 'INPUT' && /^(button|submit|reset)$/i.test(el.type);
+    (isButtonInput ? ATTRS.concat('value') : ATTRS).forEach(function (name) {
       if (!el.hasAttribute(name)) return;
       var current = el.getAttribute(name);
       var src = sourceOf(saved[name], current);
@@ -159,7 +210,7 @@
   function watch() {
     if (observer || !document.body) return;
     observer = new MutationObserver(onMutations);
-    observer.observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ATTRS });
+    observer.observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ATTRS.concat('value') });
   }
 
   function applyAll() {
@@ -243,6 +294,7 @@
 
   window.NEOPED_I18N = {
     t: t,
+    has: function (text) { return lookup(normalizeKey(text), 'en') != null; },
     register: register,
     registerPatterns: registerPatterns,
     markPageTranslated: markPageTranslated,
