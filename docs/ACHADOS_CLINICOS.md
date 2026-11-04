@@ -14,24 +14,30 @@ Os itens marcados com ✅ já foram corrigidos no código (e nos dicionários de
 | Drogas (9 páginas) | `removerAcentos` aceita números: as drogas respiratórias neonatais voltaram a calcular e copiar o relatório |
 | Exsanguineotransfusão | O botão "Gerar Relatório" voltou a funcionar |
 | Policitemia | Adicionar linha de entrada não gera mais erro |
+| PIM3 | Reimplementado com o modelo publicado (Straney 2013), incluindo base excess, PaO₂/FiO₂, recuperação pós-procedimento e as listas oficiais de diagnóstico |
+| PRISM III | Reimplementado com a pontuação publicada (Pollack 1996) e faixas por idade; a equação de mortalidade, proprietária, deixou de ser exibida |
+| PELOD-2 | Reimplementado com o modelo publicado (Leteurtre 2013): PAM e creatinina por idade, pupilas, ventilação invasiva, logit −6,61 + 0,47 × escore |
+| RCP Neonatal | Atropina 0,02 mg/kg a 0,5 mg/mL em tela, lista e relatório (sem dose mínima de 0,1 mg); adrenalina pelo NRP só a 0,1 mg/mL (IV/IO 0,02 mg/kg, faixa 0,01–0,03; ET 0,1 mg/kg, faixa 0,05–0,1); glicose 10% = 100 mg/mL |
+| VancoCalc | O relatório neonatal usa o mesmo clearance por comprimento da tela (Schwartz, mL/min/1,73 m²) |
+| 13 páginas de drogas e Neofax | Valores menores que 1 aparecem com 3 algarismos significativos (0,036 em vez de "0.0"); valores ≥ 1 sem mudança |
 
-**Pendentes de decisão clínica** (precisam que o médico responsável defina o comportamento correto): coeficientes do PIM3, PRISM III e PELOD-2; concentração de atropina da RCP Neonatal (0,1 × 0,5 mg/mL) e adrenalina endotraqueal; fórmula de clearance do VancoCalc; doses de penicilina na meningite (antibióticos neonatais); arredondamento de doses pequenas ("0.0"); classificação da DBP; cortes do SNAPPE-II, do Murray e do Finnegan; arginina no Neofax.
+**Pendentes de decisão clínica:** doses de penicilina na meningite (antibióticos neonatais); classificação da DBP; cortes do SNAPPE-II, do Murray e do Finnegan; arginina no Neofax; na RCP Neonatal, diluição da atropina para < 1 kg, volume do flush de SF, bicarbonato 8,4%, naloxona e cloreto de cálcio; no VancoCalc, k = 0,33 também para o termo (usual 0,45) e Vd pediátrico = 0,7 × clearance; vasopressina rotulada "mg (mcg)" em vez de UI.
 
 ## 1. Críticos: cálculo ou dose possivelmente errados
 
 - ✅ **Corrigido.** Drogas respiratórias (criança): AMINOFILINA "Ampola 10ml/240mg" lida como 240 mg/mL → 528 mg = 2,2 mL em vez de 22 mL (erro de 10×)
 - ✅ **Corrigido** (fórmula OPTN; colangite deixou de entrar no escore). PELD: FÓRMULA ERRADA — código 0,436·ln(bili)+0,957·ln(INR)−0,687·ln(alb)+0,480·crescimento+0,667·colangite+0,436(<12m), sem ×10; publicada: 10×[0,480·ln(bili)+1,857·ln(INR)−0,687·ln(alb)+0,436(<1a)+0,667(crescimento<−2DP)]; colangite não é variável; resultados −1 a 2, sempre "Score baixo"; modal mostra outra fórmula
-- PIM3: coeficientes inventados, não é o PIM3 publicado (Straney 2013) — sem BE, modelo errado; modal lista variáveis não coletadas; cita Slater 2003 (é PIM2)
-- PRISM III: não é o PRISM III publicado (sem faixas por idade, variáveis inventadas como "coma profundo", modelo logístico inventado); modal 24 h/0–74 × form 12 h
-- ✅ **Corrigido só o risco de FiO₂** (validação 0,21–1,0 e ajuda com ponto decimal); os coeficientes continuam pendentes. PELOD-2: limiares e coeficientes (−4,0 + 0,12×escore) ≠ Leteurtre 2013 (−6,61 + 0,47×escore); sem pupilas/ventilação/PAM e creatinina por idade; RISCO: modal manda digitar FiO2 "0,6" mas vírgula é separador de lista → lido como 0 e 6 → usa FiO2 = 6
+- ✅ **Corrigido.** PIM3: coeficientes inventados, não é o PIM3 publicado (Straney 2013) — sem BE, modelo errado; modal lista variáveis não coletadas; cita Slater 2003 (é PIM2)
+- ✅ **Corrigido.** PRISM III: não é o PRISM III publicado (sem faixas por idade, variáveis inventadas como "coma profundo", modelo logístico inventado); modal 24 h/0–74 × form 12 h
+- ✅ **Corrigido** (modelo Leteurtre 2013 e validação de FiO₂). PELOD-2: limiares e coeficientes (−4,0 + 0,12×escore) ≠ Leteurtre 2013 (−6,61 + 0,47×escore); sem pupilas/ventilação/PAM e creatinina por idade; RISCO: modal manda digitar FiO2 "0,6" mas vírgula é separador de lista → lido como 0 e 6 → usa FiO2 = 6
 - ✅ **Corrigido.** Drogas respiratórias neonatais: removerAcentos(dados.intervalo) num número → erro "texto.normalize is not a function" → resultado e relatório falham EM PORTUGUÊS para quase todas as drogas (exceto nirsevimabe/palivizumabe)
 
 ## 2. Importantes: resultado, relatório ou fluxo inconsistente
 
-- RCP Neonatal: ATROPINA — relatório divide por 0,1 mg/mL (3,2 kg → 0,64 mL) e tela usa 0,5 mg/mL (0,13–0,20 mL); dose mínima 0,1 mg só na lista
-- RCP Neonatal: adrenalina ET usa 1 mg/mL diluída; NRP recomenda só 0,1 mg/mL, 0,05–0,1 mg/kg
+- ✅ **Corrigido.** RCP Neonatal: ATROPINA — relatório divide por 0,1 mg/mL (3,2 kg → 0,64 mL) e tela usa 0,5 mg/mL (0,13–0,20 mL); dose mínima 0,1 mg só na lista
+- ✅ **Corrigido.** RCP Neonatal: adrenalina ET usa 1 mg/mL diluída; NRP recomenda só 0,1 mg/mL, 0,05–0,1 mg/kg
 - Neofax: ARGININA listada para "Deficiência de arginase" (contraindicada nessa condição)
-- Neofax: fentanil bolus 0,001 mg/kg aparece "0.00 mg/dose" (arredondamento 2 casas) — doses pequenas viram zero
+- ✅ **Corrigido.** Neofax: fentanil bolus 0,001 mg/kg aparece "0.00 mg/dose" (arredondamento 2 casas) — doses pequenas viram zero
 - Neofax: didanosina em mg/m²/dose multiplicada por kg
 - Balanço hidroeletrolítico: relatório copiado lê "Outras perdas" como 0/1 em vez de ml → TOTAL PERDAS/balanço/status do relatório diferem da tela
 - Antropometria: percentis SIMULADOS por fórmula linear (não curvas OMS/CDC reais); relatório usa cortes de IMC de ADULTO (18,5/25/30) em ≥2 anos → criança de 5 a com IMC 15,3 = "Baixo peso"; faixas tela×relatório divergem; "Pubertade"
@@ -39,9 +45,9 @@ Os itens marcados com ✅ já foram corrigidos no código (e nos dicionários de
 - Drogas respiratórias/GI/neuro (criança): dosagem arredondada a 1 casa (betametasona 0,017 → "0.0"; salbutamol 0,15 e lorazepam 0,05 → "0.1"); "Gotas 1 gota/10mg" dá volume em mL que na verdade é nº de gotas; infusão contínua sempre 1,0 mL/h; 10 drogas + lactulose com unidades ausentes no select não calculam; intervalos 0,33/0,25/4/3/720 h ausentes → cai em 12 h (palivizumabe 32 kg: "Dose total 24h" 960 mg, droga é mensal); campo sempre "Dose (mg)"; modal cita drogas inexistentes; ranitidina ainda listada
 - Murray: cortes de PEEP no código (<5/5–6/7–8/9–11/>11) ≠ Murray 1988 (≤5/6–8/9–11/12–14/≥15, como diz o modal); P/F 0 pts só >300; complacência em mL/cmH2O/kg × modal absoluto; 0,1–2,5 "Moderada"
 - Ventilação pediátrica: complacência esperada fixa NEGATIVA (-16,6) e resistência fixa 16,4526; tabela sugere baixar FR com PaO2 baixa e subir FiO2/PEEP com PaCO2 alta
-- VancoCalc: relatório neonatal calcula clearance (0,34 × peso × 1000)/creat ≠ tela (0,33 × comprimento)/creat → 17,6 vs 1076,7 mL/min no mesmo caso; Vd criança = 0,7 × clearance (unidades); Schwartz rotulado mL/min; AUC aproximada
+- ✅ **Corrigido o clearance do relatório.** VancoCalc: relatório neonatal calcula clearance (0,34 × peso × 1000)/creat ≠ tela (0,33 × comprimento)/creat → 17,6 vs 1076,7 mL/min no mesmo caso; Vd criança = 0,7 × clearance (unidades); Schwartz rotulado mL/min; AUC aproximada
 - Antibióticos neonatais: relatório recalcula com regras diferentes da tela — ≥35 sem sempre bloqueia cópia (chave ">=35_sem_0-7_dias" inexistente); com meningite relatório usa penicilina 100.000 UI/kg 6/6h e tela 50.000 UI/kg 8/8h; linhas "sepse" nunca usadas; "Imipenem/Cilastina"
-- Drogas neonatais: arredondamento a 1 casa zera doses pequenas (bumetanida "0.0"; atropina 0,02 mg/kg "0.0" no relatório; alprostadil 0,05 → "0.1")
+- ✅ **Corrigido.** Drogas neonatais: arredondamento a 1 casa zera doses pequenas (bumetanida "0.0"; atropina 0,02 mg/kg "0.0" no relatório; alprostadil 0,05 → "0.1")
 - Cardiovasculares neonatais: milrinona pré-termo "0,75 mcg/kg" vs 75 mcg/kg termo (provável erro); heparina rotulada "mg" em vez de UI; enoxaparina "manter RNI alargado" (monitorar anti-Xa); "Limpar Dados" quebra (ids inexistentes); data de nascimento 1 dia antes; modal cita drogas ausentes
 - Cardiovasculares criança: amiodarona oral "manutenção 400 mg/kg/dia" (provável mg/dia); amiodarona oral, adenosina >50 kg, captopril adolescente, hidralazina VO, sotalol, protamina não calculam (unidade ausente); doses <0,05 → "0.0" (vasopressina, atropina); heparina "mg (mcg)"; data nasc. 1 dia antes
 - Índices ventilatórios: Índice Respiratório (MAP×FiO2×100)/(PaO2/FiO2) não padrão; Índice de Ventilação (PIP−PEEP)×FR/1000 ≠ modal ≠ padrão PIP×FR×PaCO2/1000; gradiente A-a normal 2–5 (tela) × <15 (modal); OI ≤10 "SDR leve" × modal <5 normal; fórmula de vapor d'água incomum; Greenspan 1977 (provável 1997)

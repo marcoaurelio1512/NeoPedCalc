@@ -567,7 +567,7 @@
     <div class="container">
         <div class="header">
             <h1>PRISM III - Pediatric Risk of Mortality</h1>
-            <p>Apoio educativo para estimativa de gravidade/risco em UTI pediátrica nas primeiras 12 horas</p>
+            <p>Apoio educativo: escore PRISM III publicado (Pollack et al., 1996) com os piores valores das primeiras 12 horas em UTI pediátrica</p>
             <div class="header-actions">
                 <button type="button" class="btn-info" onclick="abrirModal()">
                     Como usar
@@ -599,119 +599,164 @@
                     <input type="text" id="idade_completa" readonly>
                     <span class="unit">anos, meses e dias</span>
                 </div>
+                <div class="form-group">
+                    <label for="faixa_etaria">Faixa etária PRISM III</label>
+                    <select id="faixa_etaria">
+                        <option value="">Selecione</option>
+                        <option value="neonato">Neonato (0 a &lt;1 mês)</option>
+                        <option value="lactente">Lactente (1 a 12 meses)</option>
+                        <option value="crianca">Criança (&gt;12 meses a 12 anos)</option>
+                        <option value="adolescente">Adolescente (&gt;12 anos)</option>
+                    </select>
+                    <span class="unit">preenchida automaticamente pela data de nascimento; pode ser ajustada</span>
+                </div>
             </div>
         </div>
 
         <div class="form-section">
-            <h2 class="section-title">Dados PRISM III (Piores Valores nas Primeiras 12h)</h2>
-            
+            <h2 class="section-title">Dados PRISM III (piores valores no período)</h2>
+
             <div class="info-box">
                 <h4>Informações Importantes</h4>
-                <p>O PRISM III deve ser calculado com base nos <strong>piores valores</strong> observados nas primeiras 12 horas de internação na UTI pediátrica. Para cada variável, use o valor que representa a maior gravidade neste período.</p>
+                <p>Informe os <strong>piores valores</strong> do período escolhido (PRISM III-12: primeiras 12 horas de internação na UTI pediátrica). Campos em branco são considerados normais (0 ponto). Os pontos de corte de PAS, frequência cardíaca, creatinina, BUN e TTPa dependem da faixa etária.</p>
             </div>
 
-            <h3 class="subsection-title">Hemodinâmica</h3>
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="sbp_min">Pressão Arterial Sistólica Mínima</label>
-                    <input type="number" id="sbp_min" step="1" placeholder="Ex.: 65">
+                    <label for="janela">Período de observação</label>
+                    <select id="janela">
+                        <option value="12">PRISM III-12 (primeiras 12 h)</option>
+                        <option value="24">PRISM III-24 (primeiras 24 h)</option>
+                    </select>
+                    <span class="unit">mesma pontuação; muda apenas o rótulo</span>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Cardiovascular / Neurológico</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="sbp_min">PAS mínima</label>
+                    <input type="number" id="sbp_min" step="1" min="0" placeholder="Ex.: 65">
                     <span class="unit">mmHg</span>
                 </div>
                 <div class="form-group">
-                    <label for="temp_min">Temperatura Mínima</label>
+                    <label for="hr_max">Frequência cardíaca máxima</label>
+                    <input type="number" id="hr_max" step="1" min="0" placeholder="Ex.: 160">
+                    <span class="unit">bpm</span>
+                </div>
+                <div class="form-group">
+                    <label for="temp_min">Temperatura mínima</label>
                     <input type="number" id="temp_min" step="0.1" placeholder="Ex.: 35.2">
                     <span class="unit">°C</span>
                 </div>
-            </div>
-
-            <h3 class="subsection-title">Neurológico</h3>
-            <div class="form-grid">
                 <div class="form-group">
-                    <label for="pupils">Pupilas Fixas</label>
+                    <label for="temp_max">Temperatura máxima</label>
+                    <input type="number" id="temp_max" step="0.1" placeholder="Ex.: 38.5">
+                    <span class="unit">°C</span>
+                </div>
+                <div class="form-group">
+                    <label for="mental">Estado mental</label>
+                    <select id="mental">
+                        <option value="0">Normal ou Glasgow ≥ 8</option>
+                        <option value="1">Estupor/coma (Glasgow &lt; 8)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="pupils">Reflexos pupilares</label>
                     <select id="pupils">
-                        <option value="0">Não</option>
-                        <option value="1">Sim</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="coma">Coma Profundo</label>
-                    <select id="coma">
-                        <option value="0">Não</option>
-                        <option value="1">Sim</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="seizure">Convulsões</label>
-                    <select id="seizure">
-                        <option value="0">Não</option>
-                        <option value="1">Sim</option>
+                        <option value="0">Ambas reativas</option>
+                        <option value="1">Uma pupila fixa</option>
+                        <option value="2">Ambas as pupilas fixas</option>
                     </select>
                 </div>
             </div>
 
-            <h3 class="subsection-title">Respiratório</h3>
+            <h3 class="subsection-title">Ácido-base / Gasometria</h3>
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="pao2">PaO₂</label>
-                    <input type="number" id="pao2" step="0.1" placeholder="Ex.: 80">
-                    <span class="unit">mmHg</span>
+                    <label for="ph_min">pH mínimo</label>
+                    <input type="number" id="ph_min" step="0.01" placeholder="Ex.: 7.18">
+                    <span class="unit">pior acidose</span>
                 </div>
                 <div class="form-group">
-                    <label for="fio2">FiO₂</label>
-                    <input type="number" id="fio2" min="0.21" max="1" step="0.01" placeholder="Ex.: 0.5">
-                    <span class="unit">fração (0.21-1.0)</span>
+                    <label for="ph_max">pH máximo</label>
+                    <input type="number" id="ph_max" step="0.01" placeholder="Ex.: 7.45">
+                    <span class="unit">pior alcalose</span>
                 </div>
                 <div class="form-group">
-                    <label for="paco2">PaCO₂</label>
-                    <input type="number" id="paco2" step="0.1" placeholder="Ex.: 55">
-                    <span class="unit">mmHg</span>
-                </div>
-            </div>
-
-            <h3 class="subsection-title">Metabólico</h3>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="ph">pH</label>
-                    <input type="number" id="ph" step="0.01" placeholder="Ex.: 7.18">
-                </div>
-                <div class="form-group">
-                    <label for="hco3">HCO₃⁻</label>
-                    <input type="number" id="hco3" step="0.1" placeholder="Ex.: 15">
+                    <label for="tco2_min">CO₂ total mínimo</label>
+                    <input type="number" id="tco2_min" step="0.1" min="0" placeholder="Ex.: 15">
                     <span class="unit">mmol/L</span>
                 </div>
                 <div class="form-group">
-                    <label for="glucose">Glicose</label>
-                    <input type="number" id="glucose" step="1" placeholder="Ex.: 220">
-                    <span class="unit">mg/dL</span>
+                    <label for="tco2_max">CO₂ total máximo</label>
+                    <input type="number" id="tco2_max" step="0.1" min="0" placeholder="Ex.: 26">
+                    <span class="unit">mmol/L</span>
                 </div>
                 <div class="form-group">
-                    <label for="k">Potássio</label>
-                    <input type="number" id="k" step="0.1" placeholder="Ex.: 5.6">
-                    <span class="unit">mmol/L</span>
+                    <label for="pco2_max">PCO₂ máxima</label>
+                    <input type="number" id="pco2_max" step="0.1" min="0" placeholder="Ex.: 55">
+                    <span class="unit">mmHg</span>
+                </div>
+                <div class="form-group">
+                    <label for="pao2_min">PaO₂ mínima</label>
+                    <input type="number" id="pao2_min" step="0.1" min="0" placeholder="Ex.: 80">
+                    <span class="unit">mmHg (sangue arterial)</span>
                 </div>
             </div>
 
-            <h3 class="subsection-title">Renal / Hematológico / Hepático</h3>
+            <h3 class="subsection-title">Bioquímica</h3>
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="creatinine">Creatinina</label>
-                    <input type="number" id="creatinine" step="0.01" placeholder="Ex.: 0.8">
+                    <label for="glucose">Glicose máxima</label>
+                    <input type="number" id="glucose" step="1" min="0" placeholder="Ex.: 220">
                     <span class="unit">mg/dL</span>
                 </div>
                 <div class="form-group">
-                    <label for="wbc">Leucócitos</label>
-                    <input type="number" id="wbc" step="0.1" placeholder="Ex.: 22">
-                    <span class="unit">10³/µL</span>
+                    <label for="k">Potássio máximo</label>
+                    <input type="number" id="k" step="0.1" min="0" placeholder="Ex.: 5.6">
+                    <span class="unit">mmol/L</span>
                 </div>
                 <div class="form-group">
-                    <label for="platelets">Plaquetas</label>
-                    <input type="number" id="platelets" step="1" placeholder="Ex.: 90">
-                    <span class="unit">10³/µL</span>
-                </div>
-                <div class="form-group">
-                    <label for="bilirubin">Bilirrubina Total</label>
-                    <input type="number" id="bilirubin" step="0.1" placeholder="Ex.: 1.8">
+                    <label for="creatinine">Creatinina máxima</label>
+                    <input type="number" id="creatinine" step="0.01" min="0" placeholder="Ex.: 0.8">
                     <span class="unit">mg/dL</span>
+                </div>
+                <div class="form-group">
+                    <label for="bun">BUN (ou ureia) máximo</label>
+                    <input type="number" id="bun" step="0.1" min="0" placeholder="Ex.: 18">
+                    <span class="unit">mg/dL</span>
+                </div>
+                <div class="form-group">
+                    <label for="bun_unit">Valor informado como</label>
+                    <select id="bun_unit">
+                        <option value="bun">BUN (nitrogênio ureico) mg/dL</option>
+                        <option value="ureia">Ureia mg/dL (BUN = ureia ÷ 2,14)</option>
+                    </select>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Hematologia</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="wbc">Leucócitos mínimos</label>
+                    <input type="number" id="wbc" step="0.1" min="0" placeholder="Ex.: 8.5">
+                    <span class="unit">10³/µL (= x1.000/mm³)</span>
+                </div>
+                <div class="form-group">
+                    <label for="platelets">Plaquetas mínimas</label>
+                    <input type="number" id="platelets" step="1" min="0" placeholder="Ex.: 90">
+                    <span class="unit">10³/µL (= x1.000/mm³)</span>
+                </div>
+                <div class="form-group">
+                    <label for="pt">TP máximo</label>
+                    <input type="number" id="pt" step="0.1" min="0" placeholder="Ex.: 14">
+                    <span class="unit">segundos</span>
+                </div>
+                <div class="form-group">
+                    <label for="ptt">TTPa máximo</label>
+                    <input type="number" id="ptt" step="0.1" min="0" placeholder="Ex.: 35">
+                    <span class="unit">segundos</span>
                 </div>
             </div>
 
@@ -732,11 +777,21 @@
                 <span class="result-label">PRISM III - Escore Total:</span>
                 <span class="result-value" id="escore_total">-</span>
             </div>
-            <div id="resultados_prob" class="result-item">
-                <span class="result-label">Probabilidade de Mortalidade:</span>
-                <span class="result-value" id="probabilidade_mortalidade">-</span>
+            <div class="result-item">
+                <span class="result-label">Subescore neurológico:</span>
+                <span class="result-value" id="escore_neuro">-</span>
             </div>
-            <div id="indicador_risco" style="text-align: center; margin-top: 15px;"></div>
+            <div class="result-item">
+                <span class="result-label">Subescore não neurológico:</span>
+                <span class="result-value" id="escore_nao_neuro">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Período / faixa etária:</span>
+                <span class="result-value" id="contexto_calculo">-</span>
+            </div>
+            <div class="info-box">
+                <p>Esta página mostra o escore PRISM III publicado (Pollack et al., 1996). A equação de probabilidade de óbito do PRISM III é proprietária (licenciada) e não é reproduzida aqui; escores mais altos indicam maior risco de mortalidade.</p>
+            </div>
             <div id="breakdown_table"></div>
         </div>
 
@@ -756,97 +811,85 @@
             <div class="modal-body">
                 <h3>Objetivo (educativo)</h3>
                 <p>O PRISM-III é um escore para organizar variáveis fisiológicas/laboratoriais e apoiar discussão de gravidade/risco em UTI pediátrica. O uso nesta página é informativo e não substitui avaliação clínica, protocolos institucionais nem prescrição.</p>
-                
-                <h3>Fórmula do PRISM-III</h3>
+
+                <h3>Como o escore é calculado</h3>
                 <div class="formula-box">
-                    <strong>PRISM-III = Soma de pontos baseados nos piores valores fisiológicos nas primeiras 24 horas</strong><br><br>
-                    Variáveis avaliadas:<br>
-                    • Pressão Arterial Sistólica e Diastólica<br>
-                    • Temperatura corporal<br>
-                    • Frequência cardíaca<br>
-                    • Frequência respiratória<br>
-                    • PaO2/FiO2<br>
-                    • pH arterial<br>
-                    • PCO2<br>
-                    • HCO3<br>
-                    • Glicose<br>
-                    • Potássio<br>
-                    • Creatinina<br>
-                    • Bilirrubina<br>
-                    • Leucócitos<br>
-                    • Plaquetas<br>
-                    • Escala de Glasgow<br><br>
-                    <strong>Escala Total:</strong> 0-74 pontos (quanto maior, maior o risco de mortalidade)
+                    <strong>PRISM III = subescore neurológico + subescore não neurológico</strong><br><br>
+                    Use os piores valores das primeiras 12 horas na UTI pediátrica (PRISM III-12). A opção PRISM III-24 usa as primeiras 24 horas com a mesma pontuação.<br><br>
+                    Subescore neurológico: estado mental + reflexos pupilares.<br>
+                    Subescore não neurológico: demais variáveis.<br><br>
+                    Cada variável pontua uma única vez; campos em branco valem 0 ponto.
                 </div>
 
-                <h3>Variáveis Avaliadas</h3>
+                <h3>Faixas etárias</h3>
                 <ul>
-                    <li><strong>Cardiovasculares:</strong> Pressão arterial, frequência cardíaca</li>
-                    <li><strong>Respiratórias:</strong> Frequência respiratória, PaO2/FiO2, PCO2, pH</li>
-                    <li><strong>Metabólicas:</strong> HCO3, glicose, potássio</li>
-                    <li><strong>Renais:</strong> Creatinina</li>
-                    <li><strong>Hepáticas:</strong> Bilirrubina</li>
-                    <li><strong>Hematológicas:</strong> Leucócitos, plaquetas</li>
-                    <li><strong>Neurológicas:</strong> Escala de Glasgow</li>
-                    <li><strong>Sistêmicas:</strong> Temperatura corporal</li>
+                    <li>Neonato: 0 a &lt;1 mês</li>
+                    <li>Lactente: 1 a 12 meses</li>
+                    <li>Criança: &gt;12 meses a 12 anos</li>
+                    <li>Adolescente: &gt;12 anos</li>
                 </ul>
 
-                <h3>Instruções de Uso</h3>
-                <ol>
-                    <li><strong>Dados Fisiológicos:</strong> Informe os piores valores obtidos nas primeiras 24 horas</li>
-                    <li><strong>Pressão Arterial:</strong> Sistólica e diastólica em mmHg</li>
-                    <li><strong>Temperatura:</strong> Em °C (mais alta ou mais baixa)</li>
-                    <li><strong>Frequências:</strong> Cardíaca e respiratória por minuto</li>
-                    <li><strong>Gasometria:</strong> PaO2, PCO2, pH, HCO3</li>
-                    <li><strong>Laboratório:</strong> Glicose, potássio, creatinina, bilirrubina</li>
-                    <li><strong>Hematologia:</strong> Leucócitos, plaquetas</li>
-                    <li><strong>Neurológico:</strong> Escala de Glasgow Pediátrica</li>
-                    <li>Clique em <strong>"Calcular PRISM-III"</strong> para obter o escore</li>
-                </ol>
+                <h3>Cardiovascular / Neurológico</h3>
+                <ul>
+                    <li><strong>PAS (mmHg):</strong> neonato 40-55 = 3, &lt;40 = 7; lactente 45-65 = 3, &lt;45 = 7; criança 55-75 = 3, &lt;55 = 7; adolescente 65-85 = 3, &lt;65 = 7</li>
+                    <li><strong>Temperatura:</strong> &lt;33 °C ou &gt;40 °C = 3</li>
+                    <li><strong>Estado mental:</strong> estupor/coma (Glasgow &lt; 8) = 5</li>
+                    <li><strong>Frequência cardíaca (bpm):</strong> neonato e lactente 215-225 = 3, &gt;225 = 4; criança 185-205 = 3, &gt;205 = 4; adolescente 145-155 = 3, &gt;155 = 4</li>
+                    <li><strong>Reflexos pupilares:</strong> uma pupila fixa = 7; ambas fixas = 11</li>
+                </ul>
+
+                <h3>Ácido-base / Gasometria</h3>
+                <ul>
+                    <li><strong>Acidose:</strong> pH 7,0-7,28 ou CO₂ total 5-16,9 mmol/L = 2; pH &lt;7,0 ou CO₂ total &lt;5 mmol/L = 6 (conta-se apenas o pior dos dois)</li>
+                    <li><strong>pH (alcalose):</strong> 7,48-7,55 = 2; &gt;7,55 = 3</li>
+                    <li><strong>PCO₂ (mmHg):</strong> 50-75 = 1; &gt;75 = 3</li>
+                    <li><strong>CO₂ total:</strong> &gt;34 mmol/L = 4</li>
+                    <li><strong>PaO₂ (mmHg):</strong> 42-49,9 = 3; &lt;42 = 6</li>
+                </ul>
+
+                <h3>Bioquímica</h3>
+                <ul>
+                    <li><strong>Glicose:</strong> &gt;200 mg/dL (&gt;11,0 mmol/L) = 2</li>
+                    <li><strong>Potássio:</strong> &gt;6,9 mmol/L = 3</li>
+                    <li><strong>Creatinina:</strong> neonato &gt;0,85 mg/dL = 2; lactente e criança &gt;0,90 mg/dL = 2; adolescente &gt;1,30 mg/dL = 2</li>
+                    <li><strong>BUN:</strong> neonato &gt;11,9 mg/dL = 3; demais faixas &gt;14,9 mg/dL = 3 (ureia ÷ 2,14 ≈ BUN)</li>
+                </ul>
+
+                <h3>Hematologia</h3>
+                <ul>
+                    <li><strong>Leucócitos:</strong> &lt;3.000/mm³ = 4</li>
+                    <li><strong>TP ou TTPa:</strong> TP &gt;22 s ou TTPa &gt;57 s = 3 (neonato: TP &gt;22 s ou TTPa &gt;85 s)</li>
+                    <li><strong>Plaquetas:</strong> 100.000-200.000/mm³ = 2; 50.000-99.999/mm³ = 4; &lt;50.000/mm³ = 5</li>
+                </ul>
 
                 <h3>Interpretação dos Resultados</h3>
                 <ul>
-                    <li><strong>0-10 pontos:</strong> Baixo risco de mortalidade (<5%)</li>
-                    <li><strong>11-20 pontos:</strong> Risco moderado de mortalidade (5-15%)</li>
-                    <li><strong>21-30 pontos:</strong> Alto risco de mortalidade (15-30%)</li>
-                    <li><strong>31+ pontos:</strong> Muito alto risco de mortalidade (>30%)</li>
-                    <li><strong>Mudança no escore:</strong> Indica evolução da gravidade</li>
+                    <li>Quanto maior o escore, maior o risco de mortalidade.</li>
+                    <li>A equação de probabilidade de óbito do PRISM III é proprietária (licenciada) e não é reproduzida nesta página; por isso não é exibida porcentagem de mortalidade.</li>
+                    <li>O subescore neurológico e o não neurológico são exibidos separadamente, como na publicação.</li>
                 </ul>
 
                 <h3>Considerações Importantes</h3>
                 <ul>
-                    <li>Use sempre os piores valores das primeiras 24 horas</li>
-                    <li>Útil para prognóstico e alocação de recursos</li>
+                    <li>Use sempre os piores valores do período escolhido (12 h no PRISM III-12)</li>
                     <li>Complementar à avaliação clínica, não substituto</li>
                     <li>Aplicável a crianças admitidas em UTIP</li>
                     <li>Considerar fatores não incluídos no escore</li>
-                    <li>Valores laboratoriais devem ser recentes</li>
-                    <li>Reavaliar conforme evolução clínica</li>
-                </ul>
-
-                <h3>Aplicações Clínicas</h3>
-                <ul>
-                    <li><strong>Prognóstico:</strong> Estimativa de mortalidade</li>
-                    <li><strong>Comparação entre UTIPs:</strong> Ajuste de risco</li>
-                    <li><strong>Pesquisa:</strong> Classificação de gravidade</li>
-                    <li><strong>Qualidade:</strong> Monitoramento de outcomes</li>
-                    <li><strong>Alocação de Recursos:</strong> Planejamento de cuidados</li>
+                    <li>Confira se a faixa etária selecionada está correta</li>
                 </ul>
 
                 <h3>Limitações</h3>
                 <ul>
                     <li>Baseado em população de países desenvolvidos</li>
-                    <li>Pode superestimar risco em centros com alta mortalidade</li>
                     <li>Não considera qualidade dos cuidados</li>
                     <li>Depende da disponibilidade de exames laboratoriais</li>
                     <li>Pode não capturar todas as nuances clínicas</li>
                 </ul>
 
-                <div class="reference-box">
+                <div class="reference-box" translate="no">
                     <strong>Referências:</strong><br>
-                    - Pollack MM, et al. The Pediatric Risk of Mortality (PRISM) score. Crit Care Med. 1988;16(11):1110-6.<br>
-                    - Pollack MM, et al. PRISM III: an updated Pediatric Risk of Mortality score. Crit Care Med. 1996;24(5):743-52.<br>
-                    - Pollack MM, et al. Pediatric Risk of Mortality III score: update and refinement for estimating the risk of mortality in pediatric intensive care units. Crit Care Med. 2001;29(3):667-70.
+                    - Pollack MM, Patel KM, Ruttimann UE. PRISM III: an updated Pediatric Risk of Mortality score. Crit Care Med. 1996;24(5):743-52.<br>
+                    - Pollack MM, et al. The Pediatric Risk of Mortality (PRISM) score. Crit Care Med. 1988;16(11):1110-6.
                 </div>
             </div>
         </div>
@@ -867,82 +910,42 @@
                 modal.style.display = 'none';
             }
         }
-        // Configuração PRISM III baseada na literatura
-        const PRISM3_CONFIG = {
-            logistic: { alpha: -3.5, beta: 0.08 },
-            hemo: {
-                sbp_min: [
-                    { max: 50, pts: 4 },
-                    { max: 70, pts: 2 },
-                    { max: Infinity, pts: 0 }
-                ],
-                temp_min: [
-                    { max: 34.9, pts: 2 },
-                    { max: 35.9, pts: 1 },
-                    { max: Infinity, pts: 0 }
-                ]
-            },
-            neuro: {
-                pupils_fixed: 4,
-                coma: 3,
-                seizure: 2
-            },
-            resp: {
-                pf_ratio: [
-                    { max: 100, pts: 4 },
-                    { max: 200, pts: 3 },
-                    { max: 300, pts: 2 },
-                    { max: 400, pts: 1 },
-                    { max: Infinity, pts: 0 }
-                ],
-                paco2: [
-                    { min: 51, max: 70, pts: 1 },
-                    { min: 71, max: 90, pts: 2 },
-                    { min: 91, max: Infinity, pts: 3 }
-                ]
-            },
-            metab: {
-                ph: [
-                    { max: 7.10, pts: 4 },
-                    { max: 7.24, pts: 2 },
-                    { max: Infinity, pts: 0 }
-                ],
-                hco3: [
-                    { max: 10, pts: 4 },
-                    { max: 15, pts: 2 },
-                    { max: Infinity, pts: 0 }
-                ],
-                glucose: [
-                    { max: 40, pts: 3 },
-                    { min: 200, max: 299, pts: 1 },
-                    { min: 300, max: Infinity, pts: 2 }
-                ],
-                k: [
-                    { max: 2.5, pts: 2 },
-                    { min: 6.0, max: 6.9, pts: 2 },
-                    { min: 7.0, max: Infinity, pts: 4 }
-                ]
-            },
-            organ: {
-                creatinine: [
-                    { min: 1.5, max: 1.9, pts: 1 },
-                    { min: 2.0, max: Infinity, pts: 2 }
-                ],
-                wbc: [
-                    { max: 3, pts: 2 },
-                    { min: 25, max: Infinity, pts: 1 }
-                ],
-                platelets: [
-                    { max: 50, pts: 4 },
-                    { max: 100, pts: 2 },
-                    { max: Infinity, pts: 0 }
-                ],
-                bilirubin: [
-                    { min: 2.0, max: 4.9, pts: 1 },
-                    { min: 5.0, max: Infinity, pts: 2 }
-                ]
-            }
-        };
+
+        // PRISM III publicado: Pollack MM, Patel KM, Ruttimann UE. Crit Care Med 1996;24:743-752.
+        const PRISM3_GRUPOS = Object.freeze({
+            neonato:     { rotulo: 'Neonato (0 a <1 mês)',          sbp: [40, 55], hr: [215, 225], creat: 0.85, bun: 11.9, ptt: 85 },
+            lactente:    { rotulo: 'Lactente (1 a 12 meses)',       sbp: [45, 65], hr: [215, 225], creat: 0.90, bun: 14.9, ptt: 57 },
+            crianca:     { rotulo: 'Criança (>12 meses a 12 anos)', sbp: [55, 75], hr: [185, 205], creat: 0.90, bun: 14.9, ptt: 57 },
+            adolescente: { rotulo: 'Adolescente (>12 anos)',        sbp: [65, 85], hr: [145, 155], creat: 1.30, bun: 14.9, ptt: 57 }
+        });
+        const UREIA_PARA_BUN = 2.14;
+        const PUPILAS_ROTULO = ['Ambas reativas', 'Uma pupila fixa', 'Ambas as pupilas fixas'];
+        const PUPILAS_PTS = [0, 7, 11];
+        const NAO_INFORMADO = '—';
+
+        // Data local (sem fuso) a partir de "AAAA-MM-DD"
+        function parseDataLocal(s) {
+            if (!s) return null;
+            const [a, m, d] = s.split('-').map(Number);
+            if (!a || !m || !d) return null;
+            return new Date(a, m - 1, d);
+        }
+
+        function somarMeses(data, meses) {
+            const r = new Date(data.getFullYear(), data.getMonth() + meses, data.getDate());
+            // Ajuste para fim de mês (ex.: 31/01 + 1 mês)
+            if (r.getDate() !== data.getDate()) r.setDate(0);
+            return r;
+        }
+
+        // Faixa etária PRISM III: neonato <1 mês; lactente 1-12 meses; criança >12 meses-12 anos; adolescente >12 anos
+        function faixaPorDatas(nascimento, avaliacao) {
+            if (!nascimento || !avaliacao || avaliacao < nascimento) return '';
+            if (avaliacao < somarMeses(nascimento, 1)) return 'neonato';
+            if (avaliacao <= somarMeses(nascimento, 12)) return 'lactente';
+            if (avaliacao <= somarMeses(nascimento, 144)) return 'crianca';
+            return 'adolescente';
+        }
 
         // Função para calcular idade em anos, meses e dias
         function calcularIdade() {
@@ -950,47 +953,54 @@
             const dataAvaliacao = document.getElementById('data_avaliacao').value;
 
             if (dataNascimento && dataAvaliacao) {
-                const nascimento = new Date(dataNascimento);
-                const avaliacao = new Date(dataAvaliacao);
-                
+                const nascimento = parseDataLocal(dataNascimento);
+                const avaliacao = parseDataLocal(dataAvaliacao);
+                if (!nascimento || !avaliacao || avaliacao < nascimento) {
+                    document.getElementById('idade_completa').value = '';
+                    return;
+                }
+
                 let anos = avaliacao.getFullYear() - nascimento.getFullYear();
                 let meses = avaliacao.getMonth() - nascimento.getMonth();
                 let dias = avaliacao.getDate() - nascimento.getDate();
-                
+
                 if (dias < 0) {
                     meses--;
                     const ultimoMes = new Date(avaliacao.getFullYear(), avaliacao.getMonth(), 0);
                     dias += ultimoMes.getDate();
                 }
-                
+
                 if (meses < 0) {
                     anos--;
                     meses += 12;
                 }
-                
+
                 let idadeTexto = '';
                 if (anos > 0) {
                     idadeTexto += `${anos} ano${anos > 1 ? 's' : ''}`;
                 }
                 if (meses > 0) {
                     if (idadeTexto) idadeTexto += ', ';
-                    idadeTexto += `${meses} mês${meses > 1 ? 'es' : ''}`;
+                    idadeTexto += `${meses} ${meses > 1 ? 'meses' : 'mês'}`;
                 }
                 if (dias > 0 || (!anos && !meses)) {
                     if (idadeTexto) idadeTexto += ', ';
                     idadeTexto += `${dias} dia${dias > 1 ? 's' : ''}`;
                 }
-                
+
                 document.getElementById('idade_completa').value = idadeTexto || '0 dias';
+                const faixa = faixaPorDatas(nascimento, avaliacao);
+                if (faixa) document.getElementById('faixa_etaria').value = faixa;
             }
         }
 
         // Preencher data e hora atuais
         function preencherDataAtual() {
             const hoje = new Date();
-            const dataAtual = hoje.toISOString().split('T')[0];
+            const pad = n => String(n).padStart(2, '0');
+            const dataAtual = `${hoje.getFullYear()}-${pad(hoje.getMonth() + 1)}-${pad(hoje.getDate())}`;
             const horaAtual = hoje.toTimeString().slice(0, 5);
-            
+
             if (!document.getElementById('data_avaliacao').value) {
                 document.getElementById('data_avaliacao').value = dataAtual;
             }
@@ -999,174 +1009,151 @@
             }
         }
 
-        // Função auxiliar para calcular pontos por faixas
-        function pontosPorFaixa(valor, faixas) {
-            if (valor == null || Number.isNaN(valor)) return 0;
-            for (const faixa of faixas) {
-                const min = faixa.min != null ? faixa.min : -Infinity;
-                const max = faixa.max != null ? faixa.max : Infinity;
-                if (valor >= min && valor <= max) return faixa.pts;
-            }
-            return 0;
+        // Lê um campo numérico: retorna { num, txt } (num = null se vazio)
+        function lerCampo(id) {
+            const txt = document.getElementById(id).value.trim();
+            if (txt === '') return { num: null, txt: '' };
+            const num = parseFloat(txt.replace(',', '.'));
+            return { num: Number.isFinite(num) ? num : NaN, txt };
         }
 
-        // Função para calcular PaO2/FiO2
-        function calcularPF(pao2, fio2) {
-            if (!fio2 || fio2 <= 0) return Infinity;
-            return pao2 / fio2;
-        }
-
-        // Função para calcular PRISM III
-        function calcularPRISM3() {
-            // Obter valores dos campos
-            const sbp_min = parseFloat(document.getElementById('sbp_min').value);
-            const temp_min = parseFloat(document.getElementById('temp_min').value);
-            const pupils = document.getElementById('pupils').value === '1';
-            const coma = document.getElementById('coma').value === '1';
-            const seizure = document.getElementById('seizure').value === '1';
-            const pao2 = parseFloat(document.getElementById('pao2').value);
-            const fio2 = parseFloat(document.getElementById('fio2').value);
-            const paco2 = parseFloat(document.getElementById('paco2').value);
-            const ph = parseFloat(document.getElementById('ph').value);
-            const hco3 = parseFloat(document.getElementById('hco3').value);
-            const glucose = parseFloat(document.getElementById('glucose').value);
-            const k = parseFloat(document.getElementById('k').value);
-            const creatinine = parseFloat(document.getElementById('creatinine').value);
-            const wbc = parseFloat(document.getElementById('wbc').value);
-            const platelets = parseFloat(document.getElementById('platelets').value);
-            const bilirubin = parseFloat(document.getElementById('bilirubin').value);
-
-            let score = 0;
-            const breakdown = [];
-
-            // Hemodinâmica
-            const sbp_pts = pontosPorFaixa(sbp_min, PRISM3_CONFIG.hemo.sbp_min);
-            score += sbp_pts;
-            if (sbp_min && !Number.isNaN(sbp_min)) {
-                breakdown.push(['PAS Mínima', `${sbp_min} mmHg`, sbp_pts]);
-            }
-
-            const temp_pts = pontosPorFaixa(temp_min, PRISM3_CONFIG.hemo.temp_min);
-            score += temp_pts;
-            if (temp_min && !Number.isNaN(temp_min)) {
-                breakdown.push(['Temperatura Mínima', `${temp_min}°C`, temp_pts]);
-            }
-
-            // Neurológico
-            const pupils_pts = pupils ? PRISM3_CONFIG.neuro.pupils_fixed : 0;
-            score += pupils_pts;
-            breakdown.push(['Pupilas Fixas', pupils ? 'Sim' : 'Não', pupils_pts]);
-
-            const coma_pts = coma ? PRISM3_CONFIG.neuro.coma : 0;
-            score += coma_pts;
-            breakdown.push(['Coma Profundo', coma ? 'Sim' : 'Não', coma_pts]);
-
-            const seizure_pts = seizure ? PRISM3_CONFIG.neuro.seizure : 0;
-            score += seizure_pts;
-            breakdown.push(['Convulsões', seizure ? 'Sim' : 'Não', seizure_pts]);
-
-            // Respiratório
-            if (pao2 && fio2 && !Number.isNaN(pao2) && !Number.isNaN(fio2)) {
-                const pf = calcularPF(pao2, fio2);
-                const pf_pts = pontosPorFaixa(pf, PRISM3_CONFIG.resp.pf_ratio);
-                score += pf_pts;
-                breakdown.push(['PaO₂/FiO₂', isFinite(pf) ? pf.toFixed(0) : '∞', pf_pts]);
-            }
-
-            const paco2_pts = pontosPorFaixa(paco2, PRISM3_CONFIG.resp.paco2);
-            score += paco2_pts;
-            if (paco2 && !Number.isNaN(paco2)) {
-                breakdown.push(['PaCO₂', `${paco2} mmHg`, paco2_pts]);
-            }
-
-            // Metabólico
-            const ph_pts = pontosPorFaixa(ph, PRISM3_CONFIG.metab.ph);
-            score += ph_pts;
-            if (ph && !Number.isNaN(ph)) {
-                breakdown.push(['pH', ph.toFixed(2), ph_pts]);
-            }
-
-            const hco3_pts = pontosPorFaixa(hco3, PRISM3_CONFIG.metab.hco3);
-            score += hco3_pts;
-            if (hco3 && !Number.isNaN(hco3)) {
-                breakdown.push(['HCO₃⁻', `${hco3} mmol/L`, hco3_pts]);
-            }
-
-            const glucose_pts = pontosPorFaixa(glucose, PRISM3_CONFIG.metab.glucose);
-            score += glucose_pts;
-            if (glucose && !Number.isNaN(glucose)) {
-                breakdown.push(['Glicose', `${glucose} mg/dL`, glucose_pts]);
-            }
-
-            const k_pts = pontosPorFaixa(k, PRISM3_CONFIG.metab.k);
-            score += k_pts;
-            if (k && !Number.isNaN(k)) {
-                breakdown.push(['Potássio', `${k} mmol/L`, k_pts]);
-            }
-
-            // Órgãos
-            const creatinine_pts = pontosPorFaixa(creatinine, PRISM3_CONFIG.organ.creatinine);
-            score += creatinine_pts;
-            if (creatinine && !Number.isNaN(creatinine)) {
-                breakdown.push(['Creatinina', `${creatinine} mg/dL`, creatinine_pts]);
-            }
-
-            const wbc_pts = pontosPorFaixa(wbc, PRISM3_CONFIG.organ.wbc);
-            score += wbc_pts;
-            if (wbc && !Number.isNaN(wbc)) {
-                breakdown.push(['Leucócitos', `${wbc} 10³/µL`, wbc_pts]);
-            }
-
-            const platelets_pts = pontosPorFaixa(platelets, PRISM3_CONFIG.organ.platelets);
-            score += platelets_pts;
-            if (platelets && !Number.isNaN(platelets)) {
-                breakdown.push(['Plaquetas', `${platelets} 10³/µL`, platelets_pts]);
-            }
-
-            const bilirubin_pts = pontosPorFaixa(bilirubin, PRISM3_CONFIG.organ.bilirubin);
-            score += bilirubin_pts;
-            if (bilirubin && !Number.isNaN(bilirubin)) {
-                breakdown.push(['Bilirrubina Total', `${bilirubin} mg/dL`, bilirubin_pts]);
-            }
-
-            // Calcular probabilidade
-            const logit = PRISM3_CONFIG.logistic.alpha + PRISM3_CONFIG.logistic.beta * score;
-            const probability = 1 / (1 + Math.exp(-logit));
-
-            // Exibir resultados
-            document.getElementById('escore_total').textContent = `${score} pontos`;
-            document.getElementById('probabilidade_mortalidade').textContent = `${(probability * 100).toFixed(1)}%`;
-
-            // Determinar nível de risco
-            let riskLevel, riskClass;
-            if (probability < 0.05) {
-                riskLevel = 'Baixo Risco';
-                riskClass = 'risk-low';
-            } else if (probability < 0.20) {
-                riskLevel = 'Risco Intermediário';
-                riskClass = 'risk-medium';
-            } else {
-                riskLevel = 'Alto Risco';
-                riskClass = 'risk-high';
-            }
-
-            document.getElementById('indicador_risco').innerHTML = 
-                `<span class="risk-indicator ${riskClass}">${riskLevel}</span>`;
-
-            // Criar tabela de breakdown
-            let tableHTML = '<table class="breakdown-table">';
-            tableHTML += '<thead><tr><th>Variável</th><th>Valor</th><th>Pontos</th></tr></thead>';
-            tableHTML += '<tbody>';
-            breakdown.forEach(([variavel, valor, pontos]) => {
-                tableHTML += `<tr><td>${variavel}</td><td>${valor}</td><td><strong>${pontos}</strong></td></tr>`;
+        function lerEntradas() {
+            const ids = ['sbp_min', 'hr_max', 'temp_min', 'temp_max', 'ph_min', 'ph_max', 'tco2_min', 'tco2_max',
+                'pco2_max', 'pao2_min', 'glucose', 'k', 'creatinine', 'bun', 'wbc', 'platelets', 'pt', 'ptt'];
+            const v = {};
+            ids.forEach(id => { v[id] = lerCampo(id); });
+            return Object.freeze({
+                ...v,
+                faixa: document.getElementById('faixa_etaria').value,
+                janela: document.getElementById('janela').value,
+                mental: document.getElementById('mental').value === '1',
+                pupils: parseInt(document.getElementById('pupils').value, 10) || 0,
+                bunUnit: document.getElementById('bun_unit').value
             });
-            tableHTML += '</tbody></table>';
-            
-            document.getElementById('breakdown_table').innerHTML = tableHTML;
+        }
+
+        // Retorna mensagem de erro ou '' se válido
+        function validarEntradas(e) {
+            if (!PRISM3_GRUPOS[e.faixa]) {
+                return 'Selecione a faixa etária (ou informe a data de nascimento): os pontos de corte de PAS, frequência cardíaca, creatinina, BUN e TTPa dependem da idade.';
+            }
+            const numericos = ['sbp_min', 'hr_max', 'temp_min', 'temp_max', 'ph_min', 'ph_max', 'tco2_min', 'tco2_max',
+                'pco2_max', 'pao2_min', 'glucose', 'k', 'creatinine', 'bun', 'wbc', 'platelets', 'pt', 'ptt'];
+            if (numericos.some(id => e[id].num !== null && (Number.isNaN(e[id].num) || e[id].num < 0))) {
+                return 'Há valores inválidos ou negativos. Revise os campos preenchidos.';
+            }
+            const phFora = ['ph_min', 'ph_max'].some(id => e[id].num !== null && (e[id].num < 6.5 || e[id].num > 8.0));
+            if (phFora) return 'pH fora da faixa plausível (6,5 a 8,0). Revise o valor informado.';
+            const tempFora = ['temp_min', 'temp_max'].some(id => e[id].num !== null && (e[id].num < 25 || e[id].num > 45));
+            if (tempFora) return 'Temperatura fora da faixa plausível (25 a 45 °C). Revise o valor informado.';
+            const pares = [['ph_min', 'ph_max'], ['tco2_min', 'tco2_max'], ['temp_min', 'temp_max']];
+            if (pares.some(([a, b]) => e[a].num !== null && e[b].num !== null && e[a].num > e[b].num)) {
+                return 'O valor mínimo não pode ser maior que o máximo (pH, CO₂ total ou temperatura).';
+            }
+            return '';
+        }
+
+        // Pontuação de cada variável (funções puras)
+        const pts = {
+            sbp: (v, g) => v === null ? 0 : (v < g.sbp[0] ? 7 : (v <= g.sbp[1] ? 3 : 0)),
+            hr: (v, g) => v === null ? 0 : (v > g.hr[1] ? 4 : (v >= g.hr[0] ? 3 : 0)),
+            temp: (tmin, tmax) => ((tmin !== null && tmin < 33) || (tmax !== null && tmax > 40)) ? 3 : 0,
+            acidose: (phMin, tco2Min) => {
+                const porPh = phMin === null ? 0 : (phMin < 7.0 ? 6 : (phMin <= 7.28 ? 2 : 0));
+                const porCo2 = tco2Min === null ? 0 : (tco2Min < 5 ? 6 : (tco2Min < 17 ? 2 : 0));
+                return Math.max(porPh, porCo2);
+            },
+            alcalose: v => v === null ? 0 : (v > 7.55 ? 3 : (v >= 7.48 ? 2 : 0)),
+            pco2: v => v === null ? 0 : (v > 75 ? 3 : (v >= 50 ? 1 : 0)),
+            tco2Alto: v => v === null ? 0 : (v > 34 ? 4 : 0),
+            pao2: v => v === null ? 0 : (v < 42 ? 6 : (v < 50 ? 3 : 0)),
+            glicose: v => v === null ? 0 : (v > 200 ? 2 : 0),
+            potassio: v => v === null ? 0 : (v > 6.9 ? 3 : 0),
+            creatinina: (v, g) => v === null ? 0 : (v > g.creat ? 2 : 0),
+            bun: (v, g) => v === null ? 0 : (v > g.bun ? 3 : 0),
+            leucocitos: v => v === null ? 0 : (v < 3 ? 4 : 0),
+            coagulacao: (pt, ptt, g) => ((pt !== null && pt > 22) || (ptt !== null && ptt > g.ptt)) ? 3 : 0,
+            plaquetas: v => v === null ? 0 : (v < 50 ? 5 : (v < 100 ? 4 : (v <= 200 ? 2 : 0)))
+        };
+
+        const mostrar = (campo, unidade) => campo.num === null ? NAO_INFORMADO : `${campo.txt}${unidade ? ' ' + unidade : ''}`;
+
+        // Calcula o PRISM III; retorna objeto imutável com linhas e subescores
+        function computarPRISM3(e) {
+            const g = PRISM3_GRUPOS[e.faixa];
+            const bunValor = e.bun.num === null ? null : (e.bunUnit === 'ureia' ? e.bun.num / UREIA_PARA_BUN : e.bun.num);
+            const bunTexto = e.bun.num === null ? NAO_INFORMADO
+                : (e.bunUnit === 'ureia' ? `ureia ${e.bun.txt} mg/dL → BUN ${bunValor.toFixed(1)} mg/dL` : `${e.bun.txt} mg/dL`);
+
+            const linhas = [
+                { rel: 'PAS minima', variavel: 'PAS mínima', valor: mostrar(e.sbp_min, 'mmHg'), pontos: pts.sbp(e.sbp_min.num, g), neuro: false },
+                { rel: 'Temperatura (min/max)', variavel: 'Temperatura (mín./máx.)', valor: `${mostrar(e.temp_min, '')} / ${mostrar(e.temp_max, '')} °C`, pontos: pts.temp(e.temp_min.num, e.temp_max.num), neuro: false },
+                { rel: 'Estado mental', variavel: 'Estado mental', valor: e.mental ? 'Estupor/coma (Glasgow < 8)' : 'Normal ou Glasgow ≥ 8', pontos: e.mental ? 5 : 0, neuro: true },
+                { rel: 'Frequencia cardiaca maxima', variavel: 'Frequência cardíaca máxima', valor: mostrar(e.hr_max, 'bpm'), pontos: pts.hr(e.hr_max.num, g), neuro: false },
+                { rel: 'Reflexos pupilares', variavel: 'Reflexos pupilares', valor: PUPILAS_ROTULO[e.pupils] || PUPILAS_ROTULO[0], pontos: PUPILAS_PTS[e.pupils] || 0, neuro: true },
+                { rel: 'Acidose (pH minimo / CO2 total minimo)', variavel: 'Acidose (pH mínimo / CO₂ total mínimo)', valor: `${mostrar(e.ph_min, '')} / ${mostrar(e.tco2_min, 'mmol/L')}`, pontos: pts.acidose(e.ph_min.num, e.tco2_min.num), neuro: false },
+                { rel: 'pH maximo (alcalose)', variavel: 'pH máximo (alcalose)', valor: mostrar(e.ph_max, ''), pontos: pts.alcalose(e.ph_max.num), neuro: false },
+                { rel: 'PCO2 maxima', variavel: 'PCO₂ máxima', valor: mostrar(e.pco2_max, 'mmHg'), pontos: pts.pco2(e.pco2_max.num), neuro: false },
+                { rel: 'CO2 total maximo', variavel: 'CO₂ total máximo', valor: mostrar(e.tco2_max, 'mmol/L'), pontos: pts.tco2Alto(e.tco2_max.num), neuro: false },
+                { rel: 'PaO2 minima', variavel: 'PaO₂ mínima', valor: mostrar(e.pao2_min, 'mmHg'), pontos: pts.pao2(e.pao2_min.num), neuro: false },
+                { rel: 'Glicose maxima', variavel: 'Glicose máxima', valor: mostrar(e.glucose, 'mg/dL'), pontos: pts.glicose(e.glucose.num), neuro: false },
+                { rel: 'Potassio maximo', variavel: 'Potássio máximo', valor: mostrar(e.k, 'mmol/L'), pontos: pts.potassio(e.k.num), neuro: false },
+                { rel: 'Creatinina maxima', variavel: 'Creatinina máxima', valor: mostrar(e.creatinine, 'mg/dL'), pontos: pts.creatinina(e.creatinine.num, g), neuro: false },
+                { rel: 'BUN maximo', variavel: 'BUN máximo', valor: bunTexto, pontos: pts.bun(bunValor, g), neuro: false },
+                { rel: 'Leucocitos minimos', variavel: 'Leucócitos mínimos', valor: mostrar(e.wbc, '10³/µL'), pontos: pts.leucocitos(e.wbc.num), neuro: false },
+                { rel: 'TP / TTPa maximos', variavel: 'TP / TTPa máximos', valor: `${mostrar(e.pt, 's')} / ${mostrar(e.ptt, 's')}`, pontos: pts.coagulacao(e.pt.num, e.ptt.num, g), neuro: false },
+                { rel: 'Plaquetas minimas', variavel: 'Plaquetas mínimas', valor: mostrar(e.platelets, '10³/µL'), pontos: pts.plaquetas(e.platelets.num), neuro: false }
+            ];
+
+            const neuro = linhas.filter(l => l.neuro).reduce((s, l) => s + l.pontos, 0);
+            const naoNeuro = linhas.filter(l => !l.neuro).reduce((s, l) => s + l.pontos, 0);
+            return Object.freeze({
+                linhas,
+                neuro,
+                naoNeuro,
+                total: neuro + naoNeuro,
+                grupo: g,
+                janelaRotulo: e.janela === '24' ? 'PRISM III-24 (primeiras 24 h)' : 'PRISM III-12 (primeiras 12 h)',
+                janelaRel: e.janela === '24' ? 'PRISM III-24 (piores valores nas primeiras 24 h)' : 'PRISM III-12 (piores valores nas primeiras 12 h)'
+            });
+        }
+
+        const formatarPontos = n => `${n} ${n === 1 ? 'ponto' : 'pontos'}`;
+
+        // Lê, valida e calcula; mostra alerta e retorna null se inválido
+        function obterResultado() {
+            const entradas = lerEntradas();
+            const erro = validarEntradas(entradas);
+            if (erro) {
+                alert(erro);
+                return null;
+            }
+            return computarPRISM3(entradas);
+        }
+
+        function calcularPRISM3() {
+            const r = obterResultado();
+            if (!r) return;
+
+            document.getElementById('escore_total').textContent = formatarPontos(r.total);
+            document.getElementById('escore_neuro').textContent = formatarPontos(r.neuro);
+            document.getElementById('escore_nao_neuro').textContent = formatarPontos(r.naoNeuro);
+            document.getElementById('contexto_calculo').innerHTML = `<span>${r.janelaRotulo}</span> · <span>${r.grupo.rotulo}</span>`;
+
+            const corpo = r.linhas.map(l =>
+                `<tr><td>${l.variavel}</td><td>${l.valor}</td><td><strong>${l.pontos}</strong></td></tr>`
+            ).join('');
+            document.getElementById('breakdown_table').innerHTML =
+                '<table class="breakdown-table"><thead><tr><th>Variável</th><th>Valor</th><th>Pontos</th></tr></thead>' +
+                `<tbody>${corpo}</tbody></table>`;
         }
 
         // Função para gerar e copiar relatório
         function gerarECopiarRelatorio() {
+            const r = obterResultado();
+            if (!r) return;
+            calcularPRISM3();
+
             const nome = document.getElementById('nome').value;
             const dataNascimento = document.getElementById('data_nascimento').value;
             const dataAvaliacao = document.getElementById('data_avaliacao').value;
@@ -1174,64 +1161,40 @@
             const idadeCompleta = document.getElementById('idade_completa').value;
             const obs = document.getElementById('obs').value;
 
-            // Obter resultados calculados
-            const escoreTotal = document.getElementById('escore_total').textContent;
-            const probabilidade = document.getElementById('probabilidade_mortalidade').textContent;
-            const indicador = document.getElementById('indicador_risco').textContent;
+            const cabecalho = [
+                'RESUMO INFORMATIVO — PRISM III (EDUCATIVO)',
+                nome ? `Paciente: ${nome}` : '',
+                dataAvaliacao ? `Data da Avaliacao: ${dataAvaliacao}${horaAvaliacao ? ` - Hora: ${horaAvaliacao}` : ''}` : '',
+                '',
+                'DADOS DO PACIENTE:',
+                dataNascimento ? `- Data de Nascimento: ${dataNascimento}` : '',
+                idadeCompleta ? `- Idade: ${idadeCompleta}` : '',
+                `- Faixa etaria: ${r.grupo.rotulo}`,
+                `- Periodo: ${r.janelaRel}`,
+                '',
+                'VARIAVEIS (PIORES VALORES) E PONTOS:'
+            ];
+            const variaveis = r.linhas.map(l => `- ${l.rel}: ${l.valor} = ${l.pontos} pts`);
+            const resultados = [
+                '',
+                'RESULTADOS:',
+                `- PRISM III - Escore Total: ${formatarPontos(r.total)}`,
+                `- Subescore neurologico: ${formatarPontos(r.neuro)}`,
+                `- Subescore nao neurologico: ${formatarPontos(r.naoNeuro)}`,
+                '',
+                'INTERPRETACAO:',
+                'Esta pagina mostra o escore PRISM III publicado (Pollack et al., 1996).',
+                'A equacao de probabilidade de obito do PRISM III e proprietaria (licenciada) e nao e reproduzida aqui.',
+                'Escores mais altos indicam maior risco de mortalidade.',
+                'Campos nao informados foram considerados normais (0 ponto).',
+                obs ? `\n- Observacoes: ${obs}` : '',
+                '',
+                'Referencia: Pollack MM, Patel KM, Ruttimann UE. PRISM III: an updated Pediatric Risk of Mortality score. Crit Care Med 1996;24(5):743-752.'
+            ];
 
-            let relatorioTexto = `RESUMO INFORMATIVO — PRISM III (EDUCATIVO)
-${nome ? `Paciente: ${nome}` : ''}
-${dataAvaliacao ? `Data da Avaliacao: ${dataAvaliacao}` : ''}${horaAvaliacao ? ` - Hora: ${horaAvaliacao}` : ''}
-
-DADOS DO PACIENTE:
-${dataNascimento ? `- Data de Nascimento: ${dataNascimento}` : ''}
-${idadeCompleta ? `- Idade: ${idadeCompleta}` : ''}
-
-DADOS PRISM III (PIORES VALORES PRIMEIRAS 12H):
-- PAS Minima: ${document.getElementById('sbp_min').value || '-'} mmHg
-- Temperatura Minima: ${document.getElementById('temp_min').value || '-'}°C
-- Pupilas Fixas: ${document.getElementById('pupils').value === '1' ? 'Sim' : 'Nao'}
-- Coma Profundo: ${document.getElementById('coma').value === '1' ? 'Sim' : 'Nao'}
-- Convulsoes: ${document.getElementById('seizure').value === '1' ? 'Sim' : 'Nao'}
-- PaO2: ${document.getElementById('pao2').value || '-'} mmHg
-- FiO2: ${document.getElementById('fio2').value || '-'}
-- PaCO2: ${document.getElementById('paco2').value || '-'} mmHg
-- pH: ${document.getElementById('ph').value || '-'}
-- HCO3: ${document.getElementById('hco3').value || '-'} mmol/L
-- Glicose: ${document.getElementById('glucose').value || '-'} mg/dL
-- Potassio: ${document.getElementById('k').value || '-'} mmol/L
-- Creatinina: ${document.getElementById('creatinine').value || '-'} mg/dL
-- Leucocitos: ${document.getElementById('wbc').value || '-'} 10³/µL
-- Plaquetas: ${document.getElementById('platelets').value || '-'} 10³/µL
-- Bilirrubina Total: ${document.getElementById('bilirubin').value || '-'} mg/dL
-${obs ? `- Observacoes: ${obs}` : ''}
-
-RESULTADOS:
-- PRISM III - Escore Total: ${escoreTotal}
-- Probabilidade de Mortalidade: ${probabilidade}
-- Nivel de Risco: ${indicador}
-
-INTERPRETACAO:
-O PRISM III e um indice de gravidade pediatica desenvolvido para predizer mortalidade hospitalar em criancas admitidas em UTIs pediatricas. O calculo e baseado nos piores valores observados nas primeiras 12 horas de admissao. Valores mais altos indicam maior risco de mortalidade.
-
-CRITERIOS DE PONTUACAO PRISM III:
-- PAS Minima: <50mmHg=4pts, 50-70mmHg=2pts, >70mmHg=0pts
-- Temperatura Minima: <35°C=2pts, 35-36°C=1pt, >36°C=0pts
-- Pupilas Fixas: Sim=4pts, Nao=0pts
-- Coma Profundo: Sim=3pts, Nao=0pts
-- Convulsoes: Sim=2pts, Nao=0pts
-- PaO2/FiO2: <100=4pts, 100-200=3pts, 200-300=2pts, 300-400=1pt, >400=0pts
-- PaCO2: 51-70mmHg=1pt, 71-90mmHg=2pts, >90mmHg=3pts
-- pH: <7.10=4pts, 7.10-7.24=2pts, >7.24=0pts
-- HCO3: <10mmol/L=4pts, 10-15mmol/L=2pts, >15mmol/L=0pts
-- Glicose: <40mg/dL=3pts, 200-299mg/dL=1pt, >300mg/dL=2pts
-- Potassio: <2.5mmol/L=2pts, 6.0-6.9mmol/L=2pts, >7.0mmol/L=4pts
-- Creatinina: 1.5-1.9mg/dL=1pt, >2.0mg/dL=2pts
-- Leucocitos: <3x10³/µL=2pts, >25x10³/µL=1pt
-- Plaquetas: <50x10³/µL=4pts, 50-100x10³/µL=2pts, >100x10³/µL=0pts
-- Bilirrubina: 2.0-4.9mg/dL=1pt, >5.0mg/dL=2pts
-
-Referencia: Pollack MM, et al. PRISM III: an updated Pediatric Risk of Mortality score. Crit Care Med 1996; 24(5): 743-752.`;
+            let relatorioTexto = [...cabecalho, ...variaveis, ...resultados]
+                .filter((linha, i, arr) => linha !== '' || (i > 0 && arr[i - 1] !== ''))
+                .join('\n');
 
             relatorioTexto = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorioTexto;
             if (typeof window.neopedLegalReportFooter === 'function') {
@@ -1277,15 +1240,14 @@ Referencia: Pollack MM, et al. PRISM III: an updated Pediatric Risk of Mortality
         // Função para limpar dados
         function limparDados() {
             const campos = [
-                'nome', 'data_nascimento', 'data_avaliacao', 
-                'hora_avaliacao', 'idade_completa', 'sbp_min', 'temp_min',
-                'pupils', 'coma', 'seizure', 'pao2', 'fio2', 'paco2',
-                'ph', 'hco3', 'glucose', 'k', 'creatinine', 'wbc',
-                'platelets', 'bilirubin', 'obs'
+                'nome', 'data_nascimento', 'data_avaliacao', 'hora_avaliacao', 'idade_completa', 'faixa_etaria', 'janela',
+                'sbp_min', 'hr_max', 'temp_min', 'temp_max', 'mental', 'pupils', 'ph_min', 'ph_max', 'tco2_min', 'tco2_max',
+                'pco2_max', 'pao2_min', 'glucose', 'k', 'creatinine', 'bun', 'bun_unit', 'wbc', 'platelets', 'pt', 'ptt', 'obs'
             ];
 
             campos.forEach(campo => {
                 const elemento = document.getElementById(campo);
+                if (!elemento) return;
                 if (elemento.type === 'select-one') {
                     elemento.selectedIndex = 0;
                 } else {
@@ -1293,10 +1255,11 @@ Referencia: Pollack MM, et al. PRISM III: an updated Pediatric Risk of Mortality
                 }
             });
 
-            document.getElementById('escore_total').textContent = '-';
-            document.getElementById('probabilidade_mortalidade').textContent = '-';
-            document.getElementById('indicador_risco').innerHTML = '';
+            ['escore_total', 'escore_neuro', 'escore_nao_neuro', 'contexto_calculo'].forEach(id => {
+                document.getElementById(id).textContent = '-';
+            });
             document.getElementById('breakdown_table').innerHTML = '';
+            preencherDataAtual();
         }
 
         // Event listeners

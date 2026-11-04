@@ -3070,6 +3070,26 @@
             document.getElementById('reportBtn').disabled = false;
         }
 
+        // Exibicao de quantidades clinicas: valores >= 1 mantem casasPadrao decimais;
+        // valores com |v| < 1 usam 3 algarismos significativos (sem zeros finais), para que
+        // doses pequenas nunca aparecam como "0.0"/"0.00". Zero exato -> "0". Nao altera calculos.
+        function formatarNumeroClinico(valor, casasPadrao) {
+            if (valor === null || valor === undefined || valor === '') {
+                return 'n/a';
+            }
+            const numero = Number(valor);
+            if (!Number.isFinite(numero)) {
+                return String(valor);
+            }
+            if (numero === 0) {
+                return '0';
+            }
+            if (Math.abs(numero) >= 1) {
+                return numero.toFixed(casasPadrao);
+            }
+            return String(Number(numero.toPrecision(3)));
+        }
+
         function exibirResultados(resultados, nomeMedicamento) {
             const resultsContent = document.getElementById('resultsContent');
             resultsContent.innerHTML = '';
@@ -3086,7 +3106,7 @@
                         </div>
                     </div>
                     <div style="text-align: right;">
-                        <div class="result-value">${resultado.doseCalculada.toFixed(2)} ${resultado.unidade.replace('kg/', '')}</div>
+                        <div class="result-value">${formatarNumeroClinico(resultado.doseCalculada, 2)} ${resultado.unidade.replace('kg/', '')}</div>
                         <div style="font-size: 0.9em; color: #374151; margin-top: 5px;">
                             ${resultado.dosePersonalizada ? 
                                 (resultado.intervalo > 0 ? `A cada ${resultado.intervalo} ${resultado.unidadeIntervalo}` : resultado.unidadeIntervalo) :
@@ -3097,21 +3117,21 @@
                 
                 if (resultado.miligramasTotais > 0) {
                     html += `<div style="font-size: 0.9em; color: #27ae60; margin-top: 5px;">
-                        ${resultado.miligramasTotais.toFixed(2)} mg total
+                        ${formatarNumeroClinico(resultado.miligramasTotais, 2)} mg total
                     </div>`;
                     html += `<div style="font-size: 0.9em; color: #6b7280; margin-top: 5px;">
-                        ${resultado.volumeCalculadoHora.toFixed(2)} mL/hora
+                        ${formatarNumeroClinico(resultado.volumeCalculadoHora, 2)} mL/hora
                     </div>`;
                     html += `<div style="font-size: 0.9em; color: #e74c3c; margin-top: 5px;">
-                        ${resultado.volumeCalculadoTotal.toFixed(2)} mL total (${resultado.duracaoInfusao}h)
+                        ${formatarNumeroClinico(resultado.volumeCalculadoTotal, 2)} mL total (${resultado.duracaoInfusao}h)
                     </div>`;
                 } else if (resultado.volumeCalculadoHora > 0) {
                     html += `<div style="font-size: 0.9em; color: #6b7280; margin-top: 5px;">
-                        ${resultado.volumeCalculadoHora.toFixed(2)} mL/hora
+                        ${formatarNumeroClinico(resultado.volumeCalculadoHora, 2)} mL/hora
                     </div>`;
                 } else if (resultado.volumeCalculado > 0) {
                     html += `<div style="font-size: 0.9em; color: #6b7280; margin-top: 5px;">
-                        ${resultado.volumeCalculado.toFixed(2)} mL
+                        ${formatarNumeroClinico(resultado.volumeCalculado, 2)} mL
                     </div>`;
                 }
                 
@@ -3219,17 +3239,17 @@ Dosagens Calculadas:`;
                 calculo.resultados.forEach(resultado => {
                     relatorio += `\n- ${resultado.nome}:
   Dose: ${resultado.dose} ${resultado.unidade}
-  Dose Calculada: ${resultado.doseCalculada.toFixed(2)} ${resultado.unidade.replace('kg/', '')}
+  Dose Calculada: ${formatarNumeroClinico(resultado.doseCalculada, 2)} ${resultado.unidade.replace('kg/', '')}
   Intervalo: ${resultado.intervalo > 0 ? `A cada ${resultado.intervalo} ${resultado.unidadeIntervalo}` : resultado.unidadeIntervalo}`;
                     
                     if (resultado.miligramasTotais > 0) {
-                        relatorio += `\n  Miligramas Totais: ${resultado.miligramasTotais.toFixed(2)} mg`;
-                        relatorio += `\n  Volume: ${resultado.volumeCalculadoHora.toFixed(2)} mL/hora`;
-                        relatorio += `\n  Volume Total: ${resultado.volumeCalculadoTotal.toFixed(2)} mL (${resultado.duracaoInfusao} horas)`;
+                        relatorio += `\n  Miligramas Totais: ${formatarNumeroClinico(resultado.miligramasTotais, 2)} mg`;
+                        relatorio += `\n  Volume: ${formatarNumeroClinico(resultado.volumeCalculadoHora, 2)} mL/hora`;
+                        relatorio += `\n  Volume Total: ${formatarNumeroClinico(resultado.volumeCalculadoTotal, 2)} mL (${resultado.duracaoInfusao} horas)`;
                     } else if (resultado.volumeCalculadoHora > 0) {
-                        relatorio += `\n  Volume: ${resultado.volumeCalculadoHora.toFixed(2)} mL/hora`;
+                        relatorio += `\n  Volume: ${formatarNumeroClinico(resultado.volumeCalculadoHora, 2)} mL/hora`;
                     } else if (resultado.volumeCalculado > 0) {
-                        relatorio += `\n  Volume: ${resultado.volumeCalculado.toFixed(2)} mL`;
+                        relatorio += `\n  Volume: ${formatarNumeroClinico(resultado.volumeCalculado, 2)} mL`;
                     }
                     
                     relatorio += `\n  Apresentacao: ${resultado.apresentacao}

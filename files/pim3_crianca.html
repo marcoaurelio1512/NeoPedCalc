@@ -522,6 +522,77 @@
                 font-size: 16px;
             }
         }
+
+        .subsection-title {
+            color: var(--secondary-color);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 25px 0 12px;
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-group {
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 15px 15px;
+            background: #f8f9fa;
+        }
+
+        .checkbox-group legend {
+            font-weight: 600;
+            padding: 0 6px;
+            color: var(--text-color);
+        }
+
+        .checkbox-group label {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            margin-top: 8px;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-top: 4px;
+            flex-shrink: 0;
+        }
+
+        .form-group input:disabled {
+            background-color: #e9ecef;
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .result-note {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 10px;
+        }
+
+        .formula-table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .formula-table td {
+            padding: 4px 8px;
+            border-bottom: 1px solid #e5e7eb;
+            vertical-align: top;
+        }
+
+        .formula-table td:first-child {
+            white-space: nowrap;
+            text-align: right;
+            font-weight: 700;
+        }
     </style>
     <link rel="stylesheet" href="../css/neoped-responsive.css">
 <link rel="stylesheet" href="../css/neoped-modern.css">
@@ -567,34 +638,70 @@
 
         <div class="form-section">
             <h2 class="section-title">Dados da Admissão (Primeira Hora)</h2>
-            
+
             <div class="info-box">
                 <h4>Informações Importantes</h4>
-                <p>O PIM3 deve ser calculado com base nos dados da primeira hora de admissão na UTI pediátrica. Use os piores valores observados neste período.</p>
+                <p>O PIM3 usa dados coletados entre o primeiro contato presencial com a equipe da UTI pediátrica e a primeira hora após a chegada à UTI. Para as variáveis fisiológicas, registre o primeiro valor medido nesse período.</p>
             </div>
 
+            <h3 class="subsection-title">Variáveis clínicas</h3>
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="airway">Via Aérea / Ventilação na Admissão</label>
-                    <select id="airway">
-                        <option value="">Selecione...</option>
-                        <option value="AA">Ar ambiente</option>
-                        <option value="O2">Oxigênio suplementar</option>
-                        <option value="VNI">VNI / CPAP</option>
-                        <option value="VM">Ventilação mecânica invasiva</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="pupils">Pupilas Fixas?</label>
+                    <label for="pupils">Pupilas fixas à luz (ambas)?</label>
                     <select id="pupils">
                         <option value="0">Não</option>
                         <option value="1">Sim</option>
                     </select>
+                    <span class="unit">Ambas &gt; 3 mm e fixas; não marcar se causado por fármacos, toxinas ou lesão ocular local</span>
+                </div>
+                <div class="form-group">
+                    <label for="elective">Admissão Eletiva?</label>
+                    <select id="elective">
+                        <option value="0">Não (urgência/emergência)</option>
+                        <option value="1">Sim (eletiva)</option>
+                    </select>
+                    <span class="unit">Eletiva: admissão que poderia ser adiada por mais de 6 horas sem efeito adverso</span>
+                </div>
+                <div class="form-group">
+                    <label for="mv">Ventilação mecânica na primeira hora?</label>
+                    <select id="mv">
+                        <option value="0">Não</option>
+                        <option value="1">Sim</option>
+                    </select>
+                    <span class="unit">Inclui CPAP ou BiPAP por máscara/nasal e ventilação por pressão negativa, em qualquer momento da primeira hora</span>
+                </div>
+                <div class="form-group">
+                    <label for="recovery">Recuperação de cirurgia ou procedimento como principal motivo da admissão</label>
+                    <select id="recovery">
+                        <option value="none">Não</option>
+                        <option value="bypass">Sim — cirurgia cardíaca com circulação extracorpórea</option>
+                        <option value="nonbypass">Sim — cirurgia ou procedimento cardíaco sem circulação extracorpórea</option>
+                        <option value="noncardiac">Sim — procedimento não cardíaco</option>
+                    </select>
+                    <span class="unit">Opções mutuamente exclusivas</span>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Variáveis fisiológicas</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="sbp_status">Situação da PAS</label>
+                    <select id="sbp_status" onchange="atualizarCampoPAS()">
+                        <option value="measured">Medida</option>
+                        <option value="unknown">Desconhecida (usar 120 mmHg)</option>
+                        <option value="arrest">Parada cardíaca (usar 0 mmHg)</option>
+                        <option value="shock">Choque com PA não mensurável (usar 30 mmHg)</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="sbp">Pressão Arterial Sistólica</label>
-                    <input type="number" id="sbp" min="30" max="200" step="1" placeholder="Ex.: 70">
+                    <input type="number" id="sbp" min="0" max="300" step="1" placeholder="Ex.: 90">
                     <span class="unit">mmHg</span>
+                </div>
+                <div class="form-group">
+                    <label for="be">Base excess (BE)</label>
+                    <input type="number" id="be" min="-50" max="50" step="0.1" placeholder="Ex.: -4">
+                    <span class="unit">mmol/L, sangue arterial ou capilar; em branco se desconhecido (termo = 0)</span>
                 </div>
                 <div class="form-group">
                     <label for="o2_unit">Unidade de PaO₂</label>
@@ -606,34 +713,46 @@
                 <div class="form-group">
                     <label for="pao2">PaO₂</label>
                     <input type="number" id="pao2" step="0.1" placeholder="Ex.: 80">
+                    <span class="unit">Sangue arterial; em branco se desconhecida (termo = 0)</span>
                 </div>
                 <div class="form-group">
                     <label for="fio2">FiO₂</label>
                     <input type="number" id="fio2" min="0.21" max="1" step="0.01" placeholder="Ex.: 0.5">
-                    <span class="unit">fração (0.21-1.0)</span>
+                    <span class="unit">fração (0.21-1.0) no momento da gasometria; em branco se desconhecida</span>
                 </div>
-                <div class="form-group">
-                    <label for="pre_cpr">RCP Antes da Admissão?</label>
-                    <select id="pre_cpr">
-                        <option value="0">Não</option>
-                        <option value="1">Sim</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="elective">Admissão Eletiva?</label>
-                    <select id="elective">
-                        <option value="0">Não (urgência/emergência)</option>
-                        <option value="1">Sim (eletiva)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="dx_risk">Diagnóstico de Risco</label>
-                    <select id="dx_risk">
-                        <option value="none">Nenhum/Intermediário</option>
-                        <option value="low">Baixo risco</option>
-                        <option value="high">Alto risco</option>
-                    </select>
-                </div>
+            </div>
+
+            <h3 class="subsection-title">Diagnósticos</h3>
+            <p class="unit">Marque todos os que se aplicam. Apenas a categoria de maior risco entra no cálculo (muito alto &gt; alto &gt; baixo).</p>
+            <div class="checkbox-grid">
+                <fieldset class="checkbox-group">
+                    <legend>Diagnósticos de muito alto risco</legend>
+                    <label><input type="checkbox" id="dx_arrest">Parada cardíaca antes da admissão na UTI</label>
+                    <label><input type="checkbox" id="dx_scid">Imunodeficiência combinada grave</label>
+                    <label><input type="checkbox" id="dx_leukemia">Leucemia ou linfoma após a primeira indução</label>
+                    <label><input type="checkbox" id="dx_bmt">Receptor de transplante de medula óssea</label>
+                    <label><input type="checkbox" id="dx_liver">Insuficiência hepática como principal motivo da admissão na UTI</label>
+                </fieldset>
+                <fieldset class="checkbox-group">
+                    <legend>Diagnósticos de alto risco</legend>
+                    <label><input type="checkbox" id="dx_brain_hem">Hemorragia cerebral espontânea</label>
+                    <label><input type="checkbox" id="dx_cardiomyo">Cardiomiopatia ou miocardite</label>
+                    <label><input type="checkbox" id="dx_hlhs">Síndrome do coração esquerdo hipoplásico</label>
+                    <label><input type="checkbox" id="dx_neurodeg">Doença neurodegenerativa</label>
+                    <label><input type="checkbox" id="dx_nec">Enterocolite necrosante como principal motivo da admissão</label>
+                </fieldset>
+                <fieldset class="checkbox-group">
+                    <legend>Diagnósticos de baixo risco</legend>
+                    <label><input type="checkbox" id="dx_asthma">Asma como principal motivo da admissão</label>
+                    <label><input type="checkbox" id="dx_bronchiolitis">Bronquiolite como principal motivo da admissão</label>
+                    <label><input type="checkbox" id="dx_croup">Crupe como principal motivo da admissão</label>
+                    <label><input type="checkbox" id="dx_osa">Apneia obstrutiva do sono como principal motivo da admissão</label>
+                    <label><input type="checkbox" id="dx_dka">Cetoacidose diabética como principal motivo da admissão</label>
+                    <label><input type="checkbox" id="dx_seizure">Distúrbio convulsivo como principal motivo da admissão</label>
+                </fieldset>
+            </div>
+
+            <div class="form-grid">
                 <div class="form-group">
                     <label for="obs">Observações</label>
                     <input type="text" id="obs" placeholder="Contexto clínico, medicações, etc.">
@@ -652,7 +771,32 @@
                 <span class="result-label">PIM3 - Probabilidade de Mortalidade:</span>
                 <span class="result-value" id="probabilidade_mortalidade">-</span>
             </div>
+            <div class="result-item">
+                <span class="result-label">Logit do modelo:</span>
+                <span class="result-value" id="res_logit">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">PAS utilizada no cálculo:</span>
+                <span class="result-value" id="res_sbp">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Base excess utilizado (valor absoluto):</span>
+                <span class="result-value" id="res_be">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">FiO₂ × 100 / PaO₂ utilizado:</span>
+                <span class="result-value" id="res_ratio">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Recuperação pós-procedimento:</span>
+                <span class="result-value" id="res_recovery">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Categoria de diagnóstico considerada:</span>
+                <span class="result-value" id="res_dx">-</span>
+            </div>
             <div id="indicador_risco" style="text-align: center; margin-top: 15px;"></div>
+            <p class="result-note">Faixas de risco didáticas desta calculadora; o PIM3 fornece uma probabilidade contínua e não define faixas de risco.</p>
         </div>
 
         <div class="report-section">
@@ -671,61 +815,64 @@
             <div class="modal-body">
                 <h3>Objetivo (educativo)</h3>
                 <p>O PIM-3 organiza variáveis da primeira hora de admissão para apoiar discussão de gravidade/risco em UTI pediátrica. O uso aqui é informativo e não substitui avaliação clínica, protocolos institucionais ou prescrição.</p>
-                
-                <h3>Fórmula do PIM-3</h3>
+
+                <h3>Fórmula do PIM3 (Straney et al., 2013)</h3>
                 <div class="formula-box">
-                    <strong>PIM-3 = e^(β0 + β1×variável1 + β2×variável2 + ... + βn×variáveln) / (1 + e^(β0 + β1×variável1 + β2×variável2 + ... + βn×variáveln))</strong><br><br>
-                    Variáveis incluídas:<br>
-                    • Idade da criança<br>
-                    • Diagnóstico de admissão<br>
-                    • Presença de malformações congênitas<br>
-                    • Uso de ventilação mecânica<br>
-                    • PaO2/FiO2<br>
-                    • Pressão arterial sistólica<br>
-                    • Base excess<br>
-                    • Pupilas fixas<br><br>
-                    <strong>Resultado:</strong> Probabilidade de mortalidade (0-1 ou 0-100%)
+                    <table class="formula-table">
+                        <tr><td>+3.8233</td><td>× pupilas fixas à luz, ambas (0/1)</td></tr>
+                        <tr><td>−0.5378</td><td>× admissão eletiva (0/1)</td></tr>
+                        <tr><td>+0.9763</td><td>× ventilação mecânica na primeira hora (0/1)</td></tr>
+                        <tr><td>+0.0671</td><td>× |base excess| (mmol/L)</td></tr>
+                        <tr><td>−0.0431</td><td>× PAS (mmHg)</td></tr>
+                        <tr><td>+0.1716</td><td>× PAS² / 1000</td></tr>
+                        <tr><td>+0.4214</td><td>× FiO₂ × 100 / PaO₂ (FiO₂ em fração, PaO₂ em mmHg)</td></tr>
+                        <tr><td>−1.2246</td><td>× recuperação de cirurgia cardíaca com circulação extracorpórea (0/1)</td></tr>
+                        <tr><td>−0.8762</td><td>× recuperação de cirurgia ou procedimento cardíaco sem circulação extracorpórea (0/1)</td></tr>
+                        <tr><td>−1.5164</td><td>× recuperação de procedimento não cardíaco (0/1)</td></tr>
+                        <tr><td>+1.6225</td><td>× diagnóstico de muito alto risco (0/1)</td></tr>
+                        <tr><td>+1.0725</td><td>× diagnóstico de alto risco (0/1)</td></tr>
+                        <tr><td>−2.1766</td><td>× diagnóstico de baixo risco (0/1)</td></tr>
+                        <tr><td>−1.7928</td><td>constante</td></tr>
+                    </table>
+                    <strong>Logit = soma dos termos acima</strong><br>
+                    <strong>Probabilidade de morte = e^logit / (1 + e^logit)</strong>
                 </div>
 
-                <h3>Variáveis Avaliadas</h3>
+                <h3>Regras de preenchimento</h3>
                 <ul>
-                    <li><strong>Demográficas:</strong> Idade, diagnóstico de admissão</li>
-                    <li><strong>Congênitas:</strong> Presença de malformações</li>
-                    <li><strong>Respiratórias:</strong> Ventilação mecânica, PaO2/FiO2</li>
-                    <li><strong>Cardiovasculares:</strong> Pressão arterial sistólica</li>
-                    <li><strong>Metabólicas:</strong> Base excess</li>
-                    <li><strong>Neurológicas:</strong> Pupilas fixas</li>
+                    <li>Registre o primeiro valor medido entre o primeiro contato presencial com a equipe da UTI e a primeira hora após a chegada à UTI.</li>
+                    <li><strong>PAS:</strong> desconhecida = 120 mmHg; parada cardíaca = 0 mmHg; choque com PA não mensurável = 30 mmHg.</li>
+                    <li><strong>PaO₂ e FiO₂:</strong> se qualquer uma for desconhecida, o termo FiO₂ × 100 / PaO₂ vale 0. PaO₂ em kPa é convertida para mmHg (× 7.50062).</li>
+                    <li><strong>Base excess:</strong> se desconhecido, o termo vale 0. Usa-se o valor absoluto (BE −10 e BE +10 contribuem igualmente).</li>
+                    <li><strong>Recuperação pós-procedimento:</strong> marque apenas quando a recuperação de cirurgia ou procedimento for o principal motivo da admissão; as três opções são mutuamente exclusivas.</li>
+                    <li><strong>Diagnósticos:</strong> marque todos os que se aplicam; o cálculo usa apenas a categoria de maior risco (muito alto &gt; alto &gt; baixo).</li>
                 </ul>
 
                 <h3>Instruções de Uso</h3>
                 <ol>
-                    <li><strong>Dados Demográficos:</strong> Informe idade e diagnóstico de admissão</li>
-                    <li><strong>Malformações:</strong> Marque se há malformações congênitas</li>
-                    <li><strong>Ventilação:</strong> Indique se está em ventilação mecânica</li>
-                    <li><strong>Oxigenação:</strong> Informe PaO2/FiO2</li>
-                    <li><strong>Pressão Arterial:</strong> Informe pressão arterial sistólica</li>
-                    <li><strong>Base Excess:</strong> Informe valor do base excess</li>
-                    <li><strong>Pupilas:</strong> Marque se as pupilas estão fixas</li>
-                    <li>Clique em <strong>"Calcular PIM-3"</strong> para obter o risco</li>
+                    <li>Informe pupilas, tipo de admissão, ventilação mecânica e recuperação pós-procedimento.</li>
+                    <li>Selecione a situação da PAS e, se medida, informe o valor.</li>
+                    <li>Informe base excess, PaO₂ e FiO₂ (deixe em branco os desconhecidos).</li>
+                    <li>Marque os diagnósticos presentes nas listas de risco.</li>
+                    <li>Clique em <strong>"Calcular PIM3"</strong> para obter a probabilidade de morte.</li>
                 </ol>
 
                 <h3>Interpretação dos Resultados</h3>
                 <ul>
-                    <li><strong>0-5%:</strong> Baixo risco de mortalidade</li>
-                    <li><strong>5-15%:</strong> Risco moderado de mortalidade</li>
-                    <li><strong>15-30%:</strong> Alto risco de mortalidade</li>
-                    <li><strong>30%+:</strong> Muito alto risco de mortalidade</li>
+                    <li>O resultado é a probabilidade estimada de morte hospitalar (0-100%).</li>
+                    <li>Faixas didáticas exibidas por esta calculadora (não definidas pelo PIM3):</li>
+                    <li><strong>&lt; 5%:</strong> Baixo risco de mortalidade</li>
+                    <li><strong>5% a &lt; 15%:</strong> Risco intermediário de mortalidade</li>
+                    <li><strong>15% a &lt; 30%:</strong> Alto risco de mortalidade</li>
+                    <li><strong>≥ 30%:</strong> Muito alto risco de mortalidade</li>
                     <li><strong>Comparação:</strong> Útil para comparar pacientes e centros</li>
                 </ul>
 
                 <h3>Considerações Importantes</h3>
                 <ul>
-                    <li>Use valores da primeira hora de admissão</li>
-                    <li>Útil para prognóstico precoce</li>
                     <li>Complementar à avaliação clínica, não substituto</li>
                     <li>Aplicável a crianças admitidas em UTIP</li>
                     <li>Considerar fatores não incluídos no escore</li>
-                    <li>Valores laboratoriais devem ser recentes</li>
                     <li>Reavaliar conforme evolução clínica</li>
                 </ul>
 
@@ -735,13 +882,12 @@
                     <li><strong>Comparação entre UTIPs:</strong> Ajuste de risco</li>
                     <li><strong>Pesquisa:</strong> Classificação de gravidade</li>
                     <li><strong>Qualidade:</strong> Monitoramento de outcomes</li>
-                    <li><strong>Alocação de Recursos:</strong> Planejamento de cuidados</li>
                 </ul>
 
                 <h3>Limitações</h3>
                 <ul>
-                    <li>Baseado em população de países desenvolvidos</li>
-                    <li>Pode superestimar risco em centros com alta mortalidade</li>
+                    <li>Desenvolvido com dados de UTIPs da Austrália, Nova Zelândia, Reino Unido e Irlanda; a calibração pode diferir em outras populações</li>
+                    <li>Projetado para comparar grupos de pacientes; não deve orientar decisões individuais de tratamento</li>
                     <li>Não considera qualidade dos cuidados</li>
                     <li>Depende da disponibilidade de exames laboratoriais</li>
                     <li>Pode não capturar todas as nuances clínicas</li>
@@ -749,9 +895,7 @@
 
                 <div class="reference-box">
                     <strong>Referências:</strong><br>
-                    - Straney L, et al. Pediatric Index of Mortality 3: an updated model for predicting mortality in pediatric intensive care. Pediatr Crit Care Med. 2013;14(7):673-81.<br>
-                    - Slater A, et al. PIM2: a revised version of the Paediatric Index of Mortality. Intensive Care Med. 2003;29(2):278-85.<br>
-                    - Shann F, et al. Paediatric Index of Mortality (PIM): a mortality prediction model for children in intensive care. Intensive Care Med. 1997;23(2):201-7.
+                    <span translate="no">- Straney L, Clements A, Parslow RC, et al. Paediatric Index of Mortality 3: an updated model for predicting mortality in pediatric intensive care. Pediatr Crit Care Med. 2013;14(7):673-81.</span>
                 </div>
             </div>
         </div>
@@ -772,23 +916,83 @@
                 modal.style.display = 'none';
             }
         }
-        // Configuração PIM3 baseada na literatura
-        const PIM3_CONFIG = {
-            intercept: -2.5,
-            coefficients: {
-                airway_AA: 0.0,
-                airway_O2: 0.15,
-                airway_VNI: 0.25,
-                airway_VM: 0.45,
-                pupils_fixed: 1.40,
-                sbp_per10_mmHg_below_norm: 0.10,
-                pf_ratio_per100_down: 0.12,
-                pre_adm_cpr: 0.80,
-                elective_adm: -0.35,
-                dx_low_risk: -0.50,
-                dx_high_risk: 0.90
-            }
-        };
+
+        // Coeficientes publicados do PIM3 (Straney L, et al. Pediatr Crit Care Med 2013;14:673-681)
+        const PIM3_COEF = Object.freeze({
+            pupils: 3.8233,
+            elective: -0.5378,
+            mv: 0.9763,
+            absBe: 0.0671,
+            sbp: -0.0431,
+            sbpSquaredPer1000: 0.1716,
+            fio2Pao2: 0.4214,
+            bypass: -1.2246,
+            nonbypass: -0.8762,
+            noncardiac: -1.5164,
+            veryHigh: 1.6225,
+            high: 1.0725,
+            low: -2.1766,
+            intercept: -1.7928
+        });
+
+        // PAS substituta quando não medida (regras do PIM3)
+        const SBP_SUBSTITUTE = Object.freeze({ unknown: 120, arrest: 0, shock: 30 });
+        const KPA_TO_MMHG = 7.50062;
+        const LIMITS = Object.freeze({
+            sbpMin: 0, sbpMax: 300,
+            beMin: -50, beMax: 50,
+            fio2Min: 0.21, fio2Max: 1,
+            pao2MinMmHg: 10, pao2MaxMmHg: 700
+        });
+        // Faixas didáticas desta calculadora (o PIM3 não define faixas)
+        const RISK_BANDS = Object.freeze([
+            { max: 0.05, label: 'Baixo Risco', cls: 'risk-low' },
+            { max: 0.15, label: 'Risco Intermediário', cls: 'risk-medium' },
+            { max: 0.30, label: 'Alto Risco', cls: 'risk-high' },
+            { max: Infinity, label: 'Muito Alto Risco', cls: 'risk-high' }
+        ]);
+
+        const DIAGNOSES = Object.freeze([
+            { id: 'dx_arrest', cat: 'veryHigh', rep: 'Parada cardiaca antes da admissao na UTI' },
+            { id: 'dx_scid', cat: 'veryHigh', rep: 'Imunodeficiencia combinada grave' },
+            { id: 'dx_leukemia', cat: 'veryHigh', rep: 'Leucemia ou linfoma apos a primeira inducao' },
+            { id: 'dx_bmt', cat: 'veryHigh', rep: 'Receptor de transplante de medula ossea' },
+            { id: 'dx_liver', cat: 'veryHigh', rep: 'Insuficiencia hepatica como principal motivo da admissao na UTI' },
+            { id: 'dx_brain_hem', cat: 'high', rep: 'Hemorragia cerebral espontanea' },
+            { id: 'dx_cardiomyo', cat: 'high', rep: 'Cardiomiopatia ou miocardite' },
+            { id: 'dx_hlhs', cat: 'high', rep: 'Sindrome do coracao esquerdo hipoplasico' },
+            { id: 'dx_neurodeg', cat: 'high', rep: 'Doenca neurodegenerativa' },
+            { id: 'dx_nec', cat: 'high', rep: 'Enterocolite necrosante como principal motivo da admissao' },
+            { id: 'dx_asthma', cat: 'low', rep: 'Asma como principal motivo da admissao' },
+            { id: 'dx_bronchiolitis', cat: 'low', rep: 'Bronquiolite como principal motivo da admissao' },
+            { id: 'dx_croup', cat: 'low', rep: 'Crupe como principal motivo da admissao' },
+            { id: 'dx_osa', cat: 'low', rep: 'Apneia obstrutiva do sono como principal motivo da admissao' },
+            { id: 'dx_dka', cat: 'low', rep: 'Cetoacidose diabetica como principal motivo da admissao' },
+            { id: 'dx_seizure', cat: 'low', rep: 'Disturbio convulsivo como principal motivo da admissao' }
+        ]);
+
+        const DX_CATEGORY_TEXT = Object.freeze({
+            veryHigh: { ui: 'Muito alto risco', rep: 'Muito alto risco' },
+            high: { ui: 'Alto risco', rep: 'Alto risco' },
+            low: { ui: 'Baixo risco', rep: 'Baixo risco' },
+            none: { ui: 'Nenhuma', rep: 'Nenhuma' }
+        });
+
+        const RECOVERY_TEXT = Object.freeze({
+            none: { ui: 'Não', rep: 'Nao' },
+            bypass: { ui: 'Cirurgia cardíaca com circulação extracorpórea', rep: 'Cirurgia cardiaca com circulacao extracorporea' },
+            nonbypass: { ui: 'Cirurgia ou procedimento cardíaco sem circulação extracorpórea', rep: 'Cirurgia ou procedimento cardiaco sem circulacao extracorporea' },
+            noncardiac: { ui: 'Procedimento não cardíaco', rep: 'Procedimento nao cardiaco' }
+        });
+
+        const SBP_STATUS_REPORT = Object.freeze({
+            measured: 'Medida',
+            unknown: 'Desconhecida',
+            arrest: 'Parada cardiaca',
+            shock: 'Choque com PA nao mensuravel'
+        });
+
+        let ultimoResultado = null;
 
         // Função para calcular idade em anos, meses e dias
         function calcularIdade() {
@@ -798,22 +1002,22 @@
             if (dataNascimento && dataAvaliacao) {
                 const nascimento = new Date(dataNascimento);
                 const avaliacao = new Date(dataAvaliacao);
-                
+
                 let anos = avaliacao.getFullYear() - nascimento.getFullYear();
                 let meses = avaliacao.getMonth() - nascimento.getMonth();
                 let dias = avaliacao.getDate() - nascimento.getDate();
-                
+
                 if (dias < 0) {
                     meses--;
                     const ultimoMes = new Date(avaliacao.getFullYear(), avaliacao.getMonth(), 0);
                     dias += ultimoMes.getDate();
                 }
-                
+
                 if (meses < 0) {
                     anos--;
                     meses += 12;
                 }
-                
+
                 let idadeTexto = '';
                 if (anos > 0) {
                     idadeTexto += `${anos} ano${anos > 1 ? 's' : ''}`;
@@ -826,7 +1030,7 @@
                     if (idadeTexto) idadeTexto += ', ';
                     idadeTexto += `${dias} dia${dias > 1 ? 's' : ''}`;
                 }
-                
+
                 document.getElementById('idade_completa').value = idadeTexto || '0 dias';
             }
         }
@@ -836,7 +1040,7 @@
             const hoje = new Date();
             const dataAtual = hoje.toISOString().split('T')[0];
             const horaAtual = hoje.toTimeString().slice(0, 5);
-            
+
             if (!document.getElementById('data_avaliacao').value) {
                 document.getElementById('data_avaliacao').value = dataAtual;
             }
@@ -845,161 +1049,232 @@
             }
         }
 
-        // Função para calcular PIM3
-        function calcularPIM3() {
-            const airway = document.getElementById('airway').value;
-            const pupils = document.getElementById('pupils').value === '1';
-            const sbp = parseFloat(document.getElementById('sbp').value);
-            const unit = document.getElementById('o2_unit').value;
-            const pao2_raw = parseFloat(document.getElementById('pao2').value);
-            const fio2 = parseFloat(document.getElementById('fio2').value);
-            const pre_cpr = document.getElementById('pre_cpr').value === '1';
-            const elective = document.getElementById('elective').value === '1';
-            const dx_risk = document.getElementById('dx_risk').value;
-
-            if (!airway || [sbp, pao2_raw, fio2].some(v => Number.isNaN(v))) {
-                alert('Preencha todos os campos obrigatórios da admissão.');
-                return;
-            }
-
-            // Converter PaO2 para mmHg se necessário
-            const KPA_TO_MMHG = 7.50062;
-            const pao2_mmhg = unit === 'kPa' ? (pao2_raw * KPA_TO_MMHG) : pao2_raw;
-
-            // Calcular PaO2/FiO2
-            const pf_ratio = pao2_mmhg / fio2;
-
-            // Construir vetor de características
-            const features = {
-                airway_AA: +(airway === 'AA'),
-                airway_O2: +(airway === 'O2'),
-                airway_VNI: +(airway === 'VNI'),
-                airway_VM: +(airway === 'VM'),
-                pupils_fixed: +(pupils),
-                sbp_per10_mmHg_below_norm: Math.max(0, Math.ceil((90 - sbp) / 10)),
-                pf_ratio_per100_down: Math.max(0, Math.ceil((400 - pf_ratio) / 100)),
-                pre_adm_cpr: +(pre_cpr),
-                elective_adm: +(elective),
-                dx_low_risk: +(dx_risk === 'low'),
-                dx_high_risk: +(dx_risk === 'high')
-            };
-
-            // Calcular logit
-            let logit = PIM3_CONFIG.intercept;
-            for (const [key, value] of Object.entries(PIM3_CONFIG.coefficients)) {
-                logit += value * (features[key] || 0);
-            }
-
-            // Calcular probabilidade
-            const probability = 1 / (1 + Math.exp(-logit));
-
-            // Exibir resultados
-            document.getElementById('probabilidade_mortalidade').textContent = `${(probability * 100).toFixed(1)}%`;
-
-            // Determinar nível de risco
-            let riskLevel, riskClass;
-            if (probability < 0.05) {
-                riskLevel = 'Baixo Risco';
-                riskClass = 'risk-low';
-            } else if (probability < 0.20) {
-                riskLevel = 'Risco Intermediário';
-                riskClass = 'risk-medium';
-            } else {
-                riskLevel = 'Alto Risco';
-                riskClass = 'risk-high';
-            }
-
-            document.getElementById('indicador_risco').innerHTML = 
-                `<span class="risk-indicator ${riskClass}">${riskLevel}</span>`;
+        // Habilita o campo de PAS somente quando a PAS foi medida
+        function atualizarCampoPAS() {
+            const status = document.getElementById('sbp_status').value;
+            const campo = document.getElementById('sbp');
+            campo.disabled = status !== 'measured';
+            if (status !== 'measured') campo.value = '';
         }
 
-        // Função para gerar e copiar relatório
-        function gerarECopiarRelatorio() {
+        function lerNumero(id) {
+            const bruto = document.getElementById(id).value.trim();
+            return bruto === '' ? null : parseFloat(bruto);
+        }
+
+        // Retorna { value, status } ou { error }
+        function lerPAS() {
+            const status = document.getElementById('sbp_status').value;
+            if (status !== 'measured') return { value: SBP_SUBSTITUTE[status], status };
+            const sbp = lerNumero('sbp');
+            if (sbp === null || Number.isNaN(sbp)) {
+                return { error: 'Informe a pressão arterial sistólica ou selecione outra situação da PAS.' };
+            }
+            if (sbp < LIMITS.sbpMin || sbp > LIMITS.sbpMax) {
+                return { error: 'PAS fora da faixa plausível (0-300 mmHg).' };
+            }
+            return { value: sbp, status };
+        }
+
+        // Retorna { value (BE ou null se desconhecido) } ou { error }
+        function lerBE() {
+            const be = lerNumero('be');
+            if (be === null) return { value: null };
+            if (Number.isNaN(be) || be < LIMITS.beMin || be > LIMITS.beMax) {
+                return { error: 'Base excess fora da faixa plausível (-50 a +50 mmol/L).' };
+            }
+            return { value: be };
+        }
+
+        // Retorna { pao2Mmhg, fio2, ratio } (null se desconhecidos) ou { error }
+        function lerOxigenacao() {
+            const pao2 = lerNumero('pao2');
+            const fio2 = lerNumero('fio2');
+            if (pao2 === null && fio2 === null) return { pao2Mmhg: null, fio2: null, ratio: null };
+            if (pao2 === null || fio2 === null) {
+                return { error: 'Informe PaO₂ e FiO₂ juntas ou deixe ambas em branco.' };
+            }
+            if (Number.isNaN(fio2) || fio2 < LIMITS.fio2Min || fio2 > LIMITS.fio2Max) {
+                return { error: 'FiO₂ deve ser uma fração entre 0.21 e 1.0.' };
+            }
+            const unit = document.getElementById('o2_unit').value;
+            const pao2Mmhg = unit === 'kPa' ? pao2 * KPA_TO_MMHG : pao2;
+            if (Number.isNaN(pao2Mmhg) || pao2Mmhg < LIMITS.pao2MinMmHg || pao2Mmhg > LIMITS.pao2MaxMmHg) {
+                return { error: 'PaO₂ fora da faixa plausível (10-700 mmHg ou 1.3-93 kPa).' };
+            }
+            return { pao2Mmhg, fio2, ratio: (fio2 * 100) / pao2Mmhg };
+        }
+
+        // Apenas a categoria de maior risco conta (muito alto > alto > baixo)
+        function lerDiagnosticos() {
+            const marcados = DIAGNOSES.filter(dx => document.getElementById(dx.id).checked);
+            const ordem = ['veryHigh', 'high', 'low'];
+            const categoria = ordem.find(cat => marcados.some(dx => dx.cat === cat)) || 'none';
+            return { categoria, marcados };
+        }
+
+        function lerEntradas() {
+            const sbp = lerPAS();
+            const be = lerBE();
+            const oxi = lerOxigenacao();
+            const erro = [sbp, be, oxi].find(r => r.error);
+            if (erro) return { error: erro.error };
+            return {
+                pupils: document.getElementById('pupils').value === '1',
+                elective: document.getElementById('elective').value === '1',
+                mv: document.getElementById('mv').value === '1',
+                recovery: document.getElementById('recovery').value,
+                sbp, be: be.value, oxi,
+                dx: lerDiagnosticos()
+            };
+        }
+
+        // Contribuição de cada termo ao logit (modelo publicado)
+        function calcularTermos(e) {
+            const c = PIM3_COEF;
+            const sbp = e.sbp.value;
+            return Object.freeze({
+                intercept: c.intercept,
+                pupils: e.pupils ? c.pupils : 0,
+                elective: e.elective ? c.elective : 0,
+                mv: e.mv ? c.mv : 0,
+                be: e.be === null ? 0 : c.absBe * Math.abs(e.be),
+                sbp: c.sbp * sbp + c.sbpSquaredPer1000 * (sbp * sbp / 1000),
+                oxi: e.oxi.ratio === null ? 0 : c.fio2Pao2 * e.oxi.ratio,
+                recovery: e.recovery === 'none' ? 0 : c[e.recovery],
+                dx: e.dx.categoria === 'none' ? 0 : c[e.dx.categoria]
+            });
+        }
+
+        function classificarRisco(probabilidade) {
+            return RISK_BANDS.find(b => probabilidade < b.max);
+        }
+
+        function definirTexto(id, texto) {
+            document.getElementById(id).textContent = texto;
+        }
+
+        function exibirResultado(r) {
+            const e = r.entradas;
+            definirTexto('probabilidade_mortalidade', `${(r.probabilidade * 100).toFixed(2)}%`);
+            definirTexto('res_logit', r.logit.toFixed(4));
+            definirTexto('res_sbp', `${e.sbp.value} mmHg`);
+            definirTexto('res_be', e.be === null ? '0 (não informado)' : `${Math.abs(e.be)} mmol/L`);
+            definirTexto('res_ratio', e.oxi.ratio === null ? '0 (não informado)' : e.oxi.ratio.toFixed(3));
+            definirTexto('res_recovery', RECOVERY_TEXT[e.recovery].ui);
+            definirTexto('res_dx', DX_CATEGORY_TEXT[e.dx.categoria].ui);
+            document.getElementById('indicador_risco').innerHTML =
+                `<span class="risk-indicator ${r.risco.cls}">${r.risco.label}</span>`;
+        }
+
+        // Função para calcular PIM3
+        function calcularPIM3() {
+            const entradas = lerEntradas();
+            if (entradas.error) {
+                alert(entradas.error);
+                return;
+            }
+            const termos = calcularTermos(entradas);
+            const logit = Object.values(termos).reduce((soma, v) => soma + v, 0);
+            const probabilidade = Math.exp(logit) / (1 + Math.exp(logit));
+            ultimoResultado = Object.freeze({
+                entradas, termos, logit, probabilidade,
+                risco: classificarRisco(probabilidade)
+            });
+            exibirResultado(ultimoResultado);
+        }
+
+        function sinal(valor) {
+            const fixo = valor.toFixed(4);
+            return valor >= 0 || fixo === '-0.0000' ? `+${fixo.replace('-', '')}` : fixo;
+        }
+
+        function simNao(valor) {
+            return valor ? 'Sim' : 'Nao';
+        }
+
+        function linhasVariaveis(r) {
+            const e = r.entradas;
+            const unit = document.getElementById('o2_unit').value;
+            const pao2Bruta = document.getElementById('pao2').value.trim();
+            const dxLinhas = e.dx.marcados.length
+                ? e.dx.marcados.map(dx => `  * ${dx.rep}`)
+                : ['  * Nenhum'];
+            return [
+                `- Ambas as pupilas fixas a luz: ${simNao(e.pupils)}`,
+                `- Admissao eletiva: ${simNao(e.elective)}`,
+                `- Ventilacao mecanica na primeira hora: ${simNao(e.mv)}`,
+                `- Situacao da PAS: ${SBP_STATUS_REPORT[e.sbp.status]}`,
+                `- PAS utilizada no calculo: ${e.sbp.value} mmHg`,
+                `- Base excess: ${e.be === null ? 'nao informado' : `${e.be} mmol/L`}`,
+                `- PaO2: ${e.oxi.ratio === null ? 'nao informado' : `${pao2Bruta} ${unit}`}`,
+                `- FiO2: ${e.oxi.ratio === null ? 'nao informado' : e.oxi.fio2}`,
+                `- FiO2 x 100 / PaO2: ${e.oxi.ratio === null ? '0 (nao informado)' : e.oxi.ratio.toFixed(3)}`,
+                `- Recuperacao pos-procedimento: ${RECOVERY_TEXT[e.recovery].rep}`,
+                `- Categoria de diagnostico considerada: ${DX_CATEGORY_TEXT[e.dx.categoria].rep}`,
+                '- Diagnosticos marcados:',
+                ...dxLinhas
+            ];
+        }
+
+        function linhasTermos(t) {
+            return [
+                `- Intercepto: ${sinal(t.intercept)}`,
+                `- Ambas as pupilas fixas a luz: ${sinal(t.pupils)}`,
+                `- Admissao eletiva: ${sinal(t.elective)}`,
+                `- Ventilacao mecanica na primeira hora: ${sinal(t.mv)}`,
+                `- Termo do base excess: ${sinal(t.be)}`,
+                `- Termo da PAS: ${sinal(t.sbp)}`,
+                `- Termo de oxigenacao: ${sinal(t.oxi)}`,
+                `- Recuperacao pos-procedimento: ${sinal(t.recovery)}`,
+                `- Categoria de diagnostico: ${sinal(t.dx)}`
+            ];
+        }
+
+        function montarRelatorio(r) {
             const nome = document.getElementById('nome').value;
             const dataNascimento = document.getElementById('data_nascimento').value;
             const dataAvaliacao = document.getElementById('data_avaliacao').value;
             const horaAvaliacao = document.getElementById('hora_avaliacao').value;
             const idadeCompleta = document.getElementById('idade_completa').value;
-            const airway = document.getElementById('airway').value;
-            const pupils = document.getElementById('pupils').value;
-            const sbp = document.getElementById('sbp').value;
-            const o2_unit = document.getElementById('o2_unit').value;
-            const pao2 = document.getElementById('pao2').value;
-            const fio2 = document.getElementById('fio2').value;
-            const pre_cpr = document.getElementById('pre_cpr').value;
-            const elective = document.getElementById('elective').value;
-            const dx_risk = document.getElementById('dx_risk').value;
             const obs = document.getElementById('obs').value;
+            return [
+                'RESUMO INFORMATIVO — PIM3 (EDUCATIVO)',
+                nome ? `Paciente: ${nome}` : null,
+                (dataAvaliacao || horaAvaliacao) ? `${dataAvaliacao ? `Data da Avaliacao: ${dataAvaliacao}` : ''}${horaAvaliacao ? ` - Hora: ${horaAvaliacao}` : ''}` : null,
+                '',
+                'DADOS DO PACIENTE:',
+                dataNascimento ? `- Data de Nascimento: ${dataNascimento}` : null,
+                idadeCompleta ? `- Idade: ${idadeCompleta}` : null,
+                '',
+                'VARIAVEIS PIM3 (PRIMEIRA HORA):',
+                ...linhasVariaveis(r),
+                obs ? `- Observacoes: ${obs}` : null,
+                '',
+                'RESULTADOS:',
+                `- Logit do modelo: ${r.logit.toFixed(4)}`,
+                `- PIM3 - Probabilidade de Mortalidade: ${(r.probabilidade * 100).toFixed(2)}%`,
+                `- Nivel de Risco: ${r.risco.label}`,
+                '- Faixas de risco didaticas desta calculadora, nao definidas pelo modelo original.',
+                '',
+                'CONTRIBUICAO DE CADA TERMO AO LOGIT:',
+                ...linhasTermos(r.termos),
+                'Probabilidade de morte = e^logit / (1 + e^logit)',
+                '',
+                'INTERPRETACAO:',
+                'O PIM3 estima a probabilidade de morte hospitalar de criancas admitidas em UTI pediatrica, com dados coletados entre o primeiro contato com a equipe da UTI e a primeira hora apos a chegada. Foi desenvolvido para ajuste de risco e comparacao entre grupos de pacientes; nao deve orientar decisoes individuais de tratamento.',
+                '',
+                'Referencia: Straney L, Clements A, Parslow RC, et al. Paediatric Index of Mortality 3: an updated model for predicting mortality in pediatric intensive care. Pediatr Crit Care Med 2013; 14(7): 673-681.'
+            ].filter(linha => linha !== null).join('\n');
+        }
 
-            // Obter resultados calculados
-            const probabilidade = document.getElementById('probabilidade_mortalidade').textContent;
-            const indicador = document.getElementById('indicador_risco').textContent;
-
-            // Funções auxiliares para descrições
-            function getAirwayDescription(airway) {
-                const descriptions = {
-                    'AA': 'Ar ambiente',
-                    'O2': 'Oxigênio suplementar',
-                    'VNI': 'VNI / CPAP',
-                    'VM': 'Ventilação mecânica invasiva'
-                };
-                return descriptions[airway] || airway;
+        // Função para gerar e copiar relatório
+        function gerarECopiarRelatorio() {
+            if (!ultimoResultado) {
+                alert('Calcule o PIM3 antes de gerar o texto informativo.');
+                return;
             }
-
-            function getDxRiskDescription(dx_risk) {
-                const descriptions = {
-                    'none': 'Nenhum/Intermediário',
-                    'low': 'Baixo risco',
-                    'high': 'Alto risco'
-                };
-                return descriptions[dx_risk] || dx_risk;
-            }
-
-            // Calcular PaO2/FiO2 para o relatório
-            let pf_ratio = '-';
-            if (pao2 && fio2) {
-                const KPA_TO_MMHG = 7.50062;
-                const pao2_mmhg = o2_unit === 'kPa' ? (parseFloat(pao2) * KPA_TO_MMHG) : parseFloat(pao2);
-                pf_ratio = (pao2_mmhg / parseFloat(fio2)).toFixed(1);
-            }
-
-            let relatorioTexto = `RESUMO INFORMATIVO — PIM3 (EDUCATIVO)
-${nome ? `Paciente: ${nome}` : ''}
-${dataAvaliacao ? `Data da Avaliacao: ${dataAvaliacao}` : ''}${horaAvaliacao ? ` - Hora: ${horaAvaliacao}` : ''}
-
-DADOS DO PACIENTE:
-${dataNascimento ? `- Data de Nascimento: ${dataNascimento}` : ''}
-${idadeCompleta ? `- Idade: ${idadeCompleta}` : ''}
-
-DADOS DA ADMISSAO (PRIMEIRA HORA):
-- Via Aerea/Ventilacao: ${getAirwayDescription(airway)}
-- Pupilas Fixas: ${pupils === '1' ? 'Sim' : 'Nao'}
-- Pressao Arterial Sistolica: ${sbp} mmHg
-- PaO2: ${pao2} ${o2_unit}
-- FiO2: ${fio2}
-- PaO2/FiO2: ${pf_ratio}
-- RCP Antes da Admissao: ${pre_cpr === '1' ? 'Sim' : 'Nao'}
-- Admissao Eletiva: ${elective === '1' ? 'Sim' : 'Nao'}
-- Diagnostico de Risco: ${getDxRiskDescription(dx_risk)}
-${obs ? `- Observacoes: ${obs}` : ''}
-
-RESULTADOS:
-- PIM3 - Probabilidade de Mortalidade: ${probabilidade}
-- Nivel de Risco: ${indicador}
-
-INTERPRETACAO:
-O PIM3 e um indice de gravidade pediatica desenvolvido para predizer mortalidade hospitalar em criancas admitidas em UTIs pediatricas. O calculo e baseado em dados coletados na primeira hora de admissao. Valores mais altos indicam maior risco de mortalidade.
-
-CRITERIOS DE PONTUACAO PIM3:
-- Via Aerea: Ar ambiente=0pts, O2 suplementar=0.15pts, VNI/CPAP=0.25pts, VM=0.45pts
-- Pupilas Fixas: Sim=1.40pts, Nao=0pts
-- PAS: Penalidade por quedas abaixo de 90mmHg (0.10pts por bloco de 10mmHg)
-- PaO2/FiO2: Penalidade por reducao abaixo de 400 (0.12pts por bloco de 100)
-- RCP Previa: Sim=0.80pts, Nao=0pts
-- Admissao Eletiva: Sim=-0.35pts (reduz risco), Nao=0pts
-- Diagnostico: Baixo risco=-0.50pts, Alto risco=0.90pts, Intermediario=0pts
-
-Referencia: Slater A, et al. PIM3: an updated version of the Paediatric Index of Mortality. Intensive Care Med 2003; 29(2): 278-285.`;
+            let relatorioTexto = montarRelatorio(ultimoResultado);
 
             relatorioTexto = 'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com o quadro clinico e protocolos locais.\n\n' + relatorioTexto;
             if (typeof window.neopedLegalReportFooter === 'function') {
@@ -1045,9 +1320,9 @@ Referencia: Slater A, et al. PIM3: an updated version of the Paediatric Index of
         // Função para limpar dados
         function limparDados() {
             const campos = [
-                'nome', 'data_nascimento', 'data_avaliacao', 
-                'hora_avaliacao', 'idade_completa', 'airway', 
-                'pupils', 'sbp', 'pao2', 'fio2', 'pre_cpr', 'elective', 'dx_risk', 'obs'
+                'nome', 'data_nascimento', 'data_avaliacao', 'hora_avaliacao', 'idade_completa',
+                'pupils', 'elective', 'mv', 'recovery', 'sbp_status', 'sbp', 'be',
+                'o2_unit', 'pao2', 'fio2', 'obs'
             ];
 
             campos.forEach(campo => {
@@ -1058,9 +1333,13 @@ Referencia: Slater A, et al. PIM3: an updated version of the Paediatric Index of
                     elemento.value = '';
                 }
             });
+            DIAGNOSES.forEach(dx => { document.getElementById(dx.id).checked = false; });
+            atualizarCampoPAS();
 
-            document.getElementById('probabilidade_mortalidade').textContent = '-';
+            ['probabilidade_mortalidade', 'res_logit', 'res_sbp', 'res_be', 'res_ratio', 'res_recovery', 'res_dx']
+                .forEach(id => definirTexto(id, '-'));
             document.getElementById('indicador_risco').innerHTML = '';
+            ultimoResultado = null;
         }
 
         // Event listeners

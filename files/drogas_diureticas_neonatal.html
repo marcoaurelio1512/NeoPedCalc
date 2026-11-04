@@ -1224,9 +1224,9 @@
             if (nomeElement) nomeElement.textContent = droga ? droga.nome : drogaSelecionada;
             if (dosagemElement) {
                 if (fatorAjusteIG < 1.0) {
-                    dosagemElement.textContent = `${doseAjustada.toFixed(1)} (${dose.toFixed(1)})`;
+                    dosagemElement.textContent = `${formatarNumeroClinico(doseAjustada, 1)} (${formatarNumeroClinico(dose, 1)})`;
                 } else {
-                    dosagemElement.textContent = dose.toFixed(1);
+                    dosagemElement.textContent = formatarNumeroClinico(dose, 1);
                 }
             }
             if (unidadeElement) unidadeElement.textContent = unidade;
@@ -1234,9 +1234,9 @@
             // Formatar dose total com melhor apresentação
             let doseTotalTexto = '';
             if (resultado.doseTotalMg >= 1) {
-                doseTotalTexto = `${resultado.doseTotalMg.toFixed(1)} mg`;
+                doseTotalTexto = `${formatarNumeroClinico(resultado.doseTotalMg, 1)} mg`;
             } else {
-                doseTotalTexto = `${resultado.doseTotalMcg.toFixed(1)} mcg`;
+                doseTotalTexto = `${formatarNumeroClinico(resultado.doseTotalMcg, 1)} mcg`;
             }
             if (doseTotalElement) doseTotalElement.textContent = doseTotalTexto;
             if (unidadeDoseTotalElement) unidadeDoseTotalElement.textContent = '';
@@ -1255,9 +1255,9 @@
                 volumeCard.style.display = 'block';
                 let volumeFormatado;
                 if (resultado.volumeDroga > 0) {
-                    volumeFormatado = Number(resultado.volumeDroga).toFixed(1);
+                    volumeFormatado = formatarNumeroClinico(resultado.volumeDroga, 1);
                 } else {
-                    volumeFormatado = "0.0";
+                    volumeFormatado = formatarNumeroClinico(resultado.volumeDroga, 1);
                 }
                 if (volumeElement) volumeElement.textContent = volumeFormatado;
             } else {
@@ -1272,7 +1272,7 @@
             
             if (velocidadeElement) {
                 if (resultado.velocidadeInfusao > 0) {
-                    velocidadeElement.textContent = resultado.velocidadeInfusao.toFixed(1);
+                    velocidadeElement.textContent = formatarNumeroClinico(resultado.velocidadeInfusao, 1);
                     velocidadeElement.parentElement.style.display = 'block';
                     if (dosePorIntervaloCard) dosePorIntervaloCard.style.display = 'none';
                 } else {
@@ -1282,7 +1282,7 @@
                     // Mostrar dose por intervalo para doses não contínuas
                     if (dosePorIntervaloCard && dosePorIntervaloResultado && unidadeDosePorIntervalo) {
                         dosePorIntervaloCard.style.display = 'block';
-                        dosePorIntervaloResultado.textContent = resultado.dosePorIntervalo.toFixed(1);
+                        dosePorIntervaloResultado.textContent = formatarNumeroClinico(resultado.dosePorIntervalo, 1);
                         unidadeDosePorIntervalo.textContent = 'mg';
                     }
                 }
@@ -1390,6 +1390,26 @@
             return String(texto == null ? '' : texto).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         }
 
+        // Exibicao de quantidades clinicas: valores >= 1 mantem casasPadrao decimais;
+        // valores com |v| < 1 usam 3 algarismos significativos (sem zeros finais), para que
+        // doses pequenas nunca aparecam como "0.0"/"0.00". Zero exato -> "0". Nao altera calculos.
+        function formatarNumeroClinico(valor, casasPadrao) {
+            if (valor === null || valor === undefined || valor === '') {
+                return 'n/a';
+            }
+            const numero = Number(valor);
+            if (!Number.isFinite(numero)) {
+                return String(valor);
+            }
+            if (numero === 0) {
+                return '0';
+            }
+            if (Math.abs(numero) >= 1) {
+                return numero.toFixed(casasPadrao);
+            }
+            return String(Number(numero.toPrecision(3)));
+        }
+
         function formatarNumero(valor) {
             if (valor === null || valor === undefined || valor === '') {
                 return 'n/a';
@@ -1434,16 +1454,16 @@ HISTORICO DE CALCULOS (revisar)
             historicoCalculos.forEach((calculo, index) => {
                 relatorio += `Calculo ${index + 1}:
 Droga: ${removerAcentos(calculo.droga)}
-Dosagem informada na tela: ${formatarNumero(calculo.dose)} ${removerAcentos(calculo.unidade)}`;
+Dosagem informada na tela: ${formatarNumeroClinico(calculo.dose, 1)} ${removerAcentos(calculo.unidade)}`;
 
                 if (calculo.fatorAjusteIG && calculo.fatorAjusteIG < 1.0) {
                     relatorio += `
-Valor apos fator interno (IG): ${calculo.doseAjustada ? formatarNumero(calculo.doseAjustada) : 'n/a'} ${removerAcentos(calculo.unidade)} (fator numerico no app: ${formatarNumero(calculo.fatorAjusteIG)})`;
+Valor apos fator interno (IG): ${calculo.doseAjustada ? formatarNumeroClinico(calculo.doseAjustada, 1) : 'n/a'} ${removerAcentos(calculo.unidade)} (fator numerico no app: ${formatarNumero(calculo.fatorAjusteIG)})`;
                 }
 
                 relatorio += `
-Dose por aplicacao: ${calculo.dosePorIntervalo ? formatarNumero(calculo.dosePorIntervalo) : 'n/a'} mg
-Dose total (24h): ${calculo.doseTotalMg ? formatarNumero(calculo.doseTotalMg) : 'n/a'} mg (${calculo.doseTotalMcg ? formatarNumero(calculo.doseTotalMcg) : 'n/a'} mcg)
+Dose por aplicacao: ${calculo.dosePorIntervalo ? formatarNumeroClinico(calculo.dosePorIntervalo, 1) : 'n/a'} mg
+Dose total (24h): ${calculo.doseTotalMg ? formatarNumeroClinico(calculo.doseTotalMg, 1) : 'n/a'} mg (${calculo.doseTotalMcg ? formatarNumeroClinico(calculo.doseTotalMcg, 1) : 'n/a'} mcg)
 `;
 
                 const apresentacaoLower = calculo.apresentacao ? calculo.apresentacao.toLowerCase() : '';
@@ -1456,7 +1476,7 @@ Dose total (24h): ${calculo.doseTotalMg ? formatarNumero(calculo.doseTotalMg) : 
                                  apresentacaoLower.includes('vial');
 
                 if (isLiquido) {
-                    relatorio += `Volume da droga: ${calculo.volumeDroga ? formatarNumero(calculo.volumeDroga) : 'n/a'} ml
+                    relatorio += `Volume da droga: ${calculo.volumeDroga ? formatarNumeroClinico(calculo.volumeDroga, 1) : 'n/a'} ml
 `;
                 } else {
                     relatorio += `Apresentacao: ${removerAcentos(calculo.apresentacao)}
@@ -1464,7 +1484,7 @@ Dose total (24h): ${calculo.doseTotalMg ? formatarNumero(calculo.doseTotalMg) : 
                 }
 
                 if (calculo.velocidade && calculo.velocidade > 0) {
-                    relatorio += `Velocidade de infusao: ${formatarNumero(calculo.velocidade)} ml/h
+                    relatorio += `Velocidade de infusao: ${formatarNumeroClinico(calculo.velocidade, 1)} ml/h
 `;
                 } else {
                     relatorio += `Intervalo: ${removerAcentos(calculo.intervalo)} horas

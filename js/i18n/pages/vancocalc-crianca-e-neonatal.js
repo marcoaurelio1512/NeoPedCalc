@@ -93,6 +93,7 @@
     'Idade pos-natal': ['Postnatal age', 'Edad posnatal'],
     'dias': ['days', 'días'],
     'Altura': ['Height', 'Talla'],
+    'Comprimento': ['Length', 'Longitud'],
     'Peso': ['Weight', 'Peso'],
     'Creatinina serica': ['Serum creatinine', 'Creatinina sérica'],
     'PARAMETROS FARMACOCINETICOS:': ['PHARMACOKINETIC PARAMETERS:', 'PARÁMETROS FARMACOCINÉTICOS:'],
@@ -123,7 +124,8 @@
     'Fórmulas Utilizadas': ['Formulas Used', 'Fórmulas utilizadas'],
     '1. Clearance (CL):': ['1. Clearance (CL):', '1. Aclaramiento (CL):'],
     'Criança: CL = (0.413 × Altura) / Creatinina': ['Child: CL = (0.413 × Height) / Creatinine', 'Niño: CL = (0.413 × Talla) / Creatinina'],
-    'Neonato: CL = (0.34 × Peso × 1000) / Creatinina': ['Neonate: CL = (0.34 × Weight × 1000) / Creatinine', 'Neonato: CL = (0.34 × Peso × 1000) / Creatinina'],
+    'Neonato: CL = (0.33 × Comprimento) / Creatinina': ['Neonate: CL = (0.33 × Length) / Creatinine', 'Neonato: CL = (0.33 × Longitud) / Creatinina'],
+    '(Schwartz; altura/comprimento em cm, creatinina em mg/dL; resultado em mL/min/1,73 m²)': ['(Schwartz; height/length in cm, creatinine in mg/dL; result in mL/min/1.73 m²)', '(Schwartz; talla/longitud en cm, creatinina en mg/dL; resultado en mL/min/1,73 m²)'],
     '2. Taxa de Eliminação (kel):': ['2. Elimination Rate Constant (kel):', '2. Constante de eliminación (kel):'],
     'kel = ln(Cpico / Cvale) / Tempo': ['kel = ln(Cpeak / Ctrough) / Time', 'kel = ln(Cpico / Cvalle) / Tiempo'],
     '3. Volume de Distribuição (Vd):': ['3. Volume of Distribution (Vd):', '3. Volumen de distribución (Vd):'],
@@ -136,7 +138,7 @@
     'Criança ou Neonato': ['Child or Neonate', 'Niño o neonato'],
     'Preencha os dados do paciente:': ['Fill in the patient data:', 'Complete los datos del paciente:'],
     'Criança: Idade (anos), Altura (cm), Peso (kg), Creatinina sérica (mg/dL)': ['Child: Age (years), Height (cm), Weight (kg), Serum creatinine (mg/dL)', 'Niño: Edad (años), Talla (cm), Peso (kg), Creatinina sérica (mg/dL)'],
-    'Neonato: Idade pós-natal (dias), Peso (kg), Creatinina sérica (mg/dL)': ['Neonate: Postnatal age (days), Weight (kg), Serum creatinine (mg/dL)', 'Neonato: Edad posnatal (días), Peso (kg), Creatinina sérica (mg/dL)'],
+    'Neonato: Idade pós-natal (dias), Peso (kg), Comprimento (cm), Creatinina sérica (mg/dL)': ['Neonate: Postnatal age (days), Weight (kg), Length (cm), Serum creatinine (mg/dL)', 'Neonato: Edad posnatal (días), Peso (kg), Longitud (cm), Creatinina sérica (mg/dL)'],
     'Informe os níveis séricos:': ['Enter the serum levels:', 'Introduzca los niveles séricos:'],
     'Concentração de Pico (mg/L): Nível após a infusão': ['Peak Concentration (mg/L): Level after the infusion', 'Concentración pico (mg/L): nivel después de la infusión'],
     'Concentração de Vale (mg/L): Nível antes da próxima dose': ['Trough Concentration (mg/L): Level before the next dose', 'Concentración valle (mg/L): nivel antes de la siguiente dosis'],
@@ -148,8 +150,8 @@
     'Interpretação dos Resultados': ['Interpretation of Results', 'Interpretación de los resultados'],
     'Clearance (CL):': ['Clearance (CL):', 'Aclaramiento (CL):'],
     'Capacidade de eliminar a vancomicina': ['Capacity to eliminate vancomycin', 'Capacidad de eliminar la vancomicina'],
-    'CL < 30 mL/min: Função renal reduzida - risco de acúmulo': ['CL < 30 mL/min: Reduced renal function - risk of accumulation', 'CL < 30 mL/min: función renal reducida - riesgo de acumulación'],
-    'CL ≥ 30 mL/min: Função renal preservada': ['CL ≥ 30 mL/min: Preserved renal function', 'CL ≥ 30 mL/min: función renal conservada'],
+    'CL < 30 mL/min/1,73 m²: Função renal reduzida - risco de acúmulo': ['CL < 30 mL/min/1.73 m²: Reduced renal function - risk of accumulation', 'CL < 30 mL/min/1,73 m²: función renal reducida - riesgo de acumulación'],
+    'CL ≥ 30 mL/min/1,73 m²: Função renal preservada': ['CL ≥ 30 mL/min/1.73 m²: Preserved renal function', 'CL ≥ 30 mL/min/1,73 m²: función renal conservada'],
     'Volume de Distribuição (Vd):': ['Volume of Distribution (Vd):', 'Volumen de distribución (Vd):'],
     'Espaço de distribuição do fármaco': ['Drug distribution space', 'Espacio de distribución del fármaco'],
     'Vd > 10 L: Alta distribuição - considerar dose de ataque maior': ['Vd > 10 L: High distribution - consider a larger loading dose', 'Vd > 10 L: distribución elevada - considerar una dosis de carga mayor'],
@@ -181,6 +183,10 @@
 
   // Rótulos com valor calculado dentro do parêntese (os fallbacks cortariam o parêntese).
   i18n.registerPatterns([
+    // Clearance de Schwartz (toFixed: número já com ponto) em mL/min/1,73 m².
+    [/^([\d.]+) mL\/min\/1,73 m²$/, '$1 mL/min/1.73 m²', '$1 mL/min/1,73 m²'],
+    [/^Clearance \(([\d.]+) mL\/min\/1,73 m²\):$/, 'Clearance ($1 mL/min/1.73 m²):', 'Aclaramiento ($1 mL/min/1,73 m²):'],
+    [/^- Clearance estimado: ([\d.]+) mL\/min\/1,73 m²$/, '- Estimated clearance: $1 mL/min/1.73 m²', '- Aclaramiento estimado: $1 mL/min/1,73 m²'],
     [/^Volume de distribuicao \(Vd = (.+) L\):$/, 'Volume of distribution (Vd = $1 L):', 'Volumen de distribución (Vd = $1 L):'],
     [/^Taxa de eliminacao \(kel = (.+) 1\/h\):$/, 'Elimination rate constant (kel = $1 1/h):', 'Constante de eliminación (kel = $1 1/h):'],
     [/^- Volume de distribuicao \(Vd\): (.+) L$/, '- Volume of distribution (Vd): $1 L', '- Volumen de distribución (Vd): $1 L'],

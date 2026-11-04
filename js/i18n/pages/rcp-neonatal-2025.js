@@ -49,8 +49,6 @@
 
   // Cartão "Drogas de emergência" (oculto na interface) — linhas com ícone de relógio.
   entries[CLOCK + 'Repetir a cada 3-5 min'] = [CLOCK + 'Repeat every 3-5 min', CLOCK + 'Repetir cada 3-5 min'];
-  entries[CLOCK + 'Via endotraqueal (diluir em 2-3 mL SF)'] = [CLOCK + 'Endotracheal route (dilute in 2-3 mL NS)', CLOCK + 'Vía endotraqueal (diluir en 2-3 mL de SF)'];
-  entries[CLOCK + 'Dose mínima: 0,1 mg'] = [CLOCK + 'Minimum dose: 0.1 mg', CLOCK + 'Dosis mínima: 0,1 mg'];
   entries[CLOCK + 'Reversão de opioides'] = [CLOCK + 'Opioid reversal', CLOCK + 'Reversión de opioides'];
   entries[CLOCK + 'Acidose grave'] = [CLOCK + 'Severe acidosis', CLOCK + 'Acidosis grave'];
   entries[CLOCK + 'Hipoglicemia'] = [CLOCK + 'Hypoglycemia', CLOCK + 'Hipoglucemia'];
@@ -99,12 +97,12 @@
     'Aspiração suave se necessário': ['Gentle suctioning if needed', 'Aspiración suave si es necesario'],
     'VPP com máscara ou TET': ['PPV with face mask or ETT', 'VPP con mascarilla o TET'],
     'FC < 60 bpm após VPP eficaz': ['HR < 60 bpm after effective PPV', 'FC < 60 lpm tras VPP eficaz'],
-    '0,01 mg/kg (0,1 mg/mL)': ['0.01 mg/kg (0.1 mg/mL)', '0,01 mg/kg (0,1 mg/mL)'],
+    'IV/IO 0,02 mg/kg · ETT 0,1 mg/kg (0,1 mg/mL)': ['IV/IO 0.02 mg/kg · ET 0.1 mg/kg (0.1 mg/mL)', 'IV/IO 0,02 mg/kg · ET 0,1 mg/kg (0,1 mg/mL)'],
     'Repetir a cada 3-5 min': ['Repeat every 3-5 min', 'Repetir cada 3-5 min'],
-    '0,02 mg/kg (dose mín: 0,1 mg)': ['0.02 mg/kg (min dose: 0.1 mg)', '0,02 mg/kg (dosis mín.: 0,1 mg)'],
+    '0,02 mg/kg (0,5 mg/mL)': ['0.02 mg/kg (0.5 mg/mL)', '0,02 mg/kg (0,5 mg/mL)'],
     '0,1 mg/kg (0,4 mg/mL)': ['0.1 mg/kg (0.4 mg/mL)', '0,1 mg/kg (0,4 mg/mL)'],
     '1 mEq/kg (1 mEq/mL)': ['1 mEq/kg (1 mEq/mL)', '1 mEq/kg (1 mEq/mL)'],
-    '2 mL/kg (100 mg/dL)': ['2 mL/kg (100 mg/dL)', '2 mL/kg (100 mg/dL)'],
+    '2 mL/kg (100 mg/mL)': ['2 mL/kg (100 mg/mL)', '2 mL/kg (100 mg/mL)'],
     '20 mg/kg (100 mg/mL)': ['20 mg/kg (100 mg/mL)', '20 mg/kg (100 mg/mL)'],
     'Repetir se necessário': ['Repeat if needed', 'Repetir si es necesario'],
     'Marcar Realizado': ['Mark as done', 'Marcar como realizado'],
@@ -125,12 +123,15 @@
     'BICARBONATO DE SÓDIO': ['SODIUM BICARBONATE', 'BICARBONATO DE SODIO'],
     'GLICOSE': ['DEXTROSE', 'GLUCOSA'],
     'CLORETO DE CÁLCIO': ['CALCIUM CHLORIDE', 'CLORURO DE CALCIO'],
-    'Via: IV/IO - Conc: 0,1 mg/mL': ['Route: IV/IO - Conc: 0.1 mg/mL', 'Vía: IV/IO - Conc.: 0,1 mg/mL'],
+    'Via: IV/IO - Conc: 0,1 mg/mL (1:10.000)': ['Route: IV/IO - Conc: 0.1 mg/mL (1:10,000)', 'Vía: IV/IO - Conc.: 0,1 mg/mL (1:10.000)'],
+    'Via: ETT - Conc: 0,1 mg/mL (1:10.000)': ['Route: ET - Conc: 0.1 mg/mL (1:10,000)', 'Vía: ET - Conc.: 0,1 mg/mL (1:10.000)'],
+    'Usar a mesma solução 0,1 mg/mL da via IV/IO (não usar 1 mg/mL)': ['Use the same 0.1 mg/mL solution as for IV/IO (do not use 1 mg/mL)', 'Usar la misma solución de 0,1 mg/mL de la vía IV/IO (no usar 1 mg/mL)'],
+    'Após cada dose IV/IO: flush de SF': ['After each IV/IO dose: normal saline flush', 'Después de cada dosis IV/IO: bolo de SF'],
     'Alternativa quando IV/IO não disponível': ['Alternative when IV/IO access is not available', 'Alternativa cuando no hay acceso IV/IO'],
     'Indicação: Bradicardia - Conc: 0,5 mg/mL': ['Indication: Bradycardia - Conc: 0.5 mg/mL', 'Indicación: Bradicardia - Conc.: 0,5 mg/mL'],
     'Indicação: Depressão respiratória - Conc: 0,4 mg/mL': ['Indication: Respiratory depression - Conc: 0.4 mg/mL', 'Indicación: Depresión respiratoria - Conc.: 0,4 mg/mL'],
     'Indicação: Acidose metabólica - Conc: 1 mEq/mL': ['Indication: Metabolic acidosis - Conc: 1 mEq/mL', 'Indicación: Acidosis metabólica - Conc.: 1 mEq/mL'],
-    'Indicação: Glicemia < 45 mg/dL - Conc: 100 mg/dL': ['Indication: Blood glucose < 45 mg/dL - Conc: 100 mg/dL', 'Indicación: Glucemia < 45 mg/dL - Conc.: 100 mg/dL'],
+    'Indicação: Glicemia < 45 mg/dL - Conc: 100 mg/mL': ['Indication: Blood glucose < 45 mg/dL - Conc: 100 mg/mL', 'Indicación: Glucemia < 45 mg/dL - Conc.: 100 mg/mL'],
     'Indicação: Calcemia < 7 mg/dL - Conc: 100 mg/mL': ['Indication: Serum calcium < 7 mg/dL - Conc: 100 mg/mL', 'Indicación: Calcemia < 7 mg/dL - Conc.: 100 mg/mL'],
 
     // Equipamentos
@@ -273,14 +274,19 @@
     [/^([\d.]+) mg \(0,(\d+) mg\/kg\)$/, '$1 mg (0.$2 mg/kg)', '$1 mg (0,$2 mg/kg)'],
     [/^IG: (\d+|\?) sem$/, 'GA: $1 wk', 'EG: $1 sem'],
 
+    // Epinefrina/atropina: helpers textoDosePonto/textoDoseFaixa (card, lista e relatório; números já com ponto).
+    [/^Faixa: ([\d.]+)–([\d.]+) mg = ([\d.]+)–([\d.]+) mL \(0,(\d+)–0,(\d+) mg\/kg\)$/, 'Range: $1–$2 mg = $3–$4 mL (0.$5–0.$6 mg/kg)', 'Rango: $1–$2 mg = $3–$4 mL (0,$5–0,$6 mg/kg)'],
+    [/^IV\/IO: ([\d.]+) mg \(0,(\d+) mg\/kg\) = ([\d.]+) mL$/, 'IV/IO: $1 mg (0.$2 mg/kg) = $3 mL', 'IV/IO: $1 mg (0,$2 mg/kg) = $3 mL'],
+    [/^ETT: ([\d.]+) mg \(0,(\d+) mg\/kg\) = ([\d.]+) mL$/, 'ET: $1 mg (0.$2 mg/kg) = $3 mL', 'ET: $1 mg (0,$2 mg/kg) = $3 mL'],
+
     // Peso formatado em pt-BR (toLocaleString, 2-3 casas): "3,20 kg".
     [/^Peso: (\d+),(\d+) kg$/, 'Weight: $1.$2 kg', 'Peso: $1,$2 kg'],
     [/^Peso do Recém-Nascido: (\d+),(\d+) kg$/, "Newborn's Weight: $1.$2 kg", 'Peso del recién nacido: $1,$2 kg'],
 
     // Linhas de drogas do relatório copiado.
-    [/^- Epinefrina IV\/IO: ([\d.]+) mg \(0,01 mg\/kg\) = ([\d.]+) mL$/, '- Epinephrine IV/IO: $1 mg (0.01 mg/kg) = $2 mL', '- Adrenalina IV/IO: $1 mg (0,01 mg/kg) = $2 mL'],
-    [/^- Epinefrina ETT: ([\d.]+) mg \(0,1 mg\/kg\) = ([\d.]+) mL$/, '- Epinephrine ETT: $1 mg (0.1 mg/kg) = $2 mL', '- Adrenalina ET: $1 mg (0,1 mg/kg) = $2 mL'],
-    [/^- Atropina: ([\d.]+) mg \(0,02 mg\/kg\) = ([\d.]+) mL$/, '- Atropine: $1 mg (0.02 mg/kg) = $2 mL', '- Atropina: $1 mg (0,02 mg/kg) = $2 mL'],
+    [/^- Epinefrina IV\/IO \(0,1 mg\/mL\): ([\d.]+) mg \(0,02 mg\/kg\) = ([\d.]+) mL$/, '- Epinephrine IV/IO (0.1 mg/mL): $1 mg (0.02 mg/kg) = $2 mL', '- Adrenalina IV/IO (0,1 mg/mL): $1 mg (0,02 mg/kg) = $2 mL'],
+    [/^- Epinefrina ETT \(0,1 mg\/mL\): ([\d.]+) mg \(0,1 mg\/kg\) = ([\d.]+) mL$/, '- Epinephrine ET (0.1 mg/mL): $1 mg (0.1 mg/kg) = $2 mL', '- Adrenalina ET (0,1 mg/mL): $1 mg (0,1 mg/kg) = $2 mL'],
+    [/^- Atropina \(0,5 mg\/mL\): ([\d.]+) mg \(0,02 mg\/kg\) = ([\d.]+) mL$/, '- Atropine (0.5 mg/mL): $1 mg (0.02 mg/kg) = $2 mL', '- Atropina (0,5 mg/mL): $1 mg (0,02 mg/kg) = $2 mL'],
     [/^- Naloxona: ([\d.]+) mg \(0,1 mg\/kg\) = ([\d.]+) mL$/, '- Naloxone: $1 mg (0.1 mg/kg) = $2 mL', '- Naloxona: $1 mg (0,1 mg/kg) = $2 mL'],
     [/^- Bicarbonato de Sódio: ([\d.]+) mEq \(1 mEq\/kg\) = ([\d.]+) mL$/, '- Sodium Bicarbonate: $1 mEq (1 mEq/kg) = $2 mL', '- Bicarbonato de sodio: $1 mEq (1 mEq/kg) = $2 mL'],
     [/^- Glicose 10%: ([\d.]+) mL \(2 mL\/kg\)$/, '- Dextrose 10%: $1 mL (2 mL/kg)', '- Glucosa al 10%: $1 mL (2 mL/kg)'],

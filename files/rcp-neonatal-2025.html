@@ -1136,15 +1136,54 @@
 
         // Configuração de drogas neonatais
         const DROGAS_CONFIG = {
-            epinefrina_iv: { dose: 0.01, unidade: 'mg/kg', concentracao: 0.1, unidade_conc: 'mg/mL' },
-            epinefrina_ett: { dose: 0.1, unidade: 'mg/kg', concentracao: 1, unidade_conc: 'mg/mL' },
+            epinefrina_iv: { dose: 0.02, dose_min: 0.01, dose_max: 0.03, unidade: 'mg/kg', concentracao: 0.1, unidade_conc: 'mg/mL' },
+            epinefrina_ett: { dose: 0.1, dose_min: 0.05, dose_max: 0.1, unidade: 'mg/kg', concentracao: 0.1, unidade_conc: 'mg/mL' },
             atropina: { dose: 0.02, unidade: 'mg/kg', concentracao: 0.5, unidade_conc: 'mg/mL' },
             naloxona: { dose: 0.1, unidade: 'mg/kg', concentracao: 0.4, unidade_conc: 'mg/mL' },
             bicarbonato: { dose: 1, unidade: 'mEq/kg', concentracao: 1, unidade_conc: 'mEq/mL' },
-            glicose10: { dose: 2, unidade: 'mL/kg', concentracao: 100, unidade_conc: 'mg/dL' },
-            glicose25: { dose: 2, unidade: 'mL/kg', concentracao: 250, unidade_conc: 'mg/dL' },
+            glicose10: { dose: 2, unidade: 'mL/kg', concentracao: 100, unidade_conc: 'mg/mL' },
+            glicose25: { dose: 2, unidade: 'mL/kg', concentracao: 250, unidade_conc: 'mg/mL' },
             calcio: { dose: 20, unidade: 'mg/kg', concentracao: 100, unidade_conc: 'mg/mL' }
         };
+
+        // Fonte unica das doses de epinefrina (NRP: 0,1 mg/mL IV/IO e ETT) e atropina (0,5 mg/mL, sem dose minima),
+        // usada pelo card de drogas, pela lista de procedimentos e pelo relatorio copiado.
+        const CASAS_DECIMAIS_DOSE = 3;
+
+        function formatarNumeroDose(valor) {
+            return String(parseFloat(valor.toFixed(CASAS_DECIMAIS_DOSE)));
+        }
+
+        function calcularDoseDroga(peso, config) {
+            const mg = peso * config.dose;
+            const temFaixa = typeof config.dose_min === 'number' && typeof config.dose_max === 'number';
+            return {
+                mg: mg,
+                mL: mg / config.concentracao,
+                mgMin: temFaixa ? peso * config.dose_min : null,
+                mgMax: temFaixa ? peso * config.dose_max : null,
+                mLMin: temFaixa ? (peso * config.dose_min) / config.concentracao : null,
+                mLMax: temFaixa ? (peso * config.dose_max) / config.concentracao : null
+            };
+        }
+
+        function calcularDosesRCPNeonatal(peso) {
+            return {
+                epinefrinaIV: calcularDoseDroga(peso, DROGAS_CONFIG.epinefrina_iv),
+                epinefrinaETT: calcularDoseDroga(peso, DROGAS_CONFIG.epinefrina_ett),
+                atropina: calcularDoseDroga(peso, DROGAS_CONFIG.atropina)
+            };
+        }
+
+        // Ex.: "0.064 mg (0,02 mg/kg) = 0.64 mL"
+        function textoDosePonto(dose, doseKgTexto) {
+            return `${formatarNumeroDose(dose.mg)} mg (${doseKgTexto}) = ${formatarNumeroDose(dose.mL)} mL`;
+        }
+
+        // Ex.: "Faixa: 0.032–0.096 mg = 0.32–0.96 mL (0,01–0,03 mg/kg)"
+        function textoDoseFaixa(dose, faixaKgTexto) {
+            return `Faixa: ${formatarNumeroDose(dose.mgMin)}–${formatarNumeroDose(dose.mgMax)} mg = ${formatarNumeroDose(dose.mLMin)}–${formatarNumeroDose(dose.mLMax)} mL (${faixaKgTexto})`;
+        }
 
         // Procedimentos neonatais
         const PROCEDIMENTOS = {
@@ -1186,7 +1225,7 @@
             epinefrina: {
                 id: 'epinefrina',
                 nome: 'Epinefrina IV/IO',
-                descricao: '0,01 mg/kg (0,1 mg/mL)',
+                descricao: 'IV/IO 0,02 mg/kg · ETT 0,1 mg/kg (0,1 mg/mL)',
                 categoria: 'medicamentos',
                 ordem: 6
             },
@@ -1283,7 +1322,7 @@
             atropina: {
                 id: 'atropina',
                 nome: 'Atropina',
-                descricao: '0,02 mg/kg (dose mín: 0,1 mg)',
+                descricao: '0,02 mg/kg (0,5 mg/mL)',
                 categoria: 'medicamentos',
                 ordem: 16
             },
@@ -1304,7 +1343,7 @@
             glicose: {
                 id: 'glicose',
                 nome: 'Glicose 10%',
-                descricao: '2 mL/kg (100 mg/dL)',
+                descricao: '2 mL/kg (100 mg/mL)',
                 categoria: 'medicamentos',
                 ordem: 19
             },
@@ -1392,9 +1431,10 @@
 
             let htmlEmergencia = '';
             
-            // 1. EPINEFRINA IV/IO
-            const epinefrinaIV = peso * 0.01; // 0,01 mg/kg
-            const epinefrinaIV_mL = epinefrinaIV / 0.1; // 0,1 mg/mL
+            const dosesRCP = calcularDosesRCPNeonatal(peso);
+
+            // 1. EPINEFRINA IV/IO (0,02 mg/kg; faixa 0,01-0,03 mg/kg; 0,1 mg/mL)
+            const epinefrinaIV = dosesRCP.epinefrinaIV;
             const epinefrinaIVHorarios = drogasEmergenciaAdministradas['epinefrina_iv'] || [];
             const epinefrinaIVStatus = epinefrinaIVHorarios.length > 0 ? '✅' : '⏱️';
             const epinefrinaIVHorariosText = epinefrinaIVHorarios.length > 0 ? 
@@ -1402,17 +1442,18 @@
             htmlEmergencia += `
                 <div class="drug-box">
                     <div style="color: var(--bad); font-weight: bold; font-size: 1.1rem; margin-bottom: 8px;">EPINEFRINA IV/IO ${epinefrinaIVStatus}</div>
-                    <div style="color: white; font-size: 1rem; font-weight: bold; margin-bottom: 4px;">${epinefrinaIV_mL.toFixed(2)} mL</div>
-                    <div style="color: var(--muted); font-size: 0.9rem; margin-bottom: 6px;">${epinefrinaIV.toFixed(3)} mg (0,01 mg/kg)</div>
+                    <div style="color: white; font-size: 1rem; font-weight: bold; margin-bottom: 4px;">${formatarNumeroDose(epinefrinaIV.mL)} mL</div>
+                    <div style="color: var(--muted); font-size: 0.9rem; margin-bottom: 6px;">${formatarNumeroDose(epinefrinaIV.mg)} mg (0,02 mg/kg)</div>
+                    <div style="color: var(--muted); font-size: 0.8rem; margin-bottom: 6px;">${textoDoseFaixa(epinefrinaIV, '0,01–0,03 mg/kg')}</div>
                     <div style="color: var(--warn); font-size: 0.8rem; margin-bottom: 4px;">⏱️ Repetir a cada 3-5 min</div>
-                    <div style="color: var(--muted); font-size: 0.75rem; margin-bottom: 4px;">Via: IV/IO - Conc: 0,1 mg/mL</div>
+                    <div style="color: var(--muted); font-size: 0.75rem; margin-bottom: 4px;">Via: IV/IO - Conc: 0,1 mg/mL (1:10.000)</div>
+                    <div style="color: var(--muted); font-size: 0.75rem; margin-bottom: 4px;">Após cada dose IV/IO: flush de SF</div>
                     ${epinefrinaIVHorariosText}
                 </div>
             `;
             
-            // 2. EPINEFRINA ETT
-            const epinefrinaETT = peso * 0.1; // 0,1 mg/kg
-            const epinefrinaETT_mL = epinefrinaETT / 1; // 1 mg/mL
+            // 2. EPINEFRINA ETT (0,1 mg/kg; faixa 0,05-0,1 mg/kg; mesma solucao 0,1 mg/mL)
+            const epinefrinaETT = dosesRCP.epinefrinaETT;
             const epinefrinaETTHorarios = drogasEmergenciaAdministradas['epinefrina_ett'] || [];
             const epinefrinaETTStatus = epinefrinaETTHorarios.length > 0 ? '✅' : '⏱️';
             const epinefrinaETTHorariosText = epinefrinaETTHorarios.length > 0 ? 
@@ -1420,17 +1461,19 @@
             htmlEmergencia += `
                 <div class="drug-box">
                     <div style="color: var(--bad); font-weight: bold; font-size: 1.1rem; margin-bottom: 8px;">EPINEFRINA ETT ${epinefrinaETTStatus}</div>
-                    <div style="color: white; font-size: 1rem; font-weight: bold; margin-bottom: 4px;">${epinefrinaETT_mL.toFixed(2)} mL</div>
-                    <div style="color: var(--muted); font-size: 0.9rem; margin-bottom: 6px;">${epinefrinaETT.toFixed(2)} mg (0,1 mg/kg)</div>
-                    <div style="color: var(--warn); font-size: 0.8rem; margin-bottom: 4px;">⏱️ Via endotraqueal (diluir em 2-3 mL SF)</div>
+                    <div style="color: white; font-size: 1rem; font-weight: bold; margin-bottom: 4px;">${formatarNumeroDose(epinefrinaETT.mL)} mL</div>
+                    <div style="color: var(--muted); font-size: 0.9rem; margin-bottom: 6px;">${formatarNumeroDose(epinefrinaETT.mg)} mg (0,1 mg/kg)</div>
+                    <div style="color: var(--muted); font-size: 0.8rem; margin-bottom: 6px;">${textoDoseFaixa(epinefrinaETT, '0,05–0,1 mg/kg')}</div>
+                    <div style="color: var(--warn); font-size: 0.8rem; margin-bottom: 4px;">⏱️ Repetir a cada 3-5 min</div>
+                    <div style="color: var(--muted); font-size: 0.75rem; margin-bottom: 4px;">Via: ETT - Conc: 0,1 mg/mL (1:10.000)</div>
+                    <div style="color: var(--muted); font-size: 0.75rem; margin-bottom: 4px;">Usar a mesma solução 0,1 mg/mL da via IV/IO (não usar 1 mg/mL)</div>
                     <div style="color: var(--muted); font-size: 0.75rem; margin-bottom: 4px;">Alternativa quando IV/IO não disponível</div>
                     ${epinefrinaETTHorariosText}
                 </div>
             `;
             
-            // 3. ATROPINA
-            const atropina = peso * 0.02; // 0,02 mg/kg
-            const atropina_mL = atropina / 0.5; // 0,5 mg/mL
+            // 3. ATROPINA (0,02 mg/kg; 0,5 mg/mL; sem dose minima)
+            const atropina = dosesRCP.atropina;
             const atropinaHorarios = drogasEmergenciaAdministradas['atropina'] || [];
             const atropinaStatus = atropinaHorarios.length > 0 ? '✅' : '⏱️';
             const atropinaHorariosText = atropinaHorarios.length > 0 ? 
@@ -1439,9 +1482,8 @@
                 <div class="drug-box">
                     <div style="color: var(--bad); font-weight: bold; font-size: 1.1rem; margin-bottom: 8px;">ATROPINA ${atropinaStatus}</div>
                     <div style="color: #dc3545; font-weight: bold; font-size: 0.85rem; margin-bottom: 6px; text-align: center; padding: 4px; background-color: rgba(220, 53, 69, 0.1); border-radius: 4px;">Medicação não padronizada nos protocolos de REANIMAÇÃO NEONATAL. Usar somente com critério clínico e se extremamente necessário.</div>
-                    <div style="color: white; font-size: 1rem; font-weight: bold; margin-bottom: 4px;">${atropina_mL.toFixed(2)} mL</div>
-                    <div style="color: var(--muted); font-size: 0.9rem; margin-bottom: 6px;">${atropina.toFixed(3)} mg (0,02 mg/kg)</div>
-                    <div style="color: var(--warn); font-size: 0.8rem; margin-bottom: 4px;">⏱️ Dose mínima: 0,1 mg</div>
+                    <div style="color: white; font-size: 1rem; font-weight: bold; margin-bottom: 4px;">${formatarNumeroDose(atropina.mL)} mL</div>
+                    <div style="color: var(--muted); font-size: 0.9rem; margin-bottom: 6px;">${formatarNumeroDose(atropina.mg)} mg (0,02 mg/kg)</div>
                     <div style="color: var(--muted); font-size: 0.75rem; margin-bottom: 4px;">Indicação: Bradicardia - Conc: 0,5 mg/mL</div>
                     ${atropinaHorariosText}
                 </div>
@@ -1498,7 +1540,7 @@
                     <div style="color: white; font-size: 1rem; font-weight: bold; margin-bottom: 4px;">${glicose10.toFixed(1)} mL</div>
                     <div style="color: var(--muted); font-size: 0.9rem; margin-bottom: 6px;">${glicose10.toFixed(1)} mL (2 mL/kg)</div>
                     <div style="color: var(--warn); font-size: 0.8rem; margin-bottom: 4px;">⏱️ Hipoglicemia</div>
-                    <div style="color: var(--muted); font-size: 0.75rem; margin-bottom: 4px;">Indicação: Glicemia < 45 mg/dL - Conc: 100 mg/dL</div>
+                    <div style="color: var(--muted); font-size: 0.75rem; margin-bottom: 4px;">Indicação: Glicemia < 45 mg/dL - Conc: 100 mg/mL</div>
                     ${glicose10HorariosText}
                 </div>
             `;
@@ -1992,83 +2034,6 @@
             if (!peso || peso < 0.2) return '⚠️ Informe o peso para calcular a dose';
             
             const doses = {
-                'epinefrina': {
-                    dose: peso * 0.01,
-                    unidade: 'mg',
-                    volume: peso * 0.01 / 0.1,
-                    volumeUnidade: 'mL',
-                    concentracao: '0,1 mg/mL'
-                },
-                'epinefrina_2': {
-                    dose: peso * 0.01,
-                    unidade: 'mg',
-                    volume: peso * 0.01 / 0.1,
-                    volumeUnidade: 'mL',
-                    concentracao: '0,1 mg/mL'
-                },
-                'epinefrina_3': {
-                    dose: peso * 0.01,
-                    unidade: 'mg',
-                    volume: peso * 0.01 / 0.1,
-                    volumeUnidade: 'mL',
-                    concentracao: '0,1 mg/mL'
-                },
-                'epinefrina_4': {
-                    dose: peso * 0.01,
-                    unidade: 'mg',
-                    volume: peso * 0.01 / 0.1,
-                    volumeUnidade: 'mL',
-                    concentracao: '0,1 mg/mL'
-                },
-                'epinefrina_5': {
-                    dose: peso * 0.01,
-                    unidade: 'mg',
-                    volume: peso * 0.01 / 0.1,
-                    volumeUnidade: 'mL',
-                    concentracao: '0,1 mg/mL'
-                },
-                'epinefrina_6': {
-                    dose: peso * 0.01,
-                    unidade: 'mg',
-                    volume: peso * 0.01 / 0.1,
-                    volumeUnidade: 'mL',
-                    concentracao: '0,1 mg/mL'
-                },
-                'epinefrina_7': {
-                    dose: peso * 0.01,
-                    unidade: 'mg',
-                    volume: peso * 0.01 / 0.1,
-                    volumeUnidade: 'mL',
-                    concentracao: '0,1 mg/mL'
-                },
-                'epinefrina_8': {
-                    dose: peso * 0.01,
-                    unidade: 'mg',
-                    volume: peso * 0.01 / 0.1,
-                    volumeUnidade: 'mL',
-                    concentracao: '0,1 mg/mL'
-                },
-                'epinefrina_9': {
-                    dose: peso * 0.01,
-                    unidade: 'mg',
-                    volume: peso * 0.01 / 0.1,
-                    volumeUnidade: 'mL',
-                    concentracao: '0,1 mg/mL'
-                },
-                'epinefrina_10': {
-                    dose: peso * 0.01,
-                    unidade: 'mg',
-                    volume: peso * 0.01 / 0.1,
-                    volumeUnidade: 'mL',
-                    concentracao: '0,1 mg/mL'
-                },
-                'atropina': {
-                    dose: Math.max(peso * 0.02, 0.1),
-                    unidade: 'mg',
-                    volume: Math.max(peso * 0.02, 0.1) / 0.5,
-                    volumeUnidade: 'mL',
-                    concentracao: '0,5 mg/mL'
-                },
                 'bicarbonato': {
                     dose: peso * 1,
                     unidade: 'mEq',
@@ -2113,6 +2078,19 @@
                 }
             };
             
+            const dosesRCP = calcularDosesRCPNeonatal(peso);
+            if (procedimentoId === 'epinefrina' || procedimentoId.indexOf('epinefrina_') === 0) {
+                return [
+                    `IV/IO: ${textoDosePonto(dosesRCP.epinefrinaIV, '0,02 mg/kg')}`,
+                    textoDoseFaixa(dosesRCP.epinefrinaIV, '0,01–0,03 mg/kg'),
+                    `ETT: ${textoDosePonto(dosesRCP.epinefrinaETT, '0,1 mg/kg')}`,
+                    textoDoseFaixa(dosesRCP.epinefrinaETT, '0,05–0,1 mg/kg')
+                ].map(linha => `<div>${linha}</div>`).join('');
+            }
+            if (procedimentoId === 'atropina') {
+                return `Dose: ${formatarNumeroDose(dosesRCP.atropina.mg)} mg = ${formatarNumeroDose(dosesRCP.atropina.mL)} mL (0,5 mg/mL)`;
+            }
+
             const doseInfo = doses[procedimentoId];
             if (!doseInfo) return '';
             
@@ -2510,20 +2488,18 @@
             relatorio += `DROGAS DE EMERGÊNCIA CALCULADAS:\n`;
             if (pesoNum) {
                 if (pesoNum >= 0.2) {
-                    // Epinefrina IV/IO
-                    const epinefrinaIV = pesoNum * 0.01;
-                    const epinefrinaIV_mL = epinefrinaIV / 0.1;
-                    relatorio += `- Epinefrina IV/IO: ${epinefrinaIV.toFixed(3)} mg (0,01 mg/kg) = ${epinefrinaIV_mL.toFixed(2)} mL\n`;
-                    
-                    // Epinefrina ETT
-                    const epinefrinaETT = pesoNum * 0.1;
-                    const epinefrinaETT_mL = epinefrinaETT / 1;
-                    relatorio += `- Epinefrina ETT: ${epinefrinaETT.toFixed(3)} mg (0,1 mg/kg) = ${epinefrinaETT_mL.toFixed(2)} mL\n`;
-                    
-                    // Atropina
-                    const atropina = pesoNum * 0.02;
-                    const atropina_mL = atropina / 0.1;
-                    relatorio += `- Atropina: ${atropina.toFixed(3)} mg (0,02 mg/kg) = ${atropina_mL.toFixed(2)} mL\n`;
+                    const dosesRCP = calcularDosesRCPNeonatal(pesoNum);
+
+                    // Epinefrina IV/IO (0,1 mg/mL)
+                    relatorio += `- Epinefrina IV/IO (0,1 mg/mL): ${textoDosePonto(dosesRCP.epinefrinaIV, '0,02 mg/kg')}\n`;
+                    relatorio += `  ${textoDoseFaixa(dosesRCP.epinefrinaIV, '0,01–0,03 mg/kg')}\n`;
+
+                    // Epinefrina ETT (mesma solucao 0,1 mg/mL)
+                    relatorio += `- Epinefrina ETT (0,1 mg/mL): ${textoDosePonto(dosesRCP.epinefrinaETT, '0,1 mg/kg')}\n`;
+                    relatorio += `  ${textoDoseFaixa(dosesRCP.epinefrinaETT, '0,05–0,1 mg/kg')}\n`;
+
+                    // Atropina (0,5 mg/mL)
+                    relatorio += `- Atropina (0,5 mg/mL): ${textoDosePonto(dosesRCP.atropina, '0,02 mg/kg')}\n`;
                     relatorio += `  OBSERVACAO: Medicacao nao padronizada nos protocolos de REANIMACAO NEONATAL. Usar somente com criterio clinico e se extremamente necessario.\n`;
                     
                     // Naloxona

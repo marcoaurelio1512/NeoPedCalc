@@ -600,6 +600,19 @@
                     <span class="unit">anos, meses e dias</span>
                 </div>
                 <div class="form-group">
+                    <label for="faixa_etaria">Faixa etária (para PAM e creatinina)</label>
+                    <select id="faixa_etaria">
+                        <option value="">Selecione</option>
+                        <option value="0">0 a &lt; 1 mês</option>
+                        <option value="1">1–11 meses</option>
+                        <option value="2">12–23 meses</option>
+                        <option value="3">24–59 meses</option>
+                        <option value="4">60–143 meses</option>
+                        <option value="5">≥ 144 meses</option>
+                    </select>
+                    <span class="unit">preenchida pela data de nascimento; ajuste se necessário</span>
+                </div>
+                <div class="form-group">
                     <label for="dia_uti">Dia de UTI</label>
                     <input type="number" id="dia_uti" min="1" max="120" step="1" placeholder="Ex.: 1">
                     <span class="unit">dias</span>
@@ -622,6 +635,15 @@
                     <label for="gcs">Escala de Coma de Glasgow (GCS)</label>
                     <input type="text" id="gcs" placeholder="Ex.: 7 ou lista: 9,7,8">
                     <span class="unit">pior valor do dia (quanto menor, pior)</span>
+                </div>
+                <div class="form-group">
+                    <label for="pupilas">Reação pupilar</label>
+                    <select id="pupilas">
+                        <option value="">Selecione</option>
+                        <option value="reativas">Ambas reativas</option>
+                        <option value="fixas">Ambas fixas</option>
+                    </select>
+                    <span class="unit">pupilas fixas bilateralmente pontuam 5</span>
                 </div>
             </div>
 
@@ -656,24 +678,44 @@
                     <input type="text" id="paco2" placeholder="Ex.: 60 ou lista: 50,60,55">
                     <span class="unit">mmHg (pior valor do dia)</span>
                 </div>
+                <div class="form-group">
+                    <label for="ventilacao">Ventilação invasiva</label>
+                    <select id="ventilacao">
+                        <option value="">Selecione</option>
+                        <option value="nao">Não</option>
+                        <option value="sim">Sim</option>
+                    </select>
+                    <span class="unit">ventilação mecânica invasiva (intubação ou traqueostomia)</span>
+                </div>
             </div>
 
-            <h3 class="subsection-title">Renal / Hematológico</h3>
+            <h3 class="subsection-title">Renal</h3>
             <div class="form-grid">
                 <div class="form-group">
                     <label for="creatinine">Creatinina</label>
-                    <input type="text" id="creatinine" placeholder="Ex.: 1.2 ou lista: 0.9,1.2,1.1">
-                    <span class="unit">mg/dL (pior valor do dia)</span>
+                    <input type="text" id="creatinine" placeholder="Ex.: 0.8 ou lista: 0.6,0.8,0.7">
+                    <span class="unit">maior valor do dia, na unidade escolhida abaixo</span>
                 </div>
+                <div class="form-group">
+                    <label for="creat_unidade">Unidade da creatinina</label>
+                    <select id="creat_unidade">
+                        <option value="mgdl">mg/dL (convertida: × 88,4 = µmol/L)</option>
+                        <option value="umol">µmol/L</option>
+                    </select>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Hematológico</h3>
+            <div class="form-grid">
                 <div class="form-group">
                     <label for="platelets">Plaquetas</label>
                     <input type="text" id="platelets" placeholder="Ex.: 85 ou lista: 120,85,95">
-                    <span class="unit">10³/µL (pior valor do dia)</span>
+                    <span class="unit">×10⁹/L (= 10³/µL; pior valor do dia)</span>
                 </div>
                 <div class="form-group">
                     <label for="wbc">Leucócitos</label>
                     <input type="text" id="wbc" placeholder="Ex.: 2.8 ou lista: 6.0,2.8,3.5">
-                    <span class="unit">10³/µL (pior valor do dia)</span>
+                    <span class="unit">×10⁹/L (= 10³/µL; pior valor do dia)</span>
                 </div>
             </div>
 
@@ -691,11 +733,11 @@
         <div class="results-section">
             <h2 class="section-title">Resultados</h2>
             <div id="resultados" class="result-item">
-                <span class="result-label">PELOD-2 - Escore Total:</span>
+                <span class="result-label">PELOD-2 - Escore Total (0–33):</span>
                 <span class="result-value" id="escore_total">-</span>
             </div>
             <div id="resultados_prob" class="result-item">
-                <span class="result-label">Valor do modelo logístico (referência Leteurtre et al., não predição individual):</span>
+                <span class="result-label">Probabilidade de óbito pelo modelo de Leteurtre 2013 (referência populacional, não predição individual):</span>
                 <span class="result-value" id="probabilidade_mortalidade">-</span>
             </div>
             <div id="indicador_risco" style="text-align: center; margin-top: 15px;"></div>
@@ -723,38 +765,46 @@
                 <h3>Objetivo (educativo)</h3>
                 <p>O PELOD-2 quantifica <strong>disfunção orgânica pediátrica</strong> a partir de variáveis fisiológicas/laboratoriais. Nesta página ele serve para <strong>estudo, treino e registro informativo</strong>. O percentual mostrado aplica a função logística publicada por Leteurtre et al. ao total calculado — é uma <strong>curva populacional de referência</strong>, não uma “chance” individual do paciente.</p>
                 
-                <h3>O que esta implementação soma</h3>
+                <h3>Modelo implementado (PELOD-2 publicado)</h3>
                 <div class="formula-box">
-                    <strong>Total = pontos neurológicos + cardiovasculares + respiratórios + renais + hematológicos</strong> (conforme tabelas da publicação, espelhadas nos campos da tela).<br><br>
-                    <strong>Domínios presentes nesta ferramenta:</strong><br>
-                    • Neurológico: GCS (pior do dia; quanto menor, mais pontos)<br>
-                    • Cardiovascular: PAM (mmHg) e lactato (mmol/L)<br>
-                    • Respiratório: razão PaO₂/FiO₂ e PaCO₂<br>
-                    • Renal: creatinina (mg/dL)<br>
-                    • Hematológico: plaquetas e leucócitos (10³/µL)<br><br>
-                    <strong>Total máximo nesta página:</strong> até <strong>21 pontos</strong> (soma dos máximos por domínio nesta configuração).<br>
-                    <strong>Observação:</strong> O PELOD-2 completo no artigo pode incluir outros critérios em contextos específicos; confira sempre a fonte original e o protocolo local.
+                    <strong>Total = pontos neurológicos + cardiovasculares + renais + respiratórios + hematológicos</strong> (10 variáveis, total de 0 a 33 pontos; Leteurtre et al., 2013).<br><br>
+                    <strong>Neurológico</strong><br>
+                    • Glasgow: ≥ 11 = 0; 5–10 = 1; 3–4 = 4<br>
+                    • Reação pupilar: ambas reativas = 0; ambas fixas = 5<br><br>
+                    <strong>Cardiovascular</strong><br>
+                    • Lactato (mmol/L): &lt; 5,0 = 0; 5,0–10,9 = 1; ≥ 11,0 = 4<br>
+                    • PAM (mmHg) por faixa etária, pontos 0 / 2 / 3 / 6:<br>
+                    &nbsp;&nbsp;0 a &lt; 1 mês: ≥ 46 / 31–45 / 17–30 / ≤ 16<br>
+                    &nbsp;&nbsp;1–11 meses: ≥ 55 / 39–54 / 25–38 / ≤ 24<br>
+                    &nbsp;&nbsp;12–23 meses: ≥ 60 / 44–59 / 31–43 / ≤ 30<br>
+                    &nbsp;&nbsp;24–59 meses: ≥ 62 / 46–61 / 32–45 / ≤ 31<br>
+                    &nbsp;&nbsp;60–143 meses: ≥ 65 / 49–64 / 36–48 / ≤ 35<br>
+                    &nbsp;&nbsp;≥ 144 meses: ≥ 67 / 52–66 / 38–51 / ≤ 37<br><br>
+                    <strong>Renal</strong><br>
+                    • Creatinina (µmol/L) ≥ limiar da idade = 2, abaixo = 0: 0 a &lt; 1 mês ≥ 70; 1–11 meses ≥ 23; 12–23 meses ≥ 35; 24–59 meses ≥ 51; 60–143 meses ≥ 59; ≥ 144 meses ≥ 93 (mg/dL × 88,4 = µmol/L)<br><br>
+                    <strong>Respiratório</strong><br>
+                    • PaO₂ (mmHg)/FiO₂: ≥ 61 = 0; ≤ 60 = 2<br>
+                    • PaCO₂ (mmHg): ≤ 58 = 0; 59–94 = 1; ≥ 95 = 3<br>
+                    • Ventilação invasiva: não = 0; sim = 3<br><br>
+                    <strong>Hematológico</strong><br>
+                    • Leucócitos (×10⁹/L): &gt; 2 = 0; ≤ 2 = 2<br>
+                    • Plaquetas (×10⁹/L): ≥ 142 = 0; 77–141 = 1; ≤ 76 = 2<br><br>
+                    <strong>Valores entre faixas inteiras:</strong> cada faixa começa no seu limite inferior publicado (ex.: PAM 30,5 em neonato pontua como 17–30; PaO₂/FiO₂ 60,5 pontua 0).<br>
+                    <strong>Variável não informada:</strong> conta 0 ponto e é listada abaixo do resultado.
                 </div>
 
                 <h3>Instruções de uso</h3>
                 <ol>
                     <li>Preencha os piores valores de cada parâmetro nas últimas 24 h (ou janela definida pelo seu serviço)</li>
-                    <li>Use vírgula para listar vários valores; o sistema escolhe o pior conforme a regra do parâmetro</li>
+                    <li>Informe a data de nascimento ou escolha a faixa etária: os limiares de PAM e creatinina dependem da idade</li>
+                    <li>Use vírgula para listar vários valores; o sistema escolhe o pior conforme a regra do parâmetro (menor valor para Glasgow, PAM, PaO₂, leucócitos e plaquetas; maior valor para lactato, FiO₂, PaCO₂ e creatinina)</li>
                     <li>Informe FiO₂ como fração, com ponto decimal (ex.: 0.6 para 60%); a vírgula separa valores da lista</li>
-                    <li>Clique em <strong>Calcular PELOD-2</strong> para ver total, tabela de contribuição e valor do modelo logístico</li>
+                    <li>Clique em <strong>Calcular PELOD-2</strong> para ver total, tabela de contribuição e probabilidade de óbito do modelo</li>
                     <li>Use <strong>Copiar texto</strong> apenas como rascunho educativo — revise antes de arquivar</li>
                 </ol>
 
-                <h3>Faixas de total (apenas organização visual nesta tela)</h3>
-                <p style="font-size:14px;line-height:1.5;">Esta página colore o resultado em três faixas para facilitar leitura — <strong>não definem prognóstico sozinhas</strong>:</p>
-                <ul>
-                    <li><strong>0–4 pontos:</strong> faixa baixa do total calculado aqui</li>
-                    <li><strong>5–9 pontos:</strong> faixa intermediária</li>
-                    <li><strong>≥10 pontos:</strong> faixa alta do total — integrar com exame clínico, suporte e diretrizes institucionais</li>
-                </ul>
-
                 <h3>Sobre o percentual exibido</h3>
-                <p style="font-size:14px;line-height:1.5;">O valor em % resulta da fórmula <code>logit = α + β × escore</code> com coeficientes da referência embutidos neste código. Interpretação adequada exige contexto epidemiológico e clínico; <strong>não use como único critério de decisão terapêutica.</strong></p>
+                <p style="font-size:14px;line-height:1.5;">O valor em % é a probabilidade de óbito estimada pelo modelo da publicação: <code>logit = −6,61 + 0,47 × PELOD-2</code>; <code>p = 1 / (1 + e^(−logit))</code>. Descreve a coorte de derivação da publicação (UTIs pediátricas europeias); interpretação adequada exige contexto epidemiológico e clínico; <strong>não use como único critério de decisão terapêutica.</strong></p>
 
                 <h3>Considerações importantes</h3>
                 <ul>
@@ -800,63 +850,65 @@
                 modal.style.display = 'none';
             }
         }
-        // Configuração PELOD-2 baseada na literatura
-        const PELOD2_CONFIG = {
-            logistic: { alpha: -4.0, beta: 0.12 },
-            neuro: {
-                gcs: [
-                    { max: 5, pts: 4 },
-                    { max: 8, pts: 3 },
-                    { max: 11, pts: 2 },
-                    { max: 14, pts: 1 },
-                    { max: Infinity, pts: 0 }
-                ]
-            },
-            cardio: {
-                map: [
-                    { max: 45, pts: 2 },
-                    { max: 55, pts: 1 },
-                    { max: Infinity, pts: 0 }
-                ],
-                lactate: [
-                    { min: 4.0, max: Infinity, pts: 2 },
-                    { min: 2.5, max: 3.9, pts: 1 },
-                    { min: 0, max: 2.49, pts: 0 }
-                ]
-            },
-            resp: {
-                pf_ratio: [
-                    { max: 100, pts: 3 },
-                    { max: 200, pts: 2 },
-                    { max: 300, pts: 1 },
-                    { max: Infinity, pts: 0 }
-                ],
-                paco2: [
-                    { min: 51, max: 70, pts: 1 },
-                    { min: 71, max: 90, pts: 2 },
-                    { min: 91, max: Infinity, pts: 3 }
-                ]
-            },
-            renal: {
-                creatinine: [
-                    { min: 2.0, max: Infinity, pts: 2 },
-                    { min: 1.0, max: 1.99, pts: 1 },
-                    { min: 0, max: 0.99, pts: 0 }
-                ]
-            },
-            heme: {
-                platelets: [
-                    { max: 50, pts: 3 },
-                    { max: 99, pts: 2 },
-                    { max: 149, pts: 1 },
-                    { max: Infinity, pts: 0 }
-                ],
-                wbc: [
-                    { max: 3, pts: 2 },
-                    { min: 25, max: Infinity, pts: 1 }
-                ]
-            }
-        };
+        // PELOD-2 publicado: Leteurtre S, et al. Crit Care Med 2013;41:1761-1773.
+        // Faixas etárias: 0 = 0 a <1 mês; 1 = 1-11 m; 2 = 12-23 m; 3 = 24-59 m; 4 = 60-143 m; 5 = >=144 m.
+        const PELOD2_CONFIG = Object.freeze({
+            logistic: { intercept: -6.61, slope: 0.47 },
+            faixas: ['0 a < 1 mês', '1–11 meses', '12–23 meses', '24–59 meses', '60–143 meses', '≥ 144 meses'],
+            // Limite inferior de cada faixa de PAM (mmHg): [0 pt, 2 pts, 3 pts]; abaixo do último = 6 pts.
+            mapLimites: [
+                [46, 31, 17],
+                [55, 39, 25],
+                [60, 44, 31],
+                [62, 46, 32],
+                [65, 49, 36],
+                [67, 52, 38]
+            ],
+            // Creatinina (µmol/L) >= limiar = 2 pts.
+            creatLimiarUmol: [70, 23, 35, 51, 59, 93],
+            mgdlParaUmol: 88.4
+        });
+
+        // Pontuação por variável. Cada faixa começa no limite inferior publicado.
+        function pontosGCS(v) { return v >= 11 ? 0 : (v >= 5 ? 1 : 4); }
+        function pontosPupilas(v) { return v === 'fixas' ? 5 : 0; }
+        function pontosLactato(v) { return v >= 11 ? 4 : (v >= 5 ? 1 : 0); }
+        function pontosPAM(v, faixa) {
+            const [lim0, lim2, lim3] = PELOD2_CONFIG.mapLimites[faixa];
+            if (v >= lim0) return 0;
+            if (v >= lim2) return 2;
+            if (v >= lim3) return 3;
+            return 6;
+        }
+        function pontosCreatinina(umol, faixa) { return umol >= PELOD2_CONFIG.creatLimiarUmol[faixa] ? 2 : 0; }
+        function pontosPF(v) { return v > 60 ? 0 : 2; }
+        function pontosPaCO2(v) { return v >= 95 ? 3 : (v > 58 ? 1 : 0); }
+        function pontosVentilacao(v) { return v === 'sim' ? 3 : 0; }
+        function pontosLeucocitos(v) { return v > 2 ? 0 : 2; }
+        function pontosPlaquetas(v) { return v >= 142 ? 0 : (v >= 77 ? 1 : 2); }
+
+        function probabilidadeObito(score) {
+            const logit = PELOD2_CONFIG.logistic.intercept + PELOD2_CONFIG.logistic.slope * score;
+            return 1 / (1 + Math.exp(-logit));
+        }
+
+        // Idade em meses completos entre duas datas ISO (aaaa-mm-dd).
+        function idadeEmMeses(nascIso, avalIso) {
+            const n = new Date(nascIso + 'T00:00:00');
+            const a = new Date(avalIso + 'T00:00:00');
+            let meses = (a.getFullYear() - n.getFullYear()) * 12 + (a.getMonth() - n.getMonth());
+            if (a.getDate() < n.getDate()) meses--;
+            return meses;
+        }
+
+        function faixaPorMeses(meses) {
+            if (meses < 1) return 0;
+            if (meses < 12) return 1;
+            if (meses < 24) return 2;
+            if (meses < 60) return 3;
+            if (meses < 144) return 4;
+            return 5;
+        }
 
         // Função para calcular idade em anos, meses e dias
         function calcularIdade() {
@@ -896,6 +948,11 @@
                 }
                 
                 document.getElementById('idade_completa').value = idadeTexto || '0 dias';
+
+                const totalMeses = idadeEmMeses(dataNascimento, dataAvaliacao);
+                if (totalMeses >= 0) {
+                    document.getElementById('faixa_etaria').value = String(faixaPorMeses(totalMeses));
+                }
             }
         }
 
@@ -931,155 +988,139 @@
             return valorOuArray;
         }
 
-        // Função para calcular PaO2/FiO2
-        function calcularPF(pao2, fio2) {
-            if (!fio2 || fio2 <= 0) return Infinity;
-            return pao2 / fio2;
+        function lerPior(id, preferencia) {
+            return selecionarPiorValor(processarListaOuValor(document.getElementById(id).value), preferencia);
         }
 
-        // Função auxiliar para calcular pontos por faixas
-        function pontosPorFaixa(valor, faixas) {
-            if (valor == null || Number.isNaN(valor)) return 0;
-            for (const faixa of faixas) {
-                const min = faixa.min != null ? faixa.min : -Infinity;
-                const max = faixa.max != null ? faixa.max : Infinity;
-                if (valor >= min && valor <= max) return faixa.pts;
+        function temValor(v) { return typeof v === 'number' && !Number.isNaN(v); }
+
+        function fmt(v) { return Number.isInteger(v) ? String(v) : String(Math.round(v * 100) / 100); }
+
+        let ultimoResultado = null;
+
+        // Lê os campos, valida e devolve {erro} ou os valores piores do dia.
+        function lerEntradas() {
+            const faixaTxt = document.getElementById('faixa_etaria').value;
+            const entradas = {
+                faixa: faixaTxt === '' ? null : Number(faixaTxt),
+                gcs: lerPior('gcs', 'min'),
+                pupilas: document.getElementById('pupilas').value,
+                map: lerPior('map', 'min'),
+                lactate: lerPior('lactate', 'max'),
+                pao2: lerPior('pao2', 'min'),
+                fio2: lerPior('fio2', 'max'),
+                paco2: lerPior('paco2', 'max'),
+                ventilacao: document.getElementById('ventilacao').value,
+                creatinine: lerPior('creatinine', 'max'),
+                creatUnidade: document.getElementById('creat_unidade').value,
+                platelets: lerPior('platelets', 'min'),
+                wbc: lerPior('wbc', 'min')
+            };
+
+            // "0,6" vira a lista [0, 6]; sem esta checagem o cálculo usaria FiO2 = 6 sem avisar.
+            const fio2_in = processarListaOuValor(document.getElementById('fio2').value);
+            const fio2Valores = Array.isArray(fio2_in) ? fio2_in : [fio2_in];
+            if (fio2Valores.some(v => !Number.isNaN(v) && (v < 0.21 || v > 1))) {
+                return { erro: 'FiO₂ deve ser uma fração entre 0.21 e 1.0, com ponto decimal (ex.: 0.6 para 60%). A vírgula separa valores de uma lista (ex.: 0.4,0.6).' };
             }
-            return 0;
+            if (temValor(entradas.gcs) && (entradas.gcs < 3 || entradas.gcs > 15)) {
+                return { erro: 'Glasgow deve estar entre 3 e 15.' };
+            }
+            if (temValor(entradas.pao2) !== temValor(entradas.fio2)) {
+                return { erro: 'Informe PaO₂ e FiO₂ juntos para calcular a relação PaO₂/FiO₂.' };
+            }
+            if ((temValor(entradas.map) || temValor(entradas.creatinine)) && entradas.faixa === null) {
+                return { erro: 'Informe a data de nascimento ou escolha a faixa etária: os limiares de PAM e creatinina dependem da idade.' };
+            }
+            const negativos = [entradas.map, entradas.lactate, entradas.pao2, entradas.paco2, entradas.creatinine, entradas.platelets, entradas.wbc];
+            if (negativos.some(v => temValor(v) && v < 0)) {
+                return { erro: 'Valores laboratoriais e PAM não podem ser negativos.' };
+            }
+            return entradas;
+        }
+
+        // Calcula pontos por item a partir das entradas lidas (função pura).
+        function pontuarPELOD2(e) {
+            const itens = [];
+            const faltantes = [];
+            const add = (dominio, nome, presente, valorTxt, pts) => {
+                if (presente) itens.push({ dominio, nome, valor: valorTxt, pts });
+                else faltantes.push(nome);
+            };
+            const pupLabel = { reativas: 'Ambas reativas', fixas: 'Ambas fixas' };
+            const ventLabel = { nao: 'Não', sim: 'Sim' };
+
+            add('Neurológico', 'Glasgow', temValor(e.gcs), temValor(e.gcs) ? fmt(e.gcs) : '', temValor(e.gcs) ? pontosGCS(e.gcs) : 0);
+            add('Neurológico', 'Reação pupilar', e.pupilas !== '', pupLabel[e.pupilas] || '', pontosPupilas(e.pupilas));
+            add('Cardiovascular', 'Lactato', temValor(e.lactate), temValor(e.lactate) ? `${fmt(e.lactate)} mmol/L` : '', temValor(e.lactate) ? pontosLactato(e.lactate) : 0);
+            add('Cardiovascular', 'PAM', temValor(e.map), temValor(e.map) ? `${fmt(e.map)} mmHg` : '', temValor(e.map) ? pontosPAM(e.map, e.faixa) : 0);
+
+            let creatUmol = NaN;
+            if (temValor(e.creatinine)) {
+                creatUmol = e.creatUnidade === 'umol' ? e.creatinine : e.creatinine * PELOD2_CONFIG.mgdlParaUmol;
+            }
+            const creatTxt = !temValor(e.creatinine) ? '' : (e.creatUnidade === 'umol'
+                ? `${fmt(e.creatinine)} µmol/L`
+                : `${fmt(e.creatinine)} mg/dL = ${creatUmol.toFixed(0)} µmol/L`);
+            add('Renal', 'Creatinina', temValor(e.creatinine), creatTxt, temValor(e.creatinine) ? pontosCreatinina(creatUmol, e.faixa) : 0);
+
+            const temPF = temValor(e.pao2) && temValor(e.fio2);
+            const pf = temPF ? e.pao2 / e.fio2 : NaN;
+            add('Respiratório', 'PaO₂/FiO₂', temPF, temPF ? pf.toFixed(0) : '', temPF ? pontosPF(pf) : 0);
+            add('Respiratório', 'PaCO₂', temValor(e.paco2), temValor(e.paco2) ? `${fmt(e.paco2)} mmHg` : '', temValor(e.paco2) ? pontosPaCO2(e.paco2) : 0);
+            add('Respiratório', 'Ventilação invasiva', e.ventilacao !== '', ventLabel[e.ventilacao] || '', pontosVentilacao(e.ventilacao));
+            add('Hematológico', 'Leucócitos', temValor(e.wbc), temValor(e.wbc) ? `${fmt(e.wbc)} ×10⁹/L` : '', temValor(e.wbc) ? pontosLeucocitos(e.wbc) : 0);
+            add('Hematológico', 'Plaquetas', temValor(e.platelets), temValor(e.platelets) ? `${fmt(e.platelets)} ×10⁹/L` : '', temValor(e.platelets) ? pontosPlaquetas(e.platelets) : 0);
+
+            const score = itens.reduce((s, it) => s + it.pts, 0);
+            const dominios = ['Neurológico', 'Cardiovascular', 'Renal', 'Respiratório', 'Hematológico'].map(d => ({
+                dominio: d,
+                pts: itens.filter(it => it.dominio === d).reduce((s, it) => s + it.pts, 0)
+            }));
+            return { score, probability: probabilidadeObito(score), itens, faltantes, dominios, faixa: e.faixa };
+        }
+
+        function escHtml(t) {
+            return String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
         }
 
         // Função para calcular PELOD-2
         function calcularPELOD2() {
-            // Obter valores dos campos
             const diaUti = document.getElementById('dia_uti').value;
-            
-            // Neurológico
-            const gcs_in = processarListaOuValor(document.getElementById('gcs').value);
-            const gcs = selecionarPiorValor(gcs_in, 'min');
-
-            // Cardiovascular
-            const map_in = processarListaOuValor(document.getElementById('map').value);
-            const map = selecionarPiorValor(map_in, 'min');
-            const lactate_in = processarListaOuValor(document.getElementById('lactate').value);
-            const lactate = selecionarPiorValor(lactate_in, 'max');
-
-            // Respiratório
-            const pao2_in = processarListaOuValor(document.getElementById('pao2').value);
-            const pao2 = selecionarPiorValor(pao2_in, 'min');
-            const fio2_in = processarListaOuValor(document.getElementById('fio2').value);
-            const fio2 = selecionarPiorValor(fio2_in, 'max');
-            // "0,6" vira a lista [0, 6]; sem esta checagem o cálculo usaria FiO2 = 6 sem avisar.
-            const fio2Valores = Array.isArray(fio2_in) ? fio2_in : [fio2_in];
-            if (fio2Valores.some(v => !Number.isNaN(v) && (v < 0.21 || v > 1))) {
-                alert('FiO₂ deve ser uma fração entre 0.21 e 1.0, com ponto decimal (ex.: 0.6 para 60%). A vírgula separa valores de uma lista (ex.: 0.4,0.6).');
+            const entradas = lerEntradas();
+            if (entradas.erro) {
+                alert(entradas.erro);
                 return;
             }
-            const paco2_in = processarListaOuValor(document.getElementById('paco2').value);
-            const paco2 = selecionarPiorValor(paco2_in, 'max');
+            const r = pontuarPELOD2(entradas);
+            ultimoResultado = Object.freeze({ ...r, diaUti });
 
-            // Renal/Hematológico
-            const creatinine_in = processarListaOuValor(document.getElementById('creatinine').value);
-            const creatinine = selecionarPiorValor(creatinine_in, 'max');
-            const platelets_in = processarListaOuValor(document.getElementById('platelets').value);
-            const platelets = selecionarPiorValor(platelets_in, 'min');
-            const wbc_in = processarListaOuValor(document.getElementById('wbc').value);
-            const wbc = selecionarPiorValor(wbc_in, 'min');
-
-            // Calcular PaO2/FiO2
-            const pf = calcularPF(pao2, fio2);
-
-            let score = 0;
-            const breakdown = [];
-
-            // Neurológico
-            const gcs_pts = pontosPorFaixa(gcs, PELOD2_CONFIG.neuro.gcs);
-            score += gcs_pts;
-            if (gcs && !Number.isNaN(gcs)) {
-                breakdown.push(['Neurológico - GCS', gcs, gcs_pts]);
-            }
-
-            // Cardiovascular
-            const map_pts = pontosPorFaixa(map, PELOD2_CONFIG.cardio.map);
-            score += map_pts;
-            if (map && !Number.isNaN(map)) {
-                breakdown.push(['Cardiovascular - PAM', `${map} mmHg`, map_pts]);
-            }
-
-            const lactate_pts = pontosPorFaixa(lactate, PELOD2_CONFIG.cardio.lactate);
-            score += lactate_pts;
-            if (lactate && !Number.isNaN(lactate)) {
-                breakdown.push(['Cardiovascular - Lactato', `${lactate} mmol/L`, lactate_pts]);
-            }
-
-            // Respiratório
-            const pf_pts = pontosPorFaixa(pf, PELOD2_CONFIG.resp.pf_ratio);
-            score += pf_pts;
-            if (pao2 && fio2 && !Number.isNaN(pao2) && !Number.isNaN(fio2)) {
-                breakdown.push(['Respiratório - P/F', isFinite(pf) ? pf.toFixed(0) : '∞', pf_pts]);
-            }
-
-            const paco2_pts = pontosPorFaixa(paco2, PELOD2_CONFIG.resp.paco2);
-            score += paco2_pts;
-            if (paco2 && !Number.isNaN(paco2)) {
-                breakdown.push(['Respiratório - PaCO₂', `${paco2} mmHg`, paco2_pts]);
-            }
-
-            // Renal
-            const creatinine_pts = pontosPorFaixa(creatinine, PELOD2_CONFIG.renal.creatinine);
-            score += creatinine_pts;
-            if (creatinine && !Number.isNaN(creatinine)) {
-                breakdown.push(['Renal - Creatinina', `${creatinine} mg/dL`, creatinine_pts]);
-            }
-
-            // Hematológico
-            const platelets_pts = pontosPorFaixa(platelets, PELOD2_CONFIG.heme.platelets);
-            score += platelets_pts;
-            if (platelets && !Number.isNaN(platelets)) {
-                breakdown.push(['Hematológico - Plaquetas', `${platelets} 10³/µL`, platelets_pts]);
-            }
-
-            const wbc_pts = pontosPorFaixa(wbc, PELOD2_CONFIG.heme.wbc);
-            score += wbc_pts;
-            if (wbc && !Number.isNaN(wbc)) {
-                breakdown.push(['Hematológico - Leucócitos', `${wbc} 10³/µL`, wbc_pts]);
-            }
-
-            // Calcular probabilidade
-            const logit = PELOD2_CONFIG.logistic.alpha + PELOD2_CONFIG.logistic.beta * score;
-            const probability = 1 / (1 + Math.exp(-logit));
-
-            // Exibir resultados
             const diaTexto = diaUti ? ` (Dia ${diaUti})` : '';
-            document.getElementById('escore_total').textContent = `${score} pontos${diaTexto}`;
-            document.getElementById('probabilidade_mortalidade').textContent = `${(probability * 100).toFixed(1)}%`;
+            document.getElementById('escore_total').textContent = `${r.score} pontos${diaTexto}`;
+            document.getElementById('probabilidade_mortalidade').textContent = `${(r.probability * 100).toFixed(1)}%`;
 
-            // Faixas descritivas nesta ferramenta (não prognóstico isolado)
-            let riskLevel, riskClass;
-            if (score <= 4) {
-                riskLevel = 'Faixa baixa do total (0–4)';
-                riskClass = 'risk-low';
-            } else if (score <= 9) {
-                riskLevel = 'Faixa intermediária (5–9)';
-                riskClass = 'risk-medium';
-            } else {
-                riskLevel = 'Faixa alta do total (≥10)';
-                riskClass = 'risk-high';
+            let notaHTML = '';
+            if (r.faixa !== null) {
+                notaHTML += `<p><span>Faixa etária usada</span>: <span>${escHtml(PELOD2_CONFIG.faixas[r.faixa])}</span></p>`;
             }
+            if (r.faltantes.length) {
+                notaHTML += '<p><span>Não informados (contam 0 ponto)</span>: '
+                    + r.faltantes.map(n => `<span>${escHtml(n)}</span>`).join(', ') + '</p>';
+            }
+            document.getElementById('indicador_risco').innerHTML = notaHTML;
 
-            document.getElementById('indicador_risco').innerHTML = 
-                `<span class="risk-indicator ${riskClass}">${riskLevel}</span>`;
-
-            // Criar tabela de breakdown
             let tableHTML = '<table class="breakdown-table">';
-            tableHTML += '<thead><tr><th>Sistema</th><th>Valor (Pior do Dia)</th><th>Pontos</th></tr></thead>';
+            tableHTML += '<thead><tr><th>Sistema</th><th>Variável</th><th>Valor (Pior do Dia)</th><th>Pontos</th></tr></thead>';
             tableHTML += '<tbody>';
-            breakdown.forEach(([sistema, valor, pontos]) => {
-                tableHTML += `<tr><td>${sistema}</td><td>${valor}</td><td><strong>${pontos}</strong></td></tr>`;
+            r.itens.forEach(it => {
+                tableHTML += `<tr><td>${escHtml(it.dominio)}</td><td>${escHtml(it.nome)}</td><td>${escHtml(it.valor)}</td><td><strong>${it.pts}</strong></td></tr>`;
             });
             tableHTML += '</tbody></table>';
-            
             document.getElementById('breakdown_table').innerHTML = tableHTML;
         }
+
+        // Rótulos do relatório (sem acentos, padrão dos textos copiados).
+        const RELATORIO_DOMINIO = { 'Neurológico': 'Neurologico', 'Cardiovascular': 'Cardiovascular', 'Renal': 'Renal', 'Respiratório': 'Respiratorio', 'Hematológico': 'Hematologico' };
 
         // Função para gerar e copiar relatório
         function gerarECopiarRelatorio() {
@@ -1090,11 +1131,20 @@
             const idadeCompleta = document.getElementById('idade_completa').value;
             const diaUti = document.getElementById('dia_uti').value;
             const obs = document.getElementById('obs').value;
-
-            const escoreTotal = document.getElementById('escore_total').textContent;
-            const probabilidade = document.getElementById('probabilidade_mortalidade').textContent;
-            const indicador = document.getElementById('indicador_risco').textContent;
+            const r = ultimoResultado;
+            const faixaTxt = document.getElementById('faixa_etaria').value;
+            const pupilas = document.getElementById('pupilas').value;
+            const ventilacao = document.getElementById('ventilacao').value;
+            const creatUnidade = document.getElementById('creat_unidade').value === 'umol' ? 'umol/L' : 'mg/dL';
+            const pupTxt = { reativas: 'ambas reativas', fixas: 'ambas fixas' }[pupilas] || '-';
+            const ventTxt = { nao: 'nao', sim: 'sim' }[ventilacao] || '-';
             var legalFoot = (typeof window.neopedLegalReportFooter === 'function') ? window.neopedLegalReportFooter() : '';
+
+            const resultadoTxt = r
+                ? `- Total PELOD-2 (0-33): ${r.score} pontos${r.diaUti ? ` (Dia ${r.diaUti})` : ''}
+- Probabilidade de obito pelo modelo (logit = -6,61 + 0,47 x PELOD-2): ${(r.probability * 100).toFixed(1)}%
+${r.dominios.map(d => `- ${RELATORIO_DOMINIO[d.dominio]}: ${d.pts}`).join('\n')}`
+                : '- (calculo nao realizado)';
 
             let relatorioTexto = `RESUMO INFORMATIVO — PELOD-2 (FERRAMENTA EDUCATIVA)
 ============================================
@@ -1107,43 +1157,52 @@ ${nome ? `Nome: ${nome}` : 'Nome: (nao informado)'}
 ${dataAvaliacao ? `Data da avaliacao: ${dataAvaliacao}` : ''}${horaAvaliacao ? ` — Hora: ${horaAvaliacao}` : ''}
 ${dataNascimento ? `Data de nascimento: ${dataNascimento}` : ''}
 ${idadeCompleta ? `Idade na data da avaliacao: ${idadeCompleta}` : ''}
+Faixa etaria para PAM e creatinina: ${faixaTxt !== '' ? PELOD2_CONFIG.faixas[Number(faixaTxt)] : '(nao informada)'}
 ${diaUti ? `Dia de UTI (campo informativo): ${diaUti}` : ''}
 
 VARIAVEIS INSERIDAS (piores valores do dia, conforme tela)
 ----------------------------------------------------------
 - GCS: ${document.getElementById('gcs').value || '-'}
+- Reacao pupilar: ${pupTxt}
 - PAM: ${document.getElementById('map').value || '-'} mmHg
 - Lactato: ${document.getElementById('lactate').value || '-'} mmol/L
+- Creatinina: ${document.getElementById('creatinine').value || '-'} ${creatUnidade}
 - PaO2: ${document.getElementById('pao2').value || '-'} mmHg
 - FiO2: ${document.getElementById('fio2').value || '-'}
 - PaCO2: ${document.getElementById('paco2').value || '-'} mmHg
-- Creatinina: ${document.getElementById('creatinine').value || '-'} mg/dL
-- Plaquetas: ${document.getElementById('platelets').value || '-'} 10³/uL
-- Leucocitos: ${document.getElementById('wbc').value || '-'} 10³/uL
+- Ventilacao invasiva: ${ventTxt}
+- Leucocitos: ${document.getElementById('wbc').value || '-'} x10^9/L
+- Plaquetas: ${document.getElementById('platelets').value || '-'} x10^9/L
 ${obs ? `Observacoes: ${obs}` : ''}
 
 RESULTADOS NESTA SESSAO
 -----------------------
-- Total PELOD-2 (soma desta implementacao): ${escoreTotal}
-- Valor do modelo logistico (referencia): ${probabilidade}
-- Faixa descritiva na interface: ${indicador}
+${resultadoTxt}
 
 CONTEXTO EDUCATIVO
 ------------------
 O PELOD-2 quantifica disfuncao organica em criancas criticas segundo criterios publicados. Totais maiores refletem maior pontuacao pelos limiares da tabela; conduta e prognostico clinico dependem do contexto e do protocolo local.
 
-TABELA DE PONTOS (espelhada neste codigo)
-------------------------------------------
-- GCS: ≤5=4, 6-8=3, 9-11=2, 12-14=1, 15=0
-- PAM: ≤45 mmHg=2, 46-55=1, >55=0
-- Lactato: ≥4,0=2; 2,5-3,9=1; <2,5=0 mmol/L
-- PaO2/FiO2: <100=3; 100-200=2; 200-300=1; >300=0
-- PaCO2: 51-70=1; 71-90=2; >90=3 mmHg (≤50=0 nesta implementacao)
-- Creatinina: ≥2,0=2; 1,0-1,99=1; <1,0=0 mg/dL
-- Plaquetas: <50=3; 50-99=2; 100-149=1; ≥150=0 (10³/uL)
-- Leucocitos: <3=2; >25=1; caso contrario=0 (10³/uL)
+TABELA DE PONTOS (PELOD-2 publicado, Leteurtre 2013)
+----------------------------------------------------
+- GCS: >=11=0; 5-10=1; 3-4=4
+- Reacao pupilar: ambas reativas=0; ambas fixas=5
+- Lactato (mmol/L): <5,0=0; 5,0-10,9=1; >=11,0=4
+- PAM (mmHg), pontos 0/2/3/6 por faixa etaria:
+  0 a <1 mes: >=46 / 31-45 / 17-30 / <=16
+  1-11 meses: >=55 / 39-54 / 25-38 / <=24
+  12-23 meses: >=60 / 44-59 / 31-43 / <=30
+  24-59 meses: >=62 / 46-61 / 32-45 / <=31
+  60-143 meses: >=65 / 49-64 / 36-48 / <=35
+  >=144 meses: >=67 / 52-66 / 38-51 / <=37
+- Creatinina (umol/L) >= limiar da idade = 2: <1 mes 70; 1-11 meses 23; 12-23 meses 35; 24-59 meses 51; 60-143 meses 59; >=144 meses 93 (mg/dL x 88,4 = umol/L)
+- PaO2/FiO2 (mmHg): >=61=0; <=60=2
+- PaCO2 (mmHg): <=58=0; 59-94=1; >=95=3
+- Ventilacao invasiva: nao=0; sim=3
+- Leucocitos (x10^9/L): >2=0; <=2=2
+- Plaquetas (x10^9/L): >=142=0; 77-141=1; <=76=2
 
-Referencia: Leteurtre S, et al. PELOD-2: an update of the PELOD pediatric organ dysfunction score. Crit Care Med. 2013;41(7):1761-73.` + legalFoot;
+Referencia: Leteurtre S, et al. PELOD-2: an update of the PEdiatric logistic organ dysfunction score. Crit Care Med. 2013;41(7):1761-73.` + legalFoot;
 
             copiarTexto(relatorioTexto);
         }
@@ -1183,9 +1242,9 @@ Referencia: Leteurtre S, et al. PELOD-2: an update of the PELOD pediatric organ 
         function limparDados() {
             const campos = [
                 'nome', 'data_nascimento', 'data_avaliacao', 
-                'hora_avaliacao', 'idade_completa', 'dia_uti', 'gcs',
-                'map', 'lactate', 'pao2', 'fio2', 'paco2',
-                'creatinine', 'platelets', 'wbc', 'obs'
+                'hora_avaliacao', 'idade_completa', 'faixa_etaria', 'dia_uti', 'gcs',
+                'pupilas', 'map', 'lactate', 'pao2', 'fio2', 'paco2', 'ventilacao',
+                'creatinine', 'creat_unidade', 'platelets', 'wbc', 'obs'
             ];
 
             campos.forEach(campo => {
@@ -1201,6 +1260,7 @@ Referencia: Leteurtre S, et al. PELOD-2: an update of the PELOD pediatric organ 
             document.getElementById('probabilidade_mortalidade').textContent = '-';
             document.getElementById('indicador_risco').innerHTML = '';
             document.getElementById('breakdown_table').innerHTML = '';
+            ultimoResultado = null;
         }
 
         // Event listeners

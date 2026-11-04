@@ -1274,25 +1274,25 @@
 
             // Exibir resultados
             document.getElementById('nomeDrogaResultado').textContent = droga ? droga.nome : drogaSelecionada;
-            document.getElementById('dosagemCalculada').textContent = dose.toFixed(1);
+            document.getElementById('dosagemCalculada').textContent = formatarNumeroClinico(dose, 1);
             document.getElementById('unidadeDosagem').textContent = unidade;
             
-            const doseTotalTexto = `${resultado.doseTotalMg.toFixed(1)} mg (${resultado.doseTotalMcg.toFixed(1)} mcg)`;
+            const doseTotalTexto = `${formatarNumeroClinico(resultado.doseTotalMg, 1)} mg (${formatarNumeroClinico(resultado.doseTotalMcg, 1)} mcg)`;
             document.getElementById('doseTotalResultado').textContent = doseTotalTexto;
             document.getElementById('unidadeDoseTotal').textContent = '';
             
             // Volume da droga com formatação inteligente
             let volumeFormatado;
             if (resultado.volumeDroga > 0) {
-                volumeFormatado = Number(resultado.volumeDroga).toFixed(1);
+                volumeFormatado = formatarNumeroClinico(resultado.volumeDroga, 1);
             } else {
-                volumeFormatado = "0.0";
+                volumeFormatado = formatarNumeroClinico(resultado.volumeDroga, 1);
             }
             document.getElementById('volumeDrogaResultado').textContent = volumeFormatado;
             
             // Velocidade de infusão
             if (resultado.velocidadeInfusao > 0) {
-                document.getElementById('velocidadeInfusaoResultado').textContent = `${resultado.velocidadeInfusao.toFixed(1)} ml/h`;
+                document.getElementById('velocidadeInfusaoResultado').textContent = `${formatarNumeroClinico(resultado.velocidadeInfusao, 1)} ml/h`;
             } else {
                 document.getElementById('velocidadeInfusaoResultado').textContent = 'Dose unica - nao aplicavel';
             }
@@ -1407,6 +1407,26 @@
                 .replace(/[Ñ]/g, 'N');
         }
 
+        // Exibicao de quantidades clinicas: valores >= 1 mantem casasPadrao decimais;
+        // valores com |v| < 1 usam 3 algarismos significativos (sem zeros finais), para que
+        // doses pequenas nunca aparecam como "0.0"/"0.00". Zero exato -> "0". Nao altera calculos.
+        function formatarNumeroClinico(valor, casasPadrao) {
+            if (valor === null || valor === undefined || valor === '') {
+                return 'n/a';
+            }
+            const numero = Number(valor);
+            if (!Number.isFinite(numero)) {
+                return String(valor);
+            }
+            if (numero === 0) {
+                return '0';
+            }
+            if (Math.abs(numero) >= 1) {
+                return numero.toFixed(casasPadrao);
+            }
+            return String(Number(numero.toPrecision(3)));
+        }
+
         function formatarNumero(valor) {
             if (valor === null || valor === undefined || valor === '') {
                 return 'n/a';
@@ -1446,16 +1466,16 @@
                 
                 relatorio += `\ndroga utilizada:\n`;
                 relatorio += `1. nome da droga: ${removerAcentos(calculo.droga)}\n`;
-                relatorio += `2. dosagem escolhida: ${formatarNumero(calculo.dose)} ${removerAcentos(calculo.unidade)}\n`;
-                relatorio += `3. dose total no tempo escolhido: ${formatarNumero(calculo.doseTotalMg)} mg (${formatarNumero(calculo.doseTotalMcg)} mcg)\n`;
-                relatorio += `4. volume da droga: ${formatarNumero(calculo.volumeDroga)} ml\n`;
-                relatorio += `5. velocidade de infusao: ${formatarNumero(calculo.velocidade)} ml/h\n`;
+                relatorio += `2. dosagem escolhida: ${formatarNumeroClinico(calculo.dose, 1)} ${removerAcentos(calculo.unidade)}\n`;
+                relatorio += `3. dose total no tempo escolhido: ${formatarNumeroClinico(calculo.doseTotalMg, 1)} mg (${formatarNumeroClinico(calculo.doseTotalMcg, 1)} mcg)\n`;
+                relatorio += `4. volume da droga: ${formatarNumeroClinico(calculo.volumeDroga, 1)} ml\n`;
+                relatorio += `5. velocidade de infusao: ${formatarNumeroClinico(calculo.velocidade, 1)} ml/h\n`;
                 relatorio += `6. informacoes da droga: ${removerAcentos(calculo.observacoes)}\n\n`;
                 relatorio += `detalhes tecnicos:\n`;
                 relatorio += `- apresentacao: ${removerAcentos(calculo.apresentacao)}\n`;
-                relatorio += `- volume de infusao: ${formatarNumero(calculo.volume)} ml\n`;
+                relatorio += `- volume de infusao: ${formatarNumeroClinico(calculo.volume, 1)} ml\n`;
                 relatorio += `- tempo de infusao: ${formatarNumero(calculo.tempoInfusao)} horas\n`;
-                relatorio += `- velocidade de infusao: ${formatarNumero(calculo.velocidade)} ml/h\n\n`;
+                relatorio += `- velocidade de infusao: ${formatarNumeroClinico(calculo.velocidade, 1)} ml/h\n\n`;
                 relatorio += `----------------------------------------\n\n`;
             });
 

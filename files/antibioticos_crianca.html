@@ -1420,6 +1420,33 @@
                 };
 
                 // Função para calcular superfície corporal
+                // Exibicao de quantidades clinicas (dose, volume, velocidade, concentracao).
+                // Valores >= 1: mantem casasPadrao decimais (formato original da pagina).
+                // Valores < 1: 3 algarismos significativos, sem zeros a direita (0.017, 0.15, 0.00025).
+                // Zero exato: "0". Nunca exibe "0.0" para valor nao nulo. Nao altera nenhum calculo.
+                function formatarNumeroClinico(valor, casasPadrao = 1) {
+                    if (valor === null || valor === undefined || valor === '') {
+                        return 'n/a';
+                    }
+                    const numero = Number(valor);
+                    if (!Number.isFinite(numero)) {
+                        return String(valor);
+                    }
+                    if (numero === 0) {
+                        return '0';
+                    }
+                    if (Math.abs(numero) >= 1) {
+                        return numero.toFixed(casasPadrao);
+                    }
+                    const ALGARISMOS_SIGNIFICATIVOS = 3;
+                    // Valor que arredonda para 1 (ex.: 0.99999 por erro de ponto flutuante) segue o formato de >= 1.
+                    if (Math.abs(Number(numero.toPrecision(ALGARISMOS_SIGNIFICATIVOS))) >= 1) {
+                        return numero.toFixed(casasPadrao);
+                    }
+                    const casas = Math.min(20, ALGARISMOS_SIGNIFICATIVOS - 1 - Math.floor(Math.log10(Math.abs(numero))));
+                    return numero.toFixed(casas).replace(/\.?0+$/, '');
+                }
+
                 function calcularSuperficieCorporal(peso, altura) {
                     return Math.sqrt((peso * altura) / 3600);
                 }
@@ -1536,15 +1563,15 @@
                     console.log('Cálculos finais:', { dosePorPeso, doseTotal, intervalo, dosesPorDia, doseDiaria });
 
                     // Exibir resultados
-                    document.getElementById('doseValue').textContent = doseTotal.toFixed(1);
+                    document.getElementById('doseValue').textContent = formatarNumeroClinico(doseTotal);
                     document.getElementById('doseUnit').textContent = antibioticoData.unidade.includes('UI') ? 'UI' : 'mg';
 
                     document.getElementById('intervaloValue').textContent = intervalo;
 
-                    document.getElementById('doseDiariaValue').textContent = doseDiaria.toFixed(1);
+                    document.getElementById('doseDiariaValue').textContent = formatarNumeroClinico(doseDiaria);
                     document.getElementById('doseDiariaUnit').textContent = antibioticoData.unidade.includes('UI') ? 'UI/dia' : 'mg/dia';
 
-                    document.getElementById('dosePesoValue').textContent = dosePorPeso.toFixed(1);
+                    document.getElementById('dosePesoValue').textContent = formatarNumeroClinico(dosePorPeso);
                     document.getElementById('dosePesoUnit').textContent = antibioticoData.unidade.includes('UI') ? 'UI/kg/dose' : 'mg/kg/dose';
 
                     // Exibir observações
@@ -1692,11 +1719,11 @@ MEDICAMENTO:
 - Indicacao: ${indicacao}
 
 DOSAGEM CALCULADA:
-- Dose por peso: ${dosePorPeso.toFixed(1)} ${unidadeDose}
-- Dose total por aplicacao: ${doseTotal.toFixed(1)} ${unidade}
+- Dose por peso: ${formatarNumeroClinico(dosePorPeso)} ${unidadeDose}
+- Dose total por aplicacao: ${formatarNumeroClinico(doseTotal)} ${unidade}
 - Intervalo entre doses: ${intervalo} horas
-- Numero de doses por dia: ${dosesPorDia.toFixed(1)}
-- Dose diaria total: ${doseDiaria.toFixed(1)} ${unidadeDiaria}
+- Numero de doses por dia: ${formatarNumeroClinico(dosesPorDia)}
+- Dose diaria total: ${formatarNumeroClinico(doseDiaria)} ${unidadeDiaria}
 
 FUNCAO RENAL:
 - Clearance de creatinina: ${clearance.toFixed(1)} ml/min

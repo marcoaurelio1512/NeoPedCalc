@@ -454,6 +454,16 @@
             botoes.style.display = "block";
         }
 
+        // Schwartz (beira-leito): CrCl (mL/min/1,73 m²) = k × altura/comprimento (cm) / creatinina (mg/dL).
+        // Fonte única para a tela e o relatório copiado.
+        const K_SCHWARTZ = { crianca: 0.413, neonatal: 0.33 };
+
+        function calcularClearanceSchwartz(faixa, alturaCm, creatininaMgDl) {
+            const k = K_SCHWARTZ[faixa];
+            if (!k) return 0;
+            return (k * alturaCm) / creatininaMgDl;
+        }
+
         function calcular() {
             const faixa = document.getElementById("faixaEtaria").value;
             const cpeak = parseFloat(document.getElementById("cpeak").value);
@@ -471,11 +481,7 @@
                 return;
             }
 
-            if (faixa === "crianca") {
-                clearance = (0.413 * altura) / creat;
-            } else if (faixa === "neonatal") {
-                clearance = (0.33 * altura) / creat;
-            }
+            clearance = calcularClearanceSchwartz(faixa, altura, creat);
 
             const kel = Math.log(cpeak / ctrough) / t;
             const vd = faixa === "neonatal" ? 0.9 * parseFloat(document.getElementById("peso").value) : 0.7 * clearance;
@@ -484,7 +490,7 @@
             document.getElementById("resultado").innerHTML = `
                 <div class="results">
                     <h3>Resultados</h3>
-                    <div class="result-item"><strong>Clearance estimado:</strong> ${clearance.toFixed(2)} mL/min</div>
+                    <div class="result-item"><strong>Clearance estimado:</strong> ${clearance.toFixed(2)} mL/min/1,73 m²</div>
                     <div class="result-item"><strong>Volume de distribuicao (Vd):</strong> ${vd.toFixed(2)} L</div>
                     <div class="result-item"><strong>Taxa de eliminacao (kel):</strong> ${kel.toFixed(4)} 1/h</div>
                     <div class="result-item"><strong>AUC estimada:</strong> ${auc.toFixed(2)} mg·h/L</div>
@@ -496,7 +502,7 @@ ${interpretarResultados(clearance, vd, kel, auc)}
         function interpretarResultados(clearance, vd, kel, auc) {
             let interpretacao = '<div class="interpretation"><h3>Interpretacao clinica</h3><ul>';
 
-            interpretacao += `<li><strong>Clearance (${clearance.toFixed(2)} mL/min):</strong> `;
+            interpretacao += `<li><strong>Clearance (${clearance.toFixed(2)} mL/min/1,73 m²):</strong> `;
             if (clearance < 30) {
                 interpretacao += "Funcao renal reduzida. Pode haver risco de acumulo de vancomicina.<br><em>Justificativa:</em> Valores baixos de clearance indicam disfuncao renal significativa.";
             } else {
@@ -554,7 +560,7 @@ ${interpretarResultados(clearance, vd, kel, auc)}
                 const altura = parseFloat(document.getElementById("altura").value);
                 const peso = parseFloat(document.getElementById("peso").value);
                 const creat = parseFloat(document.getElementById("creatinina").value);
-                clearance = (0.413 * altura) / creat;
+                clearance = calcularClearanceSchwartz(faixa, altura, creat);
 
                 dadosPaciente = `DADOS DO PACIENTE:
 - Faixa etaria: Crianca
@@ -565,13 +571,15 @@ ${interpretarResultados(clearance, vd, kel, auc)}
             } else if (faixa === "neonatal") {
                 const idadeDias = parseFloat(document.getElementById("idadeDias").value);
                 const peso = parseFloat(document.getElementById("peso").value);
+                const comprimento = parseFloat(document.getElementById("altura").value);
                 const creat = parseFloat(document.getElementById("creatinina").value);
-                clearance = (0.34 * peso * 1000) / creat;
+                clearance = calcularClearanceSchwartz(faixa, comprimento, creat);
 
                 dadosPaciente = `DADOS DO PACIENTE:
 - Faixa etaria: Recem-nascido
 - Idade pos-natal: ${idadeDias.toFixed(1)} dias
 - Peso: ${peso.toFixed(3)} kg
+- Comprimento: ${comprimento.toFixed(1)} cm
 - Creatinina serica: ${creat.toFixed(2)} mg/dL`;
             }
 
@@ -623,7 +631,7 @@ PARAMETROS FARMACOCINETICOS:
 - Intervalo de dosagem: ${tau.toFixed(0)} horas
 
 RESULTADOS CALCULADOS:
-- Clearance estimado: ${clearance.toFixed(2)} mL/min
+- Clearance estimado: ${clearance.toFixed(2)} mL/min/1,73 m²
 - Volume de distribuicao (Vd): ${vd.toFixed(2)} L
 - Taxa de eliminacao (kel): ${kel.toFixed(4)} 1/h
 - AUC estimada: ${auc.toFixed(2)} mg·h/L
@@ -692,7 +700,8 @@ Gerado por: NeoPedCalc - VancoCalc
                 <div class="formula-box">
                     <strong>1. Clearance (CL):</strong><br>
                     Criança: CL = (0.413 × Altura) / Creatinina<br>
-                    Neonato: CL = (0.34 × Peso × 1000) / Creatinina<br><br>
+                    Neonato: CL = (0.33 × Comprimento) / Creatinina<br>
+                    (Schwartz; altura/comprimento em cm, creatinina em mg/dL; resultado em mL/min/1,73 m²)<br><br>
 
                     <strong>2. Taxa de Eliminação (kel):</strong><br>
                     kel = ln(Cpico / Cvale) / Tempo<br><br>
@@ -711,7 +720,7 @@ Gerado por: NeoPedCalc - VancoCalc
                     <li><strong>Preencha os dados do paciente:</strong>
                         <ul>
                             <li>Criança: Idade (anos), Altura (cm), Peso (kg), Creatinina sérica (mg/dL)</li>
-                            <li>Neonato: Idade pós-natal (dias), Peso (kg), Creatinina sérica (mg/dL)</li>
+                            <li>Neonato: Idade pós-natal (dias), Peso (kg), Comprimento (cm), Creatinina sérica (mg/dL)</li>
                         </ul>
                     </li>
                     <li><strong>Informe os níveis séricos:</strong>
@@ -729,8 +738,8 @@ Gerado por: NeoPedCalc - VancoCalc
                 <ul>
                     <li><strong>Clearance (CL):</strong> Capacidade de eliminar a vancomicina
                         <ul>
-                            <li>CL < 30 mL/min: Função renal reduzida - risco de acúmulo</li>
-                            <li>CL ≥ 30 mL/min: Função renal preservada</li>
+                            <li>CL < 30 mL/min/1,73 m²: Função renal reduzida - risco de acúmulo</li>
+                            <li>CL ≥ 30 mL/min/1,73 m²: Função renal preservada</li>
                         </ul>
                     </li>
                     <li><strong>Volume de Distribuição (Vd):</strong> Espaço de distribuição do fármaco

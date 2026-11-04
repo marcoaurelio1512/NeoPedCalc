@@ -61,11 +61,8 @@
     'mmol/L (pior valor do dia)': ['mmol/L (worst value of the day)', 'mmol/L (peor valor del día)'],
     'Respiratório': ['Respiratory', 'Respiratorio'],
     'fração (maior valor do dia)': ['fraction (highest value of the day)', 'fracción (mayor valor del día)'],
-    'Renal / Hematológico': ['Renal / Hematologic', 'Renal / Hematológico'],
     'Creatinina': ['Creatinine', 'Creatinina'],
-    'mg/dL (pior valor do dia)': ['mg/dL (worst value of the day)', 'mg/dL (peor valor del día)'],
     'Plaquetas': ['Platelets', 'Plaquetas'],
-    '10³/µL (pior valor do dia)': ['10³/µL (worst value of the day)', '10³/µL (peor valor del día)'],
     'Leucócitos': ['White blood cells', 'Leucocitos'],
     'Observações': ['Notes', 'Observaciones'],
     'Sedação? Ventilação? Contexto clínico': ['Sedation? Ventilation? Clinical context', '¿Sedación? ¿Ventilación? Contexto clínico'],
@@ -74,27 +71,11 @@
 
     // Resultados
     'Resultados': ['Results', 'Resultados'],
-    'PELOD-2 - Escore Total:': ['PELOD-2 - Total Score:', 'PELOD-2 - Puntuación total:'],
-    'Valor do modelo logístico (referência Leteurtre et al., não predição individual):': [
-      'Logistic model value (Leteurtre et al. reference, not an individual prediction):',
-      'Valor del modelo logístico (referencia Leteurtre et al., no es una predicción individual):'
-    ],
     'ponto': ['point', 'punto'],
     'pontos': ['points', 'puntos'],
-    'Faixa baixa do total (0–4)': ['Low total range (0–4)', 'Rango bajo del total (0–4)'],
-    'Faixa intermediária (5–9)': ['Intermediate range (5–9)', 'Rango intermedio (5–9)'],
-    'Faixa alta do total (≥10)': ['High total range (≥10)', 'Rango alto del total (≥10)'],
     'Sistema': ['System', 'Sistema'],
     'Valor (Pior do Dia)': ['Value (Worst of the Day)', 'Valor (peor del día)'],
     'Pontos': ['Points', 'Puntos'],
-    'Neurológico - GCS': ['Neurologic - GCS', 'Neurológico - GCS'],
-    'Cardiovascular - PAM': ['Cardiovascular - MAP', 'Cardiovascular - PAM'],
-    'Cardiovascular - Lactato': ['Cardiovascular - Lactate', 'Cardiovascular - Lactato'],
-    'Respiratório - P/F': ['Respiratory - P/F', 'Respiratorio - P/F'],
-    'Respiratório - PaCO₂': ['Respiratory - PaCO₂', 'Respiratorio - PaCO₂'],
-    'Renal - Creatinina': ['Renal - Creatinine', 'Renal - Creatinina'],
-    'Hematológico - Plaquetas': ['Hematologic - Platelets', 'Hematológico - Plaquetas'],
-    'Hematológico - Leucócitos': ['Hematologic - White blood cells', 'Hematológico - Leucocitos'],
     'Texto informativo para prontuário eletrônico (revisar)': ['Informational text for the electronic health record (review)', 'Texto informativo para la historia clínica electrónica (revisar)'],
     'Gerar e copiar texto informativo': ['Generate and copy informational text', 'Generar y copiar texto informativo'],
     'NeoPedCalc — uso educacional e informativo. Não prescreve tratamento nem substitui julgamento clínico ou critérios institucionais de gravidade.': [
@@ -123,27 +104,6 @@
     'curva populacional de referência': ['population reference curve', 'curva poblacional de referencia'],
     ', não uma “chance” individual do paciente.': [', not an individual “chance” for the patient.', ', no una “probabilidad” individual del paciente.'],
     'não uma “chance” individual do paciente.': ['not an individual “chance” for the patient.', 'no una “probabilidad” individual del paciente.'],
-    'O que esta implementação soma': ['What this implementation adds up', 'Qué suma esta implementación'],
-    'Total = pontos neurológicos + cardiovasculares + respiratórios + renais + hematológicos': [
-      'Total = neurologic + cardiovascular + respiratory + renal + hematologic points',
-      'Total = puntos neurológicos + cardiovasculares + respiratorios + renales + hematológicos'
-    ],
-    '(conforme tabelas da publicação, espelhadas nos campos da tela).': ['(according to the publication tables, mirrored in the fields on screen).', '(según las tablas de la publicación, reflejadas en los campos de la pantalla).'],
-    'Domínios presentes nesta ferramenta:': ['Domains included in this tool:', 'Dominios presentes en esta herramienta:'],
-    '• Neurológico: GCS (pior do dia; quanto menor, mais pontos)': ['• Neurologic: GCS (worst of the day; lower means more points)', '• Neurológico: GCS (peor del día; cuanto menor, más puntos)'],
-    '• Cardiovascular: PAM (mmHg) e lactato (mmol/L)': ['• Cardiovascular: MAP (mmHg) and lactate (mmol/L)', '• Cardiovascular: PAM (mmHg) y lactato (mmol/L)'],
-    '• Respiratório: razão PaO₂/FiO₂ e PaCO₂': ['• Respiratory: PaO₂/FiO₂ ratio and PaCO₂', '• Respiratorio: cociente PaO₂/FiO₂ y PaCO₂'],
-    '• Renal: creatinina (mg/dL)': ['• Renal: creatinine (mg/dL)', '• Renal: creatinina (mg/dL)'],
-    '• Hematológico: plaquetas e leucócitos (10³/µL)': ['• Hematologic: platelets and white blood cells (10³/µL)', '• Hematológico: plaquetas y leucocitos (10³/µL)'],
-    'Total máximo nesta página:': ['Maximum total on this page:', 'Total máximo en esta página:'],
-    'até': ['up to', 'hasta'],
-    '21 pontos': ['21 points', '21 puntos'],
-    '(soma dos máximos por domínio nesta configuração).': ['(sum of the maximums per domain in this configuration).', '(suma de los máximos por dominio en esta configuración).'],
-    'Observação:': ['Note:', 'Observación:'],
-    'O PELOD-2 completo no artigo pode incluir outros critérios em contextos específicos; confira sempre a fonte original e o protocolo local.': [
-      'The full PELOD-2 in the article may include other criteria in specific contexts; always check the original source and the local protocol.',
-      'El PELOD-2 completo del artículo puede incluir otros criterios en contextos específicos; consulte siempre la fuente original y el protocolo local.'
-    ],
     'Instruções de uso': ['Instructions for use', 'Instrucciones de uso'],
     'Preencha os piores valores de cada parâmetro nas últimas 24 h (ou janela definida pelo seu serviço)': [
       'Enter the worst values of each parameter over the last 24 h (or the window defined by your unit)',
@@ -156,32 +116,10 @@
     'Informe FiO₂ como fração, com ponto decimal (ex.: 0.6 para 60%); a vírgula separa valores da lista': ['Enter FiO₂ as a fraction with a decimal point (e.g., 0.6 for 60%); commas separate list values', 'Indique la FiO₂ como fracción con punto decimal (ej.: 0.6 para 60%); la coma separa los valores de una lista'],
     'FiO₂ deve ser uma fração entre 0.21 e 1.0, com ponto decimal (ex.: 0.6 para 60%). A vírgula separa valores de uma lista (ex.: 0.4,0.6).': ['FiO₂ must be a fraction between 0.21 and 1.0 with a decimal point (e.g., 0.6 for 60%). Commas separate list values (e.g., 0.4,0.6).', 'La FiO₂ debe ser una fracción entre 0.21 y 1.0 con punto decimal (ej.: 0.6 para 60%). La coma separa los valores de una lista (ej.: 0.4,0.6).'],
     'Clique em': ['Click', 'Haga clic en'],
-    'para ver total, tabela de contribuição e valor do modelo logístico': [
-      'to see the total, the contribution table and the logistic model value',
-      'para ver el total, la tabla de contribución y el valor del modelo logístico'
-    ],
     'Use': ['Use', 'Use'],
     'Copiar texto': ['Copy text', 'Copiar texto'],
     'apenas como rascunho educativo — revise antes de arquivar': ['only as an educational draft — review before filing', 'solo como borrador educativo — revise antes de archivar'],
-    'Faixas de total (apenas organização visual nesta tela)': ['Total ranges (visual organization on this screen only)', 'Rangos del total (solo organización visual en esta pantalla)'],
-    'Esta página colore o resultado em três faixas para facilitar leitura —': [
-      'This page colors the result in three ranges for easier reading —',
-      'Esta página colorea el resultado en tres rangos para facilitar la lectura —'
-    ],
-    'não definem prognóstico sozinhas': ['they do not define prognosis on their own', 'no definen el pronóstico por sí solos'],
-    'faixa baixa do total calculado aqui': ['low range of the total calculated here', 'rango bajo del total calculado aquí'],
-    'faixa intermediária': ['intermediate range', 'rango intermedio'],
-    'faixa alta do total — integrar com exame clínico, suporte e diretrizes institucionais': [
-      'high range of the total — integrate with clinical examination, support and institutional guidelines',
-      'rango alto del total — integrar con la exploración clínica, el soporte y las guías institucionales'
-    ],
     'Sobre o percentual exibido': ['About the percentage shown', 'Sobre el porcentaje mostrado'],
-    'logit = α + β × escore': ['logit = α + β × score', 'logit = α + β × puntuación'],
-    'O valor em % resulta da fórmula': ['The % value results from the formula', 'El valor en % resulta de la fórmula'],
-    'com coeficientes da referência embutidos neste código. Interpretação adequada exige contexto epidemiológico e clínico;': [
-      'with reference coefficients embedded in this code. Proper interpretation requires epidemiologic and clinical context;',
-      'con coeficientes de la referencia incorporados en este código. Una interpretación adecuada exige contexto epidemiológico y clínico;'
-    ],
     'não use como único critério de decisão terapêutica.': ['do not use it as the sole criterion for therapeutic decisions.', 'no lo use como único criterio de decisión terapéutica.'],
     'Considerações importantes': ['Important considerations', 'Consideraciones importantes'],
     'Qualidade e sincronia dos exames influenciam o total': ['The quality and timing of tests influence the total', 'La calidad y la sincronía de las pruebas influyen en el total'],
@@ -228,21 +166,146 @@
     'PAM': ['MAP', 'PAM'],
     'Leucocitos': ['White blood cells', 'Leucocitos'],
     'RESULTADOS NESTA SESSAO': ['RESULTS IN THIS SESSION', 'RESULTADOS EN ESTA SESIÓN'],
-    '- Total PELOD-2 (soma desta implementacao)': ['- PELOD-2 total (sum in this implementation)', '- Total PELOD-2 (suma de esta implementación)'],
-    '- Valor do modelo logistico (referencia)': ['- Logistic model value (reference)', '- Valor del modelo logístico (referencia)'],
-    'Faixa descritiva na interface': ['Descriptive range in the interface', 'Rango descriptivo en la interfaz'],
     'CONTEXTO EDUCATIVO': ['EDUCATIONAL CONTEXT', 'CONTEXTO EDUCATIVO'],
     'O PELOD-2 quantifica disfuncao organica em criancas criticas segundo criterios publicados. Totais maiores refletem maior pontuacao pelos limiares da tabela; conduta e prognostico clinico dependem do contexto e do protocolo local.': [
       'PELOD-2 quantifies organ dysfunction in critically ill children according to published criteria. Higher totals reflect higher scores by the table thresholds; clinical management and prognosis depend on the context and the local protocol.',
       'El PELOD-2 cuantifica la disfunción orgánica en niños críticos según criterios publicados. Los totales más altos reflejan una mayor puntuación según los umbrales de la tabla; la conducta y el pronóstico clínico dependen del contexto y del protocolo local.'
     ],
-    'TABELA DE PONTOS (espelhada neste codigo)': ['POINTS TABLE (mirrored in this code)', 'TABLA DE PUNTOS (reflejada en este código)'],
-    'Lactato: ≥4,0=2; 2,5-3,9=1; <2,5=0 mmol/L': ['Lactate: ≥4.0=2; 2.5-3.9=1; <2.5=0 mmol/L', 'Lactato: ≥4,0=2; 2,5-3,9=1; <2,5=0 mmol/L'],
-    '- PaCO2: 51-70=1; 71-90=2; >90=3 mmHg (≤50=0 nesta implementacao)': ['- PaCO2: 51-70=1; 71-90=2; >90=3 mmHg (≤50=0 in this implementation)', '- PaCO2: 51-70=1; 71-90=2; >90=3 mmHg (≤50=0 en esta implementación)'],
-    'Creatinina: ≥2,0=2; 1,0-1,99=1; <1,0=0 mg/dL': ['Creatinine: ≥2.0=2; 1.0-1.99=1; <1.0=0 mg/dL', 'Creatinina: ≥2,0=2; 1,0-1,99=1; <1,0=0 mg/dL'],
-    '- Plaquetas: <50=3; 50-99=2; 100-149=1; ≥150=0 (10³/uL)': ['- Platelets: <50=3; 50-99=2; 100-149=1; ≥150=0 (10³/uL)', '- Plaquetas: <50=3; 50-99=2; 100-149=1; ≥150=0 (10³/uL)'],
-    '- Leucocitos: <3=2; >25=1; caso contrario=0 (10³/uL)': ['- White blood cells: <3=2; >25=1; otherwise=0 (10³/uL)', '- Leucocitos: <3=2; >25=1; en caso contrario=0 (10³/uL)'],
-    'Referencia': ['Reference', 'Referencia']
+    'Referencia': ['Reference', 'Referencia'],
+
+    // PELOD-2 publicado (Leteurtre 2013) — campos, resultado e modal
+    'Faixa etária (para PAM e creatinina)': ['Age group (for MAP and creatinine)', 'Grupo de edad (para PAM y creatinina)'],
+    'Selecione': ['Select', 'Seleccione'],
+    '0 a < 1 mês': ['0 to < 1 month', '0 a < 1 mes'],
+    '1–11 meses': ['1–11 months', '1–11 meses'],
+    '12–23 meses': ['12–23 months', '12–23 meses'],
+    '24–59 meses': ['24–59 months', '24–59 meses'],
+    '60–143 meses': ['60–143 months', '60–143 meses'],
+    '≥ 144 meses': ['≥ 144 months', '≥ 144 meses'],
+    'preenchida pela data de nascimento; ajuste se necessário': ['filled from the date of birth; adjust if needed', 'completado a partir de la fecha de nacimiento; ajústelo si es necesario'],
+    'Reação pupilar': ['Pupillary reaction', 'Reacción pupilar'],
+    'Ambas reativas': ['Both reactive', 'Ambas reactivas'],
+    'Ambas fixas': ['Both fixed', 'Ambas fijas'],
+    'pupilas fixas bilateralmente pontuam 5': ['bilaterally fixed pupils score 5', 'las pupilas fijas bilaterales puntúan 5'],
+    'Ventilação invasiva': ['Invasive ventilation', 'Ventilación invasiva'],
+    'Não': ['No', 'No'],
+    'Sim': ['Yes', 'Sí'],
+    'ventilação mecânica invasiva (intubação ou traqueostomia)': ['invasive mechanical ventilation (intubation or tracheostomy)', 'ventilación mecánica invasiva (intubación o traqueostomía)'],
+    'Renal': ['Renal', 'Renal'],
+    'Hematológico': ['Hematologic', 'Hematológico'],
+    'maior valor do dia, na unidade escolhida abaixo': ['highest value of the day, in the unit selected below', 'mayor valor del día, en la unidad elegida abajo'],
+    'Unidade da creatinina': ['Creatinine unit', 'Unidad de la creatinina'],
+    'mg/dL (convertida: × 88,4 = µmol/L)': ['mg/dL (converted: × 88.4 = µmol/L)', 'mg/dL (convertida: × 88,4 = µmol/L)'],
+    '×10⁹/L (= 10³/µL; pior valor do dia)': ['×10⁹/L (= 10³/µL; worst value of the day)', '×10⁹/L (= 10³/µL; peor valor del día)'],
+    'PELOD-2 - Escore Total (0–33):': ['PELOD-2 - Total Score (0–33):', 'PELOD-2 - Puntuación total (0–33):'],
+    'Probabilidade de óbito pelo modelo de Leteurtre 2013 (referência populacional, não predição individual):': [
+      'Probability of death from the Leteurtre 2013 model (population reference, not an individual prediction):',
+      'Probabilidad de muerte según el modelo de Leteurtre 2013 (referencia poblacional, no es una predicción individual):'
+    ],
+    'Faixa etária usada': ['Age group used', 'Grupo de edad utilizado'],
+    'Não informados (contam 0 ponto)': ['Not entered (scored as 0 points)', 'No informados (cuentan 0 puntos)'],
+    'Variável': ['Variable', 'Variable'],
+    'Glasgow': ['Glasgow', 'Glasgow'],
+    'PaO₂/FiO₂': ['PaO₂/FiO₂', 'PaO₂/FiO₂'],
+    'Glasgow deve estar entre 3 e 15.': ['Glasgow must be between 3 and 15.', 'El Glasgow debe estar entre 3 y 15.'],
+    'Informe PaO₂ e FiO₂ juntos para calcular a relação PaO₂/FiO₂.': ['Enter PaO₂ and FiO₂ together to calculate the PaO₂/FiO₂ ratio.', 'Introduzca la PaO₂ y la FiO₂ juntas para calcular el cociente PaO₂/FiO₂.'],
+    'Informe a data de nascimento ou escolha a faixa etária: os limiares de PAM e creatinina dependem da idade.': [
+      'Enter the date of birth or select the age group: the MAP and creatinine thresholds depend on age.',
+      'Introduzca la fecha de nacimiento o elija el grupo de edad: los umbrales de PAM y creatinina dependen de la edad.'
+    ],
+    'Valores laboratoriais e PAM não podem ser negativos.': ['Laboratory values and MAP cannot be negative.', 'Los valores de laboratorio y la PAM no pueden ser negativos.'],
+    'Modelo implementado (PELOD-2 publicado)': ['Implemented model (published PELOD-2)', 'Modelo implementado (PELOD-2 publicado)'],
+    'Total = pontos neurológicos + cardiovasculares + renais + respiratórios + hematológicos': [
+      'Total = neurologic + cardiovascular + renal + respiratory + hematologic points',
+      'Total = puntos neurológicos + cardiovasculares + renales + respiratorios + hematológicos'
+    ],
+    '(10 variáveis, total de 0 a 33 pontos; Leteurtre et al., 2013).': ['(10 variables, total 0 to 33 points; Leteurtre et al., 2013).', '(10 variables, total de 0 a 33 puntos; Leteurtre et al., 2013).'],
+    '• Glasgow: ≥ 11 = 0; 5–10 = 1; 3–4 = 4': ['• Glasgow Coma Score: ≥ 11 = 0; 5–10 = 1; 3–4 = 4', '• Glasgow: ≥ 11 = 0; 5–10 = 1; 3–4 = 4'],
+    '• Reação pupilar: ambas reativas = 0; ambas fixas = 5': ['• Pupillary reaction: both reactive = 0; both fixed = 5', '• Reacción pupilar: ambas reactivas = 0; ambas fijas = 5'],
+    '• Lactato (mmol/L): < 5,0 = 0; 5,0–10,9 = 1; ≥ 11,0 = 4': ['• Lactatemia (mmol/L): < 5.0 = 0; 5.0–10.9 = 1; ≥ 11.0 = 4', '• Lactato (mmol/L): < 5,0 = 0; 5,0–10,9 = 1; ≥ 11,0 = 4'],
+    '• PAM (mmHg) por faixa etária, pontos 0 / 2 / 3 / 6:': ['• MAP (mmHg) by age group, points 0 / 2 / 3 / 6:', '• PAM (mmHg) por grupo de edad, puntos 0 / 2 / 3 / 6:'],
+    '0 a < 1 mês: ≥ 46 / 31–45 / 17–30 / ≤ 16': ['0 to < 1 month: ≥ 46 / 31–45 / 17–30 / ≤ 16', '0 a < 1 mes: ≥ 46 / 31–45 / 17–30 / ≤ 16'],
+    '1–11 meses: ≥ 55 / 39–54 / 25–38 / ≤ 24': ['1–11 months: ≥ 55 / 39–54 / 25–38 / ≤ 24', '1–11 meses: ≥ 55 / 39–54 / 25–38 / ≤ 24'],
+    '12–23 meses: ≥ 60 / 44–59 / 31–43 / ≤ 30': ['12–23 months: ≥ 60 / 44–59 / 31–43 / ≤ 30', '12–23 meses: ≥ 60 / 44–59 / 31–43 / ≤ 30'],
+    '24–59 meses: ≥ 62 / 46–61 / 32–45 / ≤ 31': ['24–59 months: ≥ 62 / 46–61 / 32–45 / ≤ 31', '24–59 meses: ≥ 62 / 46–61 / 32–45 / ≤ 31'],
+    '60–143 meses: ≥ 65 / 49–64 / 36–48 / ≤ 35': ['60–143 months: ≥ 65 / 49–64 / 36–48 / ≤ 35', '60–143 meses: ≥ 65 / 49–64 / 36–48 / ≤ 35'],
+    '≥ 144 meses: ≥ 67 / 52–66 / 38–51 / ≤ 37': ['≥ 144 months: ≥ 67 / 52–66 / 38–51 / ≤ 37', '≥ 144 meses: ≥ 67 / 52–66 / 38–51 / ≤ 37'],
+    '• Creatinina (µmol/L) ≥ limiar da idade = 2, abaixo = 0: 0 a < 1 mês ≥ 70; 1–11 meses ≥ 23; 12–23 meses ≥ 35; 24–59 meses ≥ 51; 60–143 meses ≥ 59; ≥ 144 meses ≥ 93 (mg/dL × 88,4 = µmol/L)': [
+      '• Creatinine (µmol/L) ≥ age threshold = 2, below = 0: 0 to < 1 month ≥ 70; 1–11 months ≥ 23; 12–23 months ≥ 35; 24–59 months ≥ 51; 60–143 months ≥ 59; ≥ 144 months ≥ 93 (mg/dL × 88.4 = µmol/L)',
+      '• Creatinina (µmol/L) ≥ umbral de la edad = 2, por debajo = 0: 0 a < 1 mes ≥ 70; 1–11 meses ≥ 23; 12–23 meses ≥ 35; 24–59 meses ≥ 51; 60–143 meses ≥ 59; ≥ 144 meses ≥ 93 (mg/dL × 88,4 = µmol/L)'
+    ],
+    '• PaO₂ (mmHg)/FiO₂: ≥ 61 = 0; ≤ 60 = 2': ['• PaO₂ (mmHg)/FiO₂: ≥ 61 = 0; ≤ 60 = 2', '• PaO₂ (mmHg)/FiO₂: ≥ 61 = 0; ≤ 60 = 2'],
+    '• PaCO₂ (mmHg): ≤ 58 = 0; 59–94 = 1; ≥ 95 = 3': ['• PaCO₂ (mmHg): ≤ 58 = 0; 59–94 = 1; ≥ 95 = 3', '• PaCO₂ (mmHg): ≤ 58 = 0; 59–94 = 1; ≥ 95 = 3'],
+    '• Ventilação invasiva: não = 0; sim = 3': ['• Invasive ventilation: no = 0; yes = 3', '• Ventilación invasiva: no = 0; sí = 3'],
+    '• Leucócitos (×10⁹/L): > 2 = 0; ≤ 2 = 2': ['• WBC count (×10⁹/L): > 2 = 0; ≤ 2 = 2', '• Leucocitos (×10⁹/L): > 2 = 0; ≤ 2 = 2'],
+    '• Plaquetas (×10⁹/L): ≥ 142 = 0; 77–141 = 1; ≤ 76 = 2': ['• Platelets (×10⁹/L): ≥ 142 = 0; 77–141 = 1; ≤ 76 = 2', '• Plaquetas (×10⁹/L): ≥ 142 = 0; 77–141 = 1; ≤ 76 = 2'],
+    'Valores entre faixas inteiras:': ['Values between whole-number ranges:', 'Valores entre rangos enteros:'],
+    'cada faixa começa no seu limite inferior publicado (ex.: PAM 30,5 em neonato pontua como 17–30; PaO₂/FiO₂ 60,5 pontua 0).': [
+      'each range starts at its published lower limit (e.g., MAP 30.5 in a neonate scores as 17–30; PaO₂/FiO₂ 60.5 scores 0).',
+      'cada rango comienza en su límite inferior publicado (ej.: PAM 30,5 en un neonato puntúa como 17–30; PaO₂/FiO₂ 60,5 puntúa 0).'
+    ],
+    'Variável não informada:': ['Variable not entered:', 'Variable no informada:'],
+    'conta 0 ponto e é listada abaixo do resultado.': ['scores 0 points and is listed below the result.', 'cuenta 0 puntos y se indica debajo del resultado.'],
+    'Informe a data de nascimento ou escolha a faixa etária: os limiares de PAM e creatinina dependem da idade': [
+      'Enter the date of birth or select the age group: the MAP and creatinine thresholds depend on age',
+      'Introduzca la fecha de nacimiento o elija el grupo de edad: los umbrales de PAM y creatinina dependen de la edad'
+    ],
+    'Use vírgula para listar vários valores; o sistema escolhe o pior conforme a regra do parâmetro (menor valor para Glasgow, PAM, PaO₂, leucócitos e plaquetas; maior valor para lactato, FiO₂, PaCO₂ e creatinina)': [
+      'Use commas to list several values; the system picks the worst one according to the parameter rule (lowest value for Glasgow, MAP, PaO₂, WBC and platelets; highest value for lactate, FiO₂, PaCO₂ and creatinine)',
+      'Use comas para listar varios valores; el sistema elige el peor según la regla del parámetro (menor valor para Glasgow, PAM, PaO₂, leucocitos y plaquetas; mayor valor para lactato, FiO₂, PaCO₂ y creatinina)'
+    ],
+    'para ver total, tabela de contribuição e probabilidade de óbito do modelo': [
+      'to see the total, the contribution table and the model probability of death',
+      'para ver el total, la tabla de contribución y la probabilidad de muerte del modelo'
+    ],
+    'O valor em % é a probabilidade de óbito estimada pelo modelo da publicação:': [
+      'The % value is the probability of death estimated by the published model:',
+      'El valor en % es la probabilidad de muerte estimada por el modelo de la publicación:'
+    ],
+    'logit = −6,61 + 0,47 × PELOD-2': ['logit = −6.61 + 0.47 × PELOD-2', 'logit = −6,61 + 0,47 × PELOD-2'],
+    'p = 1 / (1 + e^(−logit))': ['p = 1 / (1 + e^(−logit))', 'p = 1 / (1 + e^(−logit))'],
+    '. Descreve a coorte de derivação da publicação (UTIs pediátricas europeias); interpretação adequada exige contexto epidemiológico e clínico;': [
+      '. It describes the publication derivation cohort (European pediatric ICUs); proper interpretation requires epidemiologic and clinical context;',
+      '. Describe la cohorte de derivación de la publicación (UCI pediátricas europeas); una interpretación adecuada exige contexto epidemiológico y clínico;'
+    ],
+    'Descreve a coorte de derivação da publicação (UTIs pediátricas europeias); interpretação adequada exige contexto epidemiológico e clínico;': [
+      'It describes the publication derivation cohort (European pediatric ICUs); proper interpretation requires epidemiologic and clinical context;',
+      'Describe la cohorte de derivación de la publicación (UCI pediátricas europeas); una interpretación adecuada exige contexto epidemiológico y clínico;'
+    ],
+
+    // Relatório copiado — PELOD-2 publicado
+    'Faixa etaria para PAM e creatinina': ['Age group for MAP and creatinine', 'Grupo de edad para PAM y creatinina'],
+    'Faixa etaria para PAM e creatinina: 0 a < 1 mês': ['Age group for MAP and creatinine: 0 to < 1 month', 'Grupo de edad para PAM y creatinina: 0 a < 1 mes'],
+    '(nao informada)': ['(not provided)', '(no informado)'],
+    '- Reacao pupilar: ambas reativas': ['- Pupillary reaction: both reactive', '- Reacción pupilar: ambas reactivas'],
+    '- Reacao pupilar: ambas fixas': ['- Pupillary reaction: both fixed', '- Reacción pupilar: ambas fijas'],
+    'Reacao pupilar': ['Pupillary reaction', 'Reacción pupilar'],
+    '- Ventilacao invasiva: sim': ['- Invasive ventilation: yes', '- Ventilación invasiva: sí'],
+    '- Ventilacao invasiva: nao': ['- Invasive ventilation: no', '- Ventilación invasiva: no'],
+    'Ventilacao invasiva': ['Invasive ventilation', 'Ventilación invasiva'],
+    '- Total PELOD-2 (0-33)': ['- PELOD-2 total (0-33)', '- Total PELOD-2 (0-33)'],
+    '- Probabilidade de obito pelo modelo (logit = -6,61 + 0,47 x PELOD-2)': ['- Model probability of death (logit = -6.61 + 0.47 x PELOD-2)', '- Probabilidad de muerte según el modelo (logit = -6,61 + 0,47 x PELOD-2)'],
+    'Neurologico': ['Neurologic', 'Neurológico'],
+    'Respiratorio': ['Respiratory', 'Respiratorio'],
+    'Hematologico': ['Hematologic', 'Hematológico'],
+    '- (calculo nao realizado)': ['- (calculation not performed)', '- (cálculo no realizado)'],
+    'TABELA DE PONTOS (PELOD-2 publicado, Leteurtre 2013)': ['POINTS TABLE (published PELOD-2, Leteurtre 2013)', 'TABLA DE PUNTOS (PELOD-2 publicado, Leteurtre 2013)'],
+    '- Reacao pupilar: ambas reativas=0; ambas fixas=5': ['- Pupillary reaction: both reactive=0; both fixed=5', '- Reacción pupilar: ambas reactivas=0; ambas fijas=5'],
+    '- Lactato (mmol/L): <5,0=0; 5,0-10,9=1; >=11,0=4': ['- Lactate (mmol/L): <5.0=0; 5.0-10.9=1; >=11.0=4', '- Lactato (mmol/L): <5,0=0; 5,0-10,9=1; >=11,0=4'],
+    '- PAM (mmHg), pontos 0/2/3/6 por faixa etaria:': ['- MAP (mmHg), points 0/2/3/6 by age group:', '- PAM (mmHg), puntos 0/2/3/6 por grupo de edad:'],
+    '0 a <1 mes: >=46 / 31-45 / 17-30 / <=16': ['0 to <1 month: >=46 / 31-45 / 17-30 / <=16', '0 a <1 mes: >=46 / 31-45 / 17-30 / <=16'],
+    '1-11 meses: >=55 / 39-54 / 25-38 / <=24': ['1-11 months: >=55 / 39-54 / 25-38 / <=24', '1-11 meses: >=55 / 39-54 / 25-38 / <=24'],
+    '12-23 meses: >=60 / 44-59 / 31-43 / <=30': ['12-23 months: >=60 / 44-59 / 31-43 / <=30', '12-23 meses: >=60 / 44-59 / 31-43 / <=30'],
+    '24-59 meses: >=62 / 46-61 / 32-45 / <=31': ['24-59 months: >=62 / 46-61 / 32-45 / <=31', '24-59 meses: >=62 / 46-61 / 32-45 / <=31'],
+    '60-143 meses: >=65 / 49-64 / 36-48 / <=35': ['60-143 months: >=65 / 49-64 / 36-48 / <=35', '60-143 meses: >=65 / 49-64 / 36-48 / <=35'],
+    '>=144 meses: >=67 / 52-66 / 38-51 / <=37': ['>=144 months: >=67 / 52-66 / 38-51 / <=37', '>=144 meses: >=67 / 52-66 / 38-51 / <=37'],
+    '- Creatinina (umol/L) >= limiar da idade = 2: <1 mes 70; 1-11 meses 23; 12-23 meses 35; 24-59 meses 51; 60-143 meses 59; >=144 meses 93 (mg/dL x 88,4 = umol/L)': [
+      '- Creatinine (umol/L) >= age threshold = 2: <1 month 70; 1-11 months 23; 12-23 months 35; 24-59 months 51; 60-143 months 59; >=144 months 93 (mg/dL x 88.4 = umol/L)',
+      '- Creatinina (umol/L) >= umbral de la edad = 2: <1 mes 70; 1-11 meses 23; 12-23 meses 35; 24-59 meses 51; 60-143 meses 59; >=144 meses 93 (mg/dL x 88,4 = umol/L)'
+    ],
+    '- Ventilacao invasiva: nao=0; sim=3': ['- Invasive ventilation: no=0; yes=3', '- Ventilación invasiva: no=0; sí=3'],
+    '- Leucocitos (x10^9/L): >2=0; <=2=2': ['- WBC count (x10^9/L): >2=0; <=2=2', '- Leucocitos (x10^9/L): >2=0; <=2=2'],
+    '- Plaquetas (x10^9/L): >=142=0; 77-141=1; <=76=2': ['- Platelets (x10^9/L): >=142=0; 77-141=1; <=76=2', '- Plaquetas (x10^9/L): >=142=0; 77-141=1; <=76=2']
   });
   i18n.registerPatterns([
     // "12 pontos (Dia 3)" — escore total com dia de UTI
