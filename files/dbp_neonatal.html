@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>NeoPedCalc — Critérios de DBP neonatal (educativo)</title>
+    <title>NeoPedCalc — Classificação de DBP (NICHD 2001 e Jensen 2019)</title>
     <style>
         * {
             margin: 0;
@@ -538,6 +538,163 @@
         body {
             overscroll-behavior-x: none;
         }
+
+        /* Classificação dupla (NICHD 2001 × Jensen 2019) */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .metrics-grid .result-card {
+            margin-bottom: 0;
+        }
+
+        .dual-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .class-card {
+            --sev: #6c757d;
+            background: white;
+            border-radius: 8px;
+            padding: 18px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-top: 5px solid var(--sev);
+        }
+
+        .class-card h3 {
+            color: #2c3e50;
+            font-size: 17px;
+            margin-bottom: 8px;
+        }
+
+        .class-tag {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #3730a3;
+            background: #eef2ff;
+            border-radius: 999px;
+            padding: 3px 10px;
+        }
+
+        .class-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--sev);
+            margin: 12px 0 8px;
+        }
+
+        .class-criterion {
+            color: #1f2937;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .class-note {
+            color: #4b5563;
+            font-size: 13px;
+            line-height: 1.45;
+            margin-top: 8px;
+        }
+
+        .sev-none { --sev: #28a745; }
+        .sev-mild { --sev: #0f9d7a; }
+        .sev-mod { --sev: #d9640a; }
+        .sev-severe { --sev: #dc3545; }
+
+        .support-list {
+            display: grid;
+            grid-template-columns: max-content minmax(0, 1fr);
+            gap: 6px 14px;
+            font-size: 14px;
+        }
+
+        .support-list dt {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .support-list dd {
+            color: #374151;
+        }
+
+        .result-box {
+            background: white;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-top: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .result-box h3 {
+            font-size: 16px;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .result-box ul {
+            padding-left: 20px;
+        }
+
+        .result-box li {
+            margin-bottom: 6px;
+        }
+
+        .result-box.alerts {
+            background: #fff3cd;
+            border-left: 4px solid #d9a406;
+        }
+
+        .field-hint {
+            font-size: 13px;
+            color: #4b5563;
+            margin-top: 6px;
+            line-height: 1.45;
+        }
+
+        .check-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: #2c3e50;
+            cursor: pointer;
+        }
+
+        .check-option input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            flex: 0 0 auto;
+        }
+
+        .protocol-table th, .protocol-table td {
+            border: 1px solid #e5e7eb;
+            padding: 8px 10px;
+            text-align: left;
+            vertical-align: top;
+            font-size: 14px;
+            line-height: 1.45;
+        }
+
+        .protocol-table th {
+            background: #f3f4f6;
+            color: #111827;
+        }
+
+        @media (max-width: 768px) {
+            .metrics-grid, .dual-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
     <link rel="stylesheet" href="../css/neoped-responsive.css">
 <link rel="stylesheet" href="../css/neoped-modern.css">
@@ -546,126 +703,211 @@
     <div class="app-viewport">
         <div class="app-shell">
             <div class="container">
-                <div class="header">
-                    <h1>DBP neonatal — critérios (Jobe/Bancalari, uso educativo)</h1>
-                    <p>Ferramenta para <strong>estudo e registro sintético</strong> com base nos critérios que você informa. <strong>Não é diagnóstico médico</strong> — confirme com radiografia, evolução clínica e definições atualizadas da sua instituição.</p>
+                <header class="header">
+                    <h1>DBP neonatal — NICHD 2001 e Jensen 2019</h1>
+                    <p>Classificação da displasia broncopulmonar conforme o Protocolo Clínico de Displasia Broncopulmonar da UTI neonatal (versão para validação institucional, out/2026).</p>
+                    <p><strong>Não é diagnóstico médico</strong> — confirme com a evolução clínica e a equipe assistente.</p>
                     <div class="header-actions">
                         <button type="button" class="btn-info" onclick="abrirModal()">Como usar</button>
                     </div>
-                </div>
+                </header>
 
-                <div class="form-container">
-                    <form id="dbpForm">
+                <main class="form-container">
+                    <form id="dbpForm" novalidate>
                         <div class="form-group">
                             <label for="nome">Nome do Paciente:</label>
                             <input type="text" id="nome" placeholder="Ex: João Silva">
                         </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="dataNascimento">Data de Nascimento:</label>
-                        <input type="date" id="dataNascimento" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="idadeGestacional">Idade Gestacional ao Nascimento (semanas):</label>
-                        <input type="number" id="idadeGestacional" step="0.1" min="22" max="42" placeholder="Ex: 28.5" required>
-                    </div>
-                </div>
-
-                <div class="criteria-section">
-                    <h3>Critério 1: Dependência de Oxigênio aos 28 dias</h3>
-                    <div class="form-group">
-                        <label>O RN era dependente de O2 suplementar aos 28 dias de vida?</label>
-                        <div class="radio-group">
-                            <div class="radio-option" data-value="sim">
-                                <input type="radio" name="dependenciaO2" value="sim" id="dependenciaO2_sim">
-                                <label for="dependenciaO2_sim">Sim</label>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="dataNascimento">Data de Nascimento:</label>
+                                <input type="date" id="dataNascimento" required>
                             </div>
-                            <div class="radio-option" data-value="nao">
-                                <input type="radio" name="dependenciaO2" value="nao" id="dependenciaO2_nao">
-                                <label for="dependenciaO2_nao">Não</label>
+                            <div class="form-group">
+                                <label for="dataAvaliacao">Data da avaliação:</label>
+                                <input type="date" id="dataAvaliacao" required>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <div class="criteria-section">
-                    <h3>Critério 2: Época da Reavaliação</h3>
-                    <div class="form-group">
-                        <label for="dataReavaliacao">Data da Reavaliação:</label>
-                        <input type="date" id="dataReavaliacao" required>
-                    </div>
-                </div>
-
-                <div class="criteria-section">
-                    <h3>Critério 3: Necessidade de Suporte na Reavaliação</h3>
-                    <div class="form-group">
-                        <label>Na data da reavaliação, o paciente necessita de:</label>
-                        <div class="radio-group">
-                            <div class="radio-option" data-value="oxigenio">
-                                <input type="radio" name="suporteReavaliacao" value="oxigenio" id="suporteReavaliacao_oxigenio">
-                                <label for="suporteReavaliacao_oxigenio">Oxigênio suplementar</label>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="igSemanas">IG ao nascer — semanas:</label>
+                                <input type="number" id="igSemanas" step="1" min="22" max="42" placeholder="Ex: 27" required>
                             </div>
-                            <div class="radio-option" data-value="cpap">
-                                <input type="radio" name="suporteReavaliacao" value="cpap" id="suporteReavaliacao_cpap">
-                                <label for="suporteReavaliacao_cpap">CPAP nasal</label>
-                            </div>
-                            <div class="radio-option" data-value="vm">
-                                <input type="radio" name="suporteReavaliacao" value="vm" id="suporteReavaliacao_vm">
-                                <label for="suporteReavaliacao_vm">Ventilação mecânica</label>
-                            </div>
-                            <div class="radio-option" data-value="nenhum">
-                                <input type="radio" name="suporteReavaliacao" value="nenhum" id="suporteReavaliacao_nenhum">
-                                <label for="suporteReavaliacao_nenhum">Nenhum suporte</label>
+                            <div class="form-group">
+                                <label for="igDias">IG ao nascer — dias (0 a 6):</label>
+                                <input type="number" id="igDias" step="1" min="0" max="6" placeholder="Ex: 3" value="0">
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                        <button type="submit" class="btn">Avaliar Critérios da DBP</button>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="pesoNascer">Peso ao nascer (g, opcional):</label>
+                                <input type="number" id="pesoNascer" step="1" min="300" max="6000" placeholder="Ex: 950">
+                            </div>
+                            <div class="form-group">
+                                <label for="diasO2">Total de dias com O₂ suplementar:</label>
+                                <input type="number" id="diasO2" step="1" min="0" placeholder="Ex: 40" required>
+                            </div>
+                        </div>
+
+                        <section class="criteria-section" aria-labelledby="suporteTitulo">
+                            <h3 id="suporteTitulo">Suporte respiratório às 36 semanas de IPM (ou na alta)</h3>
+                            <div class="form-group">
+                                <label class="check-option" for="avaliacaoAlta">
+                                    <input type="checkbox" id="avaliacaoAlta">
+                                    <span>Avaliação na alta hospitalar (antes de 36 semanas de IPM)</span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label>Modalidade na avaliação:</label>
+                                <div class="radio-group">
+                                    <div class="radio-option" data-value="nenhum">
+                                        <input type="radio" name="suporte" value="nenhum" id="suporte_nenhum">
+                                        <label for="suporte_nenhum">Ar ambiente (sem suporte respiratório)</label>
+                                    </div>
+                                    <div class="radio-option" data-value="cn_baixo">
+                                        <input type="radio" name="suporte" value="cn_baixo" id="suporte_cn_baixo">
+                                        <label for="suporte_cn_baixo">Cânula nasal de baixo fluxo</label>
+                                    </div>
+                                    <div class="radio-option" data-value="cn_alto">
+                                        <input type="radio" name="suporte" value="cn_alto" id="suporte_cn_alto">
+                                        <label for="suporte_cn_alto">Cânula nasal de alto fluxo</label>
+                                    </div>
+                                    <div class="radio-option" data-value="cpap">
+                                        <input type="radio" name="suporte" value="cpap" id="suporte_cpap">
+                                        <label for="suporte_cpap">CPAP nasal</label>
+                                    </div>
+                                    <div class="radio-option" data-value="nippv">
+                                        <input type="radio" name="suporte" value="nippv" id="suporte_nippv">
+                                        <label for="suporte_nippv">NIPPV (ventilação não invasiva com pressão positiva)</label>
+                                    </div>
+                                    <div class="radio-option" data-value="vmi">
+                                        <input type="radio" name="suporte" value="vmi" id="suporte_vmi">
+                                        <label for="suporte_vmi">Ventilação mecânica invasiva</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group" id="grupoFluxo" hidden>
+                                    <label for="fluxo">Fluxo da cânula nasal (L/min):</label>
+                                    <input type="number" id="fluxo" step="any" min="0" max="15" placeholder="Ex: 1">
+                                </div>
+                                <div class="form-group" id="grupoFio2" hidden>
+                                    <label for="fio2">FiO₂ (% ou fração):</label>
+                                    <input type="number" id="fio2" step="any" min="0.21" max="100" placeholder="Ex: 25 ou 0,25">
+                                </div>
+                            </div>
+                            <p class="field-hint">Fluxo e FiO₂ são obrigatórios na cânula nasal; na cânula de baixo fluxo, informe a FiO₂ efetiva. Nos suportes com pressão positiva, a FiO₂ é opcional (apenas registro).</p>
+                        </section>
+
+                        <section class="criteria-section" aria-labelledby="registroTitulo">
+                            <h3 id="registroTitulo">Registro complementar (opcional)</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="pressao">Pressão (cmH₂O — CPAP/PEEP/PIP):</label>
+                                    <input type="number" id="pressao" step="any" min="1" max="50" placeholder="Ex: 6">
+                                </div>
+                                <div class="form-group">
+                                    <label for="gasometria">Gasometria (quando indicada):</label>
+                                    <input type="text" id="gasometria" placeholder="Ex: pH 7,35 / pCO₂ 55">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="ecocardiograma">Ecocardiograma:</label>
+                                    <input type="text" id="ecocardiograma" placeholder="Ex: sem sinais de hipertensão pulmonar">
+                                </div>
+                                <div class="form-group">
+                                    <label for="comorbidades">Comorbidades:</label>
+                                    <input type="text" id="comorbidades" placeholder="Ex: PCA, ROP, dificuldade alimentar">
+                                </div>
+                            </div>
+                        </section>
+
+                        <button type="submit" class="btn">Classificar DBP</button>
                     </form>
 
-                    <div id="results" class="results">
-                        <div class="result-card">
-                            <h3>Idade Gestacional Corrigida</h3>
-                            <div class="result-value" id="igc">0.0</div>
-                            <div class="result-description">semanas</div>
+                    <section id="results" class="results" aria-live="polite">
+                        <div class="metrics-grid">
+                            <div class="result-card">
+                                <h3>IPM na avaliação</h3>
+                                <div class="result-value" id="resIpm">—</div>
+                                <div class="result-description">semanas + dias</div>
+                            </div>
+                            <div class="result-card">
+                                <h3>Idade pós-natal</h3>
+                                <div class="result-value" id="resIdadePosNatal">—</div>
+                                <div class="result-description">dias</div>
+                            </div>
+                            <div class="result-card">
+                                <h3>Dias com O₂ suplementar</h3>
+                                <div class="result-value" id="resDiasO2">—</div>
+                                <div class="result-description">dias</div>
+                            </div>
                         </div>
 
-                        <div class="result-card">
-                            <h3>Dias de Vida</h3>
-                            <div class="result-value" id="diasVida">0.0</div>
-                            <div class="result-description">dias</div>
+                        <div class="result-box">
+                            <h3>Suporte registrado na avaliação</h3>
+                            <dl class="support-list">
+                                <dt>Modalidade</dt><dd id="resModalidade">—</dd>
+                                <dt>Fluxo</dt><dd id="resFluxo">—</dd>
+                                <dt>FiO₂</dt><dd id="resFio2">—</dd>
+                            </dl>
                         </div>
 
-                        <div class="classification" id="classification">
-                            <h3>Resumo da classificação (educativo)</h3>
-                            <div class="classification-text" id="classificationText"></div>
+                        <div class="dual-grid">
+                            <article class="class-card" id="cardNichd">
+                                <h3>NICHD 2001 (Jobe &amp; Bancalari)</h3>
+                                <span class="class-tag">Comparabilidade histórica</span>
+                                <div class="class-value" id="nichdClasse">—</div>
+                                <p class="class-criterion" id="nichdCriterio"></p>
+                                <p class="class-note" id="nichdMomento"></p>
+                            </article>
+                            <article class="class-card" id="cardJensen">
+                                <h3>Jensen 2019</h3>
+                                <span class="class-tag">Prognóstico</span>
+                                <div class="class-value" id="jensenGrau">—</div>
+                                <p class="class-criterion" id="jensenCriterio"></p>
+                                <p class="class-note">Avaliação às 36 semanas de IPM, independentemente da duração prévia de O₂. A FiO₂ não reclassifica o grau.</p>
+                            </article>
+                        </div>
+
+                        <div class="result-box alerts" id="alertasBox" hidden>
+                            <h3>Alertas</h3>
+                            <ul id="alertasLista"></ul>
+                        </div>
+
+                        <div class="result-box">
+                            <h3>Codificação</h3>
+                            <p><strong>CID-10 P27.1 — Displasia broncopulmonar originada no período perinatal</strong></p>
+                            <p>O grau de Jensen é uma avaliação clínica/prognóstica, não um código CID adicional.</p>
+                        </div>
+
+                        <div class="result-box">
+                            <h3>Interpretação</h3>
+                            <ul>
+                                <li>A classificação às 36 semanas é útil para prognóstico e auditoria, mas não substitui a avaliação clínica longitudinal.</li>
+                                <li>Um lactente pode ter necessidade modesta de O₂ e ainda assim ter doença vascular pulmonar relevante, dificuldade alimentar ou crescimento insuficiente.</li>
+                                <li>Não use a FiO₂ isoladamente para reclassificar os graus de Jensen; documente dispositivos e fluxos.</li>
+                                <li>Registre modalidade, fluxo, pressão, FiO₂, gasometria quando indicada e ecocardiograma.</li>
+                            </ul>
                         </div>
 
                         <button type="button" id="gerarRelatorio" class="btn btn-report">
                             Copiar texto informativo
                         </button>
-                    </div>
+                    </section>
 
                     <div class="info">
-                        <strong>Lógica resumida nesta página (educativo):</strong><br>
-                        • <strong>Critério 1:</strong> dependência de O₂ aos 28 dias (sim/não), conforme você marca<br>
-                        • <strong>Critério 2:</strong> data de reavaliação usada para IGC ou dias de vida, conforme IG ao nascer<br>
-                        • <strong>Critério 3:</strong> tipo de suporte na reavaliação (O₂ / CPAP / VM / nenhum)<br><br>
-                        <strong>Gravidade (rótulo do app):</strong> leve (só O₂), moderada (O₂ “maior” ou CPAP), grave (VM) — espelha a implementação interna; <strong>não substitui</strong> laudo nem consenso multidisciplinar.
+                        <strong>Escopo:</strong> prematuros com IG &lt; 32 semanas e/ou peso ao nascer &lt; 1.500 g. Avalie o suporte às 36 semanas de idade pós-menstrual (IPM) ou na alta, quando pertinente, registrando separadamente oxigênio, fluxo, pressão positiva, ventilação invasiva e comorbidades.
                     </div>
 
                     <div class="warning">
-                        <strong>Atenção:</strong> Uso educacional. DBP evoluiu em várias definições (incl. “new BPD”); use diretrizes e discussão clínica para decisões assistenciais.
+                        <strong>Atenção:</strong> as duas classificações são mostradas lado a lado: NICHD 2001 para comparabilidade histórica e Jensen 2019 para prognóstico. Elas não substituem a avaliação clínica longitudinal.
                     </div>
-
-                    <div class="info">
-                        <strong>Referência:</strong> Jobe AH, Bancalari E. Bronchopulmonary dysplasia. 
-                        Am J Respir Crit Care Med. 2001;163:1723-9.
-                    </div>
-                </div>
+                </main>
             </div>
         </div>
     </div>
@@ -674,39 +916,76 @@
     <div id="modalInfo" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Como usar — DBP neonatal (educativo)</h2>
+                <h2>Como usar — DBP neonatal</h2>
                 <span class="close" onclick="fecharModal()">&times;</span>
             </div>
             <div class="modal-body">
-                <h3>Objetivo (educativo)</h3>
-                <p>Aplicar a <strong>lógica implementada nesta página</strong> aos dados que você preenche (O₂ aos 28 dias, data da reavaliação, suporte na reavaliação, IG ao nascer) e exibir um <strong>rótulo de classificação</strong>. Uso para <strong>aprendizado e rascunho de texto</strong> — <strong>não substitui</strong> critério formal, imagem ou decisão da neonatologia.</p>
+                <h3>Objetivo</h3>
+                <p>Aplicar o Protocolo Clínico de Displasia Broncopulmonar da UTI neonatal (versão para validação institucional, out/2026): avaliar o suporte respiratório às 36 semanas de idade pós-menstrual (IPM), ou na alta quando pertinente, e mostrar duas classificações lado a lado. Aplica-se principalmente a prematuros com IG &lt; 32 semanas e/ou peso ao nascer &lt; 1.500 g.</p>
 
-                <h3>Contexto histórico (resumo)</h3>
-                <div class="formula-box">
-                    Há várias definições de DBP ao longo do tempo (ex.: NIH/2001, estudos de oxigenação na reavaliação). Literatura como Jobe &amp; Bancalari resume conceitos; serviços podem usar cortes ligeiramente diferentes.<br><br>
-                    Esta calculadora segue a <strong>regra programada no código</strong>, não todas as variantes publicadas.
+                <h3>NICHD 2001 (Jobe &amp; Bancalari) — comparabilidade histórica</h3>
+                <p>Exige O₂ suplementar por ≥ 28 dias. Com O₂ por menos de 28 dias, não há DBP pelo NICHD.</p>
+                <div class="table-wrap">
+                    <table class="protocol-table">
+                        <thead>
+                            <tr><th>Necessidade na avaliação</th><th>Classificação NICHD</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Ar ambiente</td><td>DBP leve</td></tr>
+                            <tr><td>O₂ &lt; 30%</td><td>DBP moderada</td></tr>
+                            <tr><td>O₂ ≥ 30% e/ou pressão positiva (CPAP/NIPPV ou ventilação mecânica)</td><td>DBP grave</td></tr>
+                        </tbody>
+                    </table>
                 </div>
+                <p>Momento da avaliação: IG &lt; 32 semanas — 36 semanas de IPM ou alta, o que ocorrer primeiro; IG ≥ 32 semanas — &gt; 28 e &lt; 56 dias de idade pós-natal ou alta, o que ocorrer primeiro.</p>
+
+                <h3>Jensen 2019 — prognóstico</h3>
+                <p>Avaliação às 36 semanas de IPM, independentemente da duração prévia de O₂.</p>
+                <div class="table-wrap">
+                    <table class="protocol-table">
+                        <thead>
+                            <tr><th>Suporte às 36 semanas de IPM</th><th>Grau de Jensen</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Sem suporte respiratório</td><td>Sem DBP</td></tr>
+                            <tr><td>Cânula nasal ≤ 2 L/min</td><td>DBP grau 1</td></tr>
+                            <tr><td>Cânula nasal &gt; 2 L/min ou pressão positiva não invasiva (CPAP, NIPPV)</td><td>DBP grau 2</td></tr>
+                            <tr><td>Ventilação mecânica invasiva</td><td>DBP grau 3</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Regras do protocolo</h3>
+                <ul>
+                    <li>Não use a FiO₂ isoladamente para reclassificar os graus de Jensen; documente dispositivos e fluxos.</li>
+                    <li>A classificação às 36 semanas é útil para prognóstico e auditoria, mas não substitui a avaliação clínica longitudinal.</li>
+                    <li>Um lactente pode ter necessidade modesta de O₂ e ainda assim ter doença vascular pulmonar relevante, dificuldade alimentar ou crescimento insuficiente.</li>
+                    <li>Registre modalidade, fluxo, pressão, FiO₂, gasometria quando indicada e ecocardiograma.</li>
+                    <li>CID-10 P27.1 — Displasia broncopulmonar originada no período perinatal. O grau de Jensen é uma avaliação clínica/prognóstica, não um código CID adicional.</li>
+                </ul>
 
                 <h3>Passos na tela</h3>
                 <ol>
-                    <li>Preencha identificação, data de nascimento, IG e critérios com radio buttons.</li>
-                    <li>Informe a <strong>data da reavaliação</strong> (o app calcula dias de vida e IGC).</li>
-                    <li>Clique em <strong>Avaliar Critérios da DBP</strong> e leia o resumo.</li>
+                    <li>Informe data de nascimento, data da avaliação, IG ao nascer (semanas + dias), peso ao nascer (opcional) e o total de dias com O₂ suplementar.</li>
+                    <li>Marque a modalidade de suporte na avaliação; para cânula nasal, informe o fluxo (L/min) e a FiO₂.</li>
+                    <li>Clique em <strong>Classificar DBP</strong>: o app calcula a IPM e a idade pós-natal e avisa se a avaliação não está às 36 semanas de IPM ou se o paciente está fora do escopo principal.</li>
                     <li><strong>Copiar texto informativo</strong> gera um bloco para colar — revise antes de arquivar.</li>
                 </ol>
 
                 <h3>Limitações</h3>
                 <ul>
-                    <li>Não registra FiO₂ exata nem provas funcionais — só o que está nos campos.</li>
-                    <li>Eventos agudos ou suporte por causa não pulmonar podem distorcer a leitura clínica.</li>
-                    <li>Definições mais recentes (ex.: “new BPD”) não são reproduzidas integralmente aqui.</li>
+                    <li>Na cânula nasal, a classificação NICHD usa a FiO₂ informada (para baixo fluxo, a FiO₂ efetiva); o teste de redução de O₂ não é reproduzido aqui.</li>
+                    <li>Eventos agudos ou suporte por causa não pulmonar podem distorcer a classificação.</li>
                 </ul>
 
                 <div class="reference-box">
                     <strong>Referências:</strong><br>
+                    <span translate="no">
                     - Jobe AH, Bancalari E. Bronchopulmonary dysplasia. Am J Respir Crit Care Med. 2001;163(7):1723-1729.<br>
-                    - Shennan AT, et al. Abnormal pulmonary outcomes in premature infants: prediction from oxygen requirement in the neonatal period. Pediatrics. 1988;82(4):527-532.<br>
-                    - Northway WH Jr, et al. Pulmonary disease following respirator therapy of hyaline-membrane disease. Bronchopulmonary dysplasia. N Engl J Med. 1967;276(7):357-368.
+                    - Jensen EA, Dysart K, Gantz MG, et al. The diagnosis of bronchopulmonary dysplasia in very preterm infants. An evidence-based approach. Am J Respir Crit Care Med. 2019;200(6):751-759. doi:10.1164/rccm.201812-2348OC.<br>
+                    - Vyas-Read S, et al. A comparison of newer classifications of bronchopulmonary dysplasia: findings from the Children's Hospitals Neonatal Consortium Severe BPD Group. J Perinatol. 2022;42(1):58-64.<br>
+                    - Protocolo Clínico de Displasia Broncopulmonar — UTI neonatal. Versão para validação institucional, out/2026.
+                    </span>
                 </div>
             </div>
         </div>
@@ -726,300 +1005,461 @@
             if (event.target == modal) {
                 modal.style.display = 'none';
             }
-        }
-        // Função para calcular idade gestacional corrigida
-        function calcularIGC(idadeGestacional, diasVida) {
-            const semanasVida = diasVida / 7;
-            return idadeGestacional + semanasVida;
-        }
+        };
 
-        // Função para classificar a DBP
-        function classificarDBP(dependenciaO2, igc, diasVida, idadeGestacional, suporteReavaliacao) {
-            console.log('Dados recebidos:', {dependenciaO2, igc, diasVida, idadeGestacional, suporteReavaliacao});
-            
-            // Critério 1: Dependência de O2 aos 28 dias
-            if (dependenciaO2 !== 'sim') {
-                return {
-                    classificacao: 'Não tem DBP',
-                    classificacaoPlain: 'Nao tem DBP',
-                    descricao: 'O RN não era dependente de O2 suplementar aos 28 dias de vida.',
-                    descricaoPlain: 'O RN nao era dependente de O2 suplementar aos 28 dias de vida.',
-                    cor: '#28a745'
-                };
-            }
+        (function () {
+            'use strict';
 
-            // Critério 2: Época da reavaliação
-            let criterio2Atendido = false;
-            let mensagemCriterio2 = '';
-            
-            if (idadeGestacional < 32) {
-                // RN < 32 semanas: reavaliação na IGC ≥ 36 semanas
-                criterio2Atendido = igc >= 36;
-                mensagemCriterio2 = 'Reavaliar quando IGC ≥ 36 semanas.';
-            } else {
-                // RN ≥ 32 semanas: reavaliação ≥ 56 dias de vida
-                criterio2Atendido = diasVida >= 56;
-                mensagemCriterio2 = 'Reavaliar quando ≥ 56 dias de vida.';
-            }
+            const MS_PER_DAY = 24 * 60 * 60 * 1000;
+            const NICHD_MIN_O2_DAYS = 28;          // O₂ suplementar por ≥ 28 dias
+            const NICHD_SEVERE_FIO2 = 30;          // ≥ 30% → grave
+            const ROOM_AIR_FIO2 = 21;
+            const JENSEN_FLOW_CUTOFF = 2;          // L/min: ≤ 2 grau 1; > 2 grau 2
+            const PMA_TARGET_WEEKS = 36;
+            const SCOPE_GA_WEEKS = 32;
+            const SCOPE_WEIGHT_G = 1500;
+            const LATE_GA_MIN_DAYS = 28;           // IG ≥ 32 sem: > 28 dias
+            const LATE_GA_MAX_DAYS = 56;           //              e < 56 dias de idade pós-natal
+            const GA_MIN_WEEKS = 22;
+            const GA_MAX_WEEKS = 42;
+            const FLOW_MAX = 15;
+            const WEIGHT_MIN = 300;
+            const WEIGHT_MAX = 6000;
+            const PRESSURE_MIN = 1;
+            const PRESSURE_MAX = 50;
 
-            if (!criterio2Atendido) {
-                return {
-                    classificacao: 'Aguardar reavaliação',
-                    classificacaoPlain: 'Aguardar reavaliacao',
-                    descricao: mensagemCriterio2,
-                    descricaoPlain: mensagemCriterio2.replace('reavaliação', 'reavaliacao'),
-                    cor: '#ffc107'
-                };
-            }
-
-            // Critério 3: Necessidade de suporte na reavaliação
-            if (suporteReavaliacao === 'nenhum') {
-                return {
-                    classificacao: 'Não tem DBP',
-                    classificacaoPlain: 'Nao tem DBP',
-                    descricao: 'Não necessita de suporte respiratório na reavaliação.',
-                    descricaoPlain: 'Nao necessita de suporte respiratorio na reavaliacao.',
-                    cor: '#28a745'
-                };
-            }
-
-            // Classificação da gravidade da DBP
-            if (suporteReavaliacao === 'vm') {
-                return {
-                    classificacao: 'DBP Grave',
-                    classificacaoPlain: 'DBP Grave',
-                    descricao: 'Necessita de ventilação mecânica na reavaliação.',
-                    descricaoPlain: 'Necessita de ventilacao mecanica na reavaliacao.',
-                    cor: '#dc3545'
-                };
-            } else if (suporteReavaliacao === 'cpap') {
-                return {
-                    classificacao: 'DBP Moderada',
-                    classificacaoPlain: 'DBP Moderada',
-                    descricao: 'Necessita de CPAP nasal na reavaliação.',
-                    descricaoPlain: 'Necessita de CPAP nasal na reavaliacao.',
-                    cor: '#fd7e14'
-                };
-            } else if (suporteReavaliacao === 'oxigenio') {
-                return {
-                    classificacao: 'DBP Leve',
-                    classificacaoPlain: 'DBP Leve',
-                    descricao: 'Necessita de oxigênio suplementar na reavaliação.',
-                    descricaoPlain: 'Necessita de oxigenio suplementar na reavaliacao.',
-                    cor: '#20c997'
-                };
-            }
-
-            return {
-                classificacao: 'Indeterminado',
-                classificacaoPlain: 'Indeterminado',
-                descricao: 'Critérios não completamente atendidos.',
-                descricaoPlain: 'Criterios nao completamente atendidos.',
-                cor: '#6c757d'
+            const SUPORTES = {
+                nenhum:   { label: 'Ar ambiente (sem suporte respiratório)', cannula: false, positivePressure: false, invasive: false },
+                cn_baixo: { label: 'Cânula nasal de baixo fluxo', cannula: true, positivePressure: false, invasive: false },
+                cn_alto:  { label: 'Cânula nasal de alto fluxo', cannula: true, positivePressure: false, invasive: false },
+                cpap:     { label: 'CPAP nasal', cannula: false, positivePressure: true, invasive: false },
+                nippv:    { label: 'NIPPV (ventilação não invasiva com pressão positiva)', cannula: false, positivePressure: true, invasive: false },
+                vmi:      { label: 'Ventilação mecânica invasiva', cannula: false, positivePressure: true, invasive: true }
             };
-        }
 
-        // Função para avaliar critérios
-        function avaliarCriterios() {
-            console.log('Iniciando avaliação de critérios...');
-            
-            const nome = document.getElementById('nome').value;
-            const dataNascimento = new Date(document.getElementById('dataNascimento').value);
-            const idadeGestacional = parseFloat(document.getElementById('idadeGestacional').value);
-            const dataReavaliacao = new Date(document.getElementById('dataReavaliacao').value);
-            const dependenciaO2 = document.querySelector('input[name="dependenciaO2"]:checked')?.value;
-            const suporteReavaliacao = document.querySelector('input[name="suporteReavaliacao"]:checked')?.value;
+            const TXT = {
+                nichdMomentoPrematuro: 'Momento: 36 semanas de IPM ou alta, o que ocorrer primeiro.',
+                nichdMomentoTardio: 'Momento: > 28 e < 56 dias de idade pós-natal ou alta, o que ocorrer primeiro.',
+                alertaIpmFora: 'Avaliação fora das 36 semanas de IPM (referência: 36+0 a 36+6): classificação provisória; reavalie às 36 semanas de IPM ou na alta.',
+                alertaAltaAntes: 'Avaliação na alta antes de 36 semanas de IPM: aceita pelo NICHD (36 semanas ou alta, o que ocorrer primeiro); Jensen 2019 foi definido às 36 semanas de IPM.',
+                alertaJanelaTardia: 'IG ≥ 32 semanas: o NICHD avalia com > 28 e < 56 dias de idade pós-natal (ou na alta); a data informada está fora dessa janela.',
+                alertaJensenEscopo: 'IG ≥ 32 semanas: Jensen 2019 foi derivado em prematuros < 32 semanas; interprete o grau com cautela.',
+                alertaEscopo: 'Fora do escopo principal do protocolo (IG < 32 semanas e/ou peso ao nascer < 1.500 g).',
+                alertaFluxo: 'Fluxo informado incompatível com a modalidade marcada (baixo/alto fluxo); o grau de Jensen segue o fluxo em L/min.',
+                alertaO2: 'Há necessidade de O₂ na avaliação com menos de 28 dias de O₂ registrados: confira a contagem de dias.'
+            };
 
-            console.log('Dados coletados:', {
-                nome, dataNascimento, idadeGestacional, dataReavaliacao, 
-                dependenciaO2, suporteReavaliacao
-            });
-
-            if (!dataNascimento || !idadeGestacional || !dataReavaliacao || !dependenciaO2 || !suporteReavaliacao) {
-                alert('Por favor, preencha todos os campos obrigatórios.');
-                console.log('Campos obrigatórios não preenchidos');
-                return;
+            /** Remove acentos (rótulos do relatório seguem o padrão sem acentos). */
+            function plain(text) {
+                return String(text).normalize('NFD').replace(/[̀-ͯ]/g, '');
             }
 
-            // Calcular dias de vida
-            const diasVida = Math.floor((dataReavaliacao - dataNascimento) / (1000 * 60 * 60 * 24));
-            
-            // Calcular IGC
-            const igc = calcularIGC(idadeGestacional, diasVida);
-
-            console.log('Cálculos realizados:', {diasVida, igc});
-
-            // Classificar DBP
-            const classificacao = classificarDBP(dependenciaO2, igc, diasVida, idadeGestacional, suporteReavaliacao);
-
-            console.log('Classificação obtida:', classificacao);
-
-            // Exibir resultados
-            document.getElementById('igc').textContent = igc.toFixed(1);
-            document.getElementById('diasVida').textContent = Number(diasVida).toFixed(1);
-            document.getElementById('classificationText').textContent = classificacao.classificacao;
-            document.getElementById('classificationText').style.color = classificacao.cor;
-            document.getElementById('classification').style.borderColor = classificacao.cor;
-
-            // Mostrar resultados
-            document.getElementById('results').style.display = 'block';
-            
-            console.log('Resultados exibidos com sucesso');
-        }
-
-        // Função para gerar relatório
-        function gerarRelatorio() {
-            console.log('Iniciando geração de relatório...');
-            
-            const nome = document.getElementById('nome').value;
-            const dataNascimento = new Date(document.getElementById('dataNascimento').value);
-            const idadeGestacional = parseFloat(document.getElementById('idadeGestacional').value);
-            const dataReavaliacao = new Date(document.getElementById('dataReavaliacao').value);
-            const dependenciaO2 = document.querySelector('input[name="dependenciaO2"]:checked')?.value;
-            const suporteReavaliacao = document.querySelector('input[name="suporteReavaliacao"]:checked')?.value;
-
-            console.log('Dados para relatório:', {
-                nome, dataNascimento, idadeGestacional, dataReavaliacao, 
-                dependenciaO2, suporteReavaliacao
-            });
-
-            if (!dataNascimento || !idadeGestacional || !dataReavaliacao || !dependenciaO2 || !suporteReavaliacao) {
-                alert('Erro: Campos obrigatórios não encontrados. Execute a avaliação primeiro.');
-                console.log('Campos obrigatórios não preenchidos para relatório');
-                return;
+            /** 'AAAA-MM-DD' → Date local (evita o deslocamento de fuso de new Date('AAAA-MM-DD')). */
+            function parseLocalDate(value) {
+                const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value || '');
+                if (!m) return null;
+                const date = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+                return date.getMonth() === Number(m[2]) - 1 ? date : null;
             }
 
-            // Recalcular valores
-            const diasVida = Math.floor((dataReavaliacao - dataNascimento) / (1000 * 60 * 60 * 24));
-            const igc = calcularIGC(idadeGestacional, diasVida);
-            const classificacao = classificarDBP(dependenciaO2, igc, diasVida, idadeGestacional, suporteReavaliacao);
+            function toInputDate(date) {
+                return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+            }
 
-            console.log('Dados calculados para relatório:', {diasVida, igc, classificacao});
+            function formatDateBR(date) {
+                return String(date.getDate()).padStart(2, '0') + '/' + String(date.getMonth() + 1).padStart(2, '0') + '/' + date.getFullYear();
+            }
 
-            const foot = (typeof window.neopedLegalReportFooter === 'function')
-                ? window.neopedLegalReportFooter()
-                : '';
+            function daysBetween(start, end) {
+                return Math.round((end.getTime() - start.getTime()) / MS_PER_DAY);
+            }
 
-            const relatorio = `RESUMO INFORMATIVO — Criterios DBP neonatal (NeoPedCalc, uso educativo)
-=========================================
+            function formatNumberBR(value) {
+                return String(Number(value.toFixed(2))).replace('.', ',');
+            }
 
-NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com exame, imagem e criterios institucionais.
+            function readNumber(id) {
+                const raw = String(document.getElementById(id).value || '').trim().replace(',', '.');
+                if (raw === '') return null;
+                const n = Number(raw);
+                return Number.isFinite(n) ? n : NaN;
+            }
 
-DADOS INFORMADOS:
-- Nome: ${nome || 'Nao informado'}
-- Data de nascimento: ${dataNascimento.toLocaleDateString('pt-BR')}
-- Idade gestacional ao nascimento: ${Number(idadeGestacional).toFixed(1)} semanas
-- Data da reavaliacao: ${dataReavaliacao.toLocaleDateString('pt-BR')}
+            function readText(id) {
+                return String(document.getElementById(id).value || '').trim();
+            }
 
-CALCULOS NO APP:
-- Dias de vida (ate reavaliacao): ${Number(diasVida).toFixed(1)} dias
-- Idade gestacional corrigida: ${igc.toFixed(1)} semanas
+            /** FiO₂ em % (aceita fração 0,21–1,0 ou 21–100%). */
+            function normalizeFio2(value) {
+                if (value === null) return null;
+                if (Number.isNaN(value)) return NaN;
+                const percent = value <= 1 ? value * 100 : value;
+                return Math.round(percent * 10) / 10;
+            }
 
-CRITERIOS (campos preenchidos):
-- Dependencia de O2 aos 28 dias: ${dependenciaO2 === 'sim' ? 'Sim' : 'Nao'}
-- Janela esperada de reavaliacao (rotulo): ${idadeGestacional < 32 ? 'IGC >= 36 semanas' : '>= 56 dias de vida'}
-- Suporte na reavaliacao: ${getDescricaoSuporte(suporteReavaliacao)}
+            function isValidFio2(value) {
+                return value !== null && !Number.isNaN(value) && value >= ROOM_AIR_FIO2 && value <= 100;
+            }
 
-ROTULO AUTOMATICO (revisar):
-- ${classificacao.classificacaoPlain || classificacao.classificacao}
-- Texto do app: ${classificacao.descricaoPlain || classificacao.descricao}
+            function readInputs() {
+                const errors = [];
+                const birth = parseLocalDate(document.getElementById('dataNascimento').value);
+                const assessment = parseLocalDate(document.getElementById('dataAvaliacao').value);
+                const gaWeeks = readNumber('igSemanas');
+                const gaDaysRaw = readNumber('igDias');
+                const gaDays = gaDaysRaw === null ? 0 : gaDaysRaw;
+                const weight = readNumber('pesoNascer');
+                const o2Days = readNumber('diasO2');
+                const supportKey = document.querySelector('input[name="suporte"]:checked')?.value || null;
+                const support = supportKey ? SUPORTES[supportKey] : null;
+                const flow = readNumber('fluxo');
+                const fio2 = normalizeFio2(readNumber('fio2'));
+                const pressure = readNumber('pressao');
 
-LEMBRETES EDUCATIVOS:
-- Suporte na reavaliacao nao deve idealmente refletir apenas evento agudo; correlacione com clinica e testes quando aplicavel.
-- Jobe & Bancalari, Am J Respir Crit Care Med 2001 — referencia classica; outras definicoes coexistem na literatura.
+                if (!birth || !assessment) errors.push('Informe a data de nascimento e a data da avaliação.');
+                const postnatalDays = birth && assessment ? daysBetween(birth, assessment) : null;
+                if (postnatalDays !== null && postnatalDays < 0) errors.push('A data da avaliação não pode ser anterior à data de nascimento.');
 
----
-NOTA EDUCATIVA: Revise todos os valores. A NeoPedCalc nao substitui julgamento clinico nem protocolos institucionais.
+                const gaValid = gaWeeks !== null && Number.isInteger(gaWeeks) && gaWeeks >= GA_MIN_WEEKS && gaWeeks <= GA_MAX_WEEKS
+                    && Number.isInteger(gaDays) && gaDays >= 0 && gaDays <= 6;
+                if (!gaValid) errors.push('Informe a idade gestacional ao nascer (22 a 42 semanas; dias de 0 a 6).');
 
-${foot ? foot.trim() : ''}`;
+                if (weight !== null && (Number.isNaN(weight) || weight < WEIGHT_MIN || weight > WEIGHT_MAX)) {
+                    errors.push('Peso ao nascer fora da faixa (300 a 6.000 g).');
+                }
 
-            console.log('Relatório gerado:', relatorio);
+                if (o2Days === null || !Number.isInteger(o2Days) || o2Days < 0) {
+                    errors.push('Informe o total de dias com O₂ suplementar (número inteiro ≥ 0).');
+                } else if (postnatalDays !== null && postnatalDays >= 0 && o2Days > postnatalDays) {
+                    errors.push('Os dias com O₂ suplementar não podem exceder a idade pós-natal na avaliação.');
+                }
 
-            const msgCopia = 'Texto copiado. Revise numeros e contexto antes de usar em registro clinico ou mensagem.';
+                if (!support) {
+                    errors.push('Selecione o suporte respiratório na avaliação.');
+                } else if (support.cannula) {
+                    if (flow === null || Number.isNaN(flow) || flow <= 0 || flow > FLOW_MAX) {
+                        errors.push('Informe o fluxo da cânula nasal em L/min (maior que 0 e até 15).');
+                    }
+                    if (!isValidFio2(fio2)) errors.push('Informe a FiO₂ da cânula nasal (21 a 100% ou 0,21 a 1,0).');
+                } else if (supportKey !== 'nenhum' && fio2 !== null && !isValidFio2(fio2)) {
+                    errors.push('FiO₂ fora da faixa (21 a 100% ou 0,21 a 1,0).');
+                }
 
-            navigator.clipboard.writeText(relatorio).then(() => {
-                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
-                console.log('Relatório copiado com sucesso');
-            }).catch((err) => {
-                console.error('Erro ao copiar relatório:', err);
+                if (pressure !== null && (Number.isNaN(pressure) || pressure < PRESSURE_MIN || pressure > PRESSURE_MAX)) {
+                    errors.push('Pressão fora da faixa (1 a 50 cmH₂O).');
+                }
+
+                if (errors.length) return { errors: errors, data: null };
+
+                const gaTotalDays = gaWeeks * 7 + gaDays;
+                const pmaTotalDays = gaTotalDays + postnatalDays;
+                return {
+                    errors: [],
+                    data: {
+                        name: readText('nome'),
+                        birth: birth,
+                        assessment: assessment,
+                        gaWeeks: gaWeeks,
+                        gaDays: gaDays,
+                        weight: weight,
+                        o2Days: o2Days,
+                        postnatalDays: postnatalDays,
+                        pmaWeeks: Math.floor(pmaTotalDays / 7),
+                        pmaDays: pmaTotalDays % 7,
+                        atDischarge: document.getElementById('avaliacaoAlta').checked,
+                        supportKey: supportKey,
+                        support: support,
+                        flow: support.cannula ? flow : null,
+                        fio2: supportKey === 'nenhum' ? null : fio2,
+                        pressure: pressure,
+                        bloodGas: readText('gasometria'),
+                        echo: readText('ecocardiograma'),
+                        comorbidities: readText('comorbidades')
+                    }
+                };
+            }
+
+            /** NICHD 2001 (Jobe & Bancalari): O₂ ≥ 28 dias; gravidade pela necessidade na avaliação. */
+            function classifyNichd(d) {
+                if (d.o2Days < NICHD_MIN_O2_DAYS) {
+                    return { label: 'Sem DBP', sev: 'none', criterion: 'O₂ suplementar por menos de 28 dias: não preenche o critério NICHD 2001 para DBP.' };
+                }
+                if (d.support.positivePressure) {
+                    return { label: 'DBP grave', sev: 'severe', criterion: 'O₂ ≥ 28 dias e pressão positiva (CPAP/NIPPV ou ventilação mecânica) na avaliação.' };
+                }
+                const fio2 = d.fio2 === null ? ROOM_AIR_FIO2 : d.fio2;
+                if (fio2 >= NICHD_SEVERE_FIO2) {
+                    return { label: 'DBP grave', sev: 'severe', criterion: 'O₂ ≥ 28 dias e necessidade de O₂ ≥ 30% na avaliação.' };
+                }
+                if (fio2 > ROOM_AIR_FIO2) {
+                    return { label: 'DBP moderada', sev: 'mod', criterion: 'O₂ ≥ 28 dias e necessidade de O₂ < 30% na avaliação.' };
+                }
+                return { label: 'DBP leve', sev: 'mild', criterion: 'O₂ ≥ 28 dias e ar ambiente (sem necessidade de O₂) na avaliação.' };
+            }
+
+            /** Jensen 2019: modalidade às 36 semanas de IPM, sem considerar a duração prévia de O₂ nem a FiO₂. */
+            function classifyJensen(d) {
+                if (d.supportKey === 'nenhum') {
+                    return { label: 'Sem DBP', sev: 'none', criterion: 'Sem suporte respiratório às 36 semanas de IPM.' };
+                }
+                if (d.support.invasive) {
+                    return { label: 'DBP grau 3', sev: 'severe', criterion: 'Ventilação mecânica invasiva.' };
+                }
+                if (d.support.positivePressure) {
+                    return { label: 'DBP grau 2', sev: 'mod', criterion: 'Pressão positiva não invasiva (CPAP ou NIPPV).' };
+                }
+                if (d.flow > JENSEN_FLOW_CUTOFF) {
+                    return { label: 'DBP grau 2', sev: 'mod', criterion: 'Cânula nasal > 2 L/min.' };
+                }
+                return { label: 'DBP grau 1', sev: 'mild', criterion: 'Cânula nasal ≤ 2 L/min.' };
+            }
+
+            function buildAlerts(d) {
+                const alerts = [];
+                const preterm = d.gaWeeks < SCOPE_GA_WEEKS;
+                const pmaOutside = d.pmaWeeks !== PMA_TARGET_WEEKS;
+                if (preterm && d.atDischarge && d.pmaWeeks < PMA_TARGET_WEEKS) {
+                    alerts.push({ text: TXT.alertaAltaAntes, showPma: true });
+                } else if (preterm && pmaOutside) {
+                    alerts.push({ text: TXT.alertaIpmFora, showPma: true });
+                }
+                if (!preterm) {
+                    const inLateWindow = d.postnatalDays > LATE_GA_MIN_DAYS && d.postnatalDays < LATE_GA_MAX_DAYS;
+                    if (!inLateWindow && !d.atDischarge) alerts.push({ text: TXT.alertaJanelaTardia, showPma: false });
+                    alerts.push({ text: TXT.alertaJensenEscopo, showPma: false });
+                }
+                const lowWeight = d.weight !== null && d.weight < SCOPE_WEIGHT_G;
+                if (!preterm && !lowWeight) alerts.push({ text: TXT.alertaEscopo, showPma: false });
+                if (d.support.cannula) {
+                    const mismatch = (d.supportKey === 'cn_baixo' && d.flow > JENSEN_FLOW_CUTOFF)
+                        || (d.supportKey === 'cn_alto' && d.flow <= JENSEN_FLOW_CUTOFF);
+                    if (mismatch) alerts.push({ text: TXT.alertaFluxo, showPma: false });
+                }
+                if (d.o2Days < NICHD_MIN_O2_DAYS && d.fio2 !== null && d.fio2 > ROOM_AIR_FIO2) {
+                    alerts.push({ text: TXT.alertaO2, showPma: false });
+                }
+                return alerts;
+            }
+
+            function evaluate() {
+                const parsed = readInputs();
+                if (parsed.errors.length) return parsed;
+                const d = parsed.data;
+                return {
+                    errors: [],
+                    data: d,
+                    nichd: classifyNichd(d),
+                    nichdMoment: d.gaWeeks < SCOPE_GA_WEEKS ? TXT.nichdMomentoPrematuro : TXT.nichdMomentoTardio,
+                    jensen: classifyJensen(d),
+                    alerts: buildAlerts(d)
+                };
+            }
+
+            function pmaText(d) {
+                return d.pmaWeeks + '+' + d.pmaDays;
+            }
+
+            function flowText(d) {
+                return d.flow === null ? 'Não se aplica' : formatNumberBR(d.flow) + ' L/min';
+            }
+
+            function fio2Text(d) {
+                if (d.supportKey === 'nenhum') return 'Não se aplica (ar ambiente)';
+                return d.fio2 === null ? 'Não informado' : formatNumberBR(d.fio2) + '%';
+            }
+
+            function setCard(cardId, valueId, criterionId, result) {
+                const card = document.getElementById(cardId);
+                card.classList.remove('sev-none', 'sev-mild', 'sev-mod', 'sev-severe');
+                card.classList.add('sev-' + result.sev);
+                document.getElementById(valueId).textContent = result.label;
+                document.getElementById(criterionId).textContent = result.criterion;
+            }
+
+            function renderAlerts(alerts, d) {
+                const box = document.getElementById('alertasBox');
+                const list = document.getElementById('alertasLista');
+                list.replaceChildren();
+                alerts.forEach(function (item) {
+                    const li = document.createElement('li');
+                    const text = document.createElement('span');
+                    text.textContent = item.text;
+                    li.appendChild(text);
+                    if (item.showPma) {
+                        const label = document.createElement('strong');
+                        label.textContent = ' IPM calculada:';
+                        const value = document.createElement('span');
+                        value.textContent = ' ' + pmaText(d);
+                        li.appendChild(label);
+                        li.appendChild(value);
+                    }
+                    list.appendChild(li);
+                });
+                box.hidden = alerts.length === 0;
+            }
+
+            function render(result) {
+                const d = result.data;
+                document.getElementById('resIpm').textContent = pmaText(d);
+                document.getElementById('resIdadePosNatal').textContent = String(d.postnatalDays);
+                document.getElementById('resDiasO2').textContent = String(d.o2Days);
+                document.getElementById('resModalidade').textContent = d.support.label;
+                document.getElementById('resFluxo').textContent = flowText(d);
+                document.getElementById('resFio2').textContent = fio2Text(d);
+                setCard('cardNichd', 'nichdClasse', 'nichdCriterio', result.nichd);
+                document.getElementById('nichdMomento').textContent = result.nichdMoment;
+                setCard('cardJensen', 'jensenGrau', 'jensenCriterio', result.jensen);
+                renderAlerts(result.alerts, d);
+                document.getElementById('results').style.display = 'block';
+            }
+
+            function orNotInformed(value) {
+                return value ? value : 'Nao informado';
+            }
+
+            function buildReport(result) {
+                const d = result.data;
+                const alertLines = result.alerts.length
+                    ? result.alerts.map(function (a) { return '- ' + plain(a.text); })
+                    : ['- Nenhum alerta.'];
+                const lines = [
+                    'RESUMO INFORMATIVO — Classificacao de DBP (NeoPedCalc, protocolo institucional)',
+                    '=========================================',
+                    '',
+                    'NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Revise com exame, imagem e criterios institucionais.',
+                    '',
+                    'DADOS INFORMADOS:',
+                    '- Nome: ' + orNotInformed(d.name),
+                    '- Data de nascimento: ' + formatDateBR(d.birth),
+                    '- Idade gestacional ao nascer: ' + d.gaWeeks + ' semanas + ' + d.gaDays + ' dias',
+                    '- Peso ao nascer: ' + (d.weight === null ? 'Nao informado' : d.weight + ' g'),
+                    '- Data da avaliacao: ' + formatDateBR(d.assessment),
+                    '- Avaliacao na alta hospitalar: ' + (d.atDischarge ? 'Sim' : 'Nao'),
+                    '- Dias com O₂ suplementar: ' + d.o2Days + ' dias',
+                    '',
+                    'CALCULOS NO APP:',
+                    '- Idade pos-natal na avaliacao: ' + d.postnatalDays + ' dias',
+                    '- IPM na avaliacao: ' + d.pmaWeeks + ' semanas + ' + d.pmaDays + ' dias',
+                    '',
+                    'SUPORTE NA AVALIACAO:',
+                    '- Modalidade: ' + plain(d.support.label),
+                    '- Fluxo: ' + plain(flowText(d)),
+                    '- FiO₂: ' + plain(fio2Text(d)),
+                    '- Pressao: ' + (d.pressure === null ? 'Nao informado' : formatNumberBR(d.pressure) + ' cmH₂O'),
+                    '- Gasometria: ' + orNotInformed(d.bloodGas),
+                    '- Ecocardiograma: ' + orNotInformed(d.echo),
+                    '- Comorbidades: ' + orNotInformed(d.comorbidities),
+                    '',
+                    'CLASSIFICACAO NICHD 2001 (Jobe & Bancalari) — comparabilidade historica:',
+                    '- ' + result.nichd.label,
+                    '- ' + plain(result.nichd.criterion),
+                    '- ' + plain(result.nichdMoment),
+                    '',
+                    'CLASSIFICACAO JENSEN 2019 — prognostico:',
+                    '- ' + result.jensen.label,
+                    '- ' + plain(result.jensen.criterion),
+                    '- Avaliacao as 36 semanas de IPM, independentemente da duracao previa de O₂. A FiO₂ nao reclassifica o grau.',
+                    '',
+                    'CODIFICACAO:',
+                    '- CID-10 P27.1 — Displasia broncopulmonar originada no periodo perinatal',
+                    '- O grau de Jensen e uma avaliacao clinica/prognostica, nao um codigo CID adicional.',
+                    '',
+                    'ALERTAS:'
+                ].concat(alertLines, [
+                    '',
+                    'INTERPRETACAO (protocolo institucional):',
+                    '- A classificacao as 36 semanas e util para prognostico e auditoria, mas nao substitui a avaliacao clinica longitudinal.',
+                    '- Um lactente pode ter necessidade modesta de O₂ e ainda assim ter doenca vascular pulmonar relevante, dificuldade alimentar ou crescimento insuficiente.',
+                    '- Nao use a FiO₂ isoladamente para reclassificar os graus de Jensen; documente dispositivos e fluxos.',
+                    '- Registre modalidade, fluxo, pressao, FiO₂, gasometria quando indicada e ecocardiograma.',
+                    '',
+                    'REFERENCIAS:',
+                    '- Jobe AH, Bancalari E. Am J Respir Crit Care Med. 2001;163(7):1723-1729.',
+                    '- Jensen EA, et al. Am J Respir Crit Care Med. 2019;200(6):751-759. doi:10.1164/rccm.201812-2348OC',
+                    '- Protocolo Clinico de Displasia Broncopulmonar — UTI neonatal (versao para validacao institucional, out/2026).',
+                    '',
+                    '---',
+                    'NOTA EDUCATIVA: Revise todos os valores. A NeoPedCalc nao substitui julgamento clinico nem protocolos institucionais.'
+                ]);
+                const foot = (typeof window.neopedLegalReportFooter === 'function') ? window.neopedLegalReportFooter() : '';
+                return lines.join('\n') + (foot ? '\n\n' + foot.trim() : '');
+            }
+
+            function notifyCopied() {
+                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess();
+                else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
+            }
+
+            function copyFallback(text) {
                 const textArea = document.createElement('textarea');
-                textArea.value = relatorio;
+                textArea.value = text;
                 document.body.appendChild(textArea);
                 textArea.select();
-                document.execCommand('copy');
+                const ok = document.execCommand('copy');
                 document.body.removeChild(textArea);
-                if (typeof window.neopedCopySuccess === 'function') window.neopedCopySuccess(); else alert('Texto copiado. Revise integralmente antes de qualquer uso em documentação clínica ou compartilhamento.');
-            });
-        }
-
-        // Função para obter descrição do suporte
-        function getDescricaoSuporte(suporte) {
-            const descricoes = {
-                oxigenio: 'Oxigenio suplementar',
-                cpap: 'CPAP nasal',
-                vm: 'Ventilacao mecanica',
-                nenhum: 'Nenhum suporte'
-            };
-            return descricoes[suporte] || 'Nao informado';
-        }
-
-        // Event listener para o formulário
-        document.addEventListener('DOMContentLoaded', function() {
-            // Definir data de hoje como padrão para reavaliação
-            const hoje = new Date().toISOString().split('T')[0];
-            document.getElementById('dataReavaliacao').value = hoje;
-
-            // Event listener para o formulário
-            const form = document.getElementById('dbpForm');
-            if (form) {
-                console.log('Formulário encontrado, adicionando event listener');
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    console.log('Formulário submetido');
-                    avaliarCriterios();
-                });
-            } else {
-                console.log('Formulário não encontrado');
+                if (ok) notifyCopied();
+                else alert('Não foi possível copiar o texto automaticamente.');
             }
 
-            // Event listener para o botão de relatório
-            const botaoRelatorio = document.getElementById('gerarRelatorio');
-            if (botaoRelatorio) {
-                console.log('Botão de relatório encontrado, adicionando event listener');
-                botaoRelatorio.addEventListener('click', function() {
-                    console.log('Botão de relatório clicado');
-                    gerarRelatorio();
-                });
-            } else {
-                console.log('Botão de relatório não encontrado');
-            }
-        });
-
-        // Event listener para radio buttons - tornar toda a área clicável
-        document.addEventListener('change', function(e) {
-            if (e.target.type === 'radio') {
-                console.log('Radio button clicado:', e.target.name, e.target.value);
-                const radioGroup = e.target.name;
-                const allOptions = document.querySelectorAll(`input[name="${radioGroup}"]`);
-                allOptions.forEach(option => {
-                    option.closest('.radio-option').classList.remove('selected');
-                });
-                e.target.closest('.radio-option').classList.add('selected');
-            }
-        });
-
-        // Event listener para cliques nas opções de radio
-        document.addEventListener('click', function(e) {
-            if (e.target.closest('.radio-option')) {
-                const radioOption = e.target.closest('.radio-option');
-                const radioInput = radioOption.querySelector('input[type="radio"]');
-                if (radioInput) {
-                    radioInput.checked = true;
-                    radioInput.dispatchEvent(new Event('change'));
+            function copyReport() {
+                const result = evaluate();
+                if (result.errors.length) {
+                    alert(result.errors.join('\n'));
+                    return;
+                }
+                const report = buildReport(result);
+                if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+                    navigator.clipboard.writeText(report).then(notifyCopied).catch(function () { copyFallback(report); });
+                } else {
+                    copyFallback(report);
                 }
             }
-        });
 
+            function onSubmit(event) {
+                event.preventDefault();
+                const result = evaluate();
+                if (result.errors.length) {
+                    alert(result.errors.join('\n'));
+                    return;
+                }
+                render(result);
+            }
+
+            function syncSupportFields() {
+                const key = document.querySelector('input[name="suporte"]:checked')?.value || null;
+                const support = key ? SUPORTES[key] : null;
+                document.getElementById('grupoFluxo').hidden = !(support && support.cannula);
+                document.getElementById('grupoFio2').hidden = !support || key === 'nenhum';
+            }
+
+            function selectRadio(input) {
+                document.querySelectorAll('input[name="' + input.name + '"]').forEach(function (option) {
+                    option.closest('.radio-option').classList.toggle('selected', option === input);
+                });
+                if (input.name === 'suporte') syncSupportFields();
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                document.getElementById('dataAvaliacao').value = toInputDate(new Date());
+                document.getElementById('dbpForm').addEventListener('submit', onSubmit);
+                document.getElementById('gerarRelatorio').addEventListener('click', copyReport);
+                syncSupportFields();
+            });
+
+            document.addEventListener('change', function (event) {
+                if (event.target.type === 'radio') selectRadio(event.target);
+            });
+
+            document.addEventListener('click', function (event) {
+                const option = event.target.closest ? event.target.closest('.radio-option') : null;
+                if (!option) return;
+                const input = option.querySelector('input[type="radio"]');
+                if (input && !input.checked) {
+                    input.checked = true;
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            });
+        })();
     </script>
 <script src="../js/neoped-datetime-fix.js"></script>
 <script src="../js/neoped-i18n.js"></script><script src="../js/i18n/common.js"></script><script src="../js/i18n/pages/dbp-neonatal.js"></script><script src="../js/neoped-nav.js"></script>

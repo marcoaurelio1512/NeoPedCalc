@@ -24,12 +24,13 @@ Os itens marcados com ✅ já foram corrigidos no código (e nos dicionários de
 | VancoCalc | k = 0,33 no pré-termo (IG < 37 sem) e 0,45 no termo; novo campo de IG ao nascer |
 | Vasopressina (cardiovasculares e emergência) | Dose em UI e volume em mL (ampola 20 UI/mL), sem conversão para mg |
 | Neofax | Arginina retirada da lista |
+| DBP | Classificação conforme o protocolo institucional (out/2026): NICHD 2001 (O₂ ≥ 28 dias; gravidade às 36 sem IPM) e Jensen 2019 (suporte às 36 sem IPM) lado a lado, CID-10 P27.1, data de nascimento corrigida |
 | Vasopressina (drogas cardiovasculares) | Dose corrigida para 0,00025 UI/kg/min (0,015 UI/kg/hora), faixa 0,0002–0,002 UI/kg/min; heparina também exibida em UI |
 | PIM3 / PRISM III / PELOD-2 | Definições e janelas de coleta conforme os artigos originais; PIM3 usa 0,23 para PaO₂/FiO₂ desconhecidos (regra publicada) e não mostra mais faixas de risco; PELOD-2 recalcula a faixa etária quando qualquer data muda e considera cardiopatia cianótica |
 
-**Mantidos por decisão do médico responsável:** SNAPPE-II, Murray e Finnegan; na RCP Neonatal, sem diluição sugerida para atropina < 1 kg, flush, bicarbonato 8,4%, naloxona e cloreto de cálcio.
+**Mantidos por decisão do médico responsável:** SNAPPE-II, Murray e Finnegan; doses-padrão (sepse) dos antibióticos neonatais; aciclovir 20 mg/kg de 6/6 h na meningoencefalite; na RCP Neonatal, sem diluição sugerida para atropina < 1 kg, flush, bicarbonato 8,4%, naloxona e cloreto de cálcio.
 
-**Pendentes:** classificação da DBP; doses-padrão (sepse) de ampicilina e penicilina no pré-termo e aciclovir 6/6 h na meningoencefalite (Red Book: 8/8 h).
+**Pendentes:** nenhum no momento.
 
 ## 1. Críticos: cálculo ou dose possivelmente errados
 
@@ -62,7 +63,7 @@ Os itens marcados com ✅ já foram corrigidos no código (e nos dicionários de
 - Ventilação neonatal: mesma tabela questionável (PaO2 baixa → baixar PIP/FR; PaCO2 alta → subir FiO2/PEEP); complacência/resistência constantes; relatório sem nota padrão
 - pSOFA: respiratório chega a 8 (total até 28 vs "0–24"); PAM/creatinina não ajustadas por idade apesar de dizer; cardiovascular usa faixas de VIS
 - ✅ **Corrigido só o relatório que quebrava** (const → let). Exsanguineotransfusão: botão "Gerar Relatório" QUEBRA em todos os idiomas (relatorio += em const, linha ~2316: trocar const→let); >3,5 kg tela 5–10 mL/kg × relatório sempre 20 mL; aviso de peso 0,1–20 kg × campo até 10 kg; modal descreve campos inexistentes
-- DBP: classificação não segue NIH 2001/Jensen 2019 (O2 → leve, CPAP → moderada, VM → grave, sem suporte → sem DBP; NIH: O2 aos 28 d e ar ambiente às 36 sem = DBP leve); data de nascimento sai 1 dia antes (fuso horário)
+- ✅ **Corrigido** (protocolo institucional). DBP: classificação não segue NIH 2001/Jensen 2019 (O2 → leve, CPAP → moderada, VM → grave, sem suporte → sem DBP; NIH: O2 aos 28 d e ar ambiente às 36 sem = DBP leve); data de nascimento sai 1 dia antes (fuso horário)
 - ✅ **Corrigido.** Policitemia: adicionarLinha() usa volumeEntradaPlanejado inexistente → adicionar linha "ENTRADA" gera erro (ReferenceError)
 - Drogas respiratórias neonatais: intervalos padrão 30/720 fora do select (alerta em ataques, nirsevimabe, palivizumabe); ipratrópio "mcg/dose" fora do select → dose 0; palivizumabe/Beyfortus volume 0 mL; DART 3+3+4 d (publicado 0,15/0,10/0,05/0,02 em 3/3/2/2); cafeína manutenção "infusão contínua"; Infasurf 135 mg/kg (7,5 mL/kg; bula ~3 mL/kg); aminofilina ">55 sem IPM"; modal "auxiliando na prescrição"
 - Drogas GI/neuro neonatais: toFixed(1) — fentanil "0.0 mg", ranitidina 1,2 kg "0.0 mL" (real 0,036); lactulose "ml/kg/dose" fora do select; idade "0.0"; <32 sem "pré-termo extremo"
