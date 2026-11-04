@@ -119,7 +119,10 @@
       'Dosis 5 a 20 mcg/kg IV en bolo en 10 a 15 minutos. Ampolla 10mg/ml'
     ],
     'Dose 0,1 a 0,5 mcg/kg/min. Ampola 10mg/ml': ['Dose 0.1 to 0.5 mcg/kg/min. Ampule 10mg/ml', 'Dosis 0,1 a 0,5 mcg/kg/min. Ampolla 10mg/ml'],
-    'Dose 0,00025UI/kg/hora. Máximo 0,01UI/kg/hora. Ampola 20 UI/ml': ['Dose 0.00025IU/kg/hour. Maximum 0.01IU/kg/hour. Ampule 20 IU/ml', 'Dosis 0,00025UI/kg/hora. Máximo 0,01UI/kg/hora. Ampolla 20 UI/ml'],
+    'Dose 0,00025 UI/kg/min (0,015 UI/kg/hora). Faixa 0,0002 a 0,002 UI/kg/min (0,012 a 0,12 UI/kg/hora). Ampola 20 UI/ml': [
+      'Dose 0.00025 IU/kg/min (0.015 IU/kg/hour). Range 0.0002 to 0.002 IU/kg/min (0.012 to 0.12 IU/kg/hour). Ampule 20 IU/ml',
+      'Dosis 0,00025 UI/kg/min (0,015 UI/kg/hora). Rango 0,0002 a 0,002 UI/kg/min (0,012 a 0,12 UI/kg/hora). Ampolla 20 UI/ml'
+    ],
     'Dose 5 a 25 mcg/kg/dose. Máximo 15 mg ou 400mcg/kg/dia. Cápsulas de 1mg,2mg ou 5mg de 8/8 ou 12/12 hs': [
       'Dose 5 to 25 mcg/kg/dose. Maximum 15 mg or 400mcg/kg/day. Capsules of 1mg, 2mg or 5mg every 8 or 12 h',
       'Dosis 5 a 25 mcg/kg/dosis. Máximo 15 mg o 400mcg/kg/día. Cápsulas de 1mg, 2mg o 5mg cada 8 o 12 h'

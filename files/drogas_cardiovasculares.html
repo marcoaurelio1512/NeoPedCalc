@@ -931,10 +931,11 @@
         // Variável para debounce do cálculo automático
         let timeoutCalculo = null;
 
-        // Vasopressina é dosada em unidades (UI): dose total em UI e volume em ml, sem conversão mg/mcg.
+        // Vasopressina e heparina são dosadas em unidades (UI): dose total em UI e volume em ml, sem conversão mg/mcg.
         // Vale apenas quando a unidade escolhida é em UI (UI/kg/hora, UI/kg, UI/kg/bolus).
+        const DROGAS_EM_UI = ['vasopressina', 'heparina_ataque', 'heparina_manutencao'];
         function ehVasopressinaEmUI(drogaSelecionada, unidade) {
-            return drogaSelecionada === 'vasopressina' && typeof unidade === 'string' && unidade.indexOf('UI/') === 0;
+            return DROGAS_EM_UI.indexOf(drogaSelecionada) !== -1 && typeof unidade === 'string' && unidade.indexOf('UI/') === 0;
         }
 
         // Dose total em UI no tempo escolhido (infusão por hora) ou da dose única/bolus.
@@ -1257,12 +1258,13 @@
             },
             vasopressina: {
                 nome: "Vasopressina",
-                dose: 0.00025,
+                // 0,00025 UI/kg/min (faixa 0,0002-0,002 UI/kg/min) expresso na unidade da página: x 60 = UI/kg/hora
+                dose: 0.015,
                 unidade: "UI/kg/hora",
                 apresentacao: "20 UI/ml",
                 volume: 24,
                 tempoInfusao: 24,
-                observacoes: "Dose 0,00025UI/kg/hora. Máximo 0,01UI/kg/hora. Ampola 20 UI/ml"
+                observacoes: "Dose 0,00025 UI/kg/min (0,015 UI/kg/hora). Faixa 0,0002 a 0,002 UI/kg/min (0,012 a 0,12 UI/kg/hora). Ampola 20 UI/ml"
             },
             prazozin: {
                 nome: "Prazozin",

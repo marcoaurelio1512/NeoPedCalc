@@ -24,11 +24,12 @@ Os itens marcados com ✅ já foram corrigidos no código (e nos dicionários de
 | VancoCalc | k = 0,33 no pré-termo (IG < 37 sem) e 0,45 no termo; novo campo de IG ao nascer |
 | Vasopressina (cardiovasculares e emergência) | Dose em UI e volume em mL (ampola 20 UI/mL), sem conversão para mg |
 | Neofax | Arginina retirada da lista |
+| Vasopressina (drogas cardiovasculares) | Dose corrigida para 0,00025 UI/kg/min (0,015 UI/kg/hora), faixa 0,0002–0,002 UI/kg/min; heparina também exibida em UI |
 | PIM3 / PRISM III / PELOD-2 | Definições e janelas de coleta conforme os artigos originais; PIM3 usa 0,23 para PaO₂/FiO₂ desconhecidos (regra publicada) e não mostra mais faixas de risco; PELOD-2 recalcula a faixa etária quando qualquer data muda e considera cardiopatia cianótica |
 
 **Mantidos por decisão do médico responsável:** SNAPPE-II, Murray e Finnegan; na RCP Neonatal, sem diluição sugerida para atropina < 1 kg, flush, bicarbonato 8,4%, naloxona e cloreto de cálcio.
 
-**Pendentes:** dose de manutenção da vasopressina na página de drogas cardiovasculares (0,00025 UI/kg/**hora**, cerca de 60× abaixo da faixa da literatura 0,0002–0,002 UI/kg/min — provável erro de unidade); heparina rotulada "mg (mcg)"; classificação da DBP; doses-padrão (sepse) de ampicilina e penicilina no pré-termo e aciclovir 6/6 h na meningoencefalite (Red Book: 8/8 h).
+**Pendentes:** classificação da DBP; doses-padrão (sepse) de ampicilina e penicilina no pré-termo e aciclovir 6/6 h na meningoencefalite (Red Book: 8/8 h).
 
 ## 1. Críticos: cálculo ou dose possivelmente errados
 
