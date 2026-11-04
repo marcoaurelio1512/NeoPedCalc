@@ -18,7 +18,7 @@
   var LANG_INDEX = { en: 0, es: 1 };
   var STORAGE_KEY = 'neoped_lang';
   var ATTRS = ['placeholder', 'aria-label', 'title', 'alt'];
-  var SKIP_TAGS = { SCRIPT: 1, STYLE: 1, TEXTAREA: 1, CODE: 1, PRE: 1 };
+  var SKIP_TAGS = { SCRIPT: 1, STYLE: 1, TEXTAREA: 1, CODE: 1 };
   var HAS_LETTERS = /[A-Za-zÀ-ú]/;
 
   var dictionary = new Map();
@@ -105,9 +105,33 @@
     return changed ? out.join('') : null;
   }
 
+  function lookupPiece(piece, target) {
+    var out = lookupCore(piece, target);
+    return out != null ? out : lookupFragments(piece, target);
+  }
+
+  var SEGMENT_SPLIT = /(:\s+|\s+[|·—–]\s+|\s+-\s+)/;
+
+  /** Linhas "rótulo: valor" ou "A | B" (relatórios, doses) são traduzidas por segmento. */
+  function lookupSegments(key, target) {
+    var parts = key.split(SEGMENT_SPLIT);
+    if (parts.length < 3) return null;
+    var changed = false;
+    var out = parts.map(function (part, index) {
+      if (index % 2 === 1) return part;
+      var trimmed = part.trim();
+      if (!HAS_LETTERS.test(trimmed)) return part;
+      var hit = lookupPiece(trimmed, target);
+      if (hit == null) return part;
+      changed = true;
+      return part.replace(trimmed, hit);
+    });
+    return changed ? out.join('') : null;
+  }
+
   function lookup(key, target) {
-    var out = lookupCore(key, target);
-    return out != null ? out : lookupFragments(key, target);
+    var out = lookupPiece(key, target);
+    return out != null ? out : lookupSegments(key, target);
   }
 
   /** Mensagens com várias linhas são traduzidas linha a linha. */
@@ -115,6 +139,57 @@
     if (lang === 'pt' || message == null) return message;
     return String(message).split('\n').map(function (line) { return t(line); }).join('\n');
   }
+
+  // Relatórios copiados ou compartilhados saem no idioma escolhido.
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+    var writeText = navigator.clipboard.writeText.bind(navigator.clipboard);
+    navigator.clipboard.writeText = function (text) { return writeText(translateMessage(text)); };
+  }
+
+  function selectedText() {
+    var el = document.activeElement;
+    if (el && /^(TEXTAREA|INPUT)$/.test(el.tagName) && typeof el.selectionStart === 'number') {
+      return el.value.slice(el.selectionStart, el.selectionEnd);
+    }
+    return window.getSelection ? String(window.getSelection()) : '';
+  }
+
+  document.addEventListener('copy', function (event) {
+    if (lang === 'pt' || !event.clipboardData) return;
+    var text = selectedText();
+    var out = translateMessage(text);
+    if (!text || out === text) return;
+    event.clipboardData.setData('text/plain', out);
+    event.preventDefault();
+  });
+
+  var SHARE_URL = /^(https?:\/\/(wa\.me|api\.whatsapp\.com|web\.whatsapp\.com)\/|mailto:)/i;
+  var SHARE_PARAMS = ['text', 'body', 'subject'];
+  function translateShareUrl(url) {
+    if (lang === 'pt' || typeof url !== 'string' || !SHARE_URL.test(url)) return url;
+    var q = url.indexOf('?');
+    if (q === -1) return url;
+    var params = url.slice(q + 1).split('&').map(function (pair) {
+      var eq = pair.indexOf('=');
+      var name = eq === -1 ? pair : pair.slice(0, eq);
+      if (eq === -1 || SHARE_PARAMS.indexOf(name.toLowerCase()) === -1) return pair;
+      try {
+        var value = decodeURIComponent(pair.slice(eq + 1).replace(/\+/g, ' '));
+        return name + '=' + encodeURIComponent(translateMessage(value));
+      } catch (e) { return pair; }
+    });
+    return url.slice(0, q + 1) + params.join('&');
+  }
+  var openWindow = window.open;
+  window.open = function (url) {
+    var args = Array.prototype.slice.call(arguments);
+    args[0] = translateShareUrl(url);
+    return openWindow.apply(window, args);
+  };
+  document.addEventListener('click', function (event) {
+    var link = event.target && event.target.closest ? event.target.closest('a[href]') : null;
+    if (link && lang !== 'pt' && SHARE_URL.test(link.getAttribute('href'))) link.setAttribute('href', translateShareUrl(link.getAttribute('href')));
+  }, true);
 
   ['alert', 'confirm', 'prompt'].forEach(function (name) {
     var original = window[name];
@@ -155,9 +230,16 @@
     if (!node.parentNode || isSkipped(node.parentNode)) return;
     var src = sourceOf(textMemory.get(node), node.data);
     if (!HAS_LETTERS.test(src)) return;
-    var out = t(src);
+    var out = translateBlock(src);
     textMemory.set(node, { src: src, out: out });
     if (node.data !== out) node.data = out;
+  }
+
+  /** Texto inteiro primeiro; se não houver tradução e houver quebras de linha (<pre>, relatórios), linha a linha. */
+  function translateBlock(text) {
+    var out = t(text);
+    if (out !== text || text.indexOf('\n') === -1) return out;
+    return translateMessage(text);
   }
 
   function translateAttrs(el) {
@@ -286,10 +368,20 @@
     if (document.body) updateNotice();
   }
 
+  var FLOATING_DELAY_MS = 1500;
+
+  /** Páginas sem a barra das calculadoras (ex.: RCP Neonatal) recebem um seletor flutuante. */
+  function mountFloatingSwitcher() {
+    if (document.querySelector('.np-lang') || document.body.classList.contains('np-portal')) return;
+    var group = mountSwitcher(document.body, { dark: true });
+    if (group) group.classList.add('np-lang-floating');
+  }
+
   function init() {
     var header = document.querySelector('.np-header-inner');
     if (header) mountSwitcher(header, { before: header.querySelector('.np-account') });
     applyAll();
+    setTimeout(mountFloatingSwitcher, FLOATING_DELAY_MS);
   }
 
   window.NEOPED_I18N = {
