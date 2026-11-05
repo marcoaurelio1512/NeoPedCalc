@@ -57,6 +57,15 @@
   window.addEventListener('input', neopedGuardPartialYear, true);
   window.addEventListener('change', neopedGuardPartialYear, true);
 
+  /* Digitação lenta: o campo nativo perde o ano. Com mouse/teclado, carrega o campo com máscara. */
+  (function loadDateTyping() {
+    var self = document.currentScript;
+    if (!self || !self.src || !window.matchMedia || !window.matchMedia('(pointer: fine)').matches) return;
+    var s = document.createElement('script');
+    s.src = self.src.replace(/neoped-datetime-fix\.js(\?.*)?$/, 'neoped-date-typing.js');
+    (document.head || document.documentElement).appendChild(s);
+  })();
+
   function neopedClearDatetimeChain() {
     var els = document.querySelectorAll('.neoped-dt-chain, .neoped-dt-input');
     for (var i = 0; i < els.length; i++) {
@@ -77,6 +86,7 @@
       if (!inp || inp.type === 'hidden') continue;
       inp.classList.add('neoped-dt-input');
       neopedLimitYearDigits(inp);
+      if (window.neopedMountDateTyping) window.neopedMountDateTyping(inp);
       var p = inp.parentElement;
       var depth = 0;
       while (p && depth < 8) {
