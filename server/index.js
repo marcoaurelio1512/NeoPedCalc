@@ -7,21 +7,33 @@ import Stripe from 'stripe';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { hasAccess, isProtectedPath, publicUser } from './access.js';
+import { loadConfig, describeIntegration } from './config.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const env = process.env;
-const production = env.NODE_ENV === 'production';
-const required = ['APP_URL','SUPABASE_URL','SUPABASE_ANON_KEY','SUPABASE_SERVICE_ROLE_KEY','STRIPE_SECRET_KEY','STRIPE_PRICE_MONTHLY','STRIPE_PRICE_ANNUAL'];
-const configured = required.every(key => Boolean(env[key]));
-const demo = !configured && !production;
-if (production && !configured) throw new Error('Configuração de produção incompleta: ' + required.filter(key => !env[key]).join(', '));
-const appUrl = new URL(env.APP_URL || 'http://localhost:3000').origin;
-if (production && !appUrl.startsWith('https://')) throw new Error('APP_URL deve utilizar HTTPS em produção.');
-const stripe = configured ? new Stripe(env.STRIPE_SECRET_KEY, { maxNetworkRetries: 2, timeout: 15000 }) : null;
+let config;
+try { config = loadConfig(env); } catch (error) {
+  // Essential configuration only (APP_URL / PORT): fail fast with an identifiable message.
+  console.error('[NeoPedCalc] Falha fatal de configuração: ' + error.message);
+  process.exit(1);
+}
+const { production, demo, appUrl } = config;
+const supabaseReady = config.supabase.configured;
+const stripeReady = config.stripe.configured;
+// Subscriptions need both: identity (Supabase) and payment verification (Stripe).
+const billingReady = supabaseReady && stripeReady;
+for (const [name, state] of [['Supabase', config.supabase], ['Stripe', config.stripe]]) {
+  (state.configured ? console.info : console.warn)('[NeoPedCalc] ' + describeIntegration(name, state));
+}
+if (production && !billingReady) console.warn('[NeoPedCalc] Calculadoras protegidas permanecem BLOQUEADAS até Supabase e Stripe estarem configurados.');
+const stripe = stripeReady ? new Stripe(env.STRIPE_SECRET_KEY.trim(), { maxNetworkRetries: 2, timeout: 15000 }) : null;
 const supabaseOptions = { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } };
-const admin = configured ? createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, supabaseOptions) : null;
-const userClient = () => createClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY, supabaseOptions);
-const prices = [env.STRIPE_PRICE_MONTHLY, env.STRIPE_PRICE_ANNUAL];
+const admin = supabaseReady ? createClient(env.SUPABASE_URL.trim(), env.SUPABASE_SERVICE_ROLE_KEY.trim(), supabaseOptions) : null;
+const userClient = () => createClient(env.SUPABASE_URL.trim(), env.SUPABASE_ANON_KEY.trim(), supabaseOptions);
+const prices = stripeReady ? [env.STRIPE_PRICE_MONTHLY.trim(), env.STRIPE_PRICE_ANNUAL.trim()] : [];
+const AUTH_UNAVAILABLE = 'Login temporariamente indisponível. Tente novamente mais tarde.';
+const BILLING_UNAVAILABLE = 'Assinaturas temporariamente indisponíveis. Tente novamente mais tarde.';
+const unavailable = (res, message) => res.status(503).json({ error: message });
 const app = express();
 app.disable('x-powered-by');
 if (env.TRUST_PROXY) app.set('trust proxy', Number(env.TRUST_PROXY));
@@ -51,7 +63,7 @@ function clearSession(res) {
   res.clearCookie('np_refresh', cookieOptions);
 }
 async function authenticate(req, res) {
-  if (!configured) return null;
+  if (!supabaseReady) return null;
   const auth = userClient();
   let token = req.cookies.np_access;
   let result = token ? await auth.auth.getUser(token) : null;
@@ -67,8 +79,9 @@ async function authenticate(req, res) {
   return { user: result.data.user, token };
 }
 async function requireAuth(req, res, next) {
+  if (!supabaseReady) return demo ? res.status(401).json({ error: 'Login indisponível na prévia. Configure os serviços no servidor.' }) : unavailable(res, AUTH_UNAVAILABLE);
   const identity = await authenticate(req, res);
-  if (!identity) return res.status(401).json({ error: configured ? 'Entre na sua conta para continuar.' : 'Login indisponível na prévia. Configure os serviços no servidor.' });
+  if (!identity) return res.status(401).json({ error: 'Entre na sua conta para continuar.' });
   req.identity = identity;
   next();
 }
@@ -83,25 +96,33 @@ async function customerId(user, create = false) {
   return customer.id;
 }
 async function billingStatus(user) {
+  // Without a verifiable payment provider a subscription is NEVER assumed active.
+  if (!billingReady) return { active: false, customer: null, status: 'unavailable', hasSubscription: false };
   const customer = await customerId(user);
   if (!customer) return { active: false, customer: null, status: 'none', hasSubscription: false };
   const subscriptions = await stripe.subscriptions.list({ customer, status: 'all', limit: 100 });
   return { hasSubscription: subscriptions.data.some(s => !['canceled','incomplete_expired'].includes(s.status) && s.items.data.some(item => prices.includes(item.price.id))), active: hasAccess(subscriptions.data, prices), customer, status: subscriptions.data.find(s => s.items.data.some(item => prices.includes(item.price.id)))?.status || 'none' };
 }
-app.get('/api/health', (req,res) => res.json({ ok: true, mode: demo ? 'preview' : 'configured' }));
+// Liveness only: answers instantly, no external calls, no credentials or variable names.
+function healthPayload() {
+  const state = ready => ready ? 'configured' : 'not_configured';
+  return { status: 'ok', application: 'NeoPedCalc', environment: config.environment, mode: demo ? 'preview' : billingReady ? 'configured' : 'degraded', integrations: { supabase: state(supabaseReady), stripe: state(stripeReady) } };
+}
+app.get(['/health', '/api/health'], (req, res) => res.set('Cache-Control', 'no-store').json({ ok: true, ...healthPayload() }));
 let pricingCache = null;
 app.get('/api/config', async (req, res) => {
   if (demo) return res.json({ demo: true, prices: {} });
+  if (!stripeReady) return res.json({ demo: false, billing: false, auth: supabaseReady, prices: {} });
   if (!pricingCache || pricingCache.expires < Date.now()) {
     const data = await Promise.all(prices.map(id => stripe.prices.retrieve(id)));
     pricingCache = { expires: Date.now() + 60000, data: Object.fromEntries(data.map((price, index) => [index ? 'annual' : 'monthly', { amount: price.unit_amount, currency: price.currency, interval: price.recurring?.interval, active: price.active }])) };
   }
-  res.json({ demo: false, prices: pricingCache.data });
+  res.json({ demo: false, billing: billingReady, auth: supabaseReady, prices: pricingCache.data });
 });
 const authLimiter = rateLimit({ windowMs: 15*60*1000, limit: 25, standardHeaders: 'draft-8', legacyHeaders: false, message: { error: 'Muitas tentativas. Aguarde alguns minutos e tente novamente.' } });
 app.use('/api/auth', authLimiter);
 app.post('/api/auth/:action', async (req, res) => {
-  if (!configured) return res.status(503).json({ error: 'Esta é uma prévia local. Configure Supabase e Stripe para ativar contas e assinaturas.' });
+  if (!supabaseReady) return demo ? res.status(503).json({ error: 'Esta é uma prévia local. Configure Supabase e Stripe para ativar contas e assinaturas.' }) : unavailable(res, AUTH_UNAVAILABLE);
   const { action } = req.params;
   const { email, password, terms, access_token, refresh_token, token_hash, type } = req.body;
   const auth = userClient();
@@ -148,7 +169,8 @@ app.post('/api/auth/:action', async (req, res) => {
   res.status(404).json({ error: 'Operação não encontrada.' });
 });
 app.get('/api/account', requireAuth, async (req, res) => res.json({ user: publicUser(req.identity.user), billing: await billingStatus(req.identity.user) }));
-app.post('/api/checkout', rateLimit({ windowMs: 15*60*1000, limit: 20, message: { error: 'Aguarde antes de tentar iniciar outro pagamento.' } }), requireAuth, async (req, res) => {
+const requireBilling = (req, res, next) => billingReady ? next() : unavailable(res, BILLING_UNAVAILABLE);
+app.post('/api/checkout', rateLimit({ windowMs: 15*60*1000, limit: 20, message: { error: 'Aguarde antes de tentar iniciar outro pagamento.' } }), requireAuth, requireBilling, async (req, res) => {
   const plan = req.body.plan;
   if (!['monthly','annual'].includes(plan)) return res.status(400).json({ error: 'Plano inválido.' });
   const status = await billingStatus(req.identity.user);
@@ -165,7 +187,7 @@ app.post('/api/checkout', rateLimit({ windowMs: 15*60*1000, limit: 20, message: 
   }
   res.json({ url: session.url });
 });
-app.post('/api/billing-portal', requireAuth, async (req, res) => {
+app.post('/api/billing-portal', requireAuth, requireBilling, async (req, res) => {
   const customer = await customerId(req.identity.user);
   if (!customer) return res.status(400).json({ error: 'Sua conta ainda não possui uma assinatura.' });
   const session = await stripe.billingPortal.sessions.create({ customer, return_url: appUrl + '/conta.html' });
@@ -178,6 +200,8 @@ app.use(async (req,res,next) => {
   if (!isProtectedPath(req.path)) return next();
   res.set('Cache-Control', 'private, no-store');
   if (demo) return next();
+  // Integrations down in production: block, never fall through to free access.
+  if (!billingReady) return res.redirect(303, '/conta.html?service=unavailable');
   const identity = await authenticate(req,res);
   if (!identity) return res.redirect(303, '/conta.html');
   const status = await billingStatus(identity.user);
@@ -197,7 +221,7 @@ const publicPages = new Set(['index.html','selecao_calculadoras.html','calculado
 app.get('/:page', (req,res,next) => publicPages.has(req.params.page) ? res.sendFile(path.join(root,req.params.page)) : next());
 app.use((req,res) => res.status(404).sendFile(path.join(root,'404.html')));
 app.use((error,req,res,next) => {
-  console.error('Falha no servidor:', error.code || error.type || error.name);
+  console.error('[NeoPedCalc] Falha em', req.method, req.path, '→', error.code || error.type || error.name, error.message);
   if (res.headersSent) return next(error);
   const status = error.type === 'entity.parse.failed' ? 400 : error.type === 'entity.too.large' ? 413 : 503;
   const message = status === 503 ? 'Serviço temporariamente indisponível. Tente novamente em instantes.' : 'Solicitação inválida.';
@@ -205,5 +229,10 @@ app.use((error,req,res,next) => {
   if (req.path.startsWith('/api')) res.json({ error: message });
   else res.type('html').send('<!doctype html><html lang="pt-BR"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>NeoPedCalc</title><body><h1>'+message+'</h1><a href="/conta.html">Voltar à conta</a></body></html>');
 });
-const port = Number(env.PORT || 3000);
-app.listen(port, env.HOST || '127.0.0.1', () => console.log(`NeoPedCalc: ${appUrl} (${demo ? 'prévia local, sem cobrança' : 'autenticação e cobrança configuradas'})`));
+process.on('unhandledRejection', reason => console.error('[NeoPedCalc] Promessa rejeitada sem tratamento:', reason));
+const modeLabel = demo ? 'prévia local, sem cobrança' : billingReady ? 'autenticação e cobrança configuradas' : 'modo degradado: login/assinaturas desativados';
+const server = app.listen(config.port, config.host, () => console.info(`[NeoPedCalc] Ouvindo em ${config.host}:${config.port} · ${appUrl} (${modeLabel})`));
+server.on('error', error => {
+  console.error(`[NeoPedCalc] Não foi possível abrir ${config.host}:${config.port}: ${error.code || error.message}`);
+  process.exit(1);
+});

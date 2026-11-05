@@ -11,7 +11,7 @@ npm ci
 npm run dev
 ```
 
-Abra **http://localhost:3000**. Sem credenciais, o servidor abre uma **prévia local** com as calculadoras liberadas para revisão. Cadastro e cobrança ficam indisponíveis e a interface informa essa condição. O servidor escuta somente em `127.0.0.1` por padrão.
+Abra **http://localhost:8080**. Sem credenciais, o servidor abre uma **prévia local** com as calculadoras liberadas para revisão. Cadastro e cobrança ficam indisponíveis e a interface informa essa condição. O servidor escuta somente em `127.0.0.1` por padrão.
 
 A prévia não deve ser publicada para compradores. `NODE_ENV=production` impede inicialização sem a configuração completa e exige HTTPS no endereço público.
 

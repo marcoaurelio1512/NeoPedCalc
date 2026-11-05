@@ -1,7 +1,7 @@
 import { chromium } from 'playwright';
 import { readdir, mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-const base = process.env.TEST_BASE_URL || 'http://localhost:3000';
+const base = process.env.TEST_BASE_URL || 'http://localhost:8080';
 async function walk(dir) {
   const entries = await readdir(dir, { withFileTypes:true });
   const result=[];

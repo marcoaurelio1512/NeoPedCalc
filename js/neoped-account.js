@@ -53,6 +53,7 @@
       document.getElementById('auth-forms').hidden = false;
       document.getElementById('account-panel').hidden = true;
       if (params.get('subscription') === 'required') showMessage('Entre na sua conta e escolha um plano para acessar as calculadoras.');
+      else if (params.get('service') === 'unavailable') showMessage('O acesso às calculadoras está temporariamente indisponível. Tente novamente mais tarde.', true);
     }
   }
   const authForm = document.getElementById('auth-form');
