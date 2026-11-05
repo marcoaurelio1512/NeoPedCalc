@@ -42,6 +42,21 @@ SKIP_SUBSTRINGS = (
     "manual msd para profissionais",  # linha genérica sem autores completos
     "escore silverman-anderson para avaliacao de dispneia",
     "escore silverman-anderson para avaliação de dispneia",
+    # textos de interface/notas das calculadoras (não são citações)
+    "calculadora obstetrica baseada",
+    "dum como metodo principal",
+    "ultrassonografia precoce como metodo",
+    "valores abaixo do 3º percentil",
+    "blood pressure thresholds at third percentile",
+    "marque os sinais presentes",
+    "recomenda-se validacao local",
+    "score clinico baseado em criterios",
+    "responsáveis técnicos:",
+    "equipamentos adaptados de broselow",
+    "portal oficial:",
+    "referencias: -",
+    "www.sbp.com.br",
+    "www.spsp.org.br",
 )
 
 SKIP_EXACT_PREFIXES = (
