@@ -126,6 +126,8 @@
     })();
   }
   api('/api/config').then(config => {
+    const openAccess = document.getElementById('open-access');
+    if (openAccess) openAccess.hidden = config.openAccess !== true;
     document.querySelectorAll('[data-price]').forEach(el => {
       const price = config.prices[el.dataset.price];
       if (!price?.active || price.amount === null) return;

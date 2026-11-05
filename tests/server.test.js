@@ -119,6 +119,14 @@ test('web app install assets are served from the site root with correct types', 
   }
 });
 
+test('OPEN_ACCESS=true temporarily unlocks calculators in production and is reported', async t => {
+  const { base, logs } = await startServer(t, 3187, { OPEN_ACCESS: 'true' });
+  for (const file of ['/files/apgar.html', '/files/ballard/ballard.htm', '/selecao_calculadoras.html', '/calculadoras_neonatais.html', '/calculadoras_pediatricas.html']) assert.equal((await fetch(base + file, { redirect: 'manual' })).status, 200, file);
+  assert.equal((await (await fetch(base + '/api/config')).json()).openAccess, true);
+  assert.equal((await (await fetch(base + '/health')).json()).openAccess, true);
+  assert.match(logs(), /OPEN_ACCESS=true/);
+});
+
 test('server listens on the PORT provided by the platform', async t => {
   const { base } = await startServer(t, 3185, { RAILWAY_PUBLIC_DOMAIN: 'neo.up.railway.app', APP_URL: '' });
   assert.equal((await fetch(base + '/health')).status, 200);

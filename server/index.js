@@ -25,7 +25,8 @@ const billingReady = supabaseReady && stripeReady;
 for (const [name, state] of [['Supabase', config.supabase], ['Stripe', config.stripe]]) {
   (state.configured ? console.info : console.warn)('[NeoPedCalc] ' + describeIntegration(name, state));
 }
-if (production && !billingReady) console.warn('[NeoPedCalc] Calculadoras protegidas permanecem BLOQUEADAS até Supabase e Stripe estarem configurados.');
+if (config.openAccess) console.warn('[NeoPedCalc] ATENÇÃO: OPEN_ACCESS=true — calculadoras ABERTAS a qualquer visitante (acesso de teste). Remova a variável para reativar o bloqueio.');
+else if (production && !billingReady) console.warn('[NeoPedCalc] Calculadoras protegidas permanecem BLOQUEADAS até Supabase e Stripe estarem configurados.');
 const stripe = stripeReady ? new Stripe(env.STRIPE_SECRET_KEY.trim(), { maxNetworkRetries: 2, timeout: 15000 }) : null;
 const supabaseOptions = { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } };
 const admin = supabaseReady ? createClient(env.SUPABASE_URL.trim(), env.SUPABASE_SERVICE_ROLE_KEY.trim(), supabaseOptions) : null;
@@ -106,18 +107,18 @@ async function billingStatus(user) {
 // Liveness only: answers instantly, no external calls, no credentials or variable names.
 function healthPayload() {
   const state = ready => ready ? 'configured' : 'not_configured';
-  return { status: 'ok', application: 'NeoPedCalc', environment: config.environment, mode: demo ? 'preview' : billingReady ? 'configured' : 'degraded', integrations: { supabase: state(supabaseReady), stripe: state(stripeReady) } };
+  return { status: 'ok', application: 'NeoPedCalc', environment: config.environment, mode: demo ? 'preview' : billingReady ? 'configured' : 'degraded', openAccess: config.openAccess, integrations: { supabase: state(supabaseReady), stripe: state(stripeReady) } };
 }
 app.get(['/health', '/api/health'], (req, res) => res.set('Cache-Control', 'no-store').json({ ok: true, ...healthPayload() }));
 let pricingCache = null;
 app.get('/api/config', async (req, res) => {
-  if (demo) return res.json({ demo: true, prices: {} });
-  if (!stripeReady) return res.json({ demo: false, billing: false, auth: supabaseReady, prices: {} });
+  if (demo) return res.json({ demo: true, openAccess: config.openAccess, prices: {} });
+  if (!stripeReady) return res.json({ demo: false, openAccess: config.openAccess, billing: false, auth: supabaseReady, prices: {} });
   if (!pricingCache || pricingCache.expires < Date.now()) {
     const data = await Promise.all(prices.map(id => stripe.prices.retrieve(id)));
     pricingCache = { expires: Date.now() + 60000, data: Object.fromEntries(data.map((price, index) => [index ? 'annual' : 'monthly', { amount: price.unit_amount, currency: price.currency, interval: price.recurring?.interval, active: price.active }])) };
   }
-  res.json({ demo: false, billing: billingReady, auth: supabaseReady, prices: pricingCache.data });
+  res.json({ demo: false, openAccess: config.openAccess, billing: billingReady, auth: supabaseReady, prices: pricingCache.data });
 });
 const authLimiter = rateLimit({ windowMs: 15*60*1000, limit: 25, standardHeaders: 'draft-8', legacyHeaders: false, message: { error: 'Muitas tentativas. Aguarde alguns minutos e tente novamente.' } });
 app.use('/api/auth', authLimiter);
@@ -199,7 +200,7 @@ app.use('/api', (req,res) => res.status(404).json({ error: 'Rota não encontrada
 app.use(async (req,res,next) => {
   if (!isProtectedPath(req.path)) return next();
   res.set('Cache-Control', 'private, no-store');
-  if (demo) return next();
+  if (demo || config.openAccess) return next();
   // Integrations down in production: block, never fall through to free access.
   if (!billingReady) return res.redirect(303, '/conta.html?service=unavailable');
   const identity = await authenticate(req,res);

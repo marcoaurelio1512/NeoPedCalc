@@ -70,3 +70,4 @@ img.np-brand-icon{display:block;background:none;padding:0;width:42px;height:42px
 .np-footer-brand{display:inline-flex;align-items:center;gap:9px}.np-footer-brand img{width:26px;height:26px;border-radius:7px}
 .neoped-module-brand a img{width:24px;height:24px;border-radius:7px;display:block;box-shadow:0 0 0 1px #ffffff2e}
 @media(max-width:720px){img.np-brand-icon{width:36px;height:36px;border-radius:10px}}
+.np-open-access{margin-top:22px;padding-top:20px;border-top:1px dashed var(--np-line);display:grid;gap:10px}.np-open-access p{font-size:12px;color:#a45a18;font-weight:650}.np-open-access .np-button{text-align:center}

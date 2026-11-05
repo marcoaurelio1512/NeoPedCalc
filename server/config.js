@@ -66,7 +66,10 @@ export function loadConfig(env) {
     supabase,
     stripe,
     // Free local preview (calculators unlocked) exists ONLY outside production.
-    demo: !production && !(supabase.configured && stripe.configured)
+    demo: !production && !(supabase.configured && stripe.configured),
+    // TEMPORARY test switch: OPEN_ACCESS=true unlocks the calculators for everyone,
+    // even in production. Remove the variable to restore the paywall (no code change).
+    openAccess: env.OPEN_ACCESS?.trim().toLowerCase() === 'true'
   };
 }
 

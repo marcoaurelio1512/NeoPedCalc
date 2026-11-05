@@ -264,6 +264,8 @@
     'Aguarde antes de tentar iniciar outro pagamento.': ['Please wait before starting another payment.', 'Espere antes de intentar iniciar otro pago.'],
     'E-mail ou senha inválidos. Verifique também a confirmação do seu e-mail.': ['Invalid email or password. Also check that your email has been confirmed.', 'Correo o contraseña no válidos. Compruebe también la confirmación de su correo.'],
     'O acesso às calculadoras está temporariamente indisponível. Tente novamente mais tarde.': ['Access to the calculators is temporarily unavailable. Please try again later.', 'El acceso a las calculadoras no está disponible temporalmente. Inténtelo de nuevo más tarde.'],
+    'Acesso de teste liberado temporariamente.': ['Test access temporarily enabled.', 'Acceso de prueba habilitado temporalmente.'],
+    'Abrir as calculadoras direto →': ['Open the calculators directly →', 'Abrir las calculadoras directamente →'],
     'Login temporariamente indisponível. Tente novamente mais tarde.': ['Sign-in is temporarily unavailable. Please try again later.', 'El inicio de sesión no está disponible temporalmente. Inténtelo de nuevo más tarde.'],
     'Assinaturas temporariamente indisponíveis. Tente novamente mais tarde.': ['Subscriptions are temporarily unavailable. Please try again later.', 'Las suscripciones no están disponibles temporalmente. Inténtelo de nuevo más tarde.'],
     'Esta é uma prévia local. Configure Supabase e Stripe para ativar contas e assinaturas.': ['This is a local preview. Configure Supabase and Stripe to enable accounts and subscriptions.', 'Esta es una vista previa local. Configure Supabase y Stripe para activar cuentas y suscripciones.'],
