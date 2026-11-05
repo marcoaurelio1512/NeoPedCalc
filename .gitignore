@@ -9,3 +9,6 @@ test-results/
 
 # Projeto legado do Web Page Maker (contém senha)
 site.wss
+
+# Chaves de teste da integração com prontuário
+ehr-keys/

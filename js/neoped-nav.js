@@ -390,8 +390,18 @@ window.neopedEscapeHtml = function (value) {
     });
   }
 
+  /* Paciente aberto pelo prontuário (MV/Tasy): só carrega o módulo quando há contexto nesta aba. */
+  function loadPatientModule() {
+    try { if (!window.sessionStorage.getItem('neoped_ehr_context_v1')) return; } catch (e) { return; }
+    if (document.querySelector('script[src*="neoped-patient.js"]')) return;
+    var script = document.createElement('script');
+    script.src = getAppBase() + 'js/neoped-patient.js';
+    document.head.appendChild(script);
+  }
+
   function init() {
     applyFooterYear();
+    loadPatientModule();
     if (!document.body || document.body.getAttribute('data-neoped-no-restore') === 'true') {
       /* Páginas com estado complexo (ex.: RCP Pediátrica) não restauram do sessionStorage para não quebrar a inicialização */
     } else {

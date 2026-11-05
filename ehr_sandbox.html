@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex"><title>Hospital de teste · NeoPedCalc</title><meta name="theme-color" content="#102f3a">
+<link rel="icon" href="/images/brand/favicon.ico" sizes="48x48"><link rel="stylesheet" href="/css/neoped-responsive.css"><link rel="stylesheet" href="/css/neoped-modern.css">
+<style>
+  .sbx { max-width: 880px; margin: 0 auto; padding: 32px 16px 64px; text-align: left; }
+  .sbx-warn { background: #fff4d6; border-left: 4px solid #f6b73c; padding: 12px 16px; border-radius: 6px; margin: 16px 0 24px; color: #3a2600; }
+  .sbx-presets { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .sbx-presets button, .sbx-go { min-height: 40px; padding: 8px 14px; border-radius: 8px; cursor: pointer; font: 600 14px system-ui, sans-serif; }
+  .sbx-presets button { background: #fff; border: 1px solid #9bb7bd; color: #102f3a; }
+  .sbx-presets button[aria-pressed="true"] { background: #102f3a; color: #fff; border-color: #102f3a; }
+  .sbx-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px 18px; }
+  .sbx-grid label { display: flex; flex-direction: column; gap: 4px; font: 600 13px system-ui, sans-serif; color: #24434b; }
+  .sbx-grid input, .sbx-grid select { min-height: 40px; padding: 6px 10px; border: 1px solid #9bb7bd; border-radius: 6px; font: 15px system-ui, sans-serif; }
+  .sbx-go { margin-top: 22px; background: #2a9d8f; color: #fff; border: 0; font-size: 16px; padding: 12px 22px; }
+  .sbx-go:focus-visible, .sbx-presets button:focus-visible { outline: 3px solid #5fd3c6; outline-offset: 2px; }
+  .sbx-error { color: #b42318; font-weight: 600; min-height: 1.4em; margin-top: 12px; }
+  .sbx-out { margin-top: 24px; } .sbx-out pre { background: #0d242c; color: #d6f3ef; padding: 14px; border-radius: 8px; overflow: auto; font-size: 12px; max-height: 340px; }
+</style>
+</head>
+<body class="np-portal" data-neoped-skip-legal="true">
+<main id="conteudo" class="sbx">
+  <p class="np-eyebrow">SANDBOX · SIMULADOR DE PRONTUÁRIO</p>
+  <h1>Hospital de teste<span>.</span></h1>
+  <p class="sbx-warn"><strong>Somente para testes.</strong> Esta página faz o papel do MV/Tasy: assina um token de abertura igual ao que o hospital enviará e abre o NeoPedCalc em nova aba. Use dados fictícios. Desative com <code>EHR_SANDBOX=false</code> em produção.</p>
+  <div class="sbx-presets" role="group" aria-label="Pacientes de exemplo">
+    <button type="button" data-preset="preterm" aria-pressed="true">RN prematuro 32s4d · 2 dias</button>
+    <button type="button" data-preset="term">RN termo · 10 h de vida</button>
+    <button type="button" data-preset="infant">Lactente · 8 meses</button>
+    <button type="button" data-preset="child">Criança · 6 anos</button>
+  </div>
+  <form id="sbx-form" novalidate>
+    <div class="sbx-grid">
+      <label>Nome do paciente<input name="name" required maxlength="120"></label>
+      <label>Registro (prontuário)<input name="mrn" required maxlength="40"></label>
+      <label>Atendimento<input name="encounter" maxlength="40"></label>
+      <label>Unidade<input name="unit" maxlength="40"></label>
+      <label>Sexo<select name="sex"><option value="F">Feminino</option><option value="M">Masculino</option><option value="I">Indeterminado</option></select></label>
+      <label>Nascimento (data e hora)<input name="birth" type="datetime-local" required></label>
+      <label>IG ao nascer — semanas<input name="gaWeeks" type="number" min="20" max="45" step="1"></label>
+      <label>IG ao nascer — dias<input name="gaDays" type="number" min="0" max="6" step="1"></label>
+      <label>Peso ao nascer (g)<input name="birthWeightG" type="number" min="200" max="7000" step="1"></label>
+      <label>Peso atual (kg)<input name="weightKg" type="number" min="0.2" max="250" step="0.001"></label>
+      <label>Altura / comprimento (cm)<input name="heightCm" type="number" min="20" max="250" step="0.1"></label>
+      <label>Médico (nome)<input name="practitioner" maxlength="120"></label>
+    </div>
+    <button class="sbx-go" type="submit">Abrir NeoPedCalc como o prontuário →</button>
+    <p class="sbx-error" id="sbx-error" role="alert"></p>
+  </form>
+  <section class="sbx-out" id="sbx-out" hidden aria-labelledby="sbx-out-title">
+    <h2 id="sbx-out-title">Token enviado (conteúdo decodificado)</h2>
+    <p>É exatamente este conteúdo que a TI do hospital precisa gerar e assinar. Veja <code>docs/INTEGRACAO_PRONTUARIO.md</code>.</p>
+    <pre id="sbx-payload"></pre>
+  </section>
+</main>
+<script src="/js/neoped-ehr-sandbox.js"></script>
+</body></html>

@@ -1,0 +1,72 @@
+/* Faixa do paciente vindo do prontuário (js/neoped-patient.js). Autocontida: as calculadoras têm CSS próprios. */
+:root {
+  --np-ehr-bg: #102f3a;
+  --np-ehr-fg: #f3fbfc;
+  --np-ehr-muted: #a9c7cd;
+  --np-ehr-accent: #5fd3c6;
+  --np-ehr-warn: #f6b73c;
+  --np-ehr-warn-ink: #3a2600;
+  --np-ehr-filled: #e7f8f5;
+  --np-ehr-filled-ring: #2a9d8f;
+  --np-ehr-edited: #fff6e3;
+  --np-ehr-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.np-ehr-banner {
+  position: sticky;
+  top: 0;
+  z-index: 2147483000;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px 20px;
+  padding: 8px 16px;
+  background: var(--np-ehr-bg);
+  color: var(--np-ehr-fg);
+  font: 14px/1.35 var(--np-ehr-font);
+  border-bottom: 3px solid var(--np-ehr-accent);
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.25);
+  text-align: left;
+}
+.np-ehr-who { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; min-width: 0; }
+.np-ehr-name { font-size: 16px; font-weight: 700; letter-spacing: 0.01em; overflow-wrap: anywhere; }
+.np-ehr-meta { color: var(--np-ehr-muted); font-size: 13px; }
+.np-ehr-test {
+  background: var(--np-ehr-warn); color: var(--np-ehr-warn-ink);
+  font-size: 11px; font-weight: 800; letter-spacing: 0.08em; padding: 1px 6px; border-radius: 3px;
+}
+.np-ehr-facts { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 0; }
+.np-ehr-fact { display: flex; gap: 5px; align-items: baseline; }
+.np-ehr-fact dt { color: var(--np-ehr-muted); font-size: 12px; margin: 0; }
+.np-ehr-fact dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+.np-ehr-fact small { color: var(--np-ehr-muted); font-weight: 400; margin-left: 4px; font-size: 11px; }
+/* all: unset isolates the button from each calculator's global `button { width:100% ... }` rules. */
+.np-ehr-banner button.np-ehr-end {
+  all: unset; box-sizing: border-box; display: inline-flex; align-items: center; flex: 0 0 auto;
+  grid-column: 2; grid-row: 1; justify-self: end; min-height: 36px; padding: 6px 12px; cursor: pointer; white-space: nowrap;
+  background: transparent; color: var(--np-ehr-fg);
+  border: 1px solid var(--np-ehr-muted); border-radius: 6px; font: 600 13px var(--np-ehr-font);
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+.np-ehr-banner button.np-ehr-end:hover { background: rgb(255 255 255 / 0.1); border-color: var(--np-ehr-fg); }
+.np-ehr-banner button.np-ehr-end:focus-visible { outline: 3px solid var(--np-ehr-accent); outline-offset: 2px; }
+.np-ehr-banner dl, .np-ehr-banner dt, .np-ehr-banner dd { padding: 0; border: 0; background: none; color: inherit; }
+
+/* Campos preenchidos pelo prontuário e campos alterados manualmente depois. */
+input.np-ehr-filled { background-color: var(--np-ehr-filled) !important; box-shadow: inset 3px 0 0 var(--np-ehr-filled-ring); }
+input.np-ehr-edited { background-color: var(--np-ehr-edited) !important; box-shadow: inset 3px 0 0 var(--np-ehr-warn); }
+
+/* Phone: keep the sticky bar to ~3 lines — name + button, one meta line, facts scroll sideways. */
+@media (max-width: 640px) {
+  .np-ehr-banner { gap: 4px 10px; padding: 6px 12px; font-size: 13px; }
+  .np-ehr-meta { flex-basis: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; }
+  .np-ehr-banner button.np-ehr-end { align-self: start; min-height: 32px; padding: 4px 10px; font-size: 12px; }
+  .np-ehr-facts { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; gap: 12px; padding-bottom: 2px; }
+  .np-ehr-facts::-webkit-scrollbar { display: none; }
+  .np-ehr-fact { flex: 0 0 auto; }
+}
+@media print {
+  .np-ehr-banner { position: static; box-shadow: none; background: #fff; color: #000; border-bottom: 1px solid #000; }
+  .np-ehr-banner button.np-ehr-end { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .np-ehr-banner button.np-ehr-end { transition: none; } }

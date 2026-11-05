@@ -5,7 +5,7 @@ import { once } from 'node:events';
 import { setTimeout as delay } from 'node:timers/promises';
 
 const APP_URL = 'https://example.com';
-const NO_INTEGRATIONS = { SUPABASE_URL: '', SUPABASE_ANON_KEY: '', SUPABASE_SERVICE_ROLE_KEY: '', STRIPE_SECRET_KEY: '', STRIPE_PRICE_MONTHLY: '', STRIPE_PRICE_ANNUAL: '', RAILWAY_PUBLIC_DOMAIN: '' };
+const NO_INTEGRATIONS = { SUPABASE_URL: '', SUPABASE_ANON_KEY: '', SUPABASE_SERVICE_ROLE_KEY: '', STRIPE_SECRET_KEY: '', STRIPE_PRICE_MONTHLY: '', STRIPE_PRICE_ANNUAL: '', RAILWAY_PUBLIC_DOMAIN: '', EHR_CLIENTS: '', EHR_SESSION_SECRET: '', EHR_SANDBOX: '' };
 const SUPABASE = { SUPABASE_URL: 'https://example.supabase.co', SUPABASE_ANON_KEY: 'test-anon-key-0123456789', SUPABASE_SERVICE_ROLE_KEY: 'test-service-role-key-0123456789' };
 const STRIPE = { STRIPE_SECRET_KEY: 'sk_test_placeholder', STRIPE_PRICE_MONTHLY: 'price_test_monthly', STRIPE_PRICE_ANNUAL: 'price_test_annual' };
 const PROTECTED = ['/files/apgar.html', '/files/NutriPedWebapp/index.html', '/files/ballard/ballard.htm', '/%66iles/apgar.html', '/FILES/apgar.html', '/selecao_calculadoras.html', '/CALCULADORAS_NEONATAIS.HTML', '/calculadoras_pediatricas.html'];
@@ -49,7 +49,7 @@ test('production without Supabase and Stripe starts, serves public pages and kee
   const health = await fetch(base + '/health');
   assert.equal(health.status, 200);
   const body = await health.json();
-  assert.deepEqual({ status: body.status, application: body.application, environment: body.environment, integrations: body.integrations }, { status: 'ok', application: 'NeoPedCalc', environment: 'production', integrations: { supabase: 'not_configured', stripe: 'not_configured' } });
+  assert.deepEqual({ status: body.status, application: body.application, environment: body.environment, integrations: body.integrations }, { status: 'ok', application: 'NeoPedCalc', environment: 'production', integrations: { supabase: 'not_configured', stripe: 'not_configured', ehr: 'not_configured' } });
   assert.equal((await fetch(base + '/api/health')).status, 200, 'Railway healthcheck path still works');
   for (const page of PUBLIC) assert.equal((await fetch(base + page)).status, 200, page);
   await assertProtectedBlocked(base, '/conta.html?service=unavailable');
@@ -67,7 +67,7 @@ test('production without Supabase and Stripe starts, serves public pages and kee
 test('Supabase configured but Stripe missing: login path exists, checkout and paid content stay blocked', async t => {
   const { base } = await startServer(t, 3182, SUPABASE);
   const health = await (await fetch(base + '/health')).json();
-  assert.deepEqual(health.integrations, { supabase: 'configured', stripe: 'not_configured' });
+  assert.deepEqual(health.integrations, { supabase: 'configured', stripe: 'not_configured', ehr: 'not_configured' });
   await assertProtectedBlocked(base, '/conta.html?service=unavailable');
   assert.equal((await fetch(base + '/api/account')).status, 401, 'anonymous user still needs to sign in');
   assert.equal((await fetch(base + '/api/checkout', jsonPost({ plan: 'annual' }))).status, 401);
@@ -85,14 +85,14 @@ test('Stripe configured but Supabase missing: no identity, so nothing paid is re
 test('malformed credentials do not crash the server and are treated as not configured', async t => {
   const { base } = await startServer(t, 3184, { ...SUPABASE, ...STRIPE, SUPABASE_URL: 'not-a-url', STRIPE_SECRET_KEY: 'pk_live_wrong' });
   const health = await (await fetch(base + '/health')).json();
-  assert.deepEqual(health.integrations, { supabase: 'not_configured', stripe: 'not_configured' });
+  assert.deepEqual(health.integrations, { supabase: 'not_configured', stripe: 'not_configured', ehr: 'not_configured' });
   await assertProtectedBlocked(base, '/conta.html?service=unavailable');
 });
 
 test('full configuration: anonymous users are redirected to sign in, secrets and cross-origin writes blocked', async t => {
   const { base } = await startServer(t, 3179, { ...SUPABASE, ...STRIPE });
   const health = await (await fetch(base + '/health')).json();
-  assert.deepEqual(health.integrations, { supabase: 'configured', stripe: 'configured' });
+  assert.deepEqual(health.integrations, { supabase: 'configured', stripe: 'configured', ehr: 'not_configured' });
   assert.doesNotMatch(JSON.stringify(health), /sk_test|price_test|example\.supabase/, 'health never leaks credentials');
   await assertProtectedBlocked(base, '/conta.html');
   for (const file of ['/.env', '/server/index.js', '/server/config.js', '/server/schema.sql', '/package.json', '/README.md']) assert.equal((await fetch(base + file)).status, 404, file);
@@ -130,4 +130,65 @@ test('OPEN_ACCESS=true temporarily unlocks calculators in production and is repo
 test('server listens on the PORT provided by the platform', async t => {
   const { base } = await startServer(t, 3185, { RAILWAY_PUBLIC_DOMAIN: 'neo.up.railway.app', APP_URL: '' });
   assert.equal((await fetch(base + '/health')).status, 200);
+});
+
+test('hospital licence: a signed EHR launch replaces login, is single use and keeps clinical data off the server', async t => {
+  const { SignJWT, exportSPKI, generateKeyPair } = await import('jose');
+  const { publicKey, privateKey } = await generateKeyPair('ES256', { extractable: true });
+  const client = { iss: 'hospital-teste', name: 'Hospital Teste', system: 'TASY', alg: 'ES256', publicKey: await exportSPKI(publicKey) };
+  const { base, logs } = await startServer(t, 3188, { EHR_CLIENTS: JSON.stringify([client]), EHR_SESSION_SECRET: 's'.repeat(48), EHR_SANDBOX: 'false' });
+  assert.match(logs(), /Prontuário: 1 hospital\(is\) configurado\(s\)/);
+  assert.equal((await (await fetch(base + '/health')).json()).integrations.ehr, 'configured');
+  assert.equal((await fetch(base + '/ehr/sandbox')).status, 404, 'sandbox off');
+  const launchPage = await fetch(base + '/ehr/launch');
+  assert.equal(launchPage.status, 200);
+  assert.equal(launchPage.headers.get('referrer-policy'), 'no-referrer');
+  const patient = { mrn: 'MRN-9', name: 'RN Teste', sex: 'M', birthDateTime: new Date(Date.now() - 86400000).toISOString(), weightKg: 3.1, weightMeasuredAt: new Date().toISOString() };
+  const token = await new SignJWT({ patient, encounter: { id: 'AT-9' } }).setProtectedHeader({ alg: 'ES256' }).setIssuer(client.iss).setAudience(APP_URL).setJti('jti-integration-1').setIssuedAt().setExpirationTime('4m').sign(privateKey);
+
+  const opened = await fetch(base + '/api/ehr/session', jsonPost({ token }));
+  assert.equal(opened.status, 200);
+  const context = await opened.json();
+  assert.equal(context.patient.weightKg, 3.1);
+  assert.equal(context.hospital.name, 'Hospital Teste');
+  const cookie = opened.headers.get('set-cookie');
+  assert.match(cookie, /np_ehr=.*HttpOnly/i);
+  assert.ok(!/MRN-9|RN Teste/.test(cookie), 'cookie carries no patient data');
+  const session = cookie.split(';')[0];
+
+  const calc = await fetch(base + '/files/apgar.html', { redirect: 'manual', headers: { cookie: session } });
+  assert.equal(calc.status, 200, 'licensed hospital reaches calculators without Supabase/Stripe');
+  assert.equal((await (await fetch(base + '/api/ehr/status', { headers: { cookie: session } })).json()).session.hospital, 'Hospital Teste');
+  assert.equal((await fetch(base + '/files/apgar.html', { redirect: 'manual' })).status, 303, 'no cookie → still locked');
+  assert.equal((await fetch(base + '/files/apgar.html', { redirect: 'manual', headers: { cookie: session + 'x' } })).status, 303, 'tampered cookie');
+
+  const replay = await fetch(base + '/api/ehr/session', jsonPost({ token }));
+  assert.equal(replay.status, 409, 'link is single use');
+  const foreign = await fetch(base + '/api/ehr/session', { ...jsonPost({ token }), headers: { 'Content-Type': 'application/json', Origin: 'https://evil.example' } });
+  assert.equal(foreign.status, 403, 'cross-origin launch exchange blocked');
+  assert.equal((await fetch(base + '/api/ehr/session', jsonPost({ token: 'a.b.c' }))).status, 401);
+  assert.ok(!/MRN-9|RN Teste/.test(logs()), 'server logs never contain patient identifiers');
+});
+
+test('EHR sandbox (fake hospital) works end-to-end when explicitly enabled', async t => {
+  const { base, logs } = await startServer(t, 3189, { EHR_SANDBOX: 'true', EHR_SESSION_SECRET: 's'.repeat(48) });
+  assert.match(logs(), /EHR_SANDBOX=true em produção/);
+  assert.equal((await fetch(base + '/ehr/sandbox')).status, 200);
+  const patient = { mrn: 'T-1', name: 'Teste', sex: 'F', birthDateTime: '2026-01-10T08:00:00-03:00' };
+  const issued = await fetch(base + '/api/ehr/sandbox-token', jsonPost({ patient }));
+  assert.equal(issued.status, 200);
+  const { url, token } = await issued.json();
+  assert.ok(url.startsWith(APP_URL + '/ehr/launch#token='));
+  const opened = await fetch(base + '/api/ehr/session', jsonPost({ token }));
+  assert.equal(opened.status, 200);
+  assert.equal((await opened.json()).hospital.sandbox, true);
+  const invalid = await fetch(base + '/api/ehr/sandbox-token', jsonPost({ patient: { ...patient, weightKg: 900, weightMeasuredAt: '2026-01-10T08:00:00-03:00' } }));
+  assert.equal(invalid.status, 400);
+});
+
+test('EHR disabled in production without a session secret: nothing is unlocked', async t => {
+  const { base } = await startServer(t, 3190, { EHR_SANDBOX: 'true' });
+  assert.equal((await fetch(base + '/ehr/sandbox')).status, 404);
+  assert.equal((await fetch(base + '/api/ehr/session', jsonPost({ token: 'a.b.c' }))).status, 503);
+  await assertProtectedBlocked(base, '/conta.html?service=unavailable');
 });

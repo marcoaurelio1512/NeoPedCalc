@@ -8,6 +8,8 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { hasAccess, isProtectedPath, publicUser } from './access.js';
 import { loadConfig, describeIntegration } from './config.js';
+import { loadEhrConfig, describeEhr } from './ehr/config.js';
+import { createEhrIntegration } from './ehr/routes.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const env = process.env;
@@ -18,6 +20,7 @@ try { config = loadConfig(env); } catch (error) {
   process.exit(1);
 }
 const { production, demo, appUrl } = config;
+const ehr = loadEhrConfig(env, { production });
 const supabaseReady = config.supabase.configured;
 const stripeReady = config.stripe.configured;
 // Subscriptions need both: identity (Supabase) and payment verification (Stripe).
@@ -25,11 +28,15 @@ const billingReady = supabaseReady && stripeReady;
 for (const [name, state] of [['Supabase', config.supabase], ['Stripe', config.stripe]]) {
   (state.configured ? console.info : console.warn)('[NeoPedCalc] ' + describeIntegration(name, state));
 }
+(ehr.problems.length ? console.warn : console.info)('[NeoPedCalc] ' + describeEhr(ehr));
+if (ehr.sandbox && production) console.warn('[NeoPedCalc] ATENÇÃO: EHR_SANDBOX=true em produção — o hospital de teste em /ehr/sandbox libera as calculadoras. Remova a variável após os testes.');
+if (ehr.ephemeralSecret) console.info('[NeoPedCalc] Prontuário: EHR_SESSION_SECRET ausente — usando segredo temporário (sessões caem ao reiniciar).');
 if (config.openAccess) console.warn('[NeoPedCalc] ATENÇÃO: OPEN_ACCESS=true — calculadoras ABERTAS a qualquer visitante (acesso de teste). Remova a variável para reativar o bloqueio.');
 else if (production && !billingReady) console.warn('[NeoPedCalc] Calculadoras protegidas permanecem BLOQUEADAS até Supabase e Stripe estarem configurados.');
 const stripe = stripeReady ? new Stripe(env.STRIPE_SECRET_KEY.trim(), { maxNetworkRetries: 2, timeout: 15000 }) : null;
 const supabaseOptions = { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } };
 const admin = supabaseReady ? createClient(env.SUPABASE_URL.trim(), env.SUPABASE_SERVICE_ROLE_KEY.trim(), supabaseOptions) : null;
+const ehrIntegration = await createEhrIntegration({ ehr, appUrl, production, root, admin });
 const userClient = () => createClient(env.SUPABASE_URL.trim(), env.SUPABASE_ANON_KEY.trim(), supabaseOptions);
 const prices = stripeReady ? [env.STRIPE_PRICE_MONTHLY.trim(), env.STRIPE_PRICE_ANNUAL.trim()] : [];
 const AUTH_UNAVAILABLE = 'Login temporariamente indisponível. Tente novamente mais tarde.';
@@ -107,7 +114,7 @@ async function billingStatus(user) {
 // Liveness only: answers instantly, no external calls, no credentials or variable names.
 function healthPayload() {
   const state = ready => ready ? 'configured' : 'not_configured';
-  return { status: 'ok', application: 'NeoPedCalc', environment: config.environment, mode: demo ? 'preview' : billingReady ? 'configured' : 'degraded', openAccess: config.openAccess, integrations: { supabase: state(supabaseReady), stripe: state(stripeReady) } };
+  return { status: 'ok', application: 'NeoPedCalc', environment: config.environment, mode: demo ? 'preview' : billingReady ? 'configured' : 'degraded', openAccess: config.openAccess, integrations: { supabase: state(supabaseReady), stripe: state(stripeReady), ehr: state(ehr.enabled) } };
 }
 app.get(['/health', '/api/health'], (req, res) => res.set('Cache-Control', 'no-store').json({ ok: true, ...healthPayload() }));
 let pricingCache = null;
@@ -194,6 +201,7 @@ app.post('/api/billing-portal', requireAuth, requireBilling, async (req, res) =>
   const session = await stripe.billingPortal.sessions.create({ customer, return_url: appUrl + '/conta.html' });
   res.json({ url: session.url });
 });
+app.use(ehrIntegration.router);
 app.use('/api', (req,res) => res.status(404).json({ error: 'Rota não encontrada.' }));
 // All calculator documents and their assets are protected on the SERVER.
 // A successful checkout redirect is never treated as proof of payment.
@@ -201,6 +209,8 @@ app.use(async (req,res,next) => {
   if (!isProtectedPath(req.path)) return next();
   res.set('Cache-Control', 'private, no-store');
   if (demo || config.openAccess) return next();
+  // Hospital licence: a verified EHR launch replaces the individual login/subscription.
+  if (await ehrIntegration.sessionFor(req)) return next();
   // Integrations down in production: block, never fall through to free access.
   if (!billingReady) return res.redirect(303, '/conta.html?service=unavailable');
   const identity = await authenticate(req,res);
