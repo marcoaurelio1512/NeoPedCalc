@@ -15,6 +15,7 @@ window.NEOPED_I18N && window.NEOPED_I18N.register({
   'Referências bibliográficas': ['Bibliographic references', 'Referencias bibliográficas'],
   'Termos e advertências': ['Terms and warnings', 'Términos y advertencias'],
   'Privacidade': ['Privacy', 'Privacidad'],
+  'Digite o ano com 4 dígitos.': ['Enter the year with 4 digits.', 'Escriba el año con 4 dígitos.'],
   'Fale conosco ↗': ['Contact us ↗', 'Contáctenos ↗'],
   'Powered by Arena Health, abre arenacode.io em nova aba': ['Powered by Arena Health, opens arenacode.io in a new tab', 'Powered by Arena Health, abre arenacode.io en una nueva pestaña'],
 
