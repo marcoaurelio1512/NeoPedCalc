@@ -1136,31 +1136,14 @@ function copiarRelatorioParaClipboard() {
     var scoreFisico = document.getElementById('pScore2').innerHTML || '0';
     var scoreTotal = document.getElementById('totScore').innerHTML || '0';
     
-    // Obter idade gestacional calculada
+    // Obter idade gestacional calculada: lê a linha que o módulo destacou na tabela
+    // (linha "rateN" marcada ou linha intermediária "btwnN" visível), igual ao exibido na tela.
     var idadeGestacionalCalculada = 'Não calculada';
-    var linhasTabela = document.querySelectorAll('tr[id^="rate"]');
-    for (var i = 0; i < linhasTabela.length; i++) {
-        if (linhasTabela[i].style.backgroundColor === 'rgb(243, 244, 246)' || linhasTabela[i].style.backgroundColor === '#e5e7eb') {
-            var colunaSemanas = linhasTabela[i].querySelector('td:last-child');
-            if (colunaSemanas) {
-                idadeGestacionalCalculada = colunaSemanas.innerHTML + ' semanas';
-                break;
-            }
-        }
-    }
-    
-    // Verificar se há resultado entre as linhas
-    if (idadeGestacionalCalculada === 'Não calculada') {
-        var linhasEntre = document.querySelectorAll('tr[id^="btwn"]');
-        for (var j = 0; j < linhasEntre.length; j++) {
-            if (linhasEntre[j].style.display !== 'none' && (linhasEntre[j].style.backgroundColor === 'rgb(243, 244, 246)' || linhasEntre[j].style.backgroundColor === '#e5e7eb')) {
-                var colunaSemanasEntre = linhasEntre[j].querySelector('td:last-child');
-                if (colunaSemanasEntre) {
-                    idadeGestacionalCalculada = colunaSemanasEntre.innerHTML + ' semanas';
-                    break;
-                }
-            }
-        }
+    var linhaResultado = Array.prototype.find.call(document.querySelectorAll('tr[id^="btwn"]'), function (tr) { return tr.style.display !== 'none' && tr.textContent.trim() !== ''; })
+        || Array.prototype.find.call(document.querySelectorAll('tr[id^="rate"]'), function (tr) { return tr.style.backgroundColor !== ''; });
+    if (linhaResultado) {
+        var colunaSemanas = linhaResultado.querySelector('td:last-child');
+        if (colunaSemanas && colunaSemanas.textContent.trim() !== '') idadeGestacionalCalculada = colunaSemanas.textContent.trim() + ' semanas';
     }
     
     // Criar relatório em texto UTF-8

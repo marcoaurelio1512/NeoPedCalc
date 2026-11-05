@@ -53,7 +53,7 @@ function bgclr(el,whatColor) {
 	if (whatColor == 2) {whatColor = "#ccccff"}
 	if (ie4 || ns6) {
 		//  alert (el.style.backgroundColor);
-		if (el.style.backgroundColor != "#ccccff" && el.style.backgroundColor != "rgb(204,204,255)") {
+		if (el.style.backgroundColor != "#ccccff" && el.style.backgroundColor != "rgb(204, 204, 255)") {
 			el.style.backgroundColor = whatColor;
 		}
 	} else if (ns4) {	//  this doesn't work
@@ -155,7 +155,7 @@ function changebg(nameID) {
 		tempEl = document.getElementById(nameID + iNum);
 		//  alert (tempEl)
 		if ((ie4 || ns6) && tempEl) {
-			if (tempEl.style.backgroundColor == "#ccccff" || tempEl.style.backgroundColor == "rgb(204,204,255)") {
+			if (tempEl.style.backgroundColor == "#ccccff" || tempEl.style.backgroundColor == "rgb(204, 204, 255)") {
 				tempEl.style.backgroundColor = "";
 			}
 		}
