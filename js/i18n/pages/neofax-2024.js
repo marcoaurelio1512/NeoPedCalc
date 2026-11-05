@@ -6,9 +6,9 @@
   if (!i18n) return;
   i18n.register({
     // Cabeçalho
-    'NeoPedCalc — NEOFAX 2024 (educativo)': ['NeoPedCalc — NEOFAX 2024 (educational)', 'NeoPedCalc — NEOFAX 2024 (educativo)'],
+    'NeoPedCalc — NeoDose (educativo)': ['NeoPedCalc — NeoDose (educational)', 'NeoPedCalc — NeoDose (educativo)'],
     'Medicações Neonatais': ['Neonatal Medications', 'Medicamentos neonatales'],
-    'Calculadora de Doses Baseada no NEOFAX 2024': ['Dose Calculator Based on NEOFAX 2024', 'Calculadora de dosis basada en NEOFAX 2024'],
+    'NeoDose — Calculadora de Doses Neonatais': ['NeoDose — Neonatal Dose Calculator', 'NeoDose — Calculadora de dosis neonatales'],
     'Como usar': ['How to use', 'Cómo usar'],
 
     // Dados do paciente
@@ -124,7 +124,7 @@
     'Guias de Pratica Clinica em Neonatologia': ['Clinical Practice Guidelines in Neonatology', 'Guías de práctica clínica en neonatología'],
 
     // Modal "Como usar"
-    'Como usar — NEOFAX 2024 (educativo)': ['How to use — NEOFAX 2024 (educational)', 'Cómo usar — NEOFAX 2024 (educativo)'],
+    'Como usar — NeoDose (educativo)': ['How to use — NeoDose (educational)', 'Cómo usar — NeoDose (educativo)'],
     'Objetivo (educativo)': ['Purpose (educational)', 'Objetivo (educativo)'],
     'Esta calculadora é baseada no NEOFAX 2024 (37ª edição), um manual de referência amplamente utilizado para dosagem de medicamentos em recém-nascidos, incluindo mais de 100 medicamentos diferentes.': [
       'This calculator is based on NEOFAX 2024 (37th edition), a widely used reference manual for drug dosing in newborns, covering more than 100 different medications.',

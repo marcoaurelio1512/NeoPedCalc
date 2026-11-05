@@ -41,7 +41,7 @@ window.NEOPED_CATALOG = {
         },
         {
           "url": "files/Neofax_2024.html",
-          "title": "Neofax 2024"
+          "title": "NeoDose"
         }
       ]
     },
