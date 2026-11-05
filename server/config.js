@@ -37,8 +37,10 @@ function resolveAppUrl(env, production) {
     if (production) throw new Error('Configuração essencial ausente: APP_URL (ou RAILWAY_PUBLIC_DOMAIN).');
     return DEV_URL;
   }
+  // Accept a bare domain ("app.up.railway.app"), as often pasted into hosting panels.
+  const withScheme = /^[a-z][a-z0-9+.-]*:\/\//i.test(raw) ? raw : 'https://' + raw;
   let origin;
-  try { origin = new URL(raw).origin; } catch { throw new Error('APP_URL inválida: informe uma URL completa, ex.: https://exemplo.com'); }
+  try { origin = new URL(withScheme).origin; } catch { throw new Error('APP_URL inválida: informe uma URL completa, ex.: https://exemplo.com'); }
   if (production && !origin.startsWith('https://')) throw new Error('APP_URL deve utilizar HTTPS em produção.');
   return origin;
 }

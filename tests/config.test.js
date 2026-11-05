@@ -29,6 +29,10 @@ test('essential configuration problems are fatal', () => {
   assert.throws(() => loadConfig({ ...PROD, PORT: 'abc' }), /PORT/);
 });
 
+test('APP_URL without scheme is treated as HTTPS', () => {
+  assert.equal(loadConfig({ NODE_ENV: 'production', APP_URL: 'neopedcalc-production.up.railway.app' }).appUrl, 'https://neopedcalc-production.up.railway.app');
+});
+
 test('APP_URL falls back to the Railway public domain', () => {
   assert.equal(loadConfig({ NODE_ENV: 'production', RAILWAY_PUBLIC_DOMAIN: 'neo.up.railway.app' }).appUrl, 'https://neo.up.railway.app');
 });
