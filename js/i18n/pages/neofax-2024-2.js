@@ -1,4 +1,4 @@
-/* Medicações Neonatais — NEOFAX 2024 (files/Neofax_2024.html) — [inglês, espanhol].
+/* Medicações Neonatais — NeoDose (files/Neofax_2024.html) — [inglês, espanhol].
    Parte 2: nomes dos medicamentos (DCI de cada idioma) e campos de texto das dosagens
    (nome, unidade, unidadeIntervalo, condicao, apresentacao). Números nunca entram aqui. */
 (function (i18n) {

@@ -361,7 +361,7 @@
 <body>
     <header>
         <h1>Medicamentos neonatais</h1>
-        <p>Ferramenta educativa — valores a partir de tabelas tipo handbook (IG, dias de vida, peso). <strong>Não prescreve</strong>; confirme sempre com Neofax/bulário e equipe.</p>
+        <p>Ferramenta educativa — valores a partir de tabelas tipo handbook (IG, dias de vida, peso). <strong>Não prescreve</strong>; confirme sempre com bulário, protocolo institucional e equipe.</p>
         <div class="header-actions">
             <button type="button" class="btn-info" onclick="abrirModal()">Como usar</button>
         </div>
@@ -569,7 +569,7 @@
 
                         <div class="reference-box">
                             <strong>Referências:</strong><br>
-                            - Young TE, Mangum B. Neofax 2026: A Manual of Drugs Used in Neonatal Care.<br>
+                            - Young TE, Mangum B. Neofax 2024: A Manual of Drugs Used in Neonatal Care. 37th ed. 2024.<br>
                             - Taketomo CK, et al. Pediatric & Neonatal Dosage Handbook with International Trade Names
                             Index. 29th ed. 2022.<br>
                             - Allegaert K, et al. Clinical pharmacology in neonates and young infants: the benefit of a
@@ -1220,7 +1220,7 @@
                         case 'peso': return 'ERRO DE SEGURANÇA CLÍNICA: O peso informado (' + peso + ' kg) é inválido para a faixa neonatal. O peso máximo permitido nesta calculadora específica é 10 kg. Verifique se você digitou gramas no lugar de quilogramas (ex: digite 0.5 em vez de 500).';
                         case 'faixa': return MSG_FAIXA;
                         case 'medicamento': return 'Medicamento não encontrado!';
-                        case 'sem_linha': return 'ALERTA DE SEGURANÇA: Não foi possível calcular a dosagem exata. O cruzamento entre Indicação, Idade Gestacional e Dias de Vida deste paciente não está coberto pelo protocolo estrito do medicamento selecionado. Por segurança, o sistema bloqueou o uso automático. Consulte o Neofax ou bula.';
+                        case 'sem_linha': return 'ALERTA DE SEGURANÇA: Não foi possível calcular a dosagem exata. O cruzamento entre Indicação, Idade Gestacional e Dias de Vida deste paciente não está coberto pelo protocolo estrito do medicamento selecionado. Por segurança, o sistema bloqueou o uso automático. Consulte a bula ou o protocolo institucional.';
                         default: return 'Erro: Dados invalidos. Verifique se todos os campos foram preenchidos.';
                     }
                 }
@@ -1296,7 +1296,7 @@
                     const relatorio = `RESUMO INFORMATIVO — Medicamento neonatal (NeoPedCalc, uso educativo)
 ===============================
 
-NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Conferir com Neofax/bulario, cultura e funcao renal/hepatica antes de qualquer decisao clinica.
+NOTA: Texto gerado por calculadora; nao constitui diagnostico formal nem prescricao. Conferir com bulario/protocolo institucional, cultura e funcao renal/hepatica antes de qualquer decisao clinica.
 
 DADOS INFORMADOS:
 - Peso: ${entrada.peso} kg

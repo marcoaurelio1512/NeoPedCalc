@@ -1,4 +1,4 @@
-/* Medicações Neonatais — NEOFAX 2024 (files/Neofax_2024.html) — [inglês, espanhol].
+/* Medicações Neonatais — NeoDose (files/Neofax_2024.html) — [inglês, espanhol].
    Parte 1: interface, resultados, histórico, relatório copiado e modal "Como usar".
    Os nomes dos medicamentos e os campos de texto das dosagens estão em neofax-2024-2.js. */
 (function (i18n) {
@@ -72,9 +72,9 @@
 
     // Referência
     'Referência': ['Reference', 'Referencia'],
-    'Esta calculadora utiliza as dosagens e protocolos estabelecidos no NEOFAX 2024 para recém-nascidos, considerando idade gestacional, peso e idade pós-natal para ajuste de doses.': [
-      'This calculator uses the dosages and protocols established in NEOFAX 2024 for newborns, taking gestational age, weight and postnatal age into account for dose adjustment.',
-      'Esta calculadora utiliza las dosis y los protocolos establecidos en NEOFAX 2024 para recién nacidos, considerando la edad gestacional, el peso y la edad posnatal para el ajuste de dosis.'
+    'Esta calculadora utiliza as dosagens e protocolos estabelecidos nas referências bibliográficas para recém-nascidos, considerando idade gestacional, peso e idade pós-natal para ajuste de doses.': [
+      'This calculator uses the dosages and protocols established in the bibliographic references for newborns, taking gestational age, weight and postnatal age into account for dose adjustment.',
+      'Esta calculadora utiliza las dosis y los protocolos establecidos en las referencias bibliográficas para recién nacidos, considerando la edad gestacional, el peso y la edad posnatal para el ajuste de dosis.'
     ],
 
     // Alertas
@@ -108,7 +108,6 @@
     'DETALHOS TECNICOS': ['TECHNICAL DETAILS', 'DETALLES TÉCNICOS'],
     'Total de Calculos': ['Total Calculations', 'Total de cálculos'],
     'Data de Geracao': ['Generated On', 'Fecha de generación'],
-    'Referencia: NEOFAX': ['Reference: NEOFAX', 'Referencia: NEOFAX'],
     'OBSERVACOES IMPORTANTES': ['IMPORTANT NOTES', 'OBSERVACIONES IMPORTANTES'],
     'Verificar sempre a apresentacao da droga antes da administracao': ['Always check the drug presentation before administration', 'Verificar siempre la presentación del fármaco antes de la administración'],
     'Confirmar calculos com farmaceutico quando necessario': ['Confirm calculations with a pharmacist when necessary', 'Confirmar los cálculos con el farmacéutico cuando sea necesario'],
@@ -126,9 +125,9 @@
     // Modal "Como usar"
     'Como usar — NeoDose (educativo)': ['How to use — NeoDose (educational)', 'Cómo usar — NeoDose (educativo)'],
     'Objetivo (educativo)': ['Purpose (educational)', 'Objetivo (educativo)'],
-    'Esta calculadora é baseada no NEOFAX 2024 (37ª edição), um manual de referência amplamente utilizado para dosagem de medicamentos em recém-nascidos, incluindo mais de 100 medicamentos diferentes.': [
-      'This calculator is based on NEOFAX 2024 (37th edition), a widely used reference manual for drug dosing in newborns, covering more than 100 different medications.',
-      'Esta calculadora se basa en NEOFAX 2024 (37.ª edición), un manual de referencia ampliamente utilizado para la dosificación de medicamentos en recién nacidos, que incluye más de 100 medicamentos diferentes.'
+    'Esta calculadora reúne doses de referência de medicamentos usados em recém-nascidos, a partir dos manuais de farmacologia neonatal listados nas referências.': [
+      'This calculator gathers reference doses of drugs used in newborns, drawn from the neonatal pharmacology manuals listed in the references.',
+      'Esta calculadora reúne dosis de referencia de medicamentos usados en recién nacidos, a partir de los manuales de farmacología neonatal listados en las referencias.'
     ],
     'Metodologia de Cálculo': ['Calculation Methodology', 'Metodología de cálculo'],
     'Fórmula Geral:': ['General Formula:', 'Fórmula general:'],
@@ -186,7 +185,7 @@
     'Quantidade total do medicamento administrada em 24 horas': ['Total amount of the medication given in 24 hours', 'Cantidad total del medicamento administrada en 24 horas'],
     'mg (miligramas) ou UI (unidades internacionais)': ['mg (milligrams) or IU (international units)', 'mg (miligramos) o UI (unidades internacionales)'],
     'Considerações Importantes': ['Important Considerations', 'Consideraciones importantes'],
-    'As doses do NEOFAX são baseadas em evidências científicas e consenso de especialistas': ['NEOFAX doses are based on scientific evidence and expert consensus', 'Las dosis de NEOFAX se basan en evidencia científica y consenso de expertos'],
+    'As doses de referência são baseadas em evidências científicas e consenso de especialistas': ['Reference doses are based on scientific evidence and expert consensus', 'Las dosis de referencia se basan en evidencia científica y consenso de expertos'],
     'Prematuros extremos têm função renal e hepática imatura - doses geralmente menores e intervalos maiores': [
       'Extremely preterm infants have immature renal and hepatic function - doses are usually lower and intervals longer',
       'Los prematuros extremos tienen función renal y hepática inmadura - dosis generalmente menores e intervalos mayores'
@@ -218,10 +217,10 @@
     'Furosemida, Espironolactona, Hidroclorotiazida': ['Furosemide, Spironolactone, Hydrochlorothiazide', 'Furosemida, espironolactona, hidroclorotiazida'],
     'Outros:': ['Others:', 'Otros:'],
     'Cafeína, Teofilina, Insulina, Surfactante, etc.': ['Caffeine, Theophylline, Insulin, Surfactant, etc.', 'Cafeína, teofilina, insulina, surfactante, etc.'],
-    'Sobre o NEOFAX': ['About NEOFAX', 'Acerca de NEOFAX'],
-    'O NEOFAX é um manual de referência amplamente utilizado em unidades de terapia intensiva neonatal, contendo:': [
-      'NEOFAX is a reference manual widely used in neonatal intensive care units, containing:',
-      'NEOFAX es un manual de referencia ampliamente utilizado en las unidades de cuidados intensivos neonatales, que contiene:'
+    'Sobre as referências de dose': ['About the dose references', 'Acerca de las referencias de dosis'],
+    'Os manuais de farmacologia neonatal usados como referência, amplamente adotados em unidades de terapia intensiva neonatal, trazem:': [
+      'The neonatal pharmacology manuals used as references, widely adopted in neonatal intensive care units, include:',
+      'Los manuales de farmacología neonatal usados como referencia, ampliamente adoptados en las unidades de cuidados intensivos neonatales, incluyen:'
     ],
     'Doses baseadas em idade gestacional e pós-natal': ['Doses based on gestational and postnatal age', 'Dosis basadas en la edad gestacional y posnatal'],
     'Indicações e contraindicações': ['Indications and contraindications', 'Indicaciones y contraindicaciones'],
