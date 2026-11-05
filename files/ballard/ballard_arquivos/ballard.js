@@ -20,12 +20,12 @@ function bgclr(el,whatColor) {
 		changebg(nameID);
 		if (nameID == "male") {
 			changebg("female");
-			scoreEl = eval(getLabel("femaleNum"));
+			scoreEl = getLabel("femaleNum");
 			scoreEl.innerHTML = "&nbsp;";
 		}
 		if (nameID == "female") {
 			changebg("male");
-			scoreEl = eval(getLabel("maleNum"));
+			scoreEl = getLabel("maleNum");
 			scoreEl.innerHTML = "&nbsp;";
 		}
 
@@ -39,7 +39,7 @@ function bgclr(el,whatColor) {
 					if (document.negGest.eye.value == -2) {score = -2} else {score = -1}
 				} else {score = -1}
 			}
-		scoreEl = eval(getLabel(nameID + "Num"));
+		scoreEl = getLabel(nameID + "Num");
 		if (ns4) {}
 		if (ie4 || ns6) {scoreEl.innerHTML = score;}
 		
@@ -67,7 +67,7 @@ function bgclr(el,whatColor) {
 
 function scoreNum(nameID) {
 	//  Identify score of element
-	scoreEl = eval(getLabel(nameID + "Num"));
+	scoreEl = getLabel(nameID + "Num");
 	score = scoreEl.innerHTML;
 	return score;
 }
@@ -90,28 +90,28 @@ function addScores() {
 	
 	if (!(isNaN(posture) || isNaN(square) || isNaN(arm) || isNaN(pop) || isNaN(scarf) || isNaN(heel))) {
 		var nScore = posture + square + arm + pop + scarf + heel;
-		scoreEl = eval(getLabel("nScore"));
-		score2El = eval(getLabel("nScore2"));
+		scoreEl = getLabel("nScore");
+		score2El = getLabel("nScore2");
 		scoreEl.innerHTML = nScore;
 		score2El.innerHTML = nScore;
 	}
 	if (!(isNaN(skin) || isNaN(lanugo) || isNaN(plantar) || isNaN(breast) || isNaN(eye) || (isNaN(male) && isNaN(female)))) {
 		if (isNaN(male)) {var whichSex = female} else {var whichSex = male}
 		var pScore = skin + lanugo + plantar + breast + eye + whichSex;
-		scoreEl = eval(getLabel("pScore"));
-		score2El = eval(getLabel("pScore2"));
+		scoreEl = getLabel("pScore");
+		score2El = getLabel("pScore2");
 		scoreEl.innerHTML = pScore;
 		score2El.innerHTML = pScore;
 	}
 	if (!(isNaN(pScore) || isNaN(nScore))) {
 		var totScore = nScore + pScore;
-		scoreEl = eval(getLabel("totScore"));
+		scoreEl = getLabel("totScore");
 		scoreEl.innerHTML = totScore;
 		
 		//  Clear previous rows
 		for (x=0; x <= 13; x++) {
-			browEl = eval(getLabel("btwn" + x));
-			mainRowEl = eval(getLabel("rate" + x));
+			browEl = getLabel("btwn" + x);
+			mainRowEl = getLabel("rate" + x);
 			
 			browEl.style.display = "none";
 			if (x != 0) {mainRowEl.style.backgroundColor = "";}
@@ -120,16 +120,16 @@ function addScores() {
 		//  Highlight which row
 		if (totScore/5 == Math.round(totScore/5)) {
 			var lineNum = (totScore / 5) + 3;
-			lineEl = eval(getLabel("rate" + lineNum));
+			lineEl = getLabel("rate" + lineNum);
 			lineEl.style.backgroundColor = "#ccccff";
 		} else {
 			var lineNum = (totScore / 5) + 3;
 			lineNum = Math.floor(lineNum);
 			var numWeeks = (totScore * 2 / 5) + 24;
 			
-			rowEl = eval(getLabel("btwn" + lineNum));
-			scoreEl = eval(getLabel("bScore" + lineNum));
-			weeksEl = eval(getLabel("bWeeks" + lineNum));
+			rowEl = getLabel("btwn" + lineNum);
+			scoreEl = getLabel("bScore" + lineNum);
+			weeksEl = getLabel("bWeeks" + lineNum);
 			scoreEl.innerHTML = totScore;
 			weeksEl.innerHTML = numWeeks;
 			rowEl.style.display = "";
@@ -143,17 +143,16 @@ function addScores() {
 function getLabel(nameID) {
 	var whatTag;
 	
-	if (ie4) {whatTag = "document.all." + nameID;}
-	if (ns6) {whatTag = "document.getElementById(\"" + nameID + "\")";}
-	return whatTag;	
+	// Returns the element itself (no eval): the server CSP forbids string evaluation.
+	whatTag = document.getElementById(nameID);
+	return whatTag;
 }
 
 function changebg(nameID) {
 	//  Change color of previously-selected element to blank
 	for (i=-1; i <= 5; i++) {
 		if (i == -1) {iNum = "neg1"} else {iNum = i}
-		if (ie4) {tempEl = eval("document.all." + nameID + iNum);}
-			else if (ns6) {tempEl = eval("document.getElementById(\"" + nameID + iNum + "\")");}
+		tempEl = document.getElementById(nameID + iNum);
 		//  alert (tempEl)
 		if ((ie4 || ns6) && tempEl) {
 			if (tempEl.style.backgroundColor == "#ccccff" || tempEl.style.backgroundColor == "rgb(204,204,255)") {
