@@ -280,7 +280,6 @@ window.neopedEscapeHtml = function (value) {
         '<p class="neoped-legal-p">' +
         fullText +
         '</p>' +
-        '<p class="neoped-legal-p neoped-legal-muted">As referências bibliográficas de cada módulo aparecem na própria calculadora. Este texto é informativo e não constitui orientação médica.</p>' +
         '</div>';
 
       if (requireAccept) {

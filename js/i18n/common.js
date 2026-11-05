@@ -43,10 +43,6 @@ window.NEOPED_I18N && window.NEOPED_I18N.register({
     'This application is intended exclusively for educational and informational purposes, for healthcare professionals as support for clinical reasoning. The information presented is based on recognized scientific guidelines and bibliographic references. The application does not make diagnoses, does not prescribe treatment and does not replace individualized clinical assessment. Data interpretation and clinical decisions are the sole responsibility of the healthcare professional. Results must always be confirmed with independent clinical judgment, institutional protocols and current official references.',
     'Esta aplicación tiene una finalidad exclusivamente educativa e informativa, destinada a profesionales de la salud como apoyo al razonamiento clínico. La información presentada se basa en guías científicas y referencias bibliográficas reconocidas. La aplicación no realiza diagnósticos, no prescribe tratamientos y no sustituye la evaluación clínica individualizada. La interpretación de los datos y la decisión clínica son responsabilidad exclusiva del profesional de la salud. Los resultados deben confirmarse siempre con juicio clínico independiente, protocolos institucionales y referencias oficiales vigentes.'
   ],
-  'As referências bibliográficas de cada módulo aparecem na própria calculadora. Este texto é informativo e não constitui orientação médica.': [
-    'The bibliographic references for each module appear in the calculator itself. This text is informational and does not constitute medical advice.',
-    'Las referencias bibliográficas de cada módulo aparecen en la propia calculadora. Este texto es informativo y no constituye orientación médica.'
-  ],
   'Li e compreendi que esta ferramenta possui caráter informativo e não substitui decisão clínica profissional.': [
     'I have read and understood that this tool is informational and does not replace professional clinical decision-making.',
     'He leído y comprendido que esta herramienta tiene carácter informativo y no sustituye la decisión clínica profesional.'
