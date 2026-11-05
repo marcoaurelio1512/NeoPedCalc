@@ -38,7 +38,10 @@
     'html .neoped-dtm>input.neoped-dtm-invalid{border-color:#c62828!important;box-shadow:inset 0 0 0 1px #c62828!important}' +
     'html input.neoped-dtm-native[type]{position:absolute!important;width:1px!important;max-width:1px!important;' +
     'height:1px!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important;' +
-    'opacity:0!important;pointer-events:none!important}';
+    'opacity:0!important;pointer-events:none!important;overflow:hidden!important;clip-path:inset(50%)!important;' +
+    // Pages declare `input { transition: all .3s }`: without this the hidden native field
+    // fades out over the label (ghost date) instead of disappearing immediately.
+    'transition:none!important;animation:none!important}';
 
   function tr(text) {
     var i18n = window.NEOPED_I18N;
