@@ -652,6 +652,17 @@
         body {
             overscroll-behavior-x: none;
         }
+
+        /* Desktop/tablet (≥769px): aproveitar a largura. Celular inalterado. */
+        @media (min-width: 769px) {
+            .age-buttons > .age-btn { flex: 1 1 0; width: auto; }
+        }
+        /* Todas as larguras: radio na mesma linha do texto (o label{display:block} global o empurrava para baixo). */
+        .glasgow-option { display: flex; align-items: center; }
+        .glasgow-option label { display: inline; }
+        @media (min-width: 1024px) {
+            .glasgow-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+        }
     </style>
     <link rel="stylesheet" href="../css/neoped-responsive.css">
 <link rel="stylesheet" href="../css/neoped-modern.css">

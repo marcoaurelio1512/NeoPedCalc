@@ -620,6 +620,17 @@
         body {
             overscroll-behavior-x: none;
         }
+
+        /* Desktop/tablet (≥769px): aproveitar a largura. Celular inalterado. */
+        @media (min-width: 1024px) {
+            .pipp-section {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 16px;
+            }
+            .pipp-section > :not(.pipp-item) { grid-column: 1 / -1; }
+            .pipp-section > .pipp-item { margin-bottom: 0; }
+        }
     </style>
     <link rel="stylesheet" href="../css/neoped-responsive.css">
 <link rel="stylesheet" href="../css/neoped-modern.css">

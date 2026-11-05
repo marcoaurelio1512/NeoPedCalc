@@ -1,0 +1,73 @@
+/**
+ * NeoPedCalc — camada de layout para tablet e desktop (≥ 769px).
+ * Importada por neoped-responsive.css. Nada aqui atua no celular.
+ *
+ * Problema que resolve: as regras de "nunca exceder o viewport" de
+ * neoped-responsive.css (main, .wrap, .container, .app-viewport… { max-width: 100% })
+ * anulam a largura máxima que cada calculadora definiu localmente
+ * (1000–1200px). No celular isso é inofensivo; em telas largas o
+ * conteúdo esticava até a borda.
+ *
+ * Solução: uma coluna central única, alinhada com a barra da marca
+ * (.neoped-module-brand, que já usa 1180px). Nenhuma regra altera fórmulas.
+ */
+
+:root {
+    --neoped-content-max: 1180px;
+    --neoped-content-gutter: 24px;
+}
+
+@media (min-width: 769px) {
+    /* 1. Coluna central para os containers de topo das calculadoras.
+       Especificidade (html body > .x) supera a regra global .x { max-width: 100% }.
+       !important é necessário porque neoped-nav.js marca ancestrais de campos de
+       data com .neoped-dt-chain { max-width: 100% !important } (datetime-mobile.css). */
+    html:not(.nutriped-app) body:not(.np-portal) > :is(
+        .wrap,
+        .container,
+        .app-viewport,
+        .app,
+        main,
+        .footer,
+        .card,
+        .reference-table,
+        .info-section,
+        .info-box,
+        .warning-box,
+        .report-btn,
+        p
+    ) {
+        max-width: min(var(--neoped-content-max), calc(100% - 2 * var(--neoped-content-gutter))) !important;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* .wrap tem padding lateral de celular; no desktop a margem vem da coluna,
+       então os cartões passam a alinhar com o cabeçalho e com o logo. */
+    html:not(.nutriped-app) body:not(.np-portal) > .wrap {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    /* 2. Cabeçalho de módulo que era uma faixa de borda a borda:
+       vira cartão alinhado à mesma coluna do conteúdo. */
+    html:not(.nutriped-app) body:not(.np-portal) > header:not(.neoped-brand-header) {
+        max-width: min(var(--neoped-content-max), calc(100% - 2 * var(--neoped-content-gutter))) !important;
+        margin: 16px auto 0;
+        border-radius: var(--neoped-radius-lg) !important;
+    }
+
+    /* 3. Botões flutuantes: a regra global button { width: 100% } esticava-os
+       pela tela inteira, cobrindo a barra Voltar/Início. */
+    html:not(.nutriped-app) #botaoEquipeFlutuante {
+        width: auto !important;
+        bottom: calc(var(--neoped-nav-inset, 68px) + 12px);
+    }
+}
+
+/* Telas grandes: um pouco mais de respiro lateral. */
+@media (min-width: 1280px) {
+    :root {
+        --neoped-content-gutter: 32px;
+    }
+}

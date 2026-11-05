@@ -385,6 +385,20 @@
             .modal { padding: 10px; }
             .modal-content { width: 95%; max-height: 95vh; }
         }
+
+        /* Desktop/tablet (≥769px): aproveitar a largura. Celular inalterado. */
+        @media (min-width: 769px) {
+            .section:has(> .parameter-card) {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 16px;
+            }
+            .section:has(> .parameter-card) > :not(.parameter-card) { grid-column: 1 / -1; }
+            .section > .parameter-card { margin-bottom: 0; }
+        }
+        @media (min-width: 1024px) {
+            .section:has(> .parameter-card) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
     </style>
     <link rel="stylesheet" href="../css/neoped-responsive.css">
 <link rel="stylesheet" href="../css/neoped-modern.css">
