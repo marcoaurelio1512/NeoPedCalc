@@ -64,3 +64,9 @@ html:not([data-neoped-theme="dark"]):not(.nutriped-app) body.np-portal .np-searc
 @media(max-width:360px){:root .np-header nav{gap:13px}:root .np-header nav a{font-size:11px}:root .np-lang button{min-width:27px;padding:0 3px}}
 :root .np-lang button{font:650 11px/1 var(--neoped-font);letter-spacing:.6px;min-height:30px}@media(max-width:720px){:root .np-lang button{font-size:10px;min-height:32px}}
 :root .np-lang-floating{position:fixed;top:10px;right:10px;z-index:10003;margin:0;background:#102f3aee;border-color:#ffffff2e;box-shadow:0 4px 16px #0003}@media print{.np-lang-floating{display:none!important}}
+/* Marca NeoPedCalc (cruz + pulso). Símbolo vetorial: images/neoped-icon.svg */
+img.np-brand-icon{display:block;background:none;padding:0;width:42px;height:42px;border-radius:11px;box-shadow:0 8px 18px -10px #0a2530a6;transition:transform .45s cubic-bezier(.16,1,.3,1),box-shadow .45s cubic-bezier(.16,1,.3,1)}
+.np-brand:hover img.np-brand-icon,.np-brand:focus-visible img.np-brand-icon{transform:rotate(-8deg) scale(1.06);box-shadow:0 12px 24px -10px #0c8b7999}
+.np-footer-brand{display:inline-flex;align-items:center;gap:9px}.np-footer-brand img{width:26px;height:26px;border-radius:7px}
+.neoped-module-brand a img{width:24px;height:24px;border-radius:7px;display:block;box-shadow:0 0 0 1px #ffffff2e}
+@media(max-width:720px){img.np-brand-icon{width:36px;height:36px;border-radius:10px}}

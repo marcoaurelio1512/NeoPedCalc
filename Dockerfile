@@ -7,7 +7,7 @@ COPY --chown=node:node css ./css
 COPY --chown=node:node js ./js
 COPY --chown=node:node images ./images
 COPY --chown=node:node files ./files
-COPY --chown=node:node *.html ./
+COPY --chown=node:node *.html manifest.webmanifest ./
 ENV NODE_ENV=production HOST=0.0.0.0 PORT=8080
 EXPOSE 8080
 USER node

@@ -371,6 +371,26 @@ window.neopedEscapeHtml = function (value) {
     });
   }
 
+  /* Ícones do webapp nos módulos: "Adicionar à tela de início" usa a marca NeoPedCalc. */
+  function injectAppIcons() {
+    var base = getAppBase();
+    var tags = [
+      ['link', { rel: 'icon', href: base + 'images/brand/favicon.ico', sizes: '48x48' }],
+      ['link', { rel: 'icon', type: 'image/svg+xml', href: base + 'images/neoped-icon.svg' }],
+      ['link', { rel: 'apple-touch-icon', href: base + 'images/brand/apple-touch-icon.png' }],
+      ['link', { rel: 'manifest', href: base + 'manifest.webmanifest' }],
+      ['meta', { name: 'apple-mobile-web-app-title', content: 'NeoPedCalc' }],
+      ['meta', { name: 'theme-color', content: '#102f3a' }]
+    ];
+    tags.forEach(function (tag) {
+      var key = tag[1].rel ? 'link[rel="' + tag[1].rel + '"]' + (tag[1].type ? '[type="' + tag[1].type + '"]' : '') : 'meta[name="' + tag[1].name + '"]';
+      if (document.head.querySelector(key)) return;
+      var el = document.createElement(tag[0]);
+      Object.keys(tag[1]).forEach(function (attr) { el.setAttribute(attr, tag[1][attr]); });
+      document.head.appendChild(el);
+    });
+  }
+
   function init() {
     applyFooterYear();
     if (!document.body || document.body.getAttribute('data-neoped-no-restore') === 'true') {
@@ -381,7 +401,11 @@ window.neopedEscapeHtml = function (value) {
     if (!document.body.classList.contains('np-portal')) {
       var brand = document.createElement('div');
       brand.className = 'neoped-module-brand';
-      var home = document.createElement('a'); home.href = getHomeUrl(); home.innerHTML = '<strong>✚ NeoPedCalc</strong>';
+      var home = document.createElement('a'); home.href = getHomeUrl();
+      var mark = document.createElement('img'); mark.src = getAppBase() + 'images/neoped-icon.svg'; mark.alt = ''; mark.width = 22; mark.height = 22;
+      var name = document.createElement('strong'); name.textContent = 'NeoPedCalc';
+      home.append(mark, name);
+      injectAppIcons();
       var library = document.createElement('a'); library.href = getAppBase() + 'selecao_calculadoras.html'; library.textContent = 'Todas as calculadoras →';
       brand.append(home, library); document.body.prepend(brand);
       if (window.NEOPED_I18N) { window.NEOPED_I18N.mountSwitcher(brand, { dark: true, before: library }); window.NEOPED_I18N.refresh(); }

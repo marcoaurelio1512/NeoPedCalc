@@ -103,6 +103,22 @@ test('full configuration: anonymous users are redirected to sign in, secrets and
   assert.match(publicPage.headers.get('content-security-policy'), /default-src 'self'/);
 });
 
+test('web app install assets are served from the site root with correct types', async t => {
+  const { base } = await startServer(t, 3186, {});
+  const manifest = await fetch(base + '/manifest.webmanifest');
+  assert.equal(manifest.status, 200);
+  assert.match(manifest.headers.get('content-type'), /application\/manifest\+json/);
+  const data = await manifest.json();
+  assert.equal(data.short_name, 'NeoPedCalc');
+  assert.ok(data.icons.some(icon => icon.purpose === 'maskable' && icon.sizes === '512x512'));
+  for (const icon of data.icons) assert.equal((await fetch(base + icon.src)).status, 200, icon.src);
+  for (const [route, type] of [['/favicon.ico', /image\/x-icon/], ['/apple-touch-icon.png', /image\/png/], ['/apple-touch-icon-precomposed.png', /image\/png/]]) {
+    const response = await fetch(base + route);
+    assert.equal(response.status, 200, route);
+    assert.match(response.headers.get('content-type'), type, route);
+  }
+});
+
 test('server listens on the PORT provided by the platform', async t => {
   const { base } = await startServer(t, 3185, { RAILWAY_PUBLIC_DOMAIN: 'neo.up.railway.app', APP_URL: '' });
   assert.equal((await fetch(base + '/health')).status, 200);

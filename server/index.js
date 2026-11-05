@@ -215,6 +215,17 @@ const staticOptions = { dotfiles: 'deny', index: false, redirect: false, setHead
   else res.set('Cache-Control','public, max-age=0, must-revalidate');
 } };
 app.get('/', (req,res) => res.sendFile(path.join(root,'index.html')));
+// Web app install assets that platforms request at the site root.
+const ICON_CACHE = 'public, max-age=86400';
+const rootAssets = {
+  '/manifest.webmanifest': { file: 'manifest.webmanifest', type: 'application/manifest+json' },
+  '/favicon.ico': { file: 'images/brand/favicon.ico', type: 'image/x-icon' },
+  '/apple-touch-icon.png': { file: 'images/brand/apple-touch-icon.png', type: 'image/png' },
+  '/apple-touch-icon-precomposed.png': { file: 'images/brand/apple-touch-icon.png', type: 'image/png' }
+};
+for (const [route, asset] of Object.entries(rootAssets)) {
+  app.get(route, (req, res) => res.type(asset.type).set('Cache-Control', ICON_CACHE).sendFile(path.join(root, asset.file)));
+}
 // Only named public directories are served. Source files, secrets and backups are never exposed.
 for (const dir of ['css','js','images','files']) app.use('/'+dir, express.static(path.join(root,dir),staticOptions));
 const publicPages = new Set(['index.html','selecao_calculadoras.html','calculadoras_neonatais.html','calculadoras_pediatricas.html','bibliografia.html','advertencias.html','privacidade.html','planos.html','conta.html','pagina_indisponivel.html']);
